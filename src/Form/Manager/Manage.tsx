@@ -294,7 +294,7 @@ const FormMappingInput = (): ReactElement => {
 
 const FormOutput = (): ReactElement => {
      const [form] = useAtom(formAtom)
-     const [formMapping] = useAtom(formMappingAtom)
+     // const [formMapping] = useAtom(formMappingAtom)
      return (
           <pre>
                {JSON.stringify(form, null, 2)}
