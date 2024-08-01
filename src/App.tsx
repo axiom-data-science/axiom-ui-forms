@@ -1,3 +1,4 @@
+import FormManager from '@/Form/Manager/Manage'
 import React, { ReactElement } from 'react'
 
 
@@ -6,7 +7,9 @@ import React, { ReactElement } from 'react'
 const App = (): ReactElement => {
   return (
 
-    <h2 className='font-bold text-2xl p-10'>Asset Manager</h2>
+    <div className='h-screen flex flex-col gap-4'>
+      <FormManager />
+    </div>
 
   )
 }
