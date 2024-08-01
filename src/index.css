@@ -1,0 +1,39 @@
+@tailwind base;
+
+
+/** 
+From: https://scottspence.com/posts/change-scrollbar-color-tailwind-css
+tailwind-scrollbar is still installed and can be used
+-w-* and -rounded-* don***REMOVED***t seem to work with tailwind-scrollbar
+**/
+
+/* Firefox */
+body * {
+  scrollbar-width: thin;
+  scrollbar-color: #CCC;
+}
+
+/* Chrome, Edge, and Safari */
+body *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body *::-webkit-scrollbar-track {
+  background: #EDEDED;
+  border-radius: 5px;
+}
+
+body *::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 14px;
+  border: 0px solid #999;
+}
+
+#root {
+  height: calc(100vh);
+  width: calc(100vw);
+}
+
+@tailwind components;
+@tailwind utilities;
