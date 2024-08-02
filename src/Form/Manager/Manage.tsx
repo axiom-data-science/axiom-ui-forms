@@ -1,10 +1,11 @@
 
-import { IField, IForm, IRadioField, ISelectField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { IFormField, IForm, IRadioField, ISelectField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { Checkbox, Input, SelectInput, Tabs, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { atom, useAtom } from ***REMOVED***jotai***REMOVED***
 import React, { ReactElement, useEffect, useState } from ***REMOVED***react***REMOVED***
 import exampleForm from ***REMOVED***./exampleForm.json***REMOVED***
 import { IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
+import set from ***REMOVED***lodash/set***REMOVED***
 
 
 export interface IFormMangerProps { }
@@ -66,7 +67,7 @@ const validateForm = (form: IForm): string | undefined => {
           return (***REMOVED***At least one field is required***REMOVED***)
 
      }
-     if (form.fields.length > Object.keys(Object.fromEntries(form.fields.map((field: IField) => [field.id, field]))).length) {
+     if (form.fields.length > Object.keys(Object.fromEntries(form.fields.map((field: IFormField) => [field.id, field]))).length) {
           return (***REMOVED***Field IDs must be unique***REMOVED***)
      }
      return undefined
@@ -115,19 +116,19 @@ const FormSchemaInput = (): ReactElement => {
      )
 }
 
-const FieldLabelText = (field: IField): ReactElement => {
+const FieldLabelText = (field: IFormField): ReactElement => {
      const required = field.required ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : null
      const label = <strong>{field.label} {required}</strong>
      return label
 }
 
-const FieldLabel = (field: IField): ReactElement => {
+const FieldLabel = (field: IFormField): ReactElement => {
      return <p><FieldLabelText {...field} /></p>
 }
 
 
-const inputMap: Record<string, React.FC<IField>> = {
-     text: (field: IField): ReactElement => {
+const inputMap: Record<string, React.FC<IFormField>> = {
+     text: (field: IFormField): ReactElement => {
           const [value, setValue] = useState<string | undefined>(undefined)
           return (
                <Input label={<FieldLabel {...field} />} id={field.id} testId={field.id} value={value} onChange={(e) => {
@@ -135,7 +136,7 @@ const inputMap: Record<string, React.FC<IField>> = {
                }} />
           )
      },
-     long_text: (field: IField): ReactElement => {
+     long_text: (field: IFormField): ReactElement => {
           const [value, setValue] = useState<string | undefined>(undefined)
           return (
                <TextArea label={<FieldLabel {...field} />} id={field.id} testId={field.id} value={value} onChange={(e) => {
@@ -143,7 +144,7 @@ const inputMap: Record<string, React.FC<IField>> = {
                }} />
           )
      },
-     boolean: (field: IField): ReactElement => {
+     boolean: (field: IFormField): ReactElement => {
           const [value, setValue] = useState<boolean>(false)
           return (
                <Checkbox id={field.id} testId={field.id} label={<strong>{field.label}</strong>} className=***REMOVED***font-bold***REMOVED*** value={value} onChange={(e) => {
@@ -151,7 +152,7 @@ const inputMap: Record<string, React.FC<IField>> = {
                }} />
           )
      },
-     select: (field: IField): ReactElement => {
+     select: (field: IFormField): ReactElement => {
           const [value, setValue] = useState<string | undefined>(undefined)
           const selectField = field as ISelectField
           return (
@@ -167,7 +168,7 @@ const inputMap: Record<string, React.FC<IField>> = {
                />
           )
      },
-     radio: (field: IField): ReactElement => {
+     radio: (field: IFormField): ReactElement => {
           const [value, setValue] = useState<string | undefined>(undefined)
           const radioField = field as IRadioField
           return (
@@ -196,7 +197,7 @@ const inputMap: Record<string, React.FC<IField>> = {
 }
 
 
-const Field = (field: IField): ReactElement => {
+const Field = (field: IFormField): ReactElement => {
 
 
      const input = inputMap[field.type]
@@ -213,7 +214,7 @@ const Field = (field: IField): ReactElement => {
 
 }
 
-const getUniqueFormFields = (form: IForm): IField[] => {
+const getUniqueFormFields = (form: IForm): IFormField[] => {
      const fieldMap = Object.fromEntries(form.fields.map(f => [f.id, f]))
      return Object.values(fieldMap)
 }
@@ -258,11 +259,10 @@ const FormMappingInput = (): ReactElement => {
                               return (
                                    <div key={field.id} className=***REMOVED***flex flex-row gap-2***REMOVED***>
                                         <div>
-                                             <span className=***REMOVED***font-bold***REMOVED***>{field.label}</span>
-                                             <span className=***REMOVED***text-xs bg-slate-600 text-white p-2 rounded-md***REMOVED***>{field.id}</span>
-                                        </div>
-                                        <div>
-                                             <Input id={`map:${field.id}`} testId={`map:${field.id}`} value={mapping.fields?.[field.id]?.xpath} onChange={(e) => {
+                                             <Input placeholder=***REMOVED***Output path***REMOVED*** label={<span className=***REMOVED***pb-2***REMOVED***>
+                                                  <span className=***REMOVED***text-xs bg-slate-100  p-1 float-right text-rose-700***REMOVED***>{field.id}</span>
+                                                  {field.label}
+                                             </span>} id={`map:${field.id}`} testId={`map:${field.id}`} value={mapping.fields?.[field.id]?.xpath} onChange={(e) => {
                                                   if (e !== undefined && e !== ***REMOVED******REMOVED***) {
                                                        setMappings({
                                                             ...mapping,
@@ -292,12 +292,27 @@ const FormMappingInput = (): ReactElement => {
 
 }
 
+interface IOutputRecord {
+     [key: string]: IOutputRecord | string | undefined | number
+}
+
 const FormOutput = (): ReactElement => {
      const [form] = useAtom(formAtom)
-     // const [formMapping] = useAtom(formMappingAtom)
+     const [formMapping] = useAtom(formMappingAtom)
+     const [output, setOutput] = useState<IOutputRecord | undefined>(undefined)
+
+     useEffect(() => {
+          let newOutput: IOutputRecord = {}
+          form.fields.forEach(field => {
+               const path = formMapping.fields[field.id]?.xpath ?? field.id
+               newOutput = set(newOutput, path, field.value ?? null)
+          })
+
+          setOutput(newOutput)
+     }, [form, formMapping])
      return (
           <pre>
-               {JSON.stringify(form, null, 2)}
+               {JSON.stringify(output, null, 2)}
           </pre>
      )
 }

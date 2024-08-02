@@ -11,9 +11,9 @@ export interface IValueTypes {
     boolean: boolean
 }
 
-export type IField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
+export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
 
-interface IFieldRoot {
+interface IFormFieldRoot {
     id: string
     type: string
     required: boolean
@@ -22,7 +22,7 @@ interface IFieldRoot {
 }
 
 
-interface IStringValueInput extends IFieldRoot {
+interface IStringValueInput extends IFormFieldRoot {
     value?: ***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***
     placeholder?: string
 }
@@ -41,7 +41,7 @@ interface ISelectOption {
     value: string
 }
 
-interface ISelectableInput extends IFieldRoot {
+interface ISelectableInput extends IFormFieldRoot {
     multiple: boolean
     options: ISelectOption[]
 }
@@ -69,39 +69,39 @@ export interface ICheckboxField extends IMultiSelectableInput {
     type: ***REMOVED***checkbox***REMOVED***
 }
 
-export interface IBooleanField extends IFieldRoot {
+export interface IBooleanField extends IFormFieldRoot {
     type: ***REMOVED***boolean***REMOVED***
     value?: ***REMOVED***boolean***REMOVED***
 }
 
-interface IDateField extends IFieldRoot {
+interface IDateField extends IFormFieldRoot {
     type: ***REMOVED***date***REMOVED***
     value?: ***REMOVED***date***REMOVED***
 }
 
-interface ITimeField extends IFieldRoot {
+interface ITimeField extends IFormFieldRoot {
     type: ***REMOVED***time***REMOVED***
     value?: ***REMOVED***time***REMOVED***
 }
 
-interface IDateTimeField extends IFieldRoot {
+interface IDateTimeField extends IFormFieldRoot {
     type: ***REMOVED***datetime***REMOVED***
     value?: ***REMOVED***datetime***REMOVED***
 }
 
-interface ICompoundField extends IFieldRoot {
+interface ICompoundField extends IFormFieldRoot {
     type: ***REMOVED***compound***REMOVED***
-    fields: IField[]
+    fields: IFormField[]
     layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
 
 }
 
 
 
-/* interface IFieldSection {
+/* interface IFormFieldSection {
     label: string
     description?: string
-    fields: IField[]
+    fields: IFormField[]
 
 }
 
@@ -110,7 +110,7 @@ export interface IPage {
     id: string
     label: string
     description?: string
-    sections: IFieldSection[]
+    sections: IFormFieldSection[]
 
 } */
 
@@ -118,5 +118,5 @@ export interface IForm {
     id: string
     label: string
     description?: string
-    fields: IField[]
+    fields: IFormField[]
 }
