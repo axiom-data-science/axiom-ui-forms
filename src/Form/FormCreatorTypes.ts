@@ -11,9 +11,9 @@ export interface IValueTypes {
     boolean: boolean
 }
 
-export type IField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
+export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
 
-interface IFieldRoot {
+interface IFormFieldRoot {
     id: string
     type: string
     required: boolean
@@ -22,7 +22,7 @@ interface IFieldRoot {
 }
 
 
-interface IStringValueInput extends IFieldRoot {
+interface IStringValueInput extends IFormFieldRoot {
     value?: 'text' | 'number'
     placeholder?: string
 }
@@ -41,7 +41,7 @@ interface ISelectOption {
     value: string
 }
 
-interface ISelectableInput extends IFieldRoot {
+interface ISelectableInput extends IFormFieldRoot {
     multiple: boolean
     options: ISelectOption[]
 }
@@ -69,39 +69,39 @@ export interface ICheckboxField extends IMultiSelectableInput {
     type: 'checkbox'
 }
 
-export interface IBooleanField extends IFieldRoot {
+export interface IBooleanField extends IFormFieldRoot {
     type: 'boolean'
     value?: 'boolean'
 }
 
-interface IDateField extends IFieldRoot {
+interface IDateField extends IFormFieldRoot {
     type: 'date'
     value?: 'date'
 }
 
-interface ITimeField extends IFieldRoot {
+interface ITimeField extends IFormFieldRoot {
     type: 'time'
     value?: 'time'
 }
 
-interface IDateTimeField extends IFieldRoot {
+interface IDateTimeField extends IFormFieldRoot {
     type: 'datetime'
     value?: 'datetime'
 }
 
-interface ICompoundField extends IFieldRoot {
+interface ICompoundField extends IFormFieldRoot {
     type: 'compound'
-    fields: IField[]
+    fields: IFormField[]
     layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 
 }
 
 
 
-/* interface IFieldSection {
+/* interface IFormFieldSection {
     label: string
     description?: string
-    fields: IField[]
+    fields: IFormField[]
 
 }
 
@@ -110,7 +110,7 @@ export interface IPage {
     id: string
     label: string
     description?: string
-    sections: IFieldSection[]
+    sections: IFormFieldSection[]
 
 } */
 
@@ -118,5 +118,5 @@ export interface IForm {
     id: string
     label: string
     description?: string
-    fields: IField[]
+    fields: IFormField[]
 }
