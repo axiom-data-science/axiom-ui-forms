@@ -11,7 +11,9 @@
             "@State/*": [
                 "./src/State/*"
             ],
-            "*": [ "./src/@custom_types/*"]
+            "*": [
+                "./src/@custom_types/*"
+            ]
         }
     }
 }

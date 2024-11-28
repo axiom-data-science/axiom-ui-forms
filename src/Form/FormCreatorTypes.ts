@@ -1,102 +1,100 @@
-
-
-
-
 export interface IValueTypes {
-    text: string
-    number: number
-    date: string
-    datetime: string
-    time: string
-    boolean: boolean
+  text: string
+  number: number
+  date: string
+  datetime: string
+  time: string
+  boolean: boolean
 }
+
+type ValueOf<T> = T[keyof T]
+export type IValueType = ValueOf<IValueTypes>
 
 export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
 
 interface IFormFieldRoot {
-    id: string
-    type: string
-    required: boolean
-    label?: string
-    value?: keyof IValueTypes | Array<keyof IValueTypes>
+  id: string
+  type: string
+  required: boolean
+  label?: string
+  value?: IValueType
+  values?: IValueType[]
+  multiple?: boolean
 }
 
-
 interface IStringValueInput extends IFormFieldRoot {
-    value?: 'text' | 'number'
-    placeholder?: string
+  value?: 'text' | 'number'
+  placeholder?: string
 }
 
 interface ITextField extends IStringValueInput {
-    type: 'text'
+  type: 'text'
 }
 
 interface ILongTextField extends IStringValueInput {
-    type: 'long_text'
-    
+  type: 'long_text'
+
 }
 
 interface ISelectOption {
-    label: string
-    value: string
+  label: string
+  value: string
 }
 
 interface ISelectableInput extends IFormFieldRoot {
-    multiple: boolean
-    options: ISelectOption[]
+  multiple: boolean
+  options: ISelectOption[]
 }
 
 interface ISingleSelectableInput extends ISelectableInput {
-    value?: 'text' | 'number'
-    multiple: false
+  value?: 'text' | 'number'
+  multiple: false
 }
 
 interface IMultiSelectableInput extends ISelectableInput {
-    value?: Array<'text' | 'number'>
-    multiple: true
+  values?: Array<'text' | 'number'>
+  multiple: true
 }
 
 export interface ISelectField extends ISingleSelectableInput {
-    type: 'select'
+  type: 'select'
 }
 
 export interface IRadioField extends ISingleSelectableInput {
-    type: 'radio'
-    layout?: 'horizontal' | 'vertical'
+  type: 'radio'
+  layout?: 'horizontal' | 'vertical'
 }
 
 export interface ICheckboxField extends IMultiSelectableInput {
-    type: 'checkbox'
+  type: 'checkbox'
 }
 
 export interface IBooleanField extends IFormFieldRoot {
-    type: 'boolean'
-    value?: 'boolean'
+  type: 'boolean'
+  value?: 'boolean'
 }
 
 interface IDateField extends IFormFieldRoot {
-    type: 'date'
-    value?: 'date'
+  type: 'date'
+  value?: 'date'
 }
 
 interface ITimeField extends IFormFieldRoot {
-    type: 'time'
-    value?: 'time'
+  type: 'time'
+  value?: 'time'
 }
 
 interface IDateTimeField extends IFormFieldRoot {
-    type: 'datetime'
-    value?: 'datetime'
+  type: 'datetime'
+  value?: 'datetime'
 }
 
 interface ICompoundField extends IFormFieldRoot {
-    type: 'compound'
-    fields: IFormField[]
-    layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
+  type: 'compound'
+  fields: IFormField[]
+  layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 
 }
-
-
 
 /* interface IFormFieldSection {
     label: string
@@ -104,7 +102,6 @@ interface ICompoundField extends IFormFieldRoot {
     fields: IFormField[]
 
 }
-
 
 export interface IPage {
     id: string
@@ -115,8 +112,8 @@ export interface IPage {
 } */
 
 export interface IForm {
-    id: string
-    label: string
-    description?: string
-    fields: IFormField[]
+  id: string
+  label: string
+  description?: string
+  fields: IFormField[]
 }

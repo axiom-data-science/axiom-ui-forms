@@ -7,8 +7,10 @@
     "@axdspub/axiom-maps": "^0.3.17",
     "@axdspub/axiom-ui-data-services": "^0.0.11",
     "@axdspub/axiom-ui-utilities": "^0.0.20",
+    "@radix-ui/react-icons": "^1.3.2",
     "@types/react": "^18.2.28",
     "@types/react-dom": "^18.2.13",
+    "ajv": "^8.17.1",
     "jotai": "^2.7.0",
     "jotai-tanstack-query": "^0.8.5",
     "react": "^18.2.0",
@@ -16,17 +18,13 @@
     "react-media": "^1.10.0",
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
-    "typescript": "^5.2.2",
-    "web-vitals": "^3.5.0",
-    "zod": "^3.23.4"
+    "typescript": "^5.2.2"
   },
   "scripts": {
     "start": "set PORT=3076 && craco start ",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "storybook": "storybook dev -p 6022",
-    "build-storybook": "storybook build",
     "update-cache": "npx tsx ./scripts/update_cache.ts"
   },
   "eslintConfig": {
@@ -64,19 +62,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@craco/craco": "^7.1.0",
-    "@storybook/addon-actions": "^7.4.6",
-    "@storybook/addon-essentials": "^7.4.6",
-    "@storybook/addon-interactions": "^7.4.6",
-    "@storybook/addon-links": "^7.4.6",
-    "@storybook/addon-onboarding": "^1.0.8",
-    "@storybook/blocks": "^7.4.6",
-    "@storybook/builder-webpack5": "^7.4.6",
-    "@storybook/manager-webpack5": "^6.5.16",
-    "@storybook/node-logger": "^7.4.6",
-    "@storybook/preset-create-react-app": "^7.4.6",
-    "@storybook/react": "^7.4.6",
-    "@storybook/react-webpack5": "^7.4.6",
-    "@storybook/testing-library": "^0.2.2",
+    "@types/lodash": "^4.17.12",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
     "babel-plugin-named-exports-order": "^0.0.2",
@@ -87,9 +73,9 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-storybook": "^0.6.15",
-    "storybook": "^7.4.6",
     "tailwindcss": "^3.3.3",
     "ts-node": "^10.9.1",
+    "web-vitals": "^2.1.4",
     "webpack": "^5.88.2"
   }
 }

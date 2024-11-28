@@ -66,6 +66,12 @@
             "value": "large"
           }
         ]
+    },
+    {
+      "label": "A few of your favorite things",
+      "id": "favorites",
+      "type": "text",
+      "multiple": true
     }
   ]
 }

@@ -1,8 +1,5 @@
 import FormManager from '@/Form/Manager/Manage'
-import React, { ReactElement } from 'react'
-
-
-
+import React, { type ReactElement } from 'react'
 
 const App = (): ReactElement => {
   return (

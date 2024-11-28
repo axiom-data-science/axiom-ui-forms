@@ -1,6 +1,5 @@
 const path = require('path')
 
-
 // someday, clean up the the FOUR! repeated declarations of aliases (others are is in tsconfig.paths.json => tsconfig.json and .storybook/main.ts)
 // https://stackoverflow.com/a/71892901
 
@@ -35,6 +34,7 @@ module.exports = {
       verbose: true,
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
+        '^@Components/(.*)$': '<rootDir>/src/State/$1',
         '^@State/(.*)$': '<rootDir>/src/State/$1'
       }
     }

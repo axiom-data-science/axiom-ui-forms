@@ -20,12 +20,6 @@
     "noEmit": true,
     "jsx": "react"
   },
-  "ts-node": {
-    "esm": true,
-    "compilerOptions": {
-      "module": "nodenext",
-    }
-  },
   "include": [
     "src"
   ],
