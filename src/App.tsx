@@ -1,8 +1,5 @@
 import FormManager from ***REMOVED***@/Form/Manager/Manage***REMOVED***
-import React, { ReactElement } from ***REMOVED***react***REMOVED***
-
-
-
+import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 const App = (): ReactElement => {
   return (

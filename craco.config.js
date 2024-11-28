@@ -1,6 +1,5 @@
 const path = require(***REMOVED***path***REMOVED***)
 
-
 // someday, clean up the the FOUR! repeated declarations of aliases (others are is in tsconfig.paths.json => tsconfig.json and .storybook/main.ts)
 // https://stackoverflow.com/a/71892901
 
@@ -35,6 +34,7 @@ module.exports = {
       verbose: true,
       moduleNameMapper: {
         ***REMOVED***^@/(.*)$***REMOVED***: ***REMOVED***<rootDir>/src/$1***REMOVED***,
+        ***REMOVED***^@Components/(.*)$***REMOVED***: ***REMOVED***<rootDir>/src/State/$1***REMOVED***,
         ***REMOVED***^@State/(.*)$***REMOVED***: ***REMOVED***<rootDir>/src/State/$1***REMOVED***
       }
     }
