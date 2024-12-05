@@ -5,8 +5,7 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "standard-with-typescript",
-        "plugin:storybook/recommended"
+        "standard-with-typescript"
     ],
     "overrides": [],
     "parserOptions": {
