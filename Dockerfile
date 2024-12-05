@@ -16,7 +16,7 @@ COPY package.json package-lock.json ./
 COPY .storybook  .storybook
 COPY public  public
 COPY src  src
-COPY .eslintrc.js craco.config.js tailwind.config.js tsconfig.json tsconfig.paths.json ./
+COPY .eslintrc.json craco.config.js tailwind.config.js tsconfig.json tsconfig.paths.json ./
 COPY --from=deps /app/node_modules ./node_modules
 RUN npm run build
 
