@@ -1,9 +1,10 @@
 import { type IFormField, type IRadioField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Manager/Field/FieldLabel***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const RadioInput = ({ field, onChange }: { field: IFormField, onChange: () => void }): ReactElement => {
   const radioField = field as IRadioField
+  const [value, setValue] = useState<string>(field.value !== undefined ? String(field.value) : ***REMOVED******REMOVED***)
   return (
                  <>
                       <FieldLabel {...radioField} />
@@ -17,9 +18,10 @@ const RadioInput = ({ field, onChange }: { field: IFormField, onChange: () => vo
                                                value={option.value}
                                                onChange={(e) => {
                                                  field.value = e.target.value
+                                                 setValue(e.target.value)
                                                  onChange()
                                                }}
-                                               checked={field.value === option.value}
+                                               checked={value === option.value}
                                           /> {option.label}</label>
                                 })
                            }
