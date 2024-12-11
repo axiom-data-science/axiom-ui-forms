@@ -1,14 +1,19 @@
-export interface IValueTypes {
+interface IValueTypes {
   text: string
   number: number
   date: string
   datetime: string
   time: string
   boolean: boolean
+  composite: ICompositeValueType
 }
 
 type ValueOf<T> = T[keyof T]
-export type IValueType = ValueOf<IValueTypes>
+
+type ICompositeValueType = Record<string, string | number | boolean>
+
+export type IValueType = ValueOf<IValueTypes> | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<{ [key: string]: IValueType }>
+// export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
 export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
 
@@ -117,3 +122,7 @@ export interface IForm {
   description?: string
   fields: IFormField[]
 }
+
+export type IFormValues = Record<string, IValueType>
+
+export type IFormInputComponent = React.FC<{ field: IFormField, onChange: () => void }>

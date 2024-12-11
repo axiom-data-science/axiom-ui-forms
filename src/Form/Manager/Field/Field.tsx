@@ -1,4 +1,4 @@
-import { type IFormField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormInputComponent, type IFormField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Manager/Field/FieldLabel***REMOVED***
 import BooleanInput from ***REMOVED***@/Form/Manager/Field/Inputs/Boolean***REMOVED***
 import LongTextInput from ***REMOVED***@/Form/Manager/Field/Inputs/LongText***REMOVED***
@@ -8,7 +8,7 @@ import TextInput from ***REMOVED***@/Form/Manager/Field/Inputs/Text***REMOVED***
 import { PlusIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const inputMap: Record<string, React.FC<{ field: IFormField, onChange: () => void }>> = {
+const inputMap: Record<string, IFormInputComponent> = {
   text: TextInput,
   long_text: LongTextInput,
   boolean: BooleanInput,
