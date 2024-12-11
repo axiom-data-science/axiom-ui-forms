@@ -2,11 +2,20 @@ import Field from '@/Form/Manager/Field/Field'
 import { getUniqueFormFields } from '@/Form/Manager/helpers'
 import formAtom from '@/state/formAtom'
 import { useAtom } from 'jotai'
-import React, { type ReactElement } from 'react'
+import React, { useEffect, type ReactElement } from 'react'
+import { base64ToJson, jsonToBase64 } from '@/helpers'
+import { type IForm } from '@/Form/FormCreatorTypes'
 
 const Form = (): ReactElement => {
   const [form, setForm] = useAtom(formAtom)
   const uniqueFields = getUniqueFormFields(form)
+  useEffect(() => {
+    const base64String = jsonToBase64<IForm>(form)
+    const decodedForm = base64ToJson<IForm>(base64String)
+
+    console.log(base64String.length)
+    console.log(decodedForm)
+  }, [form])
   return (
             <div>
                  <h2 className='text-2xl pb-4 font-bold'>{form.label}</h2>

@@ -4,10 +4,13 @@ import FormOutput from '@/Form/Manager/FormOutput'
 import FormSchemaInput from '@/Form/Manager/FormSchemaInput'
 import FormMappingInput from '@/Form/Manager/FormMappingInput'
 import Form from '@/Form/Manager/Form'
+import { useAtom } from 'jotai'
+import formValuesAtom from '@/state/formValuesAtom'
 
 type IDisplayType = 'stack' | 'tab'
 
 const FormManager = (): ReactElement => {
+  const [formValues] = useAtom(formValuesAtom)
   const sections = [
     {
       id: 'config',
@@ -21,12 +24,17 @@ const FormManager = (): ReactElement => {
     },
     {
       id: 'output',
-      label: 'Output',
+      label: 'Mapped Output',
       content: <FormOutput />
+    },
+    {
+      id: 'raw_output',
+      label: 'Raw Output',
+      content: <pre>{JSON.stringify(formValues, null, 2)}</pre>
     }
   ]
   const params = Object.fromEntries(new URLSearchParams(window.location.search))
-  const display: IDisplayType = params.display === 'tab' ? 'tab' : 'stack'
+  const display: IDisplayType = params.display === 'stack' ? 'stack' : 'tab'
   return (
           <div className='flex flex-col h-full gap-4 p-20'>
                <div className='grid grid-cols-2 gap-8 flex-grow'>

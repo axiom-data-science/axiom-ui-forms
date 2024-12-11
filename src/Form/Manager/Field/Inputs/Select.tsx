@@ -1,27 +1,17 @@
 import { type IFormField, type ISelectField } from '@/Form/FormCreatorTypes'
-import FieldLabel from '@/Form/Manager/Field/FieldLabel'
-import { SelectInput } from '@axdspub/axiom-ui-utilities'
-import React, { useState, type ReactElement } from 'react'
+import Text from '@/Form/Manager/Field/Inputs/Text'
+import { type ISelectProps, type ITextInputProps, SelectInput } from '@axdspub/axiom-ui-utilities'
+import React, { type ReactElement } from 'react'
 
-const Select = ({ field, onChange }: { field: IFormField, onChange: () => void }): ReactElement => {
+const Select = ({ field, onChange, InputComponent }: { field: IFormField, onChange: () => void, InputComponent?: React.FC<ISelectProps> }): ReactElement => {
   const selectField = field as ISelectField
-  const [value, setValue] = useState<string>(field.value !== undefined ? String(field.value) : '')
-  return (
-                 <SelectInput
-                      label={<FieldLabel {...selectField} />}
-                      id={selectField.id}
-                      testId={selectField.id}
-                      value={value}
-                      onChange={(e) => {
-                        field.value = e?.value
-                        setValue(e?.value !== undefined ? String(e?.value) : '')
-                        if (onChange !== undefined) {
-                          onChange()
-                        }
-                      }}
-                      options={selectField.options}
-                 />
-  )
+  const SelectComponent = InputComponent ?? SelectInput
+  return <Text field={field} onChange={onChange} InputComponent={(props: ITextInputProps): ReactElement => {
+    return <SelectComponent {...props} options={selectField.options} onChange={(op) => {
+      const value = op?.value !== undefined ? String(op.value) : ''
+      props.onChange?.(value)
+    }} />
+  }} />
 }
 
 export default Select
