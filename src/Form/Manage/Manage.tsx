@@ -1,21 +1,22 @@
 import { MultiAccordion, Tabs } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
-import FormOutput from '@/Form/Manager/FormOutput'
-import FormSchemaInput from '@/Form/Manager/FormSchemaInput'
-import FormMappingInput from '@/Form/Manager/FormMappingInput'
-import Form from '@/Form/Manager/Form'
+import FormOutput from '@/Form/Manage/FormMappedOutput'
+import FormConfigInput from '@/Form/Manage/FormConfigInput'
+import FormMappingInput from '@/Form/Manage/FormMappingInput'
+import Form from '@/Form/FormCreator'
 import { useAtom } from 'jotai'
-import formValuesAtom from '@/state/formValuesAtom'
+import formAtom from '@/state/formAtom'
+import { RawFormOutput } from '@/Form/Manage/RawFormOutput'
 
 type IDisplayType = 'stack' | 'tab'
 
 const FormManager = (): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
+  const [form] = useAtom(formAtom)
   const sections = [
     {
       id: 'config',
       label: 'Form config',
-      content: <FormSchemaInput />
+      content: <FormConfigInput />
     },
     {
       id: 'mapping',
@@ -30,7 +31,7 @@ const FormManager = (): ReactElement => {
     {
       id: 'raw_output',
       label: 'Raw Output',
-      content: <pre>{JSON.stringify(formValues, null, 2)}</pre>
+      content: <RawFormOutput />
     }
   ]
   const params = Object.fromEntries(new URLSearchParams(window.location.search))
@@ -39,7 +40,7 @@ const FormManager = (): ReactElement => {
           <div className='flex flex-col h-full gap-4 p-20'>
                <div className='grid grid-cols-2 gap-8 flex-grow'>
 
-               <Form />
+               <Form form={form} />
 
                     <div className='flex flex-col gap-4'>
                       {

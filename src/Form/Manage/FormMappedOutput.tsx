@@ -7,9 +7,12 @@ import { useAtom } from 'jotai'
 import formAtom from '@/state/formAtom'
 import formMappingAtom from '@/state/formMappingAtom'
 import { utils } from '@axdspub/axiom-ui-utilities'
+import formValuesAtom from '@/state/formValuesAtom'
+import { copyAndAddPathToFields, getFields } from '@/Form/helpers'
+import { type IForm } from '@/Form/FormCreatorTypes'
 
 interface IOutputRecord {
-  [key: string]: IOutputRecord | string | undefined | number
+  [key: string]: IOutputRecord | string | null | number
 }
 
 const CopyButton = ({
@@ -67,36 +70,58 @@ const CopyButton = ({
   )
 }
 
-const FormOutput = (): ReactElement => {
+const CopyableJSONOutput = ({ json, label }: { json: string, label: string }): ReactElement => {
+  return <div>
+    {
+      label !== undefined
+        ? <h2 className='text-lg pb-4 font-bold'>{label}</h2>
+        : ''
+    }
+    <div className='relative' onClick={() => {
+      navigator.clipboard.writeText(json)
+        .then(() => {
+          console.log('Copied!')
+        })
+        .catch(e => {
+          console.log('Error!')
+        })
+    }}>
+  <CopyButton string={json} className='text-slate-400 absolute top-4 right-4' wrapperClassName='absolute top-0 right-0 bottom-0 left-0' />
+  <pre className='p-10 bg-slate-200 hover:bg-slate-300 text-slate-600 select-none cursor-pointer'>
+       {json}
+  </pre>
+  </div>
+  </div>
+}
+
+const MappedOutput = (): ReactElement => {
   const [form] = useAtom(formAtom)
   const [formMapping] = useAtom(formMappingAtom)
+  const [formValues] = useAtom(formValuesAtom)
   const [output, setOutput] = useState<IOutputRecord | undefined>(undefined)
+  const [flatOutput, setFlatOutput] = useState<IOutputRecord | undefined>(undefined)
 
   useEffect(() => {
     let newOutput: IOutputRecord = {}
-    form.fields.forEach(field => {
-      const path = formMapping.fields[field.id]?.xpath ?? field.id
-      newOutput = set(newOutput, path, field.value ?? null)
+    const newFlatOutput: IOutputRecord = {}
+    const { fields } = copyAndAddPathToFields<IForm>(form)
+    getFields(fields).forEach(field => {
+      const idPath = field.path?.join('.') ?? field.id
+      const path = formMapping.fields[idPath]?.xpath ?? field.id
+      const value = formValues[idPath]
+      newOutput = set(newOutput, path, value ?? null)
+      newFlatOutput[idPath] = (value === null || value === undefined) ? null : isNaN(+value) ? String(value) : Number(value)
     })
 
     setOutput(newOutput)
-  }, [form, formMapping])
-  return (<div className='relative' onClick={() => {
-    navigator.clipboard.writeText(JSON.stringify(output, null, 2))
-      .then(() => {
-        console.log('Copied!')
-      })
-      .catch(e => {
-        console.log('Error!')
-      })
-  }}>
-            {/* <CopyIcon className='absolute top-4 right-4 w-10 h-10 text-slate-400 pointer-events-none' /> */}
-            <CopyButton string={JSON.stringify(output, null, 2)} className='text-slate-400 absolute top-4 right-4' wrapperClassName='absolute top-0 right-0 bottom-0 left-0' />
-            <pre className='p-10 bg-slate-200 hover:bg-slate-300 text-slate-600 select-none cursor-pointer'>
-                 {JSON.stringify(output, null, 2)}
-            </pre>
-            </div>
+    setFlatOutput(newFlatOutput)
+  }, [form, formValues, formMapping])
+  return (<div className='flex flex-col gap-8'>
+      <CopyableJSONOutput json={JSON.stringify(output, null, 2)} label='Output' />
+      <CopyableJSONOutput json={JSON.stringify(flatOutput, null, 2)} label='Flat Output' />
+
+  </div>
   )
 }
 
-export default FormOutput
+export default MappedOutput

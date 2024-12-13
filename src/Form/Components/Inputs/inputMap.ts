@@ -1,0 +1,19 @@
+import BooleanInput from '@/Form/Components/Inputs/Boolean'
+import LongString from '@/Form/Components/Inputs/LongString'
+import StringInput from '@/Form/Components/Inputs/String'
+import ObjectInput from '@/Form/Components/Inputs/Object'
+import Radio from '@/Form/Components/Inputs/RadioGroup'
+import SingleSelect from '@/Form/Components/Inputs/SingleSelect'
+import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
+
+const inputMap: Record<string, React.FC<IFieldInputProps>> = {
+  text: StringInput,
+  long_text: LongString,
+  boolean: BooleanInput,
+  select: SingleSelect,
+  radio: Radio,
+  object: ObjectInput
+
+}
+
+export default inputMap
