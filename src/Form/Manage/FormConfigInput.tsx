@@ -17,7 +17,7 @@ const validateForm = (form: IForm): string | undefined => {
   return undefined
 }
 
-const FormSchemaInput = (): ReactElement => {
+const FormConfigInput = (): ReactElement => {
   const [form, setForm] = useAtom(formAtom)
   const [error, setError] = useState<string | undefined>(validateForm(form))
   const [str, setStr] = useState<string | undefined>(undefined)
@@ -47,7 +47,7 @@ const FormSchemaInput = (): ReactElement => {
                       id=***REMOVED***formManager***REMOVED***
                       testId=***REMOVED***formManager***REMOVED***
                       value={JSON.stringify(form, null, 2)}
-                      className=***REMOVED***h-full mt-0 w-full flex-grow shadow-inner-xl bg-slate-50***REMOVED***
+                      className=***REMOVED***h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-xl bg-slate-100***REMOVED***
                       onChange={(e) => {
                         setStr(e)
                       }}
@@ -56,4 +56,4 @@ const FormSchemaInput = (): ReactElement => {
   )
 }
 
-export default FormSchemaInput
+export default FormConfigInput

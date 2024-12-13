@@ -1,3 +1,5 @@
+import type { GeoJSON } from ***REMOVED***geojson***REMOVED***
+
 interface IValueTypes {
   text: string
   number: number
@@ -5,6 +7,7 @@ interface IValueTypes {
   datetime: string
   time: string
   boolean: boolean
+  geojson: GeoJSON
   composite: ICompositeValueType
 }
 
@@ -12,19 +15,19 @@ type ValueOf<T> = T[keyof T]
 
 type ICompositeValueType = Record<string, string | number | boolean>
 
-export type IValueType = undefined | null | ValueOf<IValueTypes> | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<{ [key: string]: IValueType }>
+export type IValueType = undefined | null | ValueOf<IValueTypes> | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | ICompoundField
+export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
 interface IFormFieldRoot {
   id: string
   type: string
-  required: boolean
-  label?: string
-  value?: IValueType
-  values?: IValueType[]
+  required?: boolean
+  label?: string | null | undefined
   multiple?: boolean
+  path?: string[]
+  level?: number
 }
 
 interface IStringValueInput extends IFormFieldRoot {
@@ -48,7 +51,16 @@ interface ISelectOption {
 
 interface ISelectableInput extends IFormFieldRoot {
   multiple: boolean
-  options: ISelectOption[]
+  options?: ISelectOption[]
+  options_source?: {
+    type: ***REMOVED***url***REMOVED***
+    url: string
+    method?: ***REMOVED***GET***REMOVED*** | ***REMOVED***POST***REMOVED***
+    headers?: Record<string, string>
+    body?: Record<string, string>
+    value_key: string
+    label_key: string
+  }
 }
 
 interface ISingleSelectableInput extends ISelectableInput {
@@ -94,27 +106,37 @@ interface IDateTimeField extends IFormFieldRoot {
   value?: ***REMOVED***datetime***REMOVED***
 }
 
-interface ICompoundField extends IFormFieldRoot {
-  type: ***REMOVED***compound***REMOVED***
+interface IContainerField extends IFormFieldRoot {
   fields: IFormField[]
   layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
-
 }
 
-/* interface IFormFieldSection {
-    label: string
-    description?: string
-    fields: IFormField[]
+export interface IObjectField extends IContainerField {
+  type: ***REMOVED***object***REMOVED***
+}
 
+export interface IFormFieldSection extends IContainerField {
+  type: ***REMOVED***section***REMOVED***
+  description?: string
+  multiple: false
+  value: undefined
+  values: undefined
+}
+
+interface IGeoJSONField extends IFormFieldRoot {
+  type: ***REMOVED***geojson***REMOVED***
+  value?: ***REMOVED***geojson***REMOVED***
+  exclude_types?: string[]
+  include_types?: string[]
 }
 
 export interface IPage {
-    id: string
-    label: string
-    description?: string
-    sections: IFormFieldSection[]
+  id: string
+  label: string
+  description?: string
+  sections: IFormFieldSection[]
 
-} */
+}
 
 export interface IForm {
   id: string
@@ -123,6 +145,26 @@ export interface IForm {
   fields: IFormField[]
 }
 
-export type IFormValues = Record<string, IValueType>
+export interface IFormWithPages {
+  id: string
+  label: string
+  description?: string
+  pages: IPage[]
+}
 
-export type IFormInputComponent = React.FC<{ field: IFormField, onChange: () => void }>
+export interface IFormFieldProps {
+  field: IFormField
+  onChange?: (val: IValueType) => void
+}
+
+export type IFormValues = Record<string, IValueType | IValueType[]>
+
+export type IFormInputComponent = React.FC<IFormFieldProps>
+
+export type IValueChangeFn = (v: IValueType | undefined) => void
+
+export interface IFieldInputProps {
+  field: IFormField
+  onChange: IValueChangeFn
+  value?: IValueType
+}

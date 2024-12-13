@@ -1,21 +1,22 @@
 import { MultiAccordion, Tabs } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
-import FormOutput from ***REMOVED***@/Form/Manager/FormOutput***REMOVED***
-import FormSchemaInput from ***REMOVED***@/Form/Manager/FormSchemaInput***REMOVED***
-import FormMappingInput from ***REMOVED***@/Form/Manager/FormMappingInput***REMOVED***
-import Form from ***REMOVED***@/Form/Manager/Form***REMOVED***
+import FormOutput from ***REMOVED***@/Form/Manage/FormMappedOutput***REMOVED***
+import FormConfigInput from ***REMOVED***@/Form/Manage/FormConfigInput***REMOVED***
+import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
+import Form from ***REMOVED***@/Form/FormCreator***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
-import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
+import formAtom from ***REMOVED***@/state/formAtom***REMOVED***
+import { RawFormOutput } from ***REMOVED***@/Form/Manage/RawFormOutput***REMOVED***
 
 type IDisplayType = ***REMOVED***stack***REMOVED*** | ***REMOVED***tab***REMOVED***
 
 const FormManager = (): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
+  const [form] = useAtom(formAtom)
   const sections = [
     {
       id: ***REMOVED***config***REMOVED***,
       label: ***REMOVED***Form config***REMOVED***,
-      content: <FormSchemaInput />
+      content: <FormConfigInput />
     },
     {
       id: ***REMOVED***mapping***REMOVED***,
@@ -30,7 +31,7 @@ const FormManager = (): ReactElement => {
     {
       id: ***REMOVED***raw_output***REMOVED***,
       label: ***REMOVED***Raw Output***REMOVED***,
-      content: <pre>{JSON.stringify(formValues, null, 2)}</pre>
+      content: <RawFormOutput />
     }
   ]
   const params = Object.fromEntries(new URLSearchParams(window.location.search))
@@ -39,7 +40,7 @@ const FormManager = (): ReactElement => {
           <div className=***REMOVED***flex flex-col h-full gap-4 p-20***REMOVED***>
                <div className=***REMOVED***grid grid-cols-2 gap-8 flex-grow***REMOVED***>
 
-               <Form />
+               <Form form={form} />
 
                     <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
                       {
