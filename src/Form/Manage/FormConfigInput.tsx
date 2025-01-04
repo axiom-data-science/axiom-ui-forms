@@ -1,7 +1,5 @@
 import { type IForm, type IFormField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
-import formAtom from ***REMOVED***@/state/formAtom***REMOVED***
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { useAtom } from ***REMOVED***jotai***REMOVED***
 import React, { type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
 
 const validateForm = (form: IForm): string | undefined => {
@@ -17,8 +15,8 @@ const validateForm = (form: IForm): string | undefined => {
   return undefined
 }
 
-const FormConfigInput = (): ReactElement => {
-  const [form, setForm] = useAtom(formAtom)
+const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => void] }): ReactElement => {
+  const [form, setForm] = formState
   const [error, setError] = useState<string | undefined>(validateForm(form))
   const [str, setStr] = useState<string | undefined>(undefined)
   useEffect(() => {

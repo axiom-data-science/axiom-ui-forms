@@ -1,4 +1,4 @@
-import { type IFormFieldSection, type IObjectField, type IForm, type IFormField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 
 export const getChildFields = (field: IFormField): IFormField[] => {
   return field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED*** ? field.fields ?? [] : []
@@ -34,9 +34,18 @@ export const getFields = (fields: IFormField[]): IFormField[] => {
 
 export function copyAndAddPathToFields<T extends IForm | IFormFieldSection | IObjectField> (formOrContainer: T): T {
   const form = JSON.parse(JSON.stringify(formOrContainer)) as T
-  const fields = getFields(form.fields)
-  form.fields = fields.map(field => {
+  // const fields = getFields(form.fields)
+  form.fields = form.fields.map(field => {
     return addFieldPath(field)
   })
   return form
+}
+
+export function getFieldValue (field: IFormField, formValues: IFormValues): IValueType | IValueType[] | undefined {
+  return formValues[getPathFromField(field)]
+}
+
+export function getPathFromField (field: IFormField): string {
+  console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
+  return field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : field.id
 }

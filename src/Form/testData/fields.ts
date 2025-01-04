@@ -11,7 +11,8 @@ export const testFields: IFormField[] = [
     id: ***REMOVED***long***REMOVED***,
     label: ***REMOVED***Long string component***REMOVED***,
     type: ***REMOVED***long_text***REMOVED***,
-    required: false
+    required: false,
+    multiple: false
   },
   {
     id: ***REMOVED***description***REMOVED***,
@@ -52,7 +53,7 @@ export const testFields: IFormField[] = [
     type: ***REMOVED***radio***REMOVED***,
     required: false,
     layout: ***REMOVED***vertical***REMOVED***,
-    multiple: false,
+    multiple: true,
     options: [
       {
         label: ***REMOVED***Small***REMOVED***,
@@ -74,6 +75,7 @@ export const testFields: IFormField[] = [
     type: ***REMOVED***object***REMOVED***,
     required: true,
     layout: ***REMOVED***vertical***REMOVED***,
+    multiple: true,
     fields: [
       {
         id: ***REMOVED***street***REMOVED***,
@@ -102,6 +104,33 @@ export const testFields: IFormField[] = [
           {
             id: ***REMOVED***zip***REMOVED***,
             label: ***REMOVED***Zip***REMOVED***,
+            type: ***REMOVED***text***REMOVED***,
+            required: true
+          }
+        ]
+      },
+      {
+        id: ***REMOVED***notes***REMOVED***,
+        label: ***REMOVED***Notes***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        multiple: true
+      },
+      {
+        id: ***REMOVED***family***REMOVED***,
+        label: ***REMOVED***Family members***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        multiple: true,
+        layout: ***REMOVED***horizontal***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***name***REMOVED***,
+            label: ***REMOVED***Name***REMOVED***,
+            type: ***REMOVED***text***REMOVED***,
+            required: true
+          },
+          {
+            id: ***REMOVED***age***REMOVED***,
+            label: ***REMOVED***Age***REMOVED***,
             type: ***REMOVED***text***REMOVED***,
             required: true
           }

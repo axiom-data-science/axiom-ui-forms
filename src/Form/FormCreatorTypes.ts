@@ -13,9 +13,13 @@ interface IValueTypes {
 
 type ValueOf<T> = T[keyof T]
 
-type ICompositeValueType = Record<string, string | number | boolean>
-
-export type IValueType = undefined | null | ValueOf<IValueTypes> | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
+// export type ICompositeValueType = Record<string, string | number | boolean>
+// type can***REMOVED***t reference self
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface ICompositeValueType {
+  [key: string]: IValueType | IValueType[] | undefined
+}
+export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
 export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
@@ -28,6 +32,7 @@ interface IFormFieldRoot {
   multiple?: boolean
   path?: string[]
   level?: number
+  value?: IValueType
 }
 
 interface IStringValueInput extends IFormFieldRoot {
@@ -36,7 +41,7 @@ interface IStringValueInput extends IFormFieldRoot {
 }
 
 interface ITextField extends IStringValueInput {
-  type: ***REMOVED***text***REMOVED***
+  type: ***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***
 }
 
 interface ILongTextField extends IStringValueInput {
@@ -50,7 +55,6 @@ interface ISelectOption {
 }
 
 interface ISelectableInput extends IFormFieldRoot {
-  multiple: boolean
   options?: ISelectOption[]
   options_source?: {
     type: ***REMOVED***url***REMOVED***
@@ -65,12 +69,10 @@ interface ISelectableInput extends IFormFieldRoot {
 
 interface ISingleSelectableInput extends ISelectableInput {
   value?: ***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***
-  multiple: false
 }
 
 interface IMultiSelectableInput extends ISelectableInput {
   values?: Array<***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***>
-  multiple: true
 }
 
 export interface ISelectField extends ISingleSelectableInput {
@@ -154,14 +156,14 @@ export interface IFormWithPages {
 
 export interface IFormFieldProps {
   field: IFormField
-  onChange?: (val: IValueType) => void
+  onChange?: IValueChangeFn
 }
 
 export type IFormValues = Record<string, IValueType | IValueType[]>
 
 export type IFormInputComponent = React.FC<IFormFieldProps>
 
-export type IValueChangeFn = (v: IValueType | undefined) => void
+export type IValueChangeFn = (v: IValueType | IValueType[] | undefined) => void
 
 export interface IFieldInputProps {
   field: IFormField

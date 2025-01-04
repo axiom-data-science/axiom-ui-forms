@@ -3,6 +3,8 @@ import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 import { BrowserRouter, Route, Routes } from ***REMOVED***react-router-dom***REMOVED***
 import FormCreator from ***REMOVED***@/Form/FormCreator***REMOVED***
 import { testFields } from ***REMOVED***@/Form/testData/fields***REMOVED***
+import SetTester from ***REMOVED***@/SetTester***REMOVED***
+import MapTester from ***REMOVED***@/Form/MapTester***REMOVED***
 
 const App = (): ReactElement => {
   return (
@@ -18,6 +20,8 @@ const App = (): ReactElement => {
               fields: testFields
             }
           } />} />
+          <Route path="/set-tester" element={<SetTester />} />
+          <Route path="/map-tester" element={<MapTester />} />
 
         </Routes>
         </BrowserRouter>

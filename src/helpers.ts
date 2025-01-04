@@ -12,3 +12,18 @@ export function base64ToJson<T = JSON> (base64: string): T {
   const decodedBuffer = new Uint8Array(decodedBinString.split(***REMOVED******REMOVED***).map(char => char.codePointAt(0) as number))
   return decode(decodedBuffer) as T
 }
+
+export function updateUrlParam (param: string, value?: string | boolean | number | null): void {
+  const u = new URL(window.location.href)
+  if (value === null || value === undefined) {
+    u.searchParams.delete(param)
+  } else {
+    u.searchParams.set(param, String(value))
+  }
+  window.history.replaceState({}, ***REMOVED******REMOVED***, u.toString())
+}
+
+export function getQueryParam (param: string): string | null {
+  const u = new URL(window.location.href)
+  return u.searchParams.get(param)
+}

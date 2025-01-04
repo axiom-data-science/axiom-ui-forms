@@ -1,13 +1,10 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
-import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { Input } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { useAtom } from ***REMOVED***jotai***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 const StringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
-  const initialValue = value !== undefined ? value : formValues[field.id] !== undefined ? String(formValues[field.id]) : ***REMOVED******REMOVED***
+  const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
   return <div>
       <Input
         id={field.id}
