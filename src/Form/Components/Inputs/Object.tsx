@@ -1,10 +1,11 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
+import { type ICompositeValueType, type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
-const ObjectInput = ({ field, onChange }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
   if (field.type === 'object' && field.fields !== undefined) {
     const cl = `${field.layout === 'horizontal' ? 'flex flex-row gap-4 px-0' : 'flex flex-col gap-4'}`
     const fc = field.layout === 'horizontal' ? 'flex-1' : ''
@@ -26,11 +27,15 @@ const ObjectInput = ({ field, onChange }: IFieldInputProps): ReactElement => {
 
             return (
               <FieldCreator
-                onChange={onChange}
+                onChange={(e) => {
+                  initialValue[childField.id] = e
+                  onChange({ ...initialValue })
+                }}
                 className={utils.makeClassName({
                   defaultClassName: 'p-0',
                   className: fc
                 })}
+                value={initialValue[childField.id]}
                 field={{ ...childField, id }}
                 key={id}
               />

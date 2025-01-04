@@ -1,27 +1,19 @@
 import { type IForm } from '@/Form/FormCreatorTypes'
-import { testFields } from '@/Form/testData/fields'
-import { base64ToJson, jsonToBase64 } from '@/helpers'
+import testForm from '@/Form/testData/testForm'
+import { base64ToJson, getQueryParam, jsonToBase64, updateUrlParam } from '@/helpers'
 import { atom } from 'jotai'
 
-const exampleForm = {
-  label: 'New form',
-  id: 'newForm',
-  fields: testFields
-}
+const exampleForm = structuredClone(testForm)
 
 const urlArg = 'form'
-const url = new URL(window.location.href)
-const base64String = url.searchParams.get(urlArg)
-
+const base64String = getQueryParam(urlArg)
 const baseFormAtom = atom<IForm>(base64String !== null ? base64ToJson<IForm>(base64String) : exampleForm as any as IForm)
 const formAtom = atom(
   (get) => {
     return get(baseFormAtom)
   },
   (get, set, newForm: IForm) => {
-    const u = new URL(window.location.href)
-    u.searchParams.set(urlArg, jsonToBase64<IForm>(newForm))
-    window.history.replaceState({}, '', u.toString())
+    updateUrlParam(urlArg, jsonToBase64<IForm>(newForm))
     set(baseFormAtom, newForm)
   }
 )

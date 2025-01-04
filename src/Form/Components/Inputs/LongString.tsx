@@ -1,16 +1,22 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
-import formValuesAtom from '@/state/formValuesAtom'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
-import { useAtom } from 'jotai'
 import React, { type ReactElement } from 'react'
 
-const LongStringInput = ({ field, onChange }: IFieldInputProps): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
+const LongStringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const initialValue = value !== undefined ? value : ''
+  const getValue = (): string => {
+    return initialValue !== undefined && initialValue !== null ? String(initialValue) : ''
+  }
   return <div>
-      <TextArea id={field.id} testId={field.id} label={<FieldLabel {...field} />} value={formValues[field.id] !== undefined ? String(formValues[field.id]) : ''} onChange={(e) => {
-        onChange(e)
-      }} /></div>
+      <TextArea
+        id={field.id}
+        testId={field.id}
+        label={<FieldLabel {...field} />}
+        value={getValue()}
+        onChange={(e) => {
+          onChange(e)
+        }} /><p className='text-xs'>{getValue()}</p></div>
 }
 
 export default LongStringInput

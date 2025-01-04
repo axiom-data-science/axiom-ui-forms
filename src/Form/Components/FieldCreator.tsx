@@ -1,32 +1,80 @@
 import inputMap from '@/Form/Components/Inputs/inputMap'
-import { type IFormField, type IValueChangeFn, type IValueType } from '@/Form/FormCreatorTypes'
+import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/FormCreatorTypes'
+import { getFieldValue, getPathFromField } from '@/Form/helpers'
 import formValuesAtom from '@/state/formValuesAtom'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
-import { PlusIcon } from '@radix-ui/react-icons'
+import { CheckIcon, CopyIcon, Cross1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { useAtom } from 'jotai'
-import React, { type ReactElement } from 'react'
+import React, { useState, type ReactElement } from 'react'
 
 interface IFieldCreator {
   field: IFormField
   onChange?: IValueChangeFn
   className?: string
   defaultClassName?: string
+  value?: IValueType | IValueType[]
 }
 
-const MultipleFieldCreator = ({ field, onChange }: IFieldCreator): ReactElement => {
-  const [formValues, setFormValues] = useAtom(formValuesAtom)
-  const defaultOnChange = (v: IValueType[] | undefined): void => {
-    formValues[field.id] = v
-    setFormValues(structuredClone(formValues))
+const toolButtonClass = 'border-white hover:border-single hover:border-1 hover:border-slate-400'
+
+const DeleteMultiple = ({
+  doDelete
+}: {
+  doDelete: () => void
+
+}): ReactElement => {
+  const [confirm, setConfirm] = useState(false)
+
+  return (
+    <>
+      {
+        confirm
+          ? <p className='flex flex-row gap-2 text-sm'><span className='text-slate-600'>Deleting: </span> Are you sure?
+              <Button size='xs' type='submit'
+                onClick={() => {
+                  doDelete()
+                  setConfirm(false)
+                }}>Yes <CheckIcon className='inline ml-2' />
+              </Button>
+              <Button size='xs' type='alert'
+                onClick={() => {
+                  setConfirm(false)
+                }}>Cancel <Cross1Icon className='inline ml-2' />
+              </Button>
+            </p>
+          : <Button size='xs' className={toolButtonClass} onClick={() => { setConfirm(true) }}>
+              Delete <TrashIcon className='inline ml-2 fill-white' />
+            </Button>
+      }
+    </>
+  )
+}
+
+const OneOfMultiple = ({
+  InputComponent,
+  field,
+  value,
+  index,
+  onChange,
+  values
+
+}: {
+  InputComponent: React.FC<IFieldInputProps>
+  field: IFormField
+  value: IValueType
+  index: number
+  onChange: (v: IValueType[] | undefined) => void
+  values: IValueType[]
+
+}): ReactElement => {
+  const addValue = (v: IValueType | null): void => {
+    const newValues = [...values]
+    newValues.splice(index + 1, 0, v)
+    onChange(newValues)
   }
 
-  const initialValues = formValues[field.id] as IValueType[] | undefined ?? [null]
-  const InputComponent = inputMap[field.type]
-
-  return <div>
-    {
-      initialValues?.map((value, index) => {
-        return <div key={`${field.id}-${index}`} className='flex flex-col gap-2'>
+  return (
+    <div className='flex flex-col gap-2'>
           <InputComponent
           field={{
             ...field,
@@ -36,51 +84,99 @@ const MultipleFieldCreator = ({ field, onChange }: IFieldCreator): ReactElement 
           }}
           value={value}
           onChange={(v) => {
-            const newValues = [...initialValues]
-            newValues[index] = v
-            defaultOnChange(newValues)
+            const newValues = [...values]
+            newValues[index] = v as IValueType
+            onChange(newValues)
           }}
         />
+
+            <div className='flex flex-row justify-between w-full p-2'>
+              {index > 0 && (
+              <DeleteMultiple doDelete={() => {
+                const newValues = [...values]
+                newValues.splice(index, 1)
+                onChange(newValues)
+              }} />
+              )}
+              <div className='ml-auto flex gap-2'>
+                <Button
+                size='xs'
+                className={toolButtonClass}
+                onClick={() => {
+                  addValue(null)
+                }}>Add <PlusIcon className='inline ml-2' /></Button>
+                <Button
+                  size='xs'
+                  className={toolButtonClass}
+                  onClick={() => {
+                    addValue(structuredClone(value))
+                  }}>Duplicate <CopyIcon className='inline ml-2' />
+                </Button>
+              </div>
+            </div>
         </div>
+  )
+}
+
+const MultipleFieldCreator = ({ field, onChange, value }: IFieldCreator): ReactElement => {
+  const [formValues, setFormValues] = useAtom(formValuesAtom)
+  const defaultOnChange = (v: IValueType[] | undefined): void => {
+    formValues[getPathFromField(field)] = v
+    setFormValues(structuredClone(formValues))
+  }
+
+  const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
+  const initialValues = (initialVal !== undefined ? (Array.isArray(initialVal) ? initialVal : [initialVal]) : [null])
+
+  /* const initialValues = (
+    formValues[getPathFromField(field)] !== undefined
+      ? Array.isArray(formValues[getPathFromField(field)])
+        ? formValues[getPathFromField(field)]
+        : [formValues[getPathFromField(field)]]
+      : [null]
+  ) as IValueType[] */
+
+  const InputComponent = inputMap[field.type]
+
+  return <div>
+    {
+      initialValues?.map((value, index) => {
+        return <OneOfMultiple
+          key={`${field.id}-${index}`}
+          InputComponent={InputComponent}
+          field={field}
+          value={value}
+          index={index}
+          onChange={onChange ?? defaultOnChange}
+          values={initialValues}
+          />
       })
     }
-    {
-      <div className='flex flex-row gap-2 mt-4'>
-      <Button
-        size='sm'
-        type='create'
-        onClick={() => {
-          defaultOnChange([...(initialValues ?? []), undefined])
-        }}
-      >
-        Add <PlusIcon className='inline' />
-      </Button>
-      </div>
-    }
-
   </div>
 }
 
 const FieldCreator = ({
   field,
+  value,
   onChange,
   className,
   defaultClassName = 'py-5 flex flex-col gap-8'
 }: IFieldCreator): ReactElement => {
   const InputComponent = inputMap[field.type]
   const [formValues, setFormValues] = useAtom(formValuesAtom)
-  const defaultOnChange = (v: IValueType | undefined): void => {
-    formValues[field.id] = v
+  const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
+    formValues[getPathFromField(field)] = v
     setFormValues(structuredClone(formValues))
   }
+  const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
   return InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
       defaultClassName
     })}>{
       field.multiple === true
-        ? <MultipleFieldCreator field={field} onChange={onChange} />
-        : <InputComponent field={field} onChange={onChange ?? defaultOnChange} />
+        ? <MultipleFieldCreator field={field} onChange={onChange} value={initialValue} />
+        : <InputComponent field={field} onChange={onChange ?? defaultOnChange} value={Array.isArray(initialValue) ? initialValue[0] : initialValue} />
 
     }</div>
     : <p>No component definition for {field.type} ({field.id})</p>

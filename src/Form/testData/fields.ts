@@ -11,7 +11,8 @@ export const testFields: IFormField[] = [
     id: 'long',
     label: 'Long string component',
     type: 'long_text',
-    required: false
+    required: false,
+    multiple: false
   },
   {
     id: 'description',
@@ -52,7 +53,7 @@ export const testFields: IFormField[] = [
     type: 'radio',
     required: false,
     layout: 'vertical',
-    multiple: false,
+    multiple: true,
     options: [
       {
         label: 'Small',
@@ -74,6 +75,7 @@ export const testFields: IFormField[] = [
     type: 'object',
     required: true,
     layout: 'vertical',
+    multiple: true,
     fields: [
       {
         id: 'street',
@@ -102,6 +104,33 @@ export const testFields: IFormField[] = [
           {
             id: 'zip',
             label: 'Zip',
+            type: 'text',
+            required: true
+          }
+        ]
+      },
+      {
+        id: 'notes',
+        label: 'Notes',
+        type: 'text',
+        multiple: true
+      },
+      {
+        id: 'family',
+        label: 'Family members',
+        type: 'object',
+        multiple: true,
+        layout: 'horizontal',
+        fields: [
+          {
+            id: 'name',
+            label: 'Name',
+            type: 'text',
+            required: true
+          },
+          {
+            id: 'age',
+            label: 'Age',
             type: 'text',
             required: true
           }

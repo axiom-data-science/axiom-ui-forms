@@ -1,13 +1,17 @@
+import { type IForm } from '@/Form/FormCreatorTypes'
+import { type IFormMapping } from '@/Form/FormMappingTypes'
 import { addFieldPath, getFields } from '@/Form/helpers'
-import formAtom from '@/state/formAtom'
-import formMappingAtom from '@/state/formMappingAtom'
 import { Input } from '@axdspub/axiom-ui-utilities'
-import { useAtom } from 'jotai'
 import React, { type ReactElement } from 'react'
 
-const FormMappingInput = (): ReactElement => {
-  const [form] = useAtom(formAtom)
-  const [mapping, setMappings] = useAtom(formMappingAtom)
+const FormMappingInput = ({
+  form,
+  mappingState
+}: {
+  form: IForm
+  mappingState: [IFormMapping, (mapping: IFormMapping) => void]
+}): ReactElement => {
+  const [mapping, setMappings] = mappingState
   const uniqueFields = getFields(form.fields.map(f => addFieldPath(structuredClone(f))))
   return (
             <>

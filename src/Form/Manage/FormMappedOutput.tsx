@@ -4,12 +4,11 @@ import React, { type ReactElement, useEffect, useState } from 'react'
 import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'
 import { useAtom } from 'jotai'
 
-import formAtom from '@/state/formAtom'
-import formMappingAtom from '@/state/formMappingAtom'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import formValuesAtom from '@/state/formValuesAtom'
 import { copyAndAddPathToFields, getFields } from '@/Form/helpers'
 import { type IForm } from '@/Form/FormCreatorTypes'
+import { type IFormMapping } from '@/Form/FormMappingTypes'
 
 interface IOutputRecord {
   [key: string]: IOutputRecord | string | null | number
@@ -94,9 +93,13 @@ const CopyableJSONOutput = ({ json, label }: { json: string, label: string }): R
   </div>
 }
 
-const MappedOutput = (): ReactElement => {
-  const [form] = useAtom(formAtom)
-  const [formMapping] = useAtom(formMappingAtom)
+const MappedOutput = ({
+  form,
+  formMapping
+}: {
+  form: IForm
+  formMapping: IFormMapping
+}): ReactElement => {
   const [formValues] = useAtom(formValuesAtom)
   const [output, setOutput] = useState<IOutputRecord | undefined>(undefined)
   const [flatOutput, setFlatOutput] = useState<IOutputRecord | undefined>(undefined)
@@ -105,7 +108,8 @@ const MappedOutput = (): ReactElement => {
     let newOutput: IOutputRecord = {}
     const newFlatOutput: IOutputRecord = {}
     const { fields } = copyAndAddPathToFields<IForm>(form)
-    getFields(fields).forEach(field => {
+    const flatFields = getFields(fields)
+    flatFields.forEach(field => {
       const idPath = field.path?.join('.') ?? field.id
       const path = formMapping.fields[idPath]?.xpath ?? field.id
       const value = formValues[idPath]
