@@ -86,8 +86,9 @@ export const testFields: IFormField[] = [
       {
         id: ***REMOVED***city_state_zip***REMOVED***,
         type: ***REMOVED***object***REMOVED***,
-        required: true,
+        required: false,
         layout: ***REMOVED***horizontal***REMOVED***,
+        label: ***REMOVED******REMOVED***,
         fields: [
           {
             id: ***REMOVED***city***REMOVED***,
@@ -120,13 +121,26 @@ export const testFields: IFormField[] = [
         label: ***REMOVED***Family members***REMOVED***,
         type: ***REMOVED***object***REMOVED***,
         multiple: true,
-        layout: ***REMOVED***horizontal***REMOVED***,
         fields: [
           {
             id: ***REMOVED***name***REMOVED***,
             label: ***REMOVED***Name***REMOVED***,
-            type: ***REMOVED***text***REMOVED***,
-            required: true
+            type: ***REMOVED***object***REMOVED***,
+            layout: ***REMOVED***horizontal***REMOVED***,
+            fields: [
+              {
+                id: ***REMOVED***firstName***REMOVED***,
+                label: ***REMOVED***First name***REMOVED***,
+                type: ***REMOVED***text***REMOVED***
+              },
+              {
+                id: ***REMOVED***lastName***REMOVED***,
+                label: ***REMOVED***Last name***REMOVED***,
+                type: ***REMOVED***text***REMOVED***
+              }
+
+            ]
+
           },
           {
             id: ***REMOVED***age***REMOVED***,

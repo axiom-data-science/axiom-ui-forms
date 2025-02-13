@@ -5,8 +5,14 @@ export const getChildFields = (field: IFormField): IFormField[] => {
 }
 
 export const addFieldPath = (field: IFormField, parentPath?: string[]): IFormField => {
-  field.path = parentPath !== undefined ? parentPath.concat(field.id) : [field.id]
-  field.level = parentPath !== undefined ? parentPath.length + 1 : 1
+  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
+    field.path = parentPath !== undefined ? parentPath.slice() : []
+    field.level = parentPath !== undefined ? parentPath.length : 0
+  } else {
+    const newSegment = field.id // `${field.id}${field.multiple === true ? ***REMOVED***[]***REMOVED*** : ***REMOVED******REMOVED***}`
+    field.path = parentPath !== undefined ? parentPath.concat(newSegment) : [newSegment]
+    field.level = parentPath !== undefined ? parentPath.length + 1 : 1
+  }
   if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.fields !== undefined) {
     field.fields = field.fields.map(childField => {
       return addFieldPath(childField, field.path)
@@ -46,6 +52,6 @@ export function getFieldValue (field: IFormField, formValues: IFormValues): IVal
 }
 
 export function getPathFromField (field: IFormField): string {
-  console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
+  // console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
   return field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : field.id
 }

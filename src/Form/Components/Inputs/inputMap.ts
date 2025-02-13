@@ -5,10 +5,14 @@ import ObjectInput from ***REMOVED***@/Form/Components/Inputs/Object***REMOVED**
 import Radio from ***REMOVED***@/Form/Components/Inputs/RadioGroup***REMOVED***
 import SingleSelect from ***REMOVED***@/Form/Components/Inputs/SingleSelect***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import JSONStringInput from ***REMOVED***@/Form/Components/Inputs/JSONString***REMOVED***
+import NumberInput from ***REMOVED***@/Form/Components/Inputs/Number***REMOVED***
 
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
   long_text: LongString,
+  number: NumberInput,
+  json: JSONStringInput,
   boolean: BooleanInput,
   select: SingleSelect,
   radio: Radio,

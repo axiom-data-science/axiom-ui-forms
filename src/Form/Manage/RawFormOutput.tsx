@@ -1,3 +1,4 @@
+import { CopyableJSONOutput } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { set } from ***REMOVED***lodash***REMOVED***
@@ -13,17 +14,7 @@ export const RawFormOutput = (): ReactElement => {
   // const rehydratedMapped = {}
 
   return <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
-    <div>
-    <h2>As stored</h2>
-    <pre className=***REMOVED***p-10 bg-slate-200***REMOVED***>{JSON.stringify(formValues, null, 2)}</pre>
-    </div>
-    <div>
-    <h2>Rehydrated as mapped</h2>
-    <pre className=***REMOVED***p-10 bg-slate-200***REMOVED***>{JSON.stringify(rehydrated, null, 2)}</pre>
-    </div>
-    <div>
-    <h2>Rehydrated</h2>
-    <pre className=***REMOVED***p-10 bg-slate-200***REMOVED***>{JSON.stringify(rehydrated, null, 2)}</pre>
-    </div>
+    <CopyableJSONOutput string={JSON.stringify(formValues, null, 2)} label=***REMOVED***As stored***REMOVED*** />
+    <CopyableJSONOutput string={JSON.stringify(rehydrated, null, 2)} label=***REMOVED***Rehydrated***REMOVED*** />
     </div>
 }

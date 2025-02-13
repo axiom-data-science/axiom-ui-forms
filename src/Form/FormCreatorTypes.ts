@@ -8,6 +8,7 @@ interface IValueTypes {
   time: string
   boolean: boolean
   geojson: GeoJSON
+  json: JSON
   composite: ICompositeValueType
 }
 
@@ -22,15 +23,17 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
+export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
+export type IFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***geojson***REMOVED***
 interface IFormFieldRoot {
   id: string
-  type: string
+  type: IFormFieldType
   required?: boolean
   label?: string | null | undefined
   multiple?: boolean
   path?: string[]
+  fullPath?: string[]
   level?: number
   value?: IValueType
 }
@@ -46,7 +49,10 @@ interface ITextField extends IStringValueInput {
 
 interface ILongTextField extends IStringValueInput {
   type: ***REMOVED***long_text***REMOVED***
+}
 
+interface IJSONField extends IFormFieldRoot {
+  type: ***REMOVED***json***REMOVED***
 }
 
 interface ISelectOption {
@@ -109,6 +115,7 @@ interface IDateTimeField extends IFormFieldRoot {
 }
 
 interface IContainerField extends IFormFieldRoot {
+  skip_path?: boolean
   fields: IFormField[]
   layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
 }
@@ -168,5 +175,6 @@ export type IValueChangeFn = (v: IValueType | IValueType[] | undefined) => void
 export interface IFieldInputProps {
   field: IFormField
   onChange: IValueChangeFn
+  formValueState: [IFormValues, (v: IFormValues) => void]
   value?: IValueType
 }

@@ -1,0 +1,82 @@
+{
+    "$id": "/axds/test.schema.json",
+    "type": "object",
+    "required": [ "short", "long", "size" ],
+    "properties": {
+        "short":{
+            "type": "string"
+        },
+        "long": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "agree": {
+            "type": "boolean"
+        },
+        "color": {
+            "type": "string",
+            "enum": [
+                {"const": "red"},
+                {"const": "blue"},
+                {"const": "green"}
+              ]
+        },
+        "size": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    {"const": "small"},
+                    {"const": "medium"},
+                    {"const": "large"}
+                  ]
+            }
+        },
+        "address": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "street": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "string"
+                    },
+                    "zip": {
+                        "type": "string"
+                    },
+                    "notes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "family": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "firstName": {
+                                    "type": "string"
+                                },
+                                "lastname": {
+                                    "type": "string"
+                                },
+                                "age": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}

@@ -4,10 +4,10 @@ import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/F
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ field, onChange, value, formValueState }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
   if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
-    const cl = `${field.layout === ***REMOVED***horizontal***REMOVED*** ? ***REMOVED***flex flex-row gap-4 px-0***REMOVED*** : ***REMOVED***flex flex-col gap-4***REMOVED***}`
+    const cl = `${field.layout === ***REMOVED***horizontal***REMOVED*** ? `flex flex-row gap-4  ${field.label !== undefined ? ***REMOVED***px-0***REMOVED*** : ***REMOVED******REMOVED***}` : ***REMOVED***flex flex-col gap-4***REMOVED***}`
     const fc = field.layout === ***REMOVED***horizontal***REMOVED*** ? ***REMOVED***flex-1***REMOVED*** : ***REMOVED******REMOVED***
     return (
         <div>
@@ -27,10 +27,13 @@ const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
 
             return (
               <FieldCreator
-                onChange={(e) => {
-                  initialValue[childField.id] = e
-                  onChange({ ...initialValue })
-                }}
+                formValueState={formValueState}
+                onChange={field.skip_path === true
+                  ? undefined
+                  : (e) => {
+                      initialValue[childField.id] = e
+                      onChange({ ...initialValue })
+                    }}
                 className={utils.makeClassName({
                   defaultClassName: ***REMOVED***p-0***REMOVED***,
                   className: fc
