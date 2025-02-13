@@ -26,6 +26,11 @@ export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<Valu
 export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
 export type IFormFieldType = 'section' | 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson'
+interface IFieldConditions {
+  dependsOn: string
+  value: string | number | boolean
+}
+
 interface IFormFieldRoot {
   id: string
   type: IFormFieldType
@@ -36,6 +41,7 @@ interface IFormFieldRoot {
   fullPath?: string[]
   level?: number
   value?: IValueType
+  conditions?: IFieldConditions
 }
 
 interface IStringValueInput extends IFormFieldRoot {
