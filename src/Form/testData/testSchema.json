@@ -4,7 +4,8 @@
     "required": [ "short", "long", "size" ],
     "properties": {
         "short":{
-            "type": "string"
+            "type": "string",
+            "maxLength": 100
         },
         "long": {
             "type": "string"
@@ -40,16 +41,20 @@
                 "type": "object",
                 "properties": {
                     "street": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "city": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "state": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 20
                     },
                     "zip": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 20
                     },
                     "notes": {
                         "type": "array",
@@ -63,10 +68,12 @@
                             "type": "object",
                             "properties": {
                                 "firstName": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "maxLength": 100
                                 },
                                 "lastname": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "maxLength": 100
                                 },
                                 "age": {
                                     "type": "integer"
