@@ -1,6 +1,6 @@
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { Tabs, TextArea } from '@axdspub/axiom-ui-utilities'
-import { type JSONSchema6Type, type JSONSchema6, type JSONSchema6Definition } from 'json-schema'
+import { type JSONSchema7Type, type JSONSchema7, type JSONSchema7Definition } from 'json-schema'
 import React, { useEffect, useState, type ReactElement } from 'react'
 import metaSchemaDraftV7 from 'ajv/lib/refs/json-schema-draft-07.json'
 import metaSchemaDraftV6 from 'ajv/lib/refs/json-schema-draft-06.json'
@@ -29,8 +29,8 @@ const getValidator = (schema: number): ValidateFunction => {
   }
 }
 
-export const objectToSchema = (ob: unknown): JSONSchema6 => {
-  return GenerateSchema.json('Schema', ob) as JSONSchema6
+export const objectToSchema = (ob: unknown): JSONSchema7 => {
+  return GenerateSchema.json('Schema', ob) as JSONSchema7
 }
 
 const validateSchema = (schemaOb: unknown, version: number = 6): string | undefined => {
@@ -43,7 +43,7 @@ const validateSchema = (schemaOb: unknown, version: number = 6): string | undefi
   return undefined
 }
 
-const validateAgainstSchema = (schema: JSONSchema6, formValues: IFormValues): string[] | undefined => {
+const validateAgainstSchema = (schema: JSONSchema7, formValues: IFormValues): string[] | undefined => {
   const ajv = new Ajv({ strict: false, allErrors: true })
   const validator = ajv.compile(schema)
   const valid = validator(formValues)
@@ -76,7 +76,7 @@ const makeLabel = (options: Array<string | number | undefined | null>): string |
     }).join(' ')
 }
 
-const getFieldType = (schema: JSONSchema6): IFormFieldType => {
+const getFieldType = (schema: JSONSchema7): IFormFieldType => {
   const schemaType = schema.type
   if (schemaType === 'string' || schemaType === 'number' || schemaType === 'integer') {
     if (schema.enum !== undefined || schema.oneOf !== undefined) {
@@ -93,14 +93,12 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
     return 'boolean'
   } else if (schemaType === 'object') {
     return 'object'
-  } else if (schemaType === 'any') {
-    return 'json'
   }
 
   return 'text'
 }
 
-export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definition | undefined): string | number | boolean | undefined => {
+export const getValueFromSchema = (schema: JSONSchema7Type | JSONSchema7Definition | undefined): string | number | boolean | undefined => {
   if (schema === undefined || schema === null) {
     return undefined
   }
@@ -119,7 +117,7 @@ export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
   return undefined
 }
 
-export const getLabelFromSchema = (schema: JSONSchema6Type | JSONSchema6Definition | undefined): string | undefined => {
+export const getLabelFromSchema = (schema: JSONSchema7Type | JSONSchema7Definition | undefined): string | undefined => {
   if (schema === undefined || schema === null) {
     return undefined
   }
@@ -141,9 +139,9 @@ export const getLabelFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
   return String(getValueFromSchema(schema))
 }
 
-const schemaToFormField = (schema: JSONSchema6, property: string, multiple?: boolean): IFormField => {
+const schemaToFormField = (schema: JSONSchema7, property: string, multiple?: boolean): IFormField => {
   if (schema.type === 'array') {
-    return schemaToFormField(schema.items as JSONSchema6, property, true)
+    return schemaToFormField(schema.items as JSONSchema7, property, true)
   }
   const type = getFieldType(schema)
   const id = makeId([
@@ -208,7 +206,7 @@ const schemaToFormField = (schema: JSONSchema6, property: string, multiple?: boo
   }
 }
 
-export const schemaToFormObject = (schema: JSONSchema6): IForm => {
+export const schemaToFormObject = (schema: JSONSchema7): IForm => {
   const formFields: IFormField[] = []
   for (const key in schema.properties) {
     if (schema.properties[key] !== undefined && typeof schema.properties[key] !== 'boolean') {
@@ -223,7 +221,7 @@ export const schemaToFormObject = (schema: JSONSchema6): IForm => {
 }
 
 const SchemaToForm = (): ReactElement => {
-  const [schema, setSchema] = useState<JSONSchema6 | undefined>(undefined)
+  const [schema, setSchema] = useState<JSONSchema7 | undefined>(undefined)
   const [form, setForm] = useState<IForm | undefined>(undefined)
   const [formValues, setFormValues] = useState<IFormValues>({})
   const [error, setError] = useState<string | undefined>(validateSchema(schema))
@@ -236,8 +234,8 @@ const SchemaToForm = (): ReactElement => {
         const validationResponse = validateSchema(ob)
         setError(validationResponse)
         if (validationResponse === undefined) {
-          setSchema(ob as JSONSchema6)
-          setForm(schemaToFormObject(ob as JSONSchema6))
+          setSchema(ob as JSONSchema7)
+          setForm(schemaToFormObject(ob as JSONSchema7))
         }
       } catch {
         setError('Invalid JSON')
