@@ -12,6 +12,7 @@ FROM node:18-alpine AS builder
 
 # RUN apk --no-cache add curl
 WORKDIR /app
+COPY src/example-jwt-tokens.json src/jwt-tokens.json
 COPY package.json package-lock.json ./
 COPY .storybook  .storybook
 COPY public  public
