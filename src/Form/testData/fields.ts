@@ -86,8 +86,9 @@ export const testFields: IFormField[] = [
       {
         id: 'city_state_zip',
         type: 'object',
-        required: true,
+        required: false,
         layout: 'horizontal',
+        label: '',
         fields: [
           {
             id: 'city',
@@ -120,13 +121,26 @@ export const testFields: IFormField[] = [
         label: 'Family members',
         type: 'object',
         multiple: true,
-        layout: 'horizontal',
         fields: [
           {
             id: 'name',
             label: 'Name',
-            type: 'text',
-            required: true
+            type: 'object',
+            layout: 'horizontal',
+            fields: [
+              {
+                id: 'firstName',
+                label: 'First name',
+                type: 'text'
+              },
+              {
+                id: 'lastName',
+                label: 'Last name',
+                type: 'text'
+              }
+
+            ]
+
           },
           {
             id: 'age',

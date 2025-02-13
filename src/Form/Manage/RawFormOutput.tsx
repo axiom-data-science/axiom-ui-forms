@@ -1,3 +1,4 @@
+import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
 import formValuesAtom from '@/state/formValuesAtom'
 import { useAtom } from 'jotai'
 import { set } from 'lodash'
@@ -13,17 +14,7 @@ export const RawFormOutput = (): ReactElement => {
   // const rehydratedMapped = {}
 
   return <div className='flex flex-col gap-4'>
-    <div>
-    <h2>As stored</h2>
-    <pre className='p-10 bg-slate-200'>{JSON.stringify(formValues, null, 2)}</pre>
-    </div>
-    <div>
-    <h2>Rehydrated as mapped</h2>
-    <pre className='p-10 bg-slate-200'>{JSON.stringify(rehydrated, null, 2)}</pre>
-    </div>
-    <div>
-    <h2>Rehydrated</h2>
-    <pre className='p-10 bg-slate-200'>{JSON.stringify(rehydrated, null, 2)}</pre>
-    </div>
+    <CopyableJSONOutput string={JSON.stringify(formValues, null, 2)} label='As stored' />
+    <CopyableJSONOutput string={JSON.stringify(rehydrated, null, 2)} label='Rehydrated' />
     </div>
 }

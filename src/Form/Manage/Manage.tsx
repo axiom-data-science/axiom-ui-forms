@@ -12,6 +12,8 @@ import { getQueryParam, updateUrlParam } from '@/helpers'
 import formValuesAtom from '@/state/formValuesAtom'
 import { CheckIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
 import testForm from '@/Form/testData/testForm'
+import { type IForm, type IFormValues } from '@/Form/FormCreatorTypes'
+import { type IFormMapping } from '@/Form/FormMappingTypes'
 
 type IDisplayType = 'stack' | 'tab'
 
@@ -50,10 +52,18 @@ const ClearForm = ({
   )
 }
 
-const FormManager = (): ReactElement => {
-  const [form, setForm] = useAtom(formAtom)
-  const [mapping, setMapping] = useAtom(formMappingAtom)
-  const [,setFormValues] = useAtom(formValuesAtom)
+const FormManager = ({
+  formValueState,
+  mappingState,
+  formState
+}: {
+  formValueState?: [IFormValues, (v: IFormValues) => void]
+  mappingState?: [IFormMapping, (v: IFormMapping) => void]
+  formState?: [IForm, (v: IForm) => void]
+}): ReactElement => {
+  const [form, setForm] = formState ?? useAtom(formAtom)
+  const [mapping, setMapping] = mappingState ?? useAtom(formMappingAtom)
+  const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   const sections = [
     {
       id: 'config',
@@ -98,7 +108,7 @@ const FormManager = (): ReactElement => {
             </div>
                <div className='grid grid-cols-2 gap-8 flex-grow'>
 
-               <Form form={form} />
+               <Form form={form} formValueState={[formValues, setFormValues]} />
 
                     <div className='flex flex-col gap-4'>
                       {

@@ -4,10 +4,10 @@ import { type ICompositeValueType, type IFieldInputProps } from '@/Form/FormCrea
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
-const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ field, onChange, value, formValueState }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
   if (field.type === 'object' && field.fields !== undefined) {
-    const cl = `${field.layout === 'horizontal' ? 'flex flex-row gap-4 px-0' : 'flex flex-col gap-4'}`
+    const cl = `${field.layout === 'horizontal' ? `flex flex-row gap-4  ${field.label !== undefined ? 'px-0' : ''}` : 'flex flex-col gap-4'}`
     const fc = field.layout === 'horizontal' ? 'flex-1' : ''
     return (
         <div>
@@ -27,10 +27,13 @@ const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
 
             return (
               <FieldCreator
-                onChange={(e) => {
-                  initialValue[childField.id] = e
-                  onChange({ ...initialValue })
-                }}
+                formValueState={formValueState}
+                onChange={field.skip_path === true
+                  ? undefined
+                  : (e) => {
+                      initialValue[childField.id] = e
+                      onChange({ ...initialValue })
+                    }}
                 className={utils.makeClassName({
                   defaultClassName: 'p-0',
                   className: fc

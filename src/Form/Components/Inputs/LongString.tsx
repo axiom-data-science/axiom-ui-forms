@@ -16,7 +16,7 @@ const LongStringInput = ({ field, onChange, value }: IFieldInputProps): ReactEle
         value={getValue()}
         onChange={(e) => {
           onChange(e)
-        }} /><p className='text-xs'>{getValue()}</p></div>
+        }} /></div>
 }
 
 export default LongStringInput

@@ -1,10 +1,9 @@
 import inputMap from '@/Form/Components/Inputs/inputMap'
-import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/FormCreatorTypes'
+import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/FormCreatorTypes'
 import { getFieldValue, getPathFromField } from '@/Form/helpers'
-import formValuesAtom from '@/state/formValuesAtom'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
-import { useAtom } from 'jotai'
+import { set } from 'lodash'
 import React, { useState, type ReactElement } from 'react'
 
 interface IFieldCreator {
@@ -13,6 +12,7 @@ interface IFieldCreator {
   className?: string
   defaultClassName?: string
   value?: IValueType | IValueType[]
+  formValueState: [IFormValues, (v: IFormValues) => void]
 }
 
 const toolButtonClass = 'border-white hover:border-single hover:border-1 hover:border-slate-400'
@@ -21,7 +21,6 @@ const DeleteMultiple = ({
   doDelete
 }: {
   doDelete: () => void
-
 }): ReactElement => {
   const [confirm, setConfirm] = useState(false)
 
@@ -56,7 +55,8 @@ const OneOfMultiple = ({
   value,
   index,
   onChange,
-  values
+  values,
+  formValueState
 
 }: {
   InputComponent: React.FC<IFieldInputProps>
@@ -65,6 +65,7 @@ const OneOfMultiple = ({
   index: number
   onChange: (v: IValueType[] | undefined) => void
   values: IValueType[]
+  formValueState: [IFormValues, (v: IFormValues) => void]
 
 }): ReactElement => {
   const addValue = (v: IValueType | null): void => {
@@ -76,6 +77,7 @@ const OneOfMultiple = ({
   return (
     <div className='flex flex-col gap-2'>
           <InputComponent
+          formValueState={formValueState}
           field={{
             ...field,
             required: false,
@@ -118,11 +120,12 @@ const OneOfMultiple = ({
   )
 }
 
-const MultipleFieldCreator = ({ field, onChange, value }: IFieldCreator): ReactElement => {
-  const [formValues, setFormValues] = useAtom(formValuesAtom)
+const MultipleFieldCreator = ({ field, onChange, value, formValueState }: IFieldCreator): ReactElement => {
+  const [formValues, setFormValues] = formValueState
   const defaultOnChange = (v: IValueType[] | undefined): void => {
-    formValues[getPathFromField(field)] = v
-    setFormValues(structuredClone(formValues))
+    const formValuesCopy = structuredClone(formValues)
+    set(formValuesCopy, getPathFromField(field), v)
+    setFormValues(formValuesCopy)
   }
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
@@ -142,6 +145,7 @@ const MultipleFieldCreator = ({ field, onChange, value }: IFieldCreator): ReactE
     {
       initialValues?.map((value, index) => {
         return <OneOfMultiple
+          formValueState={formValueState}
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
           field={field}
@@ -160,13 +164,15 @@ const FieldCreator = ({
   value,
   onChange,
   className,
-  defaultClassName = 'py-5 flex flex-col gap-8'
+  defaultClassName = 'py-2 flex flex-col gap-8',
+  formValueState
 }: IFieldCreator): ReactElement => {
   const InputComponent = inputMap[field.type]
-  const [formValues, setFormValues] = useAtom(formValuesAtom)
+  const [formValues, setFormValues] = formValueState
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
-    formValues[getPathFromField(field)] = v
-    setFormValues(structuredClone(formValues))
+    const formValuesCopy = structuredClone(formValues)
+    set(formValuesCopy, getPathFromField(field), v)
+    setFormValues(formValuesCopy)
   }
   const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
   return InputComponent !== undefined
@@ -175,8 +181,8 @@ const FieldCreator = ({
       defaultClassName
     })}>{
       field.multiple === true
-        ? <MultipleFieldCreator field={field} onChange={onChange} value={initialValue} />
-        : <InputComponent field={field} onChange={onChange ?? defaultOnChange} value={Array.isArray(initialValue) ? initialValue[0] : initialValue} />
+        ? <MultipleFieldCreator field={field} onChange={onChange} value={initialValue} formValueState={formValueState} />
+        : <InputComponent field={field} onChange={onChange ?? defaultOnChange} value={Array.isArray(initialValue) ? initialValue[0] : initialValue} formValueState={formValueState} />
 
     }</div>
     : <p>No component definition for {field.type} ({field.id})</p>

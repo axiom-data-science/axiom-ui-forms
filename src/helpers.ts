@@ -1,3 +1,4 @@
+import { type IValueType, type IFormValues } from '@/Form/FormCreatorTypes'
 import { decode, encode } from 'cbor-x'
 
 export function jsonToBase64<T = JSON> (json: T): string {
@@ -26,4 +27,10 @@ export function updateUrlParam (param: string, value?: string | boolean | number
 export function getQueryParam (param: string): string | null {
   const u = new URL(window.location.href)
   return u.searchParams.get(param)
+}
+
+export function typeToFormValues (m: any = {}): IFormValues {
+  return Object.fromEntries(Object.keys(m).map(k => {
+    return [String(k), m[k] as IValueType]
+  }))
 }

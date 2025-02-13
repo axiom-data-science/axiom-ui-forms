@@ -8,6 +8,7 @@ interface IValueTypes {
   time: string
   boolean: boolean
   geojson: GeoJSON
+  json: JSON
   composite: ICompositeValueType
 }
 
@@ -22,15 +23,17 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | ILongTextField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
+export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
+export type IFormFieldType = 'section' | 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson'
 interface IFormFieldRoot {
   id: string
-  type: string
+  type: IFormFieldType
   required?: boolean
   label?: string | null | undefined
   multiple?: boolean
   path?: string[]
+  fullPath?: string[]
   level?: number
   value?: IValueType
 }
@@ -46,7 +49,10 @@ interface ITextField extends IStringValueInput {
 
 interface ILongTextField extends IStringValueInput {
   type: 'long_text'
+}
 
+interface IJSONField extends IFormFieldRoot {
+  type: 'json'
 }
 
 interface ISelectOption {
@@ -109,6 +115,7 @@ interface IDateTimeField extends IFormFieldRoot {
 }
 
 interface IContainerField extends IFormFieldRoot {
+  skip_path?: boolean
   fields: IFormField[]
   layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 }
@@ -168,5 +175,6 @@ export type IValueChangeFn = (v: IValueType | IValueType[] | undefined) => void
 export interface IFieldInputProps {
   field: IFormField
   onChange: IValueChangeFn
+  formValueState: [IFormValues, (v: IFormValues) => void]
   value?: IValueType
 }

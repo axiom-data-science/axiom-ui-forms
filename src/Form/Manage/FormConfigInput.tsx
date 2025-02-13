@@ -1,4 +1,5 @@
 import { type IForm, type IFormField } from '@/Form/FormCreatorTypes'
+import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement, useState, useEffect } from 'react'
 
@@ -41,6 +42,8 @@ const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => vo
                   </p>
                    : ''
                  }
+                 <div className='h-full relative'>
+                <CopyButton string={JSON.stringify(form, null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
                  <TextArea
                       id='formManager'
                       testId='formManager'
@@ -50,6 +53,7 @@ const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => vo
                         setStr(e)
                       }}
                  />
+                 </div>
             </div>
   )
 }
