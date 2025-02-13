@@ -166,9 +166,17 @@ const FieldCreator = ({
   className,
   defaultClassName = ***REMOVED***py-2 flex flex-col gap-8***REMOVED***,
   formValueState
-}: IFieldCreator): ReactElement => {
-  const InputComponent = inputMap[field.type]
+}: IFieldCreator): ReactElement | null => {
   const [formValues, setFormValues] = formValueState
+  const InputComponent = inputMap[field.type]
+
+  if (field.conditions !== undefined) {
+    const dependentValue = formValues[field.conditions.dependsOn]
+    if (dependentValue !== field.conditions.value) {
+      return null
+    }
+  }
+
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
     const formValuesCopy = structuredClone(formValues)
     set(formValuesCopy, getPathFromField(field), v)
