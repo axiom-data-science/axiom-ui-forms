@@ -3,7 +3,7 @@ import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED
 import { copyAndAddPathToFields, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
-import testForm from ***REMOVED***@/Form/testData/testForm***REMOVED***
+import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
 import { Checkbox, Input, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -35,7 +35,7 @@ const FieldMap = ({ field, mappingState }: { field: IFormField, mappingState: [I
 }
 
 const MapTester = (): ReactElement => {
-  const [inputObject, setInputObject] = useState<IForm>(copyAndAddPathToFields(testForm))
+  const [inputObject, setInputObject] = useState<IForm>(copyAndAddPathToFields(testForm as IForm))
   const [mapping, setMapping] = useState<IFormMapping>({
     fields: {},
     $targetSchema: ***REMOVED******REMOVED***

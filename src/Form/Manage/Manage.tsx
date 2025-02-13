@@ -11,7 +11,7 @@ import formMappingAtom from ***REMOVED***@/state/formMappingAtom***REMOVED***
 import { getQueryParam, updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { CheckIcon, Cross1Icon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import testForm from ***REMOVED***@/Form/testData/testForm***REMOVED***
+import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 
@@ -103,7 +103,7 @@ const FormManager = ({
                   setFormValues({})
                 }} />
                 <ClearForm message=***REMOVED***Clear form config***REMOVED*** onConfirm={() => {
-                  setForm(structuredClone(testForm))
+                  setForm(structuredClone(testForm as IForm))
                 }} />
             </div>
                <div className=***REMOVED***grid grid-cols-2 gap-8 flex-grow***REMOVED***>
