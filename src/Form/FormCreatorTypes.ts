@@ -27,7 +27,7 @@ export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField
 
 export type IFormFieldType = 'section' | 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson'
 interface IFieldConditions {
-  dependsOn: string
+  dependsOn: string | string[]
   value: string | number | boolean
 }
 
@@ -179,6 +179,7 @@ export type IFormInputComponent = React.FC<IFormFieldProps>
 export type IValueChangeFn = (v: IValueType | IValueType[] | undefined) => void
 
 export interface IFieldInputProps {
+  form: IForm
   field: IFormField
   onChange: IValueChangeFn
   formValueState: [IFormValues, (v: IFormValues) => void]
