@@ -49,7 +49,7 @@ const FormCreator = ({
         {
         activeForm.fields.map((field) => {
           return (
-            <FieldCreator onChange={onChange} field={field} key={field.id} formValueState={formValueState} />
+            <FieldCreator onChange={onChange} form={form} field={field} key={field.id} formValueState={formValueState} />
           )
         })
         }

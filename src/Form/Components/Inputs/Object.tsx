@@ -4,7 +4,7 @@ import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/F
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const ObjectInput = ({ field, onChange, value, formValueState }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ form, field, onChange, value, formValueState }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
   if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
     const cl = `${field.layout === ***REMOVED***horizontal***REMOVED*** ? `flex flex-row gap-4  ${field.label !== undefined ? ***REMOVED***px-0***REMOVED*** : ***REMOVED******REMOVED***}` : ***REMOVED***flex flex-col gap-4***REMOVED***}`
@@ -40,6 +40,7 @@ const ObjectInput = ({ field, onChange, value, formValueState }: IFieldInputProp
                 })}
                 value={initialValue[childField.id]}
                 field={{ ...childField, id }}
+                form={form}
                 key={id}
               />
             )

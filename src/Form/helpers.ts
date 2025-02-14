@@ -55,3 +55,31 @@ export function getPathFromField (field: IFormField): string {
   // console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
   return field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : field.id
 }
+
+// THIS DOESN***REMOVED***T HANDLE NESTED YET
+export const checkCondition = (field: IFormField, formValues: IFormValues): boolean => {
+  if (field.conditions !== undefined) {
+    const dependsOn = Array.isArray(field.conditions.dependsOn) ? field.conditions.dependsOn : [field.conditions.dependsOn]
+
+    const val = field.conditions.value
+    return dependsOn.every(d => val !== undefined
+      ? formValues[d] === val
+      : formValues !== null && formValues[d] !== undefined
+    )
+  }
+  return true
+}
+
+export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: IFormValues): IFormValues {
+  Object.keys(formValues).forEach(key => {
+    const field = form.fields.find(f => f.id === key)
+    if (field !== undefined && !checkCondition(field, formValues)) {
+      formValues[key] = undefined
+    }
+  })
+
+  const fields = getFields(form.fields)
+  const fieldIds = fields.map(f => f.id)
+  const newFormValues = Object.fromEntries(Object.entries(formValues).filter(([key]) => fieldIds.includes(key)))
+  return newFormValues
+}
