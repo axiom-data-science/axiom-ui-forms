@@ -73,12 +73,22 @@
         "id": "test_section",
         "label": "Test Section",
         "type": "object",
-        "conditions": { "dependsOn": "scenario", "value": "physics" },
+        "conditions": { "dependsOn": "scenario", "value": "oil_spill" },
         "fields": [
           {
             "id": "test_field",
             "label": "Test Field",
             "type": "text"
+          },
+          {
+            "id": "test_field_2",
+            "label": "Something about biodegradation",
+            "description": "This field won***REMOVED***t get cleaned up when we change from oil",
+            "type": "text",
+            "conditions": {
+              "dependsOn": "biodegradation"
+            }
+
           }
         ]
       }

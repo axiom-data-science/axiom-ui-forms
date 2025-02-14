@@ -64,7 +64,7 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
     const val = field.conditions.value
     return dependsOn.every(d => val !== undefined
       ? formValues[d] === val
-      : formValues !== null && formValues[d] !== undefined
+      : formValues !== null && formValues[d] !== undefined && formValues[d] !== false
     )
   }
   return true
