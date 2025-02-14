@@ -68,6 +68,19 @@
           { "label": "Aircraft", "value": "aircraft" },
           { "label": "Vehicle", "value": "vehicle" }
         ]
+      },
+      {
+        "id": "test_section",
+        "label": "Test Section",
+        "type": "object",
+        "conditions": { "dependsOn": "scenario", "value": "physics" },
+        "fields": [
+          {
+            "id": "test_field",
+            "label": "Test Field",
+            "type": "text"
+          }
+        ]
       }
     ]
   }
