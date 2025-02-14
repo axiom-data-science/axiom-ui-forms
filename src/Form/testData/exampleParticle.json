@@ -1,0 +1,75 @@
+{
+    "label": "New Form",
+    "id": "newForm",
+    "fields": [
+      {
+        "id": "title",
+        "label": "Title",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "scenario",
+        "label": "Scenario",
+        "type": "select",
+        "required": true,
+        "options": [
+          { "label": "Larval Fish", "value": "larval_fish" },
+          { "label": "Search and Rescue", "value": "search_and_rescue" },
+          { "label": "Oil Spill", "value": "oil_spill" },
+          { "label": "Physics", "value": "physics" }
+        ]
+      },
+      {
+        "id": "hatched",
+        "label": "Hatched",
+        "type": "boolean",
+        "conditions": { "dependsOn": "scenario", "value": "larval_fish" }
+      },
+      {
+        "id": "emulsification",
+        "label": "Emulsification",
+        "type": "boolean",
+        "conditions": { "dependsOn": "scenario", "value": "oil_spill" }
+      },
+      {
+        "id": "dispersion",
+        "label": "Dispersion",
+        "type": "boolean",
+        "conditions": { "dependsOn": "scenario", "value": "oil_spill" }
+      },
+      {
+        "id": "evaporation",
+        "label": "Evaporation",
+        "type": "boolean",
+        "conditions": { "dependsOn": "scenario", "value": "oil_spill" }
+      },
+      {
+        "id": "update_oil_film_thickness",
+        "label": "Update Oil Film Thickness",
+        "type": "boolean",
+        "conditions": { "dependsOn": "scenario", "value": "oil_spill" }
+      },
+      {
+        "id": "biodegradation",
+        "label": "Biodegradation",
+        "type": "boolean",
+        "conditions": { "dependsOn": "scenario", "value": "oil_spill" }
+      },
+      {
+        "id": "object_type",
+        "label": "Object Type",
+        "type": "select",
+        "required": true,
+        "conditions": { "dependsOn": "scenario", "value": "search_and_rescue" },
+        "options": [
+          { "label": "Person", "value": "person" },
+          { "label": "Boat", "value": "boat" },
+          { "label": "Aircraft", "value": "aircraft" },
+          { "label": "Vehicle", "value": "vehicle" }
+        ]
+      }
+    ]
+  }
+  
+  
