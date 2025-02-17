@@ -73,6 +73,7 @@
         "id": "test_section",
         "label": "Test Section",
         "type": "object",
+        "skip_path": true,
         "conditions": { "dependsOn": "scenario", "value": "oil_spill" },
         "fields": [
           {
@@ -89,6 +90,19 @@
               "dependsOn": "biodegradation"
             }
 
+          },
+          {
+            "id": "sub_container",
+            "type": "object",
+            "skip_path": true,
+            "label": "Sub Container",
+            "fields": [
+              {
+                "id": "sub_sub_field",
+                "label": "Sub Field",
+                "type": "text"
+              }
+            ]
           }
         ]
       }
