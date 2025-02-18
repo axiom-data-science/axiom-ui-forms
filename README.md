@@ -1,4 +1,8 @@
-Prototype UI for ONC
+Library that allows:
+- Creation of forms using a json config file
+- Creation of forms using a [json schema draft 6](https://json-schema.org/draft-06/json-schema-release-notes), with selective overrides using json config
+- To do: allow addition of new form types and UI components by consuming library
+- To do: allow schema version 4 and draft 7
 
 ## Testing build locally
 
@@ -8,10 +12,3 @@ npm run build
 cd build
 http-server --push-state -p 8091 -o
 ```
-
-
-
-## TODO
-
-- [ ] Save filter and map state in url
-- [ ] Update `axiom-maps` to allow geojson to be updatd on existing layer with the goal of removingthe flicker after filter

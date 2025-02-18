@@ -13,6 +13,7 @@ yalc.lock
 
 # production
 /build
+/library
 
 # storybook build
 /storybook-static

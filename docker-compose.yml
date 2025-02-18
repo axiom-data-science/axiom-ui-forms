@@ -1,6 +1,6 @@
 services:
   app:
-    image: asset-manager-ui:latest
+    image: axiom-ui-forms:latest
     build:
       context:      .
       dockerfile:   Dockerfile
