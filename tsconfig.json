@@ -25,7 +25,8 @@
     ]
   },
   "include": [
-    "src"
+    "src",
+    "rollup.config.mjs"
   ],
   "extends": "./tsconfig.paths.json"
 }

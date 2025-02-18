@@ -91,7 +91,7 @@ const OneOfMultiple = ({
           value={value}
           onChange={(v) => {
             const newValues = [...values]
-            newValues[index] = v as IValueType
+            newValues[index] = String(v)
             onChange(newValues)
           }}
         />

@@ -19,10 +19,18 @@
         "react"
     ],
     "rules": {
-        "ignoreIIFE": 0
+        "ignoreIIFE": 0,
+        "@typescript-eslint/strict-boolean-expressions": 0,
+        "@typescript-eslint/no-misused-promises": [2, {
+            "checksVoidReturn": {
+              "attributes": false
+            }
+          }]
+
     },
     "ignorePatterns": [
         "**/build/*",
+        "**/library/*",
         "**/node_modules/*",
         "**/.yalc/*"
     ]
