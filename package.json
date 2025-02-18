@@ -1,10 +1,10 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "main": "./library/index.js",
   "module": "./library/index.js",
-  "types": "./library/axiom-ui-utilities.d.ts",
+  "types": "./library/axiom-ui-forms.d.ts",
   "peerDependencies": {
     "lodash": "^4.17.21",
     "react": "^18.0.0",
