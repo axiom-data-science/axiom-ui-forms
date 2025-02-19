@@ -1,6 +1,6 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "main": "./library/index.js",
   "module": "./library/index.js",

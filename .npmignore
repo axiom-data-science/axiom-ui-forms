@@ -1,0 +1,14 @@
+Dockerfile
+Dockerfile.storybook
+docker-compose
+.dockerignore
+docker
+.gitlab-ci
+^src
+build
+public
+.storybook
+.vscode
+.yalc
+yalc.lock
+.tsconfig
