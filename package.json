@@ -42,7 +42,7 @@
   },
   "scripts": {
     "start": "set PORT=3080 && craco start ",
-    "build": "craco build && npx typedoc src/library.ts --out build/docs",
+    "build": "craco build && npx typedoc src/library.ts --out public/docs",
     "test": "craco test",
     "eject": "react-scripts eject",
     "clean": "rimraf library",
