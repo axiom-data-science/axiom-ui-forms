@@ -55,7 +55,7 @@ const validateAgainstSchema = (schema: JSONSchema7, formValues: IFormValues): st
   return undefined
 }
 
-const makeId = (options: Array<string | number | undefined | null>): string => {
+const makeFormFieldId = (options: Array<string | number | undefined | null>): string => {
   const validOptions = options.filter((o) => o !== undefined && o !== null)
   if (validOptions.length === 0) {
     return crypto !== undefined ? crypto.randomUUID() : Math.random().toString(36).substring(2)
@@ -144,7 +144,7 @@ const schemaToFormField = (schema: JSONSchema7, property: string, multiple?: boo
     return schemaToFormField(schema.items as JSONSchema7, property, true)
   }
   const type = getFieldType(schema)
-  const id = makeId([
+  const id = makeFormFieldId([
     schema.$id,
     property,
     schema.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***)
@@ -214,7 +214,7 @@ export const schemaToFormObject = (schema: JSONSchema7): IForm => {
     }
   }
   return {
-    id: makeId([schema.$id, schema.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***)]),
+    id: makeFormFieldId([schema.$id, schema.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***)]),
     label: schema.title ?? ***REMOVED***Untitled***REMOVED***,
     fields: formFields
   }
