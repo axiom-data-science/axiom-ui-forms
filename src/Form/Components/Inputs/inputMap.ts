@@ -7,7 +7,7 @@ import SingleSelect from ***REMOVED***@/Form/Components/Inputs/SingleSelect***RE
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import JSONStringInput from ***REMOVED***@/Form/Components/Inputs/JSONString***REMOVED***
 import NumberInput from ***REMOVED***@/Form/Components/Inputs/Number***REMOVED***
-
+import GeoJSONInput from ***REMOVED***@/Form/Components/Inputs/GeoJSON***REMOVED***
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
   long_text: LongString,
@@ -16,7 +16,8 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   boolean: BooleanInput,
   select: SingleSelect,
   radio: Radio,
-  object: ObjectInput
+  object: ObjectInput,
+  geojson: GeoJSONInput
 
 }
 
