@@ -34,12 +34,6 @@ const config = [
       // https://github.com/d3/d3-selection/issues/168#issuecomment-451983830
       if (warning.code === ***REMOVED***CIRCULAR_DEPENDENCY***REMOVED***) return
 
-      // rollup says - what do you expect to happen with eval? make sure code isn***REMOVED***t evil https://github.com/rollup/rollup/issues/4366#issuecomment-1023346209
-      // cesium says - there***REMOVED***s a reason we use eval and (I***REMOVED***m assuming they aren***REMOVED***t particularly evil)
-      // also, it sounds like they***REMOVED***re getting close to removing eval
-      // https://github.com/CesiumGS/cesium/issues/9024#issuecomment-1533025563 and https://github.com/CesiumGS/cesium/issues/9473 (and FF blocker https://bugzilla.mozilla.org/show_bug.cgi?id=1247687)
-      if (warning.code === ***REMOVED***EVAL***REMOVED***) return
-
       warn(warning)
     },
     output: [

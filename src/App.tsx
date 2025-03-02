@@ -14,7 +14,7 @@ const App = (): ReactElement => {
             <Route path=***REMOVED***/***REMOVED*** element={<FormManager />} />
             <Route path=***REMOVED***/schema-to-form***REMOVED*** element={<SchemaToForm />} />
             <Route path="/set-tester" element={<SetTester />} />
-            <Route path="/map-tester" element={<MapTester />} />W
+            <Route path="/map-tester" element={<MapTester />} />
           </Routes>
         </BrowserRouter>
     </div>
