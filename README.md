@@ -174,11 +174,18 @@ Coming soon
 
 
 
-## Testing build locally
+# Testing build locally
 
-```
+```bash
 npm i spa-http-server -g
 npm run build
 cd build
 http-server --push-state -p 8091 -o
+```
+
+# Publish version to NPM
+
+```bash
+npm login --scope=@axdspub
+npm publish --access public
 ```

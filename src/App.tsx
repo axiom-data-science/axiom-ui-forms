@@ -14,7 +14,7 @@ const App = (): ReactElement => {
             <Route path='/' element={<FormManager />} />
             <Route path='/schema-to-form' element={<SchemaToForm />} />
             <Route path="/set-tester" element={<SetTester />} />
-            <Route path="/map-tester" element={<MapTester />} />W
+            <Route path="/map-tester" element={<MapTester />} />
           </Routes>
         </BrowserRouter>
     </div>
