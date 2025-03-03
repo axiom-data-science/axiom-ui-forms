@@ -1,9 +1,41 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { AxiomLeafletMap } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const MAP_CONFIG = {
+    baseLayerKey: ***REMOVED***hybrid***REMOVED***,
+    height: ***REMOVED***500px***REMOVED***,
+    width: ***REMOVED***100%***REMOVED***,
+    style: {
+      left: ***REMOVED***0px***REMOVED***,
+      top: ***REMOVED***0px***REMOVED***,
+      right: ***REMOVED***0px***REMOVED***,
+      bottom: ***REMOVED***0px***REMOVED***,
+      padding: ***REMOVED***0***REMOVED***
+    },
+    center: { lat: 61.2181, lon: -149.9003 },
+    zoom: 8,
+    layers: [
+      // {
+      //   id: ***REMOVED***ghrsst_temperature***REMOVED***,
+      //   type: ***REMOVED***wms***REMOVED***,
+      //   label: ***REMOVED***GHRSST Temperature***REMOVED***,
+      //   zIndex: 5,
+      //   isBaseLayer: false,
+      //   url: ***REMOVED***https://mur2.ncwms.axds.co/wms***REMOVED***,
+      //   params: {
+      //     layers: ***REMOVED***MUR2/analysed_sst***REMOVED***,
+      //     styles: ***REMOVED***boxfill/matplotlib-magma***REMOVED***,
+      //     format: ***REMOVED***image/png***REMOVED***,
+      //     transparent: true
+      //   }
+      // }
+    ]
+  }
+
   const [error, setError] = useState<string | undefined>(undefined)
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
   const getValue = (): string => {
@@ -14,6 +46,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       : ***REMOVED******REMOVED***
   }
   return <div>
+      <AxiomLeafletMap {...MAP_CONFIG} />
       <TextArea
         error={error}
         className={
