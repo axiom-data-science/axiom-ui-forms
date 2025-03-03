@@ -1,9 +1,41 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
+import { AxiomLeafletMap } from '@axdspub/axiom-maps'
 import React, { useState, type ReactElement } from 'react'
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const MAP_CONFIG = {
+    baseLayerKey: 'hybrid',
+    height: '500px',
+    width: '100%',
+    style: {
+      left: '0px',
+      top: '0px',
+      right: '0px',
+      bottom: '0px',
+      padding: '0'
+    },
+    center: { lat: 61.2181, lon: -149.9003 },
+    zoom: 8,
+    layers: [
+      // {
+      //   id: 'ghrsst_temperature',
+      //   type: 'wms',
+      //   label: 'GHRSST Temperature',
+      //   zIndex: 5,
+      //   isBaseLayer: false,
+      //   url: 'https://mur2.ncwms.axds.co/wms',
+      //   params: {
+      //     layers: 'MUR2/analysed_sst',
+      //     styles: 'boxfill/matplotlib-magma',
+      //     format: 'image/png',
+      //     transparent: true
+      //   }
+      // }
+    ]
+  }
+
   const [error, setError] = useState<string | undefined>(undefined)
   const initialValue = value !== undefined ? value : ''
   const getValue = (): string => {
@@ -14,6 +46,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       : ''
   }
   return <div>
+      <AxiomLeafletMap {...MAP_CONFIG} />
       <TextArea
         error={error}
         className={
