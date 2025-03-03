@@ -1,7 +1,7 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { AxiomLeafletMap } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
+import { AxiomOpenLayersMap } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
@@ -46,7 +46,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       : ***REMOVED******REMOVED***
   }
   return <div>
-      <AxiomLeafletMap {...MAP_CONFIG} />
+      <AxiomOpenLayersMap {...MAP_CONFIG} />
       <TextArea
         error={error}
         className={
