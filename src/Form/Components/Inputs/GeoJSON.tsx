@@ -1,7 +1,7 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
-import { AxiomOpenLayersMap } from '@axdspub/axiom-maps'
+import { AxiomOpenLayersMap, EMapShape } from '@axdspub/axiom-maps'
 import React, { useState, type ReactElement } from 'react'
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
@@ -33,7 +33,13 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       //     transparent: true
       //   }
       // }
-    ]
+    ],
+    tools: {
+      draw: {
+        shape: EMapShape.polygon,
+        enabled: true
+      }
+    }
   }
 
   const [error, setError] = useState<string | undefined>(undefined)
