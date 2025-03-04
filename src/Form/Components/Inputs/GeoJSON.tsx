@@ -1,13 +1,13 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
+import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import { type GeoJSON } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   console.log(***REMOVED***INITIAL VALUE***REMOVED***, value)
-  const MAP_CONFIG = {
+  const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
     height: ***REMOVED***500px***REMOVED***,
     width: ***REMOVED***100%***REMOVED***,
@@ -20,18 +20,6 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     },
     center: { lat: 61.2181, lon: -149.9003 },
     zoom: 8,
-    layers: value
-      ? [{
-          id: ***REMOVED***geojson-layer***REMOVED***,
-          type: ***REMOVED***geoJson***REMOVED*** as const,
-          label: ***REMOVED***GeoJSON Layer***REMOVED***,
-          zIndex: 20,
-          isBaseLayer: false,
-          options: {
-            geoJson: (value as any).features
-          }
-        }]
-      : [],
     tools: {
       draw: {
         shape: EMapShape.polygon,
@@ -51,6 +39,30 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         : String(geojson)
       : ***REMOVED******REMOVED***
   }
+
+  // Reload shape on the map
+  useEffect(() => {
+    if (map === undefined) return
+    map.removeLayer(***REMOVED***geojson-layer***REMOVED***)
+    map.addLayer({
+      id: ***REMOVED***geojson-layer***REMOVED***,
+      type: ***REMOVED***geoJson***REMOVED*** as const,
+      label: ***REMOVED***GeoJSON Layer***REMOVED***,
+      zIndex: 20,
+      isBaseLayer: false,
+      options: {
+        geoJson: (value as any).features.map((feature: any) => ({
+          ...feature,
+          properties: {
+            ...feature.properties,
+            color: ***REMOVED***rgba(255,255,255,.2)***REMOVED***,
+            stroke: ***REMOVED***orange***REMOVED***,
+            ***REMOVED***stroke-width***REMOVED***: 2
+          }
+        }))
+      }
+    })
+  }, [map])
 
   useEffect(() => {
     if (map === undefined) return
