@@ -111,6 +111,16 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }
 
+  const updateCoordinatesFromGeoJSON = (geo: GeoJSON | undefined): void => {
+    if (geo?.type === 'FeatureCollection' && Array.isArray(geo.features) && geo.features.length > 0) {
+      const feature = geo.features[0]
+      if (feature?.geometry?.type === 'Polygon') {
+        const coords = feature.geometry.coordinates[0]
+        setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n'))
+      }
+    }
+  }
+
   // Reload shape on the map
   useEffect(() => {
     if (map === undefined) return
@@ -127,20 +137,14 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     map.onDrawComplete((e: IMapDrawEvent) => {
       console.log('draw complete', e)
       setGeojson(e.data?.geojson)
+      updateCoordinatesFromGeoJSON(e.data?.geojson)
     })
 
     // On modify drawing
     map.onDrawUpdate((e: IMapDrawEvent) => {
       console.log('draw update', e)
       setGeojson(e.data?.geojson)
-      // Update coordinates text input
-      if (e.data?.geojson?.type === 'FeatureCollection' && Array.isArray(e.data.geojson.features) && e.data.geojson.features.length > 0) {
-        const feature = e.data.geojson.features[0]
-        if (feature?.geometry?.type === 'Polygon') {
-          const coords = feature.geometry.coordinates[0]
-          setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n'))
-        }
-      }
+      updateCoordinatesFromGeoJSON(e.data?.geojson)
     })
   }
   , [map])
