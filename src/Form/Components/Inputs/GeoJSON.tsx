@@ -69,12 +69,15 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       points.push(points[0])
 
       return {
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'Polygon',
-          coordinates: [points]
-        }
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Polygon',
+            coordinates: [points]
+          }
+        }]
       }
     } catch (e) {
       setError('Invalid coordinate format. Use "lat, lon" format, one per line')
@@ -85,28 +88,33 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   // Reload shape on the map
   useEffect(() => {
     if (map === undefined) return
-    map.removeLayer('geojson-layer')
+    map.enableDraw(EMapShape.polygon)
 
-    if ((value as any).features === undefined) return
+    if (geojson !== undefined) {
+      map.setDrawGeojson(geojson)
+    }
+    // map.removeLayer('geojson-layer')
 
-    map.addLayer({
-      id: 'geojson-layer',
-      type: 'geoJson' as const,
-      label: 'GeoJSON Layer',
-      zIndex: 20,
-      isBaseLayer: false,
-      options: {
-        geoJson: (value as any).features.map((feature: any) => ({
-          ...feature,
-          properties: {
-            ...feature.properties,
-            color: 'rgba(255,255,255,.2)',
-            stroke: 'orange',
-            'stroke-width': 2
-          }
-        }))
-      }
-    })
+    // if ((value as any).features === undefined) return
+
+    // map.addLayer({
+    //   id: 'geojson-layer',
+    //   type: 'geoJson' as const,
+    //   label: 'GeoJSON Layer',
+    //   zIndex: 20,
+    //   isBaseLayer: false,
+    //   options: {
+    //     geoJson: (value as any).features.map((feature: any) => ({
+    //       ...feature,
+    //       properties: {
+    //         ...feature.properties,
+    //         color: 'rgba(255,255,255,.2)',
+    //         stroke: 'orange',
+    //         'stroke-width': 2
+    //       }
+    //     }))
+    //   }
+    // })
   }, [map])
 
   useEffect(() => {
