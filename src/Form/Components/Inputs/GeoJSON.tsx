@@ -18,22 +18,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     },
     center: { lat: 61.2181, lon: -149.9003 },
     zoom: 8,
-    layers: [
-      // {
-      //   id: ***REMOVED***ghrsst_temperature***REMOVED***,
-      //   type: ***REMOVED***wms***REMOVED***,
-      //   label: ***REMOVED***GHRSST Temperature***REMOVED***,
-      //   zIndex: 5,
-      //   isBaseLayer: false,
-      //   url: ***REMOVED***https://mur2.ncwms.axds.co/wms***REMOVED***,
-      //   params: {
-      //     layers: ***REMOVED***MUR2/analysed_sst***REMOVED***,
-      //     styles: ***REMOVED***boxfill/matplotlib-magma***REMOVED***,
-      //     format: ***REMOVED***image/png***REMOVED***,
-      //     transparent: true
-      //   }
-      // }
-    ],
+    layers: [],
     tools: {
       draw: {
         shape: EMapShape.polygon,
@@ -54,16 +39,16 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   }
 
   useEffect(() => {
-    if (map !== undefined) {
-      map.onDrawComplete((e: IMapDrawEvent) => {
-        console.log(***REMOVED***draw complete***REMOVED***, e)
-      })
+    if (map === undefined) return
 
-      // Handle draw updates (while drawing)
-      map.onDrawUpdate((e: IMapDrawEvent) => {
-        console.log(***REMOVED***draw update***REMOVED***, e)
-      })
-    }
+    map.onDrawComplete((e: IMapDrawEvent) => {
+      console.log(***REMOVED***draw complete***REMOVED***, e)
+    })
+
+    // On modify drawing
+    map.onDrawUpdate((e: IMapDrawEvent) => {
+      console.log(***REMOVED***draw update***REMOVED***, e)
+    })
   }
   , [map])
 
@@ -71,12 +56,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       <TextArea
         error={error}
-        className={
-            [
-              ***REMOVED***min-h-[500px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
-              // ***REMOVED***p-0 bg-[repeating-linear-gradient(to_bottom,var(--tw-gradient-stops))] from-[#efefef] from-[length:0_25px] to-[#FFF] to-[length:25px_50px]***REMOVED***
-            ].join(***REMOVED*** ***REMOVED***)
-        }
+        className=***REMOVED***min-h-[500px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
         id={field.id}
         testId={field.id}
         label={<FieldLabel {...field} />}
