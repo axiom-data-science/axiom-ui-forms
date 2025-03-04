@@ -128,6 +128,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
     if (geojson !== undefined && 'features' in geojson) {
       map.setDrawGeojson(geojson)
+      map.disableDraw(EMapShape.polygon) // Disable drawing when there's a shape
     }
   }, [map])
 
@@ -138,6 +139,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       console.log('draw complete', e)
       setGeojson(e.data?.geojson)
       updateCoordinatesFromGeoJSON(e.data?.geojson)
+      map.disableDraw(EMapShape.polygon) // Disable drawing after shape is complete
     })
 
     // On modify drawing
@@ -197,6 +199,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         type: 'FeatureCollection',
         features: []
       })
+      map.enableDraw(EMapShape.polygon) // Re-enable drawing when shape is cleared
     }
   }
 
