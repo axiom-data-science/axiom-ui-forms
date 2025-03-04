@@ -41,7 +41,19 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   const [error, setError] = useState<string | undefined>(undefined)
   const [geojson, setGeojson] = useState<GeoJSON | undefined>(value as unknown as GeoJSON)
   const [showGeoJSONInput] = useState<boolean>(false) // For debugging purposes
-  const [coordinates, setCoordinates] = useState<string>('')
+  const [coordinates, setCoordinates] = useState<string>(() => {
+    const geoValue = value as unknown as GeoJSON.FeatureCollection
+    if (geoValue?.type === 'FeatureCollection' && Array.isArray(geoValue.features) && geoValue.features.length > 0) {
+      const feature = geoValue.features[0]
+      if (feature?.geometry?.type === 'Polygon') {
+        // Get the first ring of coordinates (ignore holes)
+        const coords = feature.geometry.coordinates[0]
+        // Convert from [lon, lat] to "lat, lon" format
+        return coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n')
+      }
+    }
+    return ''
+  })
 
   const getValue = (): string => {
     return geojson !== undefined && geojson !== null
