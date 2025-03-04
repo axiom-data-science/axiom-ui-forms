@@ -39,9 +39,13 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
-  const [geojson, setGeojson] = useState<GeoJSON | undefined>(value as unknown as GeoJSON)
+  const [geojson, setGeojson] = useState<GeoJSON | undefined>(() => {
+    if (!value) return undefined
+    return value as unknown as GeoJSON
+  })
   const [showGeoJSONInput] = useState<boolean>(false) // For debugging purposes
   const [coordinates, setCoordinates] = useState<string>(() => {
+    if (!value) return ***REMOVED******REMOVED***
     const geoValue = value as unknown as GeoJSON.FeatureCollection
     if (geoValue?.type === ***REMOVED***FeatureCollection***REMOVED*** && Array.isArray(geoValue.features) && geoValue.features.length > 0) {
       const feature = geoValue.features[0]
@@ -162,6 +166,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       }
     } else {
       setGeojson(undefined)
+      onChange(undefined) // Explicitly clear the value
       if (map) {
         map.setDrawGeojson({
           type: ***REMOVED***FeatureCollection***REMOVED***,
