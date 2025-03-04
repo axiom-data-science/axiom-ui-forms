@@ -5,6 +5,15 @@ import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type ISty
 import { type GeoJSON } from 'geojson'
 import React, { useEffect, useState, type ReactElement } from 'react'
 
+/*
+61.44480592425796, -150.3785489314675
+61.26059021199541, -150.7356022485971
+61.05235501381105, -150.61435734866856
+61.06014246374005, -149.9221328461051
+61.441517540302925, -149.16102284579276
+61.44480592425796, -150.3785489314675
+*/
+
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   console.log('INITIAL VALUE', value)
   const MAP_CONFIG: IStyleableMapProps = {
@@ -93,28 +102,6 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     if (geojson !== undefined && 'features' in geojson) {
       map.setDrawGeojson(geojson)
     }
-    // map.removeLayer('geojson-layer')
-
-    // if ((value as any).features === undefined) return
-
-    // map.addLayer({
-    //   id: 'geojson-layer',
-    //   type: 'geoJson' as const,
-    //   label: 'GeoJSON Layer',
-    //   zIndex: 20,
-    //   isBaseLayer: false,
-    //   options: {
-    //     geoJson: (value as any).features.map((feature: any) => ({
-    //       ...feature,
-    //       properties: {
-    //         ...feature.properties,
-    //         color: 'rgba(255,255,255,.2)',
-    //         stroke: 'orange',
-    //         'stroke-width': 2
-    //       }
-    //     }))
-    //   }
-    // })
   }, [map])
 
   useEffect(() => {
@@ -145,8 +132,22 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     if (newGeoJSON) {
       setGeojson(newGeoJSON)
       setError(undefined)
+      // Clear existing shape and redraw with new coordinates
+      if (map) {
+        map.setDrawGeojson({
+          type: 'FeatureCollection',
+          features: []
+        })
+        map.setDrawGeojson(newGeoJSON as GeoJSON.FeatureCollection)
+      }
     } else {
       setGeojson(undefined)
+      if (map) {
+        map.setDrawGeojson({
+          type: 'FeatureCollection',
+          features: []
+        })
+      }
     }
   }
 
