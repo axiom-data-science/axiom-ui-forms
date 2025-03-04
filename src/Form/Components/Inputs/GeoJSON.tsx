@@ -177,25 +177,36 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }
 
+  const hasValidShape = (geo: GeoJSON | undefined): boolean => {
+    return geo !== undefined &&
+           ***REMOVED***features***REMOVED*** in geo &&
+           Array.isArray(geo.features) &&
+           geo.features.length > 0
+  }
+
+  const clearShape = (): void => {
+    setGeojson(undefined)
+    onChange(undefined)
+    setCoordinates(***REMOVED******REMOVED***)
+    if (map) {
+      map.setDrawGeojson({
+        type: ***REMOVED***FeatureCollection***REMOVED***,
+        features: []
+      })
+    }
+  }
+
   return <div className="relative">
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
-      <button
-        onClick={() => {
-          setGeojson(undefined)
-          onChange(undefined)
-          setCoordinates(***REMOVED******REMOVED***)
-          if (map) {
-            map.setDrawGeojson({
-              type: ***REMOVED***FeatureCollection***REMOVED***,
-              features: []
-            })
-          }
-        }}
-        className="absolute z-20 top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg"
-        title="Clear shape"
-      >
-        <TrashIcon className="w-5 h-5" />
-      </button>
+      {hasValidShape(geojson) && (
+        <button
+          onClick={clearShape}
+          className="absolute z-20 top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg"
+          title="Clear shape"
+        >
+          <TrashIcon className="w-5 h-5" />
+        </button>
+      )}
       <div className="mt-4">
         <TextArea
           error={error}
