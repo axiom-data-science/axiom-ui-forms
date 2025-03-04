@@ -31,6 +31,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const [geojson, setGeojson] = useState<GeoJSON | undefined>(undefined)
+  const [showGeoJSONInput] = useState<boolean>(true) // For debugging purposes
   const getValue = (): string => {
     return geojson !== undefined && geojson !== null
       ? typeof geojson === ***REMOVED***object***REMOVED***
@@ -57,7 +58,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
   return <div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
-      <TextArea
+      {showGeoJSONInput && <TextArea
         error={error}
         className=***REMOVED***min-h-[500px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
         id={field.id}
@@ -72,7 +73,8 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           } catch (e) {
             setError(***REMOVED***Invalid JSON***REMOVED***)
           }
-        }} /></div>
+        }} />}
+    </div>
 }
 
 export default GeoJSONInput
