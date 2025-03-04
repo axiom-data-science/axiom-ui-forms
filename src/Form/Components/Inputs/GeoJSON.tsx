@@ -1,8 +1,8 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { AxiomOpenLayersMap, EMapShape } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
-import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
+import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const MAP_CONFIG = {
@@ -42,6 +42,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }
 
+  const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
   const getValue = (): string => {
@@ -51,8 +52,23 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         : String(initialValue)
       : ***REMOVED******REMOVED***
   }
+
+  useEffect(() => {
+    if (map !== undefined) {
+      map.onDrawComplete((e: IMapDrawEvent) => {
+        console.log(***REMOVED***draw complete***REMOVED***, e)
+      })
+
+      // Handle draw updates (while drawing)
+      map.onDrawUpdate((e: IMapDrawEvent) => {
+        console.log(***REMOVED***draw update***REMOVED***, e)
+      })
+    }
+  }
+  , [map])
+
   return <div>
-      <AxiomOpenLayersMap {...MAP_CONFIG} />
+      <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       <TextArea
         error={error}
         className={
