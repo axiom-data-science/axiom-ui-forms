@@ -6,6 +6,7 @@ import { type GeoJSON } from 'geojson'
 import React, { useEffect, useState, type ReactElement } from 'react'
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  console.log('INITIAL VALUE', value)
   const MAP_CONFIG = {
     baseLayerKey: 'hybrid',
     height: '500px',
@@ -19,7 +20,18 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     },
     center: { lat: 61.2181, lon: -149.9003 },
     zoom: 8,
-    layers: [],
+    layers: value
+      ? [{
+          id: 'geojson-layer',
+          type: 'geoJson' as const,
+          label: 'GeoJSON Layer',
+          zIndex: 20,
+          isBaseLayer: false,
+          options: {
+            geoJson: (value as any).features
+          }
+        }]
+      : [],
     tools: {
       draw: {
         shape: EMapShape.polygon,
@@ -30,7 +42,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
-  const [geojson, setGeojson] = useState<GeoJSON | undefined>(undefined)
+  const [geojson, setGeojson] = useState<GeoJSON | undefined>(value as unknown as GeoJSON)
   const [showGeoJSONInput] = useState<boolean>(true) // For debugging purposes
   const getValue = (): string => {
     return geojson !== undefined && geojson !== null
@@ -55,6 +67,12 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     })
   }
   , [map])
+
+  useEffect(() => {
+    if (geojson !== undefined) {
+      onChange(geojson)
+    }
+  }, [geojson])
 
   return <div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
