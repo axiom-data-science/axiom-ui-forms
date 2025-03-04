@@ -2,6 +2,7 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
 import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap } from '@axdspub/axiom-maps'
+import { type GeoJSON } from 'geojson'
 import React, { useEffect, useState, type ReactElement } from 'react'
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
@@ -29,12 +30,12 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
-  const initialValue = value !== undefined ? value : ''
+  const [geojson, setGeojson] = useState<GeoJSON | undefined>(undefined)
   const getValue = (): string => {
-    return initialValue !== undefined && initialValue !== null
-      ? typeof initialValue === 'object'
-        ? JSON.stringify(initialValue, null, 2)
-        : String(initialValue)
+    return geojson !== undefined && geojson !== null
+      ? typeof geojson === 'object'
+        ? JSON.stringify(geojson, null, 2)
+        : String(geojson)
       : ''
   }
 
@@ -43,11 +44,13 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
     map.onDrawComplete((e: IMapDrawEvent) => {
       console.log('draw complete', e)
+      setGeojson(e.data?.geojson)
     })
 
     // On modify drawing
     map.onDrawUpdate((e: IMapDrawEvent) => {
       console.log('draw update', e)
+      setGeojson(e.data?.geojson)
     })
   }
   , [map])
