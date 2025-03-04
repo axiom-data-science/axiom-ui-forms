@@ -128,6 +128,14 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     map.onDrawUpdate((e: IMapDrawEvent) => {
       console.log('draw update', e)
       setGeojson(e.data?.geojson)
+      // Update coordinates text input
+      if (e.data?.geojson?.type === 'FeatureCollection' && Array.isArray(e.data.geojson.features) && e.data.geojson.features.length > 0) {
+        const feature = e.data.geojson.features[0]
+        if (feature?.geometry?.type === 'Polygon') {
+          const coords = feature.geometry.coordinates[0]
+          setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n'))
+        }
+      }
     })
   }
   , [map])
