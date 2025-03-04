@@ -31,7 +31,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const [geojson, setGeojson] = useState<GeoJSON | undefined>(value as unknown as GeoJSON)
-  const [showGeoJSONInput] = useState<boolean>(true) // For debugging purposes
+  const [showGeoJSONInput] = useState<boolean>(false) // For debugging purposes
   const [coordinates, setCoordinates] = useState<string>(***REMOVED******REMOVED***)
 
   const getValue = (): string => {
@@ -90,7 +90,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     if (map === undefined) return
     map.enableDraw(EMapShape.polygon)
 
-    if (geojson !== undefined) {
+    if (geojson !== undefined && ***REMOVED***features***REMOVED*** in geojson) {
       map.setDrawGeojson(geojson)
     }
     // map.removeLayer(***REMOVED***geojson-layer***REMOVED***)
