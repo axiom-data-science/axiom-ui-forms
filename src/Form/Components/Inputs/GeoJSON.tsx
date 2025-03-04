@@ -4,6 +4,7 @@ import { TextArea } from '@axdspub/axiom-ui-utilities'
 import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from '@axdspub/axiom-maps'
 import { type GeoJSON } from 'geojson'
 import React, { useEffect, useState, type ReactElement } from 'react'
+import { TrashIcon } from '@radix-ui/react-icons'
 
 /*
 61.44480592425796, -150.3785489314675
@@ -176,15 +177,32 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }
 
-  return <div>
+  return <div className="relative">
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
+      <button
+        onClick={() => {
+          setGeojson(undefined)
+          onChange(undefined)
+          setCoordinates('')
+          if (map) {
+            map.setDrawGeojson({
+              type: 'FeatureCollection',
+              features: []
+            })
+          }
+        }}
+        className="absolute z-20 top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg"
+        title="Clear shape"
+      >
+        <TrashIcon className="w-5 h-5" />
+      </button>
       <div className="mt-4">
         <TextArea
           error={error}
           className='min-h-[100px] bg-slate-50 rounded-lg shadow-inner'
           id={`${field.id}-coordinates`}
           testId={`${field.id}-coordinates`}
-          label="Enter coordinates (lat, lon) one per line"
+          label="Enter coordinates (latitude, longitude) one pair per line."
           value={coordinates}
           onChange={handleCoordinatesChange}
           placeholder="61.2181, -149.9003&#10;61.2182, -149.9004&#10;61.2183, -149.9005"
