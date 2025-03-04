@@ -32,6 +32,8 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   const [error, setError] = useState<string | undefined>(undefined)
   const [geojson, setGeojson] = useState<GeoJSON | undefined>(value as unknown as GeoJSON)
   const [showGeoJSONInput] = useState<boolean>(true) // For debugging purposes
+  const [coordinates, setCoordinates] = useState<string>('')
+
   const getValue = (): string => {
     return geojson !== undefined && geojson !== null
       ? typeof geojson === 'object'
@@ -40,10 +42,53 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       : ''
   }
 
+  const createPolygonFromCoordinates = (coordString: string): GeoJSON | undefined => {
+    if (!coordString.trim()) {
+      setError(undefined)
+      return undefined
+    }
+
+    try {
+      const points = coordString
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => {
+          const [lat, lon] = line.split(',').map(coord => parseFloat(coord.trim()))
+          if (isNaN(lat) || isNaN(lon)) {
+            throw new Error('Invalid coordinate format')
+          }
+          return [lon, lat]
+        })
+
+      if (points.length < 3) {
+        throw new Error('Need at least 3 points to create a polygon')
+      }
+
+      // Close the polygon by adding the first point at the end
+      points.push(points[0])
+
+      return {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Polygon',
+          coordinates: [points]
+        }
+      }
+    } catch (e) {
+      setError('Invalid coordinate format. Use "lat, lon" format, one per line')
+      return undefined
+    }
+  }
+
   // Reload shape on the map
   useEffect(() => {
     if (map === undefined) return
     map.removeLayer('geojson-layer')
+
+    if ((value as any).features === undefined) return
+
     map.addLayer({
       id: 'geojson-layer',
       type: 'geoJson' as const,
@@ -86,8 +131,31 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }, [geojson])
 
+  const handleCoordinatesChange = (e: string | undefined): void => {
+    setCoordinates(e ?? '')
+    const newGeoJSON = createPolygonFromCoordinates(e ?? '')
+    if (newGeoJSON) {
+      setGeojson(newGeoJSON)
+      setError(undefined)
+    } else {
+      setGeojson(undefined)
+    }
+  }
+
   return <div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
+      <div className="mt-4">
+        <TextArea
+          error={error}
+          className='min-h-[100px] bg-slate-50 rounded-lg shadow-inner'
+          id={`${field.id}-coordinates`}
+          testId={`${field.id}-coordinates`}
+          label="Enter coordinates (lat, lon) one per line"
+          value={coordinates}
+          onChange={handleCoordinatesChange}
+          placeholder="61.2181, -149.9003&#10;61.2182, -149.9004&#10;61.2183, -149.9005"
+        />
+      </div>
       {showGeoJSONInput && <TextArea
         error={error}
         className='min-h-[500px] bg-slate-50 rounded-lg shadow-inner'
