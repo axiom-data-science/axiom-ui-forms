@@ -18,22 +18,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     },
     center: { lat: 61.2181, lon: -149.9003 },
     zoom: 8,
-    layers: [
-      // {
-      //   id: 'ghrsst_temperature',
-      //   type: 'wms',
-      //   label: 'GHRSST Temperature',
-      //   zIndex: 5,
-      //   isBaseLayer: false,
-      //   url: 'https://mur2.ncwms.axds.co/wms',
-      //   params: {
-      //     layers: 'MUR2/analysed_sst',
-      //     styles: 'boxfill/matplotlib-magma',
-      //     format: 'image/png',
-      //     transparent: true
-      //   }
-      // }
-    ],
+    layers: [],
     tools: {
       draw: {
         shape: EMapShape.polygon,
@@ -54,16 +39,16 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   }
 
   useEffect(() => {
-    if (map !== undefined) {
-      map.onDrawComplete((e: IMapDrawEvent) => {
-        console.log('draw complete', e)
-      })
+    if (map === undefined) return
 
-      // Handle draw updates (while drawing)
-      map.onDrawUpdate((e: IMapDrawEvent) => {
-        console.log('draw update', e)
-      })
-    }
+    map.onDrawComplete((e: IMapDrawEvent) => {
+      console.log('draw complete', e)
+    })
+
+    // On modify drawing
+    map.onDrawUpdate((e: IMapDrawEvent) => {
+      console.log('draw update', e)
+    })
   }
   , [map])
 
@@ -71,12 +56,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       <TextArea
         error={error}
-        className={
-            [
-              'min-h-[500px] bg-slate-50 rounded-lg shadow-inner'
-              // 'p-0 bg-[repeating-linear-gradient(to_bottom,var(--tw-gradient-stops))] from-[#efefef] from-[length:0_25px] to-[#FFF] to-[length:25px_50px]'
-            ].join(' ')
-        }
+        className='min-h-[500px] bg-slate-50 rounded-lg shadow-inner'
         id={field.id}
         testId={field.id}
         label={<FieldLabel {...field} />}
