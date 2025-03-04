@@ -1,8 +1,8 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
-import { AxiomOpenLayersMap, EMapShape } from '@axdspub/axiom-maps'
-import React, { useState, type ReactElement } from 'react'
+import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap } from '@axdspub/axiom-maps'
+import React, { useEffect, useState, type ReactElement } from 'react'
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const MAP_CONFIG = {
@@ -42,6 +42,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }
 
+  const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const initialValue = value !== undefined ? value : ''
   const getValue = (): string => {
@@ -51,8 +52,23 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         : String(initialValue)
       : ''
   }
+
+  useEffect(() => {
+    if (map !== undefined) {
+      map.onDrawComplete((e: IMapDrawEvent) => {
+        console.log('draw complete', e)
+      })
+
+      // Handle draw updates (while drawing)
+      map.onDrawUpdate((e: IMapDrawEvent) => {
+        console.log('draw update', e)
+      })
+    }
+  }
+  , [map])
+
   return <div>
-      <AxiomOpenLayersMap {...MAP_CONFIG} />
+      <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       <TextArea
         error={error}
         className={
