@@ -7,6 +7,7 @@ import React, { useEffect, useState, type ReactElement } from ***REMOVED***react
 import { TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 
 /*
+List of coordinates for testing. Around Anchorage.
 61.44480592425796, -150.3785489314675
 61.26059021199541, -150.7356022485971
 61.05235501381105, -150.61435734866856
