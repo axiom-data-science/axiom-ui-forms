@@ -1,13 +1,13 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
-import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap } from '@axdspub/axiom-maps'
+import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from '@axdspub/axiom-maps'
 import { type GeoJSON } from 'geojson'
 import React, { useEffect, useState, type ReactElement } from 'react'
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   console.log('INITIAL VALUE', value)
-  const MAP_CONFIG = {
+  const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: 'hybrid',
     height: '500px',
     width: '100%',
@@ -20,18 +20,6 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     },
     center: { lat: 61.2181, lon: -149.9003 },
     zoom: 8,
-    layers: value
-      ? [{
-          id: 'geojson-layer',
-          type: 'geoJson' as const,
-          label: 'GeoJSON Layer',
-          zIndex: 20,
-          isBaseLayer: false,
-          options: {
-            geoJson: (value as any).features
-          }
-        }]
-      : [],
     tools: {
       draw: {
         shape: EMapShape.polygon,
@@ -51,6 +39,30 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         : String(geojson)
       : ''
   }
+
+  // Reload shape on the map
+  useEffect(() => {
+    if (map === undefined) return
+    map.removeLayer('geojson-layer')
+    map.addLayer({
+      id: 'geojson-layer',
+      type: 'geoJson' as const,
+      label: 'GeoJSON Layer',
+      zIndex: 20,
+      isBaseLayer: false,
+      options: {
+        geoJson: (value as any).features.map((feature: any) => ({
+          ...feature,
+          properties: {
+            ...feature.properties,
+            color: 'rgba(255,255,255,.2)',
+            stroke: 'orange',
+            'stroke-width': 2
+          }
+        }))
+      }
+    })
+  }, [map])
 
   useEffect(() => {
     if (map === undefined) return
