@@ -36,6 +36,7 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
       </label>
       <input
         id={field.id}
+        className="border border-slate-300 p-2"
         data-testid={field.id}
         type="datetime-local"
         value={formatValue(value as string)}
