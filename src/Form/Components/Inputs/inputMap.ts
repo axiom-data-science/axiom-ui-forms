@@ -8,6 +8,8 @@ import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
 import JSONStringInput from '@/Form/Components/Inputs/JSONString'
 import NumberInput from '@/Form/Components/Inputs/Number'
 import GeoJSONInput from '@/Form/Components/Inputs/GeoJSON'
+import DateTimeInput from '@/Form/Components/Inputs/DateTime'
+
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
   long_text: LongString,
@@ -17,8 +19,8 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   select: SingleSelect,
   radio: Radio,
   object: ObjectInput,
-  geojson: GeoJSONInput
-
+  geojson: GeoJSONInput,
+  datetime: DateTimeInput
 }
 
 export default inputMap
