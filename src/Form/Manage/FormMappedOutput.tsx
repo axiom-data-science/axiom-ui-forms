@@ -7,7 +7,7 @@ import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { copyAndAddPathToFields, getFields } from ***REMOVED***@/Form/helpers***REMOVED***
-import { type IForm } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IForm } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 
 interface IOutputRecord {
@@ -95,12 +95,14 @@ const CopyableJSONOutput = ({ json, label }: { json: string, label: string }): R
 
 const MappedOutput = ({
   form,
-  formMapping
+  formMapping,
+  formValueState
 }: {
   form: IForm
   formMapping: IFormMapping
+  formValueState?: [IFormValues, (v: IFormValues) => void]
 }): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
+  const [formValues] = formValueState ?? useAtom(formValuesAtom)
   const [output, setOutput] = useState<IOutputRecord | undefined>(undefined)
   const [flatOutput, setFlatOutput] = useState<IOutputRecord | undefined>(undefined)
 

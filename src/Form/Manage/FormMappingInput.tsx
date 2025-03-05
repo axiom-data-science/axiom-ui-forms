@@ -12,7 +12,7 @@ const FormMappingInput = ({
   mappingState: [IFormMapping, (mapping: IFormMapping) => void]
 }): ReactElement => {
   const [mapping, setMappings] = mappingState
-  const uniqueFields = getFields(form.fields.map(f => addFieldPath(structuredClone(f))))
+  const uniqueFields = getFields(form?.fields?.map(f => addFieldPath(structuredClone(f))))
   return (
             <>
                  <div className=***REMOVED***flex flex-col gap-4***REMOVED***>

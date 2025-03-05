@@ -25,7 +25,9 @@ export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<Valu
 
 export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
-export type IFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***geojson***REMOVED***
+export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***geojson***REMOVED*** | `custom:${string}`
+export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
+
 interface IFieldConditions {
   dependsOn: string | string[]
   value: string | number | boolean
@@ -33,7 +35,7 @@ interface IFieldConditions {
 
 interface IFormFieldRoot {
   id: string
-  type: IFormFieldType
+  type: string
   required?: boolean
   label?: string | null | undefined
   multiple?: boolean
@@ -131,11 +133,12 @@ export interface IObjectField extends IContainerField {
 }
 
 export interface IFormFieldSection extends IContainerField {
-  type: ***REMOVED***section***REMOVED***
-  description?: string
-  multiple: false
-  value: undefined
-  values: undefined
+  type: ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
+  skip_path: true
+}
+
+export interface IFormFieldPage extends IFormFieldSection {
+  type: ***REMOVED***page***REMOVED***
 }
 
 interface IGeoJSONField extends IFormFieldRoot {
@@ -145,19 +148,26 @@ interface IGeoJSONField extends IFormFieldRoot {
   include_types?: string[]
 }
 
-export interface IPage {
+export interface IPage extends Omit<IForm, ***REMOVED***pages***REMOVED***> {
   id: string
   label: string
   description?: string
-  sections: IFormFieldSection[]
+  fields: IFormField[]
 
+}
+
+export interface IWizardStep extends Omit<IForm, ***REMOVED***wizard_steps***REMOVED***> {
+  order: number
 }
 
 export interface IForm {
   id: string
   label: string
+  navigationType?: ***REMOVED***tabs***REMOVED*** | ***REMOVED***wizard***REMOVED*** | ***REMOVED***pages***REMOVED***
   description?: string
-  fields: IFormField[]
+  fields?: IFormField[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
 }
 
 export interface IFormWithPages {

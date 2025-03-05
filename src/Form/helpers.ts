@@ -1,7 +1,7 @@
-import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IPage } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 
-export const getChildFields = (field: IFormField): IFormField[] => {
-  return field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED*** ? field.fields ?? [] : []
+export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
+  return field?.fields ?? []
 }
 
 export const addFieldPath = (field: IFormField, parentPath?: string[]): IFormField => {
@@ -22,11 +22,21 @@ export const addFieldPath = (field: IFormField, parentPath?: string[]): IFormFie
 }
 
 export const getUniqueFormFields = (form: IForm): IFormField[] => {
-  const fieldMap = Object.fromEntries(form.fields.map(f => [f.id, f]))
+  const fieldMap = Object.fromEntries((form?.fields ?? []).map(f => [f.id, f]))
   return Object.values(fieldMap)
 }
 
-export const getFields = (fields: IFormField[]): IFormField[] => {
+export const getFieldsFromPage = (page: IPage): IFormField[] => {
+  if (page === undefined) {
+    return []
+  }
+  return getFields(page.fields)
+}
+
+export const getFields = (fields?: Array<{ id: string, fields?: IFormField[] }>): IFormField[] => {
+  if (fields === undefined) {
+    return []
+  }
   const all = fields.map(field => {
     let fields = [field]
     const children = getChildFields(field)
@@ -41,8 +51,20 @@ export const getFields = (fields: IFormField[]): IFormField[] => {
 export function copyAndAddPathToFields<T extends IForm | IFormFieldSection | IObjectField> (formOrContainer: T): T {
   const form = JSON.parse(JSON.stringify(formOrContainer)) as T
   // const fields = getFields(form.fields)
-  form.fields = form.fields.map(field => {
+  form.fields = form?.fields?.map(field => {
     return addFieldPath(field)
+  })
+  return form
+}
+
+export function copyAndAddPathToPages (formOrContainer: IForm): IForm {
+  const form = JSON.parse(JSON.stringify(formOrContainer)) as IForm
+  // const fields = getFields(form.fields)
+  form.pages = form?.pages?.map(page => {
+    page.fields = page.fields.map(field => {
+      return addFieldPath(field)
+    })
+    return page
   })
   return form
 }
@@ -72,13 +94,15 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
 
 export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: IFormValues): IFormValues {
   Object.keys(formValues).forEach(key => {
-    const field = form.fields.find(f => f.id === key)
+    const field = form?.fields?.find(f => f.id === key)
     if (field !== undefined && !checkCondition(field, formValues)) {
       formValues[key] = undefined
     }
   })
 
-  const fields = getFields(form.fields)
+  const pageFields = form?.pages?.map(p => getFields(p.fields)).flat(1)
+  const wizardFields = form?.wizard_steps?.map(p => getFields(p.fields)).flat(1)
+  const fields = getFields((form?.fields ?? [])).concat(pageFields ?? []).concat(wizardFields ?? [])
   const fieldIds = fields.map(f => f.id)
   const newFormValues = Object.fromEntries(Object.entries(formValues).filter(([key]) => fieldIds.includes(key)))
   return newFormValues

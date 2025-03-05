@@ -86,7 +86,7 @@ const MapTester = (): ReactElement => {
                     </div>
                     <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
                     {
-                      inputObject.fields.map(f => {
+                      inputObject?.fields?.map(f => {
                         return (
                           <FieldMap key={f.id} field={f} mappingState={[mapping, setMapping]} />
                         )
