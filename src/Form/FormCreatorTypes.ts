@@ -25,7 +25,9 @@ export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<Valu
 
 export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
-export type IFormFieldType = 'section' | 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson'
+export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson' | `custom:${string}`
+export type ISectionFormFieldType = 'section' | 'page'
+
 interface IFieldConditions {
   dependsOn: string | string[]
   value: string | number | boolean
@@ -33,7 +35,7 @@ interface IFieldConditions {
 
 interface IFormFieldRoot {
   id: string
-  type: IFormFieldType
+  type: string
   required?: boolean
   label?: string | null | undefined
   multiple?: boolean
@@ -131,11 +133,12 @@ export interface IObjectField extends IContainerField {
 }
 
 export interface IFormFieldSection extends IContainerField {
-  type: 'section'
-  description?: string
-  multiple: false
-  value: undefined
-  values: undefined
+  type: 'section' | 'page'
+  skip_path: true
+}
+
+export interface IFormFieldPage extends IFormFieldSection {
+  type: 'page'
 }
 
 interface IGeoJSONField extends IFormFieldRoot {
@@ -145,19 +148,26 @@ interface IGeoJSONField extends IFormFieldRoot {
   include_types?: string[]
 }
 
-export interface IPage {
+export interface IPage extends Omit<IForm, 'pages'> {
   id: string
   label: string
   description?: string
-  sections: IFormFieldSection[]
+  fields: IFormField[]
 
+}
+
+export interface IWizardStep extends Omit<IForm, 'wizard_steps'> {
+  order: number
 }
 
 export interface IForm {
   id: string
   label: string
+  navigationType?: 'tabs' | 'wizard' | 'pages'
   description?: string
-  fields: IFormField[]
+  fields?: IFormField[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
 }
 
 export interface IFormWithPages {

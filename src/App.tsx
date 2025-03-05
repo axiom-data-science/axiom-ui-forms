@@ -1,9 +1,33 @@
 import FormManager from '@/Form/Manage/Manage'
-import React, { type ReactElement } from 'react'
+import React, { useState, type ReactElement } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SetTester from '@/SetTester'
 import MapTester from '@/Form/MapTester'
 import SchemaToForm from '@/Form/SchemaToForm'
+import pagedFormJson from '@/Form/testData/pagedForm.json'
+import wizardFormJson from '@/Form/testData/wizardForm.json'
+import { type IForm, type IFormValues } from '@/Form/FormCreatorTypes'
+import { FormCreator } from '@/Form'
+
+const PagedFormWrap = (): ReactElement => {
+  const formValueState = useState<IFormValues>({})
+  return (
+    <div>
+  <FormCreator form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' />
+  <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+  </div>
+  )
+}
+
+const WizardFormWrap = (): ReactElement => {
+  const formValueState = useState<IFormValues>({})
+  return (
+    <div>
+        <FormCreator form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' />
+        <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+      </div>
+  )
+}
 
 const App = (): ReactElement => {
   return (
@@ -15,6 +39,12 @@ const App = (): ReactElement => {
             <Route path='/schema-to-form' element={<SchemaToForm />} />
             <Route path="/set-tester" element={<SetTester />} />
             <Route path="/map-tester" element={<MapTester />} />
+            <Route path="/page-form/" element={<PagedFormWrap />}>
+              <Route path=':page' element={<PagedFormWrap />} />
+            </Route>
+            <Route path='/wizard-form' element={<WizardFormWrap />}>
+              <Route path=':step' element={<WizardFormWrap />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>

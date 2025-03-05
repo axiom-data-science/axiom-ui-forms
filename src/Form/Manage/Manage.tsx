@@ -86,12 +86,13 @@ const FormManager = ({
       content: <FormOutput
         form={form}
         formMapping={mapping}
+        formValueState={[formValues, setFormValues]}
       />
     },
     {
       id: 'raw_output',
       label: 'Raw Output',
-      content: <RawFormOutput />
+      content: <RawFormOutput formValueState={[formValues, setFormValues]} />
     }
   ]
   const params = Object.fromEntries(new URLSearchParams(window.location.search))

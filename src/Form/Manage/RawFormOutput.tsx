@@ -1,11 +1,13 @@
+import { type IFormValues } from '@/Form/FormCreatorTypes'
 import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
+
 import formValuesAtom from '@/state/formValuesAtom'
 import { useAtom } from 'jotai'
 import { set } from 'lodash'
 import React, { type ReactElement } from 'react'
 
-export const RawFormOutput = (): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
+export const RawFormOutput = ({ formValueState }: { formValueState?: [IFormValues, (v: IFormValues) => void] }): ReactElement => {
+  const [formValues] = formValueState ?? useAtom(formValuesAtom)
   const rehydrated = {}
   Object.keys(formValues).forEach(path => {
     set(rehydrated, path, formValues[path])
