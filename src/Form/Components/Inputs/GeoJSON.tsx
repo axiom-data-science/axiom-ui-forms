@@ -16,8 +16,43 @@ List of coordinates for testing. Around Anchorage.
 61.44480592425796, -150.3785489314675
 */
 
+const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lon: number } => {
+  if (!geo || !(***REMOVED***features***REMOVED*** in geo) || !Array.isArray(geo.features) || geo.features.length === 0) {
+    return { lat: 61.2181, lon: -149.9003 } // Default to Anchorage
+  }
+
+  const feature = geo.features[0]
+  if (!feature?.geometry || feature.geometry.type !== ***REMOVED***Polygon***REMOVED***) {
+    return { lat: 61.2181, lon: -149.9003 }
+  }
+
+  const coordinates = feature.geometry.coordinates[0] // Get first ring (ignore holes)
+  if (!Array.isArray(coordinates) || coordinates.length === 0) {
+    return { lat: 61.2181, lon: -149.9003 }
+  }
+
+  // Calculate average of all coordinates
+  let sumLat = 0
+  let sumLon = 0
+  let count = 0
+
+  coordinates.forEach((coord: GeoJSON.Position) => {
+    sumLat += coord[1]
+    sumLon += coord[0]
+    count++
+  })
+
+  return {
+    lat: sumLat / count,
+    lon: sumLon / count
+  }
+}
+
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   console.log(***REMOVED***INITIAL VALUE***REMOVED***, value)
+  const initialGeoJSON = value as unknown as GeoJSON
+  const initialCenter = calculateCenterFromGeoJSON(initialGeoJSON)
+
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
     height: ***REMOVED***500px***REMOVED***,
@@ -29,7 +64,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       bottom: ***REMOVED***0px***REMOVED***,
       padding: ***REMOVED***0***REMOVED***
     },
-    center: { lat: 61.2181, lon: -149.9003 },
+    center: initialCenter,
     zoom: 8,
     tools: {
       draw: {
