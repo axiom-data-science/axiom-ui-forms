@@ -9,6 +9,8 @@ import JSONStringInput from ***REMOVED***@/Form/Components/Inputs/JSONString***R
 import NumberInput from ***REMOVED***@/Form/Components/Inputs/Number***REMOVED***
 import GeoJSONInput from ***REMOVED***@/Form/Components/Inputs/GeoJSON***REMOVED***
 import DateTimeInput from ***REMOVED***@/Form/Components/Inputs/DateTime***REMOVED***
+import DateInput from ***REMOVED***@/Form/Components/Inputs/Date***REMOVED***
+import TimeInput from ***REMOVED***@/Form/Components/Inputs/Time***REMOVED***
 
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
@@ -20,7 +22,9 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   radio: Radio,
   object: ObjectInput,
   geojson: GeoJSONInput,
-  datetime: DateTimeInput
+  datetime: DateTimeInput,
+  date: DateInput,
+  time: TimeInput
 }
 
 export default inputMap
