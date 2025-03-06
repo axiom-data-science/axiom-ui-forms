@@ -64,11 +64,26 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
     }
   }
 
+  const getConstraintMessage = (): string | null => {
+    if (!minDateTime && !maxDateTime) return null
+    const parts = []
+    if (minDateTime) parts.push(`after ${new Date(minDateTime).toLocaleString()}`)
+    if (maxDateTime) parts.push(`before ${new Date(maxDateTime).toLocaleString()}`)
+    return `Must be ${parts.join(' and ')}`
+  }
+
+  const constraintMessage = getConstraintMessage()
+
   return (
     <div>
-      <label htmlFor={field.id}>
-        <FieldLabel {...field} />
-      </label>
+      <div className="flex items-baseline gap-2">
+        <label htmlFor={field.id}>
+          <FieldLabel {...field} />
+        </label>
+        {constraintMessage && (
+          <span className="text-sm text-slate-500 italic">{constraintMessage}</span>
+        )}
+      </div>
       <input
         id={field.id}
         className={`border ${error ? 'border-red-500' : 'border-slate-300'} p-2 w-full`}
