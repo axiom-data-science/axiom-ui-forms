@@ -16,14 +16,14 @@ List of coordinates for testing. Around Anchorage.
 61.44480592425796, -150.3785489314675
 */
 
-const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lon: number } => {
+const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lon: number, zoom: number } => {
   if (!geo || !(***REMOVED***features***REMOVED*** in geo) || !Array.isArray(geo.features) || geo.features.length === 0) {
-    return { lat: 61.2181, lon: -149.9003 } // Default to Anchorage
+    return { lat: 61.2181, lon: -149.9003, zoom: 8 } // Default to Anchorage
   }
 
   const feature = geo.features[0]
   if (!feature?.geometry) {
-    return { lat: 61.2181, lon: -149.9003 }
+    return { lat: 61.2181, lon: -149.9003, zoom: 8 }
   }
 
   const geometry = feature.geometry
@@ -40,34 +40,62 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
       coordinates = [geometry.coordinates]
       break
     default:
-      return { lat: 61.2181, lon: -149.9003 }
+      return { lat: 61.2181, lon: -149.9003, zoom: 8 }
   }
 
   if (!Array.isArray(coordinates) || coordinates.length === 0) {
-    return { lat: 61.2181, lon: -149.9003 }
+    return { lat: 61.2181, lon: -149.9003, zoom: 8 }
   }
 
-  // Calculate average of all coordinates
+  // Calculate bounds
+  let minLat = Infinity
+  let maxLat = -Infinity
+  let minLon = Infinity
+  let maxLon = -Infinity
   let sumLat = 0
   let sumLon = 0
   let count = 0
 
   coordinates.forEach((coord: GeoJSON.Position) => {
-    sumLat += coord[1]
-    sumLon += coord[0]
+    const [lon, lat] = coord
+    minLat = Math.min(minLat, lat)
+    maxLat = Math.max(maxLat, lat)
+    minLon = Math.min(minLon, lon)
+    maxLon = Math.max(maxLon, lon)
+    sumLat += lat
+    sumLon += lon
     count++
   })
 
+  // Calculate center
+  const centerLat = sumLat / count
+  const centerLon = sumLon / count
+
+  // Calculate zoom level based on bounds
+  const latDiff = maxLat - minLat
+  const lonDiff = maxLon - minLon
+  const maxDiff = Math.max(latDiff, lonDiff)
+
+  // Adjust zoom based on the size of the shape
+  let zoom = 8 // default zoom
+  if (maxDiff < 0.1) zoom = 12 // very small shape
+  else if (maxDiff < 0.5) zoom = 10 // small shape
+  else if (maxDiff < 1) zoom = 9 // medium shape
+  else if (maxDiff < 2) zoom = 8 // large shape
+  else if (maxDiff < 5) zoom = 7 // very large shape
+  else zoom = 6 // huge shape
+
   return {
-    lat: sumLat / count,
-    lon: sumLon / count
+    lat: centerLat,
+    lon: centerLon,
+    zoom
   }
 }
 
 const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   console.log(***REMOVED***INITIAL VALUE***REMOVED***, value)
   const initialGeoJSON = value as unknown as GeoJSON
-  const initialCenter = calculateCenterFromGeoJSON(initialGeoJSON)
+  const initialMapConfig = calculateCenterFromGeoJSON(initialGeoJSON)
   const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(EMapShape.polygon)
   const [isDrawing, setIsDrawing] = useState<boolean>(false)
 
@@ -82,8 +110,8 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       bottom: ***REMOVED***0px***REMOVED***,
       padding: ***REMOVED***0***REMOVED***
     },
-    center: initialCenter,
-    zoom: 8,
+    center: { lat: initialMapConfig.lat, lon: initialMapConfig.lon },
+    zoom: initialMapConfig.zoom,
     tools: {
       draw: {
         shape: currentDrawType,
