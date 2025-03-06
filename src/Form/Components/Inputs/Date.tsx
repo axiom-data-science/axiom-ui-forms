@@ -17,10 +17,10 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
       const date = new Date(val)
       if (isNaN(date.getTime())) return ***REMOVED******REMOVED***
 
-      // Format to YYYY-MM-DD
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, ***REMOVED***0***REMOVED***)
-      const day = String(date.getDate()).padStart(2, ***REMOVED***0***REMOVED***)
+      // Format to YYYY-MM-DD using UTC to avoid timezone issues
+      const year = date.getUTCFullYear()
+      const month = String(date.getUTCMonth() + 1).padStart(2, ***REMOVED***0***REMOVED***)
+      const day = String(date.getUTCDate()).padStart(2, ***REMOVED***0***REMOVED***)
 
       return `${year}-${month}-${day}`
     } catch {
@@ -30,16 +30,14 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const newInputValue = e.target.value
-
-    // Always update the input value since the browser***REMOVED***s date input
-    // will handle the formatting and validation
     setInputValue(newInputValue)
 
     // Only notify parent of change if we have a complete valid date
     if (newInputValue) {
-      const date = new Date(newInputValue)
+      // Create date in UTC by appending T00:00:00Z to the input value
+      const date = new Date(newInputValue + ***REMOVED***T00:00:00Z***REMOVED***)
       // Check if it***REMOVED***s a valid date and the year is reasonable (4 digits)
-      if (!isNaN(date.getTime()) && date.getFullYear() > 999) {
+      if (!isNaN(date.getTime()) && date.getUTCFullYear() > 999) {
         onChange(date.toISOString())
       }
     } else {
