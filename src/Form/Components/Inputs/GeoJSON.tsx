@@ -209,17 +209,21 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
     const feature = geo.features[0]
     const geometry = feature.geometry
+    let newCoords = ***REMOVED******REMOVED***
 
     if (geometry.type === ***REMOVED***Polygon***REMOVED***) {
       const coords = geometry.coordinates[0]
-      setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***))
+      newCoords = coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***)
     } else if (geometry.type === ***REMOVED***LineString***REMOVED***) {
       const coords = geometry.coordinates
-      setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***))
+      newCoords = coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***)
     } else if (geometry.type === ***REMOVED***Point***REMOVED***) {
       const coords = geometry.coordinates
-      setCoordinates(`${coords[1]}, ${coords[0]}`)
+      newCoords = `${coords[1]}, ${coords[0]}`
     }
+
+    setCoordinates(newCoords)
+    setShowShapeTypeButtons(shouldShowShapeButtons(newCoords))
   }
 
   useEffect(() => {
