@@ -1,8 +1,14 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
 
 const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const [inputValue, setInputValue] = useState(***REMOVED******REMOVED***)
+
+  useEffect(() => {
+    setInputValue(formatValue(value as string))
+  }, [value])
+
   // Convert the value to the format expected by date input (YYYY-MM-DD)
   const formatValue = (val: string | undefined | null): string => {
     if (!val) return ***REMOVED******REMOVED***
@@ -23,8 +29,22 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newValue = e.target.value ? new Date(e.target.value).toISOString() : undefined
-    onChange(newValue)
+    const newInputValue = e.target.value
+
+    // Always update the input value since the browser***REMOVED***s date input
+    // will handle the formatting and validation
+    setInputValue(newInputValue)
+
+    // Only notify parent of change if we have a complete valid date
+    if (newInputValue) {
+      const date = new Date(newInputValue)
+      // Check if it***REMOVED***s a valid date and the year is reasonable (4 digits)
+      if (!isNaN(date.getTime()) && date.getFullYear() > 999) {
+        onChange(date.toISOString())
+      }
+    } else {
+      onChange(undefined)
+    }
   }
 
   return (
@@ -37,7 +57,7 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
         className="border border-slate-300 p-2 w-full"
         data-testid={field.id}
         type="date"
-        value={formatValue(value as string)}
+        value={inputValue}
         onChange={handleChange}
       />
     </div>
