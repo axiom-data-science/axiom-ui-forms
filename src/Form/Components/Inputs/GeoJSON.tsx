@@ -240,6 +240,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   }
 
   return <div className="relative">
+      <FieldLabel {...field} />
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       {hasValidShape(geojson) && (
         <button
