@@ -71,11 +71,26 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
     }
   }
 
+  const getConstraintMessage = (): string | null => {
+    if (!minDate && !maxDate) return null
+    const parts = []
+    if (minDate) parts.push(`after ${formatValue(minDate)}`)
+    if (maxDate) parts.push(`before ${formatValue(maxDate)}`)
+    return `Must be ${parts.join(***REMOVED*** and ***REMOVED***)}`
+  }
+
+  const constraintMessage = getConstraintMessage()
+
   return (
     <div>
-      <label htmlFor={field.id}>
-        <FieldLabel {...field} />
-      </label>
+      <div className="flex items-baseline gap-2">
+        <label htmlFor={field.id}>
+          <FieldLabel {...field} />
+        </label>
+        {constraintMessage && (
+          <span className="text-sm text-slate-500 italic">{constraintMessage}</span>
+        )}
+      </div>
       <input
         id={field.id}
         className={`border ${error ? ***REMOVED***border-red-500***REMOVED*** : ***REMOVED***border-slate-300***REMOVED***} p-2 w-full`}

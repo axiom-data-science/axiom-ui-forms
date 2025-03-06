@@ -67,11 +67,26 @@ const TimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
     }
   }
 
+  const getConstraintMessage = (): string | null => {
+    if (!minTime && !maxTime) return null
+    const parts = []
+    if (minTime) parts.push(`after ${minTime}`)
+    if (maxTime) parts.push(`before ${maxTime}`)
+    return `Must be ${parts.join(***REMOVED*** and ***REMOVED***)}`
+  }
+
+  const constraintMessage = getConstraintMessage()
+
   return (
     <div>
-      <label htmlFor={field.id}>
-        <FieldLabel {...field} />
-      </label>
+      <div className="flex items-baseline gap-2">
+        <label htmlFor={field.id}>
+          <FieldLabel {...field} />
+        </label>
+        {constraintMessage && (
+          <span className="text-sm text-slate-500 italic">{constraintMessage}</span>
+        )}
+      </div>
       <input
         id={field.id}
         className={`border ${error ? ***REMOVED***border-red-500***REMOVED*** : ***REMOVED***border-slate-300***REMOVED***} p-2 w-full`}
