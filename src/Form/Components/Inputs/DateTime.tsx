@@ -1,8 +1,15 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
 const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const [error, setError] = useState<string | null>(null)
+
+  if (field.type !== ***REMOVED***datetime***REMOVED***) {
+    return <p>Field config for {field.id} is missing &apos;options&apos;</p>
+  }
+  const { minDateTime, maxDateTime } = field.constraints ?? {}
+
   // Convert the value to the format expected by datetime-local input (YYYY-MM-DDThh:mm)
   const formatValue = (val: string | undefined | null): string => {
     if (!val) return ***REMOVED******REMOVED***
@@ -24,8 +31,24 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
     }
   }
 
+  const validateDateTime = (date: Date): string | null => {
+    if (minDateTime && date < new Date(minDateTime)) {
+      return `Date must be after ${new Date(minDateTime).toLocaleString()}`
+    }
+    if (maxDateTime && date > new Date(maxDateTime)) {
+      return `Date must be before ${new Date(maxDateTime).toLocaleString()}`
+    }
+    return null
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = e.target.value ? new Date(e.target.value).toISOString() : undefined
+    if (newValue) {
+      const validationError = validateDateTime(new Date(newValue))
+      setError(validationError)
+    } else {
+      setError(null)
+    }
     onChange(newValue)
   }
 
@@ -36,12 +59,15 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
       </label>
       <input
         id={field.id}
-        className="border border-slate-300 p-2 w-full"
+        className={`border ${error ? ***REMOVED***border-red-500***REMOVED*** : ***REMOVED***border-slate-300***REMOVED***} p-2 w-full`}
         data-testid={field.id}
         type="datetime-local"
         value={formatValue(value as string)}
         onChange={handleChange}
+        min={minDateTime ? formatValue(minDateTime) : undefined}
+        max={maxDateTime ? formatValue(maxDateTime) : undefined}
       />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   )
 }
