@@ -83,12 +83,14 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
 
   return (
     <div>
-      <div className="flex items-baseline gap-2">
-        <label htmlFor={field.id}>
+      <div className="flex flex-wrap items-baseline gap-2">
+        <label htmlFor={field.id} className="flex-1 min-w-[200px]">
           <FieldLabel {...field} />
         </label>
         {constraintMessage && (
-          <span className="text-sm text-slate-500 italic">{constraintMessage}</span>
+          <span className="text-sm text-slate-500 italic">
+            {constraintMessage}
+          </span>
         )}
       </div>
       <input
