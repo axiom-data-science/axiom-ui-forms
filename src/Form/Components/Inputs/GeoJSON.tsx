@@ -321,6 +321,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             features: []
           })
           map.setDrawGeojson(newGeoJSON as GeoJSON.FeatureCollection)
+          map.disableDraw(currentDrawType) // Disable drawing when coordinates are entered
         }
       } else {
         setGeojson(undefined)
@@ -445,14 +446,16 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             <div className="flex gap-2">
               <button
                 onClick={() => { applyShapeType(EMapShape.linestring) }}
-                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm"
+                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
               >
+                <BorderSolidIcon className="w-4 h-4" />
                 Create Path
               </button>
               <button
                 onClick={() => { applyShapeType(EMapShape.polygon) }}
-                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm"
+                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
               >
+                <SquareIcon className="w-4 h-4 rotate-45" />
                 Create Polygon
               </button>
             </div>
