@@ -263,9 +263,9 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.polygon
-                ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
-                : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
-            } text-white w-10 h-10 flex items-center justify-center`}
+                ? ***REMOVED***bg-white hover:bg-gray-50***REMOVED***
+                : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
+            } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw polygon"
           >
             <SquareIcon className="w-5 h-5 rotate-45" />
@@ -279,9 +279,9 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.linestring
-                ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
-                : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
-            } text-white w-10 h-10 flex items-center justify-center`}
+                ? ***REMOVED***bg-white hover:bg-gray-50***REMOVED***
+                : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
+            } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw line"
           >
             <BorderSolidIcon className="w-5 h-5 rotate-45" />
@@ -295,9 +295,9 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             onClick={() => { handleDrawTypeChange(EMapShape.point) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.point
-                ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
-                : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
-            } text-white w-10 h-10 flex items-center justify-center`}
+                ? ***REMOVED***bg-white hover:bg-gray-50***REMOVED***
+                : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
+            } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw point"
           >
             <DrawingPinFilledIcon className="w-5 h-5" />
