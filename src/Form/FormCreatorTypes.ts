@@ -113,6 +113,10 @@ interface IDateField extends IFormFieldRoot {
 interface ITimeField extends IFormFieldRoot {
   type: ***REMOVED***time***REMOVED***
   value?: ***REMOVED***time***REMOVED***
+  constraints?: {
+    minTime?: string
+    maxTime?: string
+  }
 }
 
 interface IDateTimeConstraints {
