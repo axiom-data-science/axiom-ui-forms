@@ -4,7 +4,7 @@ import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import { type GeoJSON } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import { TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { TrashIcon, TriangleUpIcon, DrawingPinIcon, DotFilledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 
 /*
 List of coordinates for testing. Around Anchorage.
@@ -257,51 +257,66 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
 
   return <div className="relative">
       <FieldLabel {...field} />
-      <div className="absolute z-20 top-2 left-2 flex gap-2">
-        <button
-          onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
-          className={`p-2 rounded-lg shadow-lg ${
-            currentDrawType === EMapShape.polygon
-              ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
-              : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
-          } text-white`}
-          title="Draw polygon"
-        >
-          Polygon
-        </button>
-        <button
-          onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
-          className={`p-2 rounded-lg shadow-lg ${
-            currentDrawType === EMapShape.linestring
-              ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
-              : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
-          } text-white`}
-          title="Draw line"
-        >
-          Line
-        </button>
-        <button
-          onClick={() => { handleDrawTypeChange(EMapShape.point) }}
-          className={`p-2 rounded-lg shadow-lg ${
-            currentDrawType === EMapShape.point
-              ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
-              : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
-          } text-white`}
-          title="Draw point"
-        >
-          Point
-        </button>
+      <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
+        <div className="tooltip-container relative group">
+          <button
+            onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
+            className={`p-2 rounded-lg shadow-lg ${
+              currentDrawType === EMapShape.polygon
+                ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
+                : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
+            } text-white w-10 h-10 flex items-center justify-center`}
+            title="Draw polygon"
+          >
+            <TriangleUpIcon className="w-5 h-5" />
+            <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+              Draw Polygon
+            </span>
+          </button>
+        </div>
+        <div className="tooltip-container relative group">
+          <button
+            onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
+            className={`p-2 rounded-lg shadow-lg ${
+              currentDrawType === EMapShape.linestring
+                ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
+                : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
+            } text-white w-10 h-10 flex items-center justify-center`}
+            title="Draw line"
+          >
+            <DrawingPinIcon className="w-5 h-5 rotate-45" />
+            <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+              Draw Line
+            </span>
+          </button>
+        </div>
+        <div className="tooltip-container relative group">
+          <button
+            onClick={() => { handleDrawTypeChange(EMapShape.point) }}
+            className={`p-2 rounded-lg shadow-lg ${
+              currentDrawType === EMapShape.point
+                ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
+                : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
+            } text-white w-10 h-10 flex items-center justify-center`}
+            title="Draw point"
+          >
+            <DotFilledIcon className="w-5 h-5" />
+            <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+              Draw Point
+            </span>
+          </button>
+        </div>
+        {hasValidShape(geojson) && (
+          <button
+            onClick={clearShape}
+            className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
+            title="Clear shape"
+          >
+            <TrashIcon className="w-5 h-5" />
+          </button>
+        )}
       </div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
-      {hasValidShape(geojson) && (
-        <button
-          onClick={clearShape}
-          className="absolute z-20 top-10 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg"
-          title="Clear shape"
-        >
-          <TrashIcon className="w-5 h-5" />
-        </button>
-      )}
       <div className="mt-4">
         <TextArea
           error={error}
