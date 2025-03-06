@@ -105,18 +105,26 @@ export interface IBooleanField extends IFormFieldRoot {
   value?: ***REMOVED***boolean***REMOVED***
 }
 
+interface IDateFieldConstraints {
+  minDate?: string
+  maxDate?: string
+}
+
 interface IDateField extends IFormFieldRoot {
   type: ***REMOVED***date***REMOVED***
   value?: ***REMOVED***date***REMOVED***
+  constraints?: IDateFieldConstraints
+}
+
+interface ITimeFieldConstraints {
+  minTime?: string
+  maxTime?: string
 }
 
 interface ITimeField extends IFormFieldRoot {
   type: ***REMOVED***time***REMOVED***
   value?: ***REMOVED***time***REMOVED***
-  constraints?: {
-    minTime?: string
-    maxTime?: string
-  }
+  constraints?: ITimeFieldConstraints
 }
 
 interface IDateTimeConstraints {

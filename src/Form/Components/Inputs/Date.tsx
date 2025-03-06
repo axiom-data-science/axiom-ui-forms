@@ -3,7 +3,12 @@ import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REM
 import React, { type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
 
 const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  if (field.type !== ***REMOVED***date***REMOVED***) {
+    return <p>Field config for {field.id} is missing &apos;options&apos;</p>
+  }
   const [inputValue, setInputValue] = useState(***REMOVED******REMOVED***)
+  const [error, setError] = useState<string | null>(null)
+  const { minDate, maxDate } = field.constraints ?? {}
 
   useEffect(() => {
     setInputValue(formatValue(value as string))
@@ -28,6 +33,22 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
     }
   }
 
+  const validateDate = (dateStr: string): string | null => {
+    if (!minDate && !maxDate) return null
+
+    const inputDate = new Date(dateStr + ***REMOVED***T00:00:00Z***REMOVED***)
+    const minDateObj = minDate ? new Date(minDate) : null
+    const maxDateObj = maxDate ? new Date(maxDate) : null
+
+    if (minDateObj && inputDate < minDateObj) {
+      return `Date must be after ${formatValue(minDate)}`
+    }
+    if (maxDateObj && inputDate > maxDateObj) {
+      return `Date must be before ${formatValue(maxDate)}`
+    }
+    return null
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const newInputValue = e.target.value
     setInputValue(newInputValue)
@@ -38,9 +59,14 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
       const date = new Date(newInputValue + ***REMOVED***T00:00:00Z***REMOVED***)
       // Check if it***REMOVED***s a valid date and the year is reasonable (4 digits)
       if (!isNaN(date.getTime()) && date.getUTCFullYear() > 999) {
-        onChange(date.toISOString())
+        const validationError = validateDate(newInputValue)
+        setError(validationError)
+        if (!validationError) {
+          onChange(date.toISOString())
+        }
       }
     } else {
+      setError(null)
       onChange(undefined)
     }
   }
@@ -52,12 +78,15 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
       </label>
       <input
         id={field.id}
-        className="border border-slate-300 p-2 w-full"
+        className={`border ${error ? ***REMOVED***border-red-500***REMOVED*** : ***REMOVED***border-slate-300***REMOVED***} p-2 w-full`}
         data-testid={field.id}
         type="date"
         value={inputValue}
         onChange={handleChange}
+        min={minDate ? formatValue(minDate) : undefined}
+        max={maxDate ? formatValue(maxDate) : undefined}
       />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   )
 }
