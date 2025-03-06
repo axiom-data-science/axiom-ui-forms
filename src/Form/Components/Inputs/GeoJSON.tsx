@@ -263,7 +263,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.polygon
-                ? ***REMOVED***bg-white hover:bg-gray-50***REMOVED***
+                ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw polygon"
@@ -279,7 +279,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.linestring
-                ? ***REMOVED***bg-white hover:bg-gray-50***REMOVED***
+                ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw line"
@@ -295,7 +295,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             onClick={() => { handleDrawTypeChange(EMapShape.point) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.point
-                ? ***REMOVED***bg-white hover:bg-gray-50***REMOVED***
+                ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw point"
