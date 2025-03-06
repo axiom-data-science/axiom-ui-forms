@@ -42,7 +42,18 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newValue = e.target.value ? new Date(e.target.value).toISOString() : undefined
+    const inputValue = e.target.value
+    // If the input is empty but we have a current value, keep the current value
+    if (!inputValue && value) {
+      return
+    }
+
+    // If we have a partial date (e.g., just started typing year), keep the current value
+    if (inputValue && inputValue.length < 16) { // 16 is the length of a complete datetime-local value
+      return
+    }
+
+    const newValue = inputValue ? new Date(inputValue).toISOString() : undefined
     if (newValue) {
       const validationError = validateDateTime(new Date(newValue))
       setError(validationError)
