@@ -115,9 +115,15 @@ interface ITimeField extends IFormFieldRoot {
   value?: 'time'
 }
 
+interface IDateTimeConstraints {
+  minDateTime?: string
+  maxDateTime?: string
+}
+
 interface IDateTimeField extends IFormFieldRoot {
   type: 'datetime'
   value?: 'datetime'
+  constraints?: IDateTimeConstraints
 }
 
 interface IContainerField extends IFormFieldRoot {
