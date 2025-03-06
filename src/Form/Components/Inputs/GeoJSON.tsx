@@ -52,6 +52,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   console.log(***REMOVED***INITIAL VALUE***REMOVED***, value)
   const initialGeoJSON = value as unknown as GeoJSON
   const initialCenter = calculateCenterFromGeoJSON(initialGeoJSON)
+  const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(EMapShape.polygon)
 
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
@@ -68,7 +69,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     zoom: 8,
     tools: {
       draw: {
-        shape: EMapShape.polygon,
+        shape: currentDrawType,
         enabled: true
       }
     }
@@ -160,13 +161,13 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   // Reload shape on the map
   useEffect(() => {
     if (map === undefined) return
-    map.enableDraw(EMapShape.polygon)
+    map.enableDraw(currentDrawType)
 
     if (geojson !== undefined && ***REMOVED***features***REMOVED*** in geojson) {
       map.setDrawGeojson(geojson)
-      map.disableDraw(EMapShape.polygon) // Disable drawing when there***REMOVED***s a shape
+      map.disableDraw(currentDrawType) // Disable drawing when there***REMOVED***s a shape
     }
-  }, [map])
+  }, [map, currentDrawType])
 
   useEffect(() => {
     if (map === undefined) return
@@ -175,7 +176,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       console.log(***REMOVED***draw complete***REMOVED***, e)
       setGeojson(e.data?.geojson)
       updateCoordinatesFromGeoJSON(e.data?.geojson)
-      map.disableDraw(EMapShape.polygon) // Disable drawing after shape is complete
+      map.disableDraw(currentDrawType) // Disable drawing after shape is complete
     })
 
     // On modify drawing
@@ -235,17 +236,67 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         type: ***REMOVED***FeatureCollection***REMOVED***,
         features: []
       })
-      map.enableDraw(EMapShape.polygon) // Re-enable drawing when shape is cleared
+      map.enableDraw(currentDrawType) // Re-enable drawing when shape is cleared
+    }
+  }
+
+  const handleDrawTypeChange = (shapeType: EMapShape): void => {
+    if (map) {
+      // Clear existing shape if any
+      map.setDrawGeojson({
+        type: ***REMOVED***FeatureCollection***REMOVED***,
+        features: []
+      })
+      setGeojson(undefined)
+      onChange(undefined)
+      setCoordinates(***REMOVED******REMOVED***)
+      setCurrentDrawType(shapeType)
+      map.enableDraw(shapeType)
     }
   }
 
   return <div className="relative">
       <FieldLabel {...field} />
+      <div className="absolute z-20 top-2 left-2 flex gap-2">
+        <button
+          onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
+          className={`p-2 rounded-lg shadow-lg ${
+            currentDrawType === EMapShape.polygon
+              ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
+              : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
+          } text-white`}
+          title="Draw polygon"
+        >
+          Polygon
+        </button>
+        <button
+          onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
+          className={`p-2 rounded-lg shadow-lg ${
+            currentDrawType === EMapShape.linestring
+              ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
+              : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
+          } text-white`}
+          title="Draw line"
+        >
+          Line
+        </button>
+        <button
+          onClick={() => { handleDrawTypeChange(EMapShape.point) }}
+          className={`p-2 rounded-lg shadow-lg ${
+            currentDrawType === EMapShape.point
+              ? ***REMOVED***bg-blue-500 hover:bg-blue-600***REMOVED***
+              : ***REMOVED***bg-gray-500 hover:bg-gray-600***REMOVED***
+          } text-white`}
+          title="Draw point"
+        >
+          Point
+        </button>
+      </div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       {hasValidShape(geojson) && (
         <button
           onClick={clearShape}
-          className="absolute z-20 top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg"
+          className="absolute z-20 top-10 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg"
           title="Clear shape"
         >
           <TrashIcon className="w-5 h-5" />
