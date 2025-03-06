@@ -1,6 +1,6 @@
+import { Button, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
-import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import { type GeoJSON } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
@@ -420,65 +420,61 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       <FieldLabel {...field} />
       <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
         <div className="tooltip-container relative group">
-          <button
+          <Button
             onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.polygon && isDrawing
                 ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
-            title="Draw polygon"
           >
             <SquareIcon className="w-5 h-5 rotate-45" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Polygon
             </span>
-          </button>
+          </Button>
         </div>
         <div className="tooltip-container relative group">
-          <button
+          <Button
             onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.linestring && isDrawing
                 ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
-            title="Draw line"
           >
             <BorderSolidIcon className="w-5 h-5" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Path
             </span>
-          </button>
+          </Button>
         </div>
         <div className="tooltip-container relative group">
-          <button
+          <Button
             onClick={() => { handleDrawTypeChange(EMapShape.point) }}
             className={`p-2 rounded-lg shadow-lg ${
               currentDrawType === EMapShape.point && isDrawing
                 ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
-            title="Draw point"
           >
             <DrawingPinFilledIcon className="w-5 h-5" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Point
             </span>
-          </button>
+          </Button>
         </div>
         {hasValidShape(geojson) && (
           <div className="tooltip-container relative group">
-            <button
+            <Button
               onClick={clearShape}
               className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
-              title="Clear shape"
             >
               <TrashIcon className="w-5 h-5" />
               <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
                 Clear Shape
               </span>
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -488,20 +484,20 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
           {showShapeTypeButtons && (
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={() => { applyShapeType(EMapShape.linestring) }}
                 className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
               >
                 <BorderSolidIcon className="w-4 h-4" />
                 Create Path
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => { applyShapeType(EMapShape.polygon) }}
                 className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
               >
                 <SquareIcon className="w-4 h-4 rotate-45" />
                 Create Polygon
-              </button>
+              </Button>
             </div>
           )}
         </div>
