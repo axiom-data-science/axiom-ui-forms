@@ -53,6 +53,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   const initialGeoJSON = value as unknown as GeoJSON
   const initialCenter = calculateCenterFromGeoJSON(initialGeoJSON)
   const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(EMapShape.polygon)
+  const [isDrawing, setIsDrawing] = useState<boolean>(false)
 
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
@@ -161,11 +162,14 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
   // Reload shape on the map
   useEffect(() => {
     if (map === undefined) return
-    map.enableDraw(currentDrawType)
 
     if (geojson !== undefined && ***REMOVED***features***REMOVED*** in geojson) {
       map.setDrawGeojson(geojson)
       map.disableDraw(currentDrawType) // Disable drawing when there***REMOVED***s a shape
+      setIsDrawing(false)
+    } else {
+      map.enableDraw(currentDrawType)
+      setIsDrawing(true)
     }
   }, [map, currentDrawType])
 
@@ -177,6 +181,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       setGeojson(e.data?.geojson)
       updateCoordinatesFromGeoJSON(e.data?.geojson)
       map.disableDraw(currentDrawType) // Disable drawing after shape is complete
+      setIsDrawing(false)
     })
 
     // On modify drawing
@@ -185,8 +190,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       setGeojson(e.data?.geojson)
       updateCoordinatesFromGeoJSON(e.data?.geojson)
     })
-  }
-  , [map])
+  }, [map])
 
   useEffect(() => {
     if (geojson !== undefined) {
@@ -237,6 +241,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
         features: []
       })
       map.enableDraw(currentDrawType) // Re-enable drawing when shape is cleared
+      setIsDrawing(true)
     }
   }
 
@@ -252,6 +257,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       setCoordinates(***REMOVED******REMOVED***)
       setCurrentDrawType(shapeType)
       map.enableDraw(shapeType)
+      setIsDrawing(true)
     }
   }
 
@@ -262,7 +268,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           <button
             onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
             className={`p-2 rounded-lg shadow-lg ${
-              currentDrawType === EMapShape.polygon
+              currentDrawType === EMapShape.polygon && isDrawing
                 ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
@@ -278,13 +284,13 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           <button
             onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
             className={`p-2 rounded-lg shadow-lg ${
-              currentDrawType === EMapShape.linestring
+              currentDrawType === EMapShape.linestring && isDrawing
                 ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
             title="Draw line"
           >
-            <BorderSolidIcon className="w-5 h-5 rotate-45" />
+            <BorderSolidIcon className="w-5 h-5" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Path
             </span>
@@ -294,7 +300,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           <button
             onClick={() => { handleDrawTypeChange(EMapShape.point) }}
             className={`p-2 rounded-lg shadow-lg ${
-              currentDrawType === EMapShape.point
+              currentDrawType === EMapShape.point && isDrawing
                 ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
                 : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
             } text-black w-10 h-10 flex items-center justify-center`}
