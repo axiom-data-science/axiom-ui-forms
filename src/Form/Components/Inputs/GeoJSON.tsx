@@ -22,11 +22,27 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
   }
 
   const feature = geo.features[0]
-  if (!feature?.geometry || feature.geometry.type !== ***REMOVED***Polygon***REMOVED***) {
+  if (!feature?.geometry) {
     return { lat: 61.2181, lon: -149.9003 }
   }
 
-  const coordinates = feature.geometry.coordinates[0] // Get first ring (ignore holes)
+  const geometry = feature.geometry
+  let coordinates: GeoJSON.Position[] = []
+
+  switch (geometry.type) {
+    case ***REMOVED***Polygon***REMOVED***:
+      coordinates = geometry.coordinates[0] // Get first ring (ignore holes)
+      break
+    case ***REMOVED***LineString***REMOVED***:
+      coordinates = geometry.coordinates
+      break
+    case ***REMOVED***Point***REMOVED***:
+      coordinates = [geometry.coordinates]
+      break
+    default:
+      return { lat: 61.2181, lon: -149.9003 }
+  }
+
   if (!Array.isArray(coordinates) || coordinates.length === 0) {
     return { lat: 61.2181, lon: -149.9003 }
   }
@@ -441,7 +457,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       <div className="mt-4">
         <div className="flex justify-between items-center mb-2">
-          <span>Enter coordinates (latitude, longitude) one pair per line.</span>
+          <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
           {showShapeTypeButtons && (
             <div className="flex gap-2">
               <button
