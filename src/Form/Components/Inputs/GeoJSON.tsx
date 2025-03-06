@@ -234,6 +234,8 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       setGeojson(e.data?.geojson)
       updateCoordinatesFromGeoJSON(e.data?.geojson)
       setIsDrawing(false)
+      // Disable drawing after shape is completed
+      map.disableDraw(currentDrawType)
     })
 
     // On modify drawing
@@ -281,6 +283,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       setGeojson(undefined)
       onChange(undefined)
       setCoordinates(***REMOVED******REMOVED***)
+      setShowShapeTypeButtons(false)
       setCurrentDrawType(shapeType)
       map.enableDraw(shapeType)
       setIsDrawing(true)
@@ -299,7 +302,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           return false
         }
       })
-    return validLines.length >= 2
+    return validLines.length >= 3
   }
 
   const handleCoordinatesChange = (e: string | undefined): void => {
