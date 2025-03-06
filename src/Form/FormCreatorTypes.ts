@@ -148,6 +148,14 @@ interface IGeoJSONField extends IFormFieldRoot {
   include_types?: string[]
 }
 
+export interface IFormSection {
+  id: string
+  label?: string
+  fields?: IFormField[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
+}
+
 export interface IPage extends Omit<IForm, ***REMOVED***pages***REMOVED***> {
   id: string
   label: string

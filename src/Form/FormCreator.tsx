@@ -1,5 +1,5 @@
 import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
-import { type IFormValues, type IForm, type IValueChangeFn, type IFormField, type IWizardStep, type IPage } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IForm, type IValueChangeFn, type IFormField, type IWizardStep, type IFormSection } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 import { copyAndAddPathToFields } from ***REMOVED***@/Form/helpers***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { ExclamationTriangleIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -101,14 +101,6 @@ const FormCreator = ({
         <FormSection formSection={activeForm} formValueState={formValueState} form={activeForm} onChange={onChange} />
     </div>
   )
-}
-
-interface IFormSection {
-  id: string
-  label?: string
-  fields?: IFormField[]
-  pages?: IPage[]
-  wizard_steps?: IWizardStep[]
 }
 
 const FormSection = ({
