@@ -48,24 +48,23 @@ const TimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const inputValue = e.target.value
-    // If the input is empty but we have a current value, keep the current value
-    if (!inputValue && value) {
-      return
-    }
 
-    // If we have a partial time (e.g., just started typing hours), keep the current value
+    // If we have a partial time (e.g., just started typing hours), don***REMOVED***t update
     if (inputValue && inputValue.length < 5) { // 5 is the length of a complete time value (HH:MM)
       return
     }
 
-    const newValue = inputValue ? new Date(`1970-01-01T${inputValue}`).toISOString() : undefined
-    if (newValue) {
+    if (inputValue) {
+      const newValue = new Date(`1970-01-01T${inputValue}`).toISOString()
       const validationError = validateTime(inputValue)
       setError(validationError)
+      if (!validationError) {
+        onChange(newValue)
+      }
     } else {
       setError(null)
+      onChange(undefined)
     }
-    onChange(newValue)
   }
 
   return (
