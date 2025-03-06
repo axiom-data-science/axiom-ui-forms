@@ -4,7 +4,7 @@ import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import { type GeoJSON } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import { TrashIcon, TriangleUpIcon, DrawingPinIcon, DotFilledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { TrashIcon, SquareIcon, BorderSolidIcon, DrawingPinFilledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 
 /*
 List of coordinates for testing. Around Anchorage.
@@ -268,7 +268,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             } text-white w-10 h-10 flex items-center justify-center`}
             title="Draw polygon"
           >
-            <TriangleUpIcon className="w-5 h-5" />
+            <SquareIcon className="w-5 h-5" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Polygon
             </span>
@@ -284,7 +284,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             } text-white w-10 h-10 flex items-center justify-center`}
             title="Draw line"
           >
-            <DrawingPinIcon className="w-5 h-5 rotate-45" />
+            <BorderSolidIcon className="w-5 h-5" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Line
             </span>
@@ -300,20 +300,25 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             } text-white w-10 h-10 flex items-center justify-center`}
             title="Draw point"
           >
-            <DotFilledIcon className="w-5 h-5" />
+            <DrawingPinFilledIcon className="w-5 h-5" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Point
             </span>
           </button>
         </div>
         {hasValidShape(geojson) && (
-          <button
-            onClick={clearShape}
-            className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
-            title="Clear shape"
-          >
-            <TrashIcon className="w-5 h-5" />
-          </button>
+          <div className="tooltip-container relative group">
+            <button
+              onClick={clearShape}
+              className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
+              title="Clear shape"
+            >
+              <TrashIcon className="w-5 h-5" />
+              <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                Clear Shape
+              </span>
+            </button>
+          </div>
         )}
       </div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
