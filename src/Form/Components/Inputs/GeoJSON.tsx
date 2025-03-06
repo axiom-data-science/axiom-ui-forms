@@ -268,7 +268,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             } text-white w-10 h-10 flex items-center justify-center`}
             title="Draw polygon"
           >
-            <SquareIcon className="w-5 h-5" />
+            <SquareIcon className="w-5 h-5 rotate-45" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
               Draw Polygon
             </span>
@@ -284,9 +284,9 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
             } text-white w-10 h-10 flex items-center justify-center`}
             title="Draw line"
           >
-            <BorderSolidIcon className="w-5 h-5" />
+            <BorderSolidIcon className="w-5 h-5 rotate-45" />
             <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-              Draw Line
+              Draw Path
             </span>
           </button>
         </div>
