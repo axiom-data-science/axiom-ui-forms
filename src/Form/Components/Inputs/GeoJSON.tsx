@@ -88,11 +88,18 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     const geoValue = value as unknown as GeoJSON.FeatureCollection
     if (geoValue?.type === ***REMOVED***FeatureCollection***REMOVED*** && Array.isArray(geoValue.features) && geoValue.features.length > 0) {
       const feature = geoValue.features[0]
-      if (feature?.geometry?.type === ***REMOVED***Polygon***REMOVED***) {
-        // Get the first ring of coordinates (ignore holes)
-        const coords = feature.geometry.coordinates[0]
-        // Convert from [lon, lat] to "lat, lon" format
+      const geometry = feature?.geometry
+      if (!geometry) return ***REMOVED******REMOVED***
+
+      if (geometry.type === ***REMOVED***Polygon***REMOVED***) {
+        const coords = geometry.coordinates[0]
         return coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***)
+      } else if (geometry.type === ***REMOVED***LineString***REMOVED***) {
+        const coords = geometry.coordinates
+        return coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***)
+      } else if (geometry.type === ***REMOVED***Point***REMOVED***) {
+        const coords = geometry.coordinates
+        return `${coords[1]}, ${coords[0]}`
       }
     }
     return ***REMOVED******REMOVED***
@@ -106,7 +113,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       : ***REMOVED******REMOVED***
   }
 
-  const createPolygonFromCoordinates = (coordString: string): GeoJSON | undefined => {
+  const createGeoJSONFromCoordinates = (coordString: string, forceType?: EMapShape): GeoJSON | undefined => {
     if (!coordString.trim()) {
       setError(undefined)
       return undefined
@@ -125,21 +132,53 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           return [lon, lat]
         })
 
-      if (points.length < 3) {
-        throw new Error(***REMOVED***Need at least 3 points to create a polygon***REMOVED***)
+      if (points.length === 0) {
+        throw new Error(***REMOVED***No valid coordinates found***REMOVED***)
       }
 
-      // Close the polygon by adding the first point at the end
-      points.push(points[0])
+      // Single point
+      if (points.length === 1) {
+        return {
+          type: ***REMOVED***FeatureCollection***REMOVED***,
+          features: [{
+            type: ***REMOVED***Feature***REMOVED***,
+            properties: {},
+            geometry: {
+              type: ***REMOVED***Point***REMOVED***,
+              coordinates: points[0]
+            }
+          }]
+        }
+      }
 
+      // For polygon or line, based on forceType or number of points
+      if (forceType === EMapShape.polygon || (!forceType && points.length >= 3)) {
+        // Close the polygon by adding the first point at the end if not already closed
+        if (JSON.stringify(points[0]) !== JSON.stringify(points[points.length - 1])) {
+          points.push(points[0])
+        }
+        return {
+          type: ***REMOVED***FeatureCollection***REMOVED***,
+          features: [{
+            type: ***REMOVED***Feature***REMOVED***,
+            properties: {},
+            geometry: {
+              type: ***REMOVED***Polygon***REMOVED***,
+              coordinates: [points]
+            }
+          }]
+        }
+      }
+
+      // LineString
       return {
         type: ***REMOVED***FeatureCollection***REMOVED***,
         features: [{
           type: ***REMOVED***Feature***REMOVED***,
           properties: {},
           geometry: {
-            type: ***REMOVED***Polygon***REMOVED***,
-            coordinates: [points]
+            type: ***REMOVED***LineString***REMOVED***,
+            coordinates: points
           }
         }]
       }
@@ -149,29 +188,39 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
     }
   }
 
-  const updateCoordinatesFromGeoJSON = (geo: GeoJSON | undefined): void => {
-    if (geo?.type === ***REMOVED***FeatureCollection***REMOVED*** && Array.isArray(geo.features) && geo.features.length > 0) {
-      const feature = geo.features[0]
-      if (feature?.geometry?.type === ***REMOVED***Polygon***REMOVED***) {
-        const coords = feature.geometry.coordinates[0]
-        setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***))
+  const [showShapeTypeButtons, setShowShapeTypeButtons] = useState<boolean>(() => {
+    // Show buttons if initial value has 2+ coordinates
+    if (!value) return false
+    const geoValue = value as unknown as GeoJSON.FeatureCollection
+    if (geoValue?.type === ***REMOVED***FeatureCollection***REMOVED*** && Array.isArray(geoValue.features) && geoValue.features.length > 0) {
+      const feature = geoValue.features[0]
+      const geometry = feature?.geometry
+      if (!geometry) return false
+
+      if (geometry.type === ***REMOVED***Polygon***REMOVED*** || geometry.type === ***REMOVED***LineString***REMOVED***) {
+        return geometry.coordinates.length >= 2
       }
     }
-  }
+    return false
+  })
 
-  // Reload shape on the map
-  useEffect(() => {
-    if (map === undefined) return
+  const updateCoordinatesFromGeoJSON = (geo: GeoJSON | undefined): void => {
+    if (!geo || geo.type !== ***REMOVED***FeatureCollection***REMOVED*** || !geo.features?.[0]?.geometry) return
 
-    if (geojson !== undefined && ***REMOVED***features***REMOVED*** in geojson) {
-      map.setDrawGeojson(geojson)
-      map.disableDraw(currentDrawType) // Disable drawing when there***REMOVED***s a shape
-      setIsDrawing(false)
-    } else {
-      map.enableDraw(currentDrawType)
-      setIsDrawing(true)
+    const feature = geo.features[0]
+    const geometry = feature.geometry
+
+    if (geometry.type === ***REMOVED***Polygon***REMOVED***) {
+      const coords = geometry.coordinates[0]
+      setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***))
+    } else if (geometry.type === ***REMOVED***LineString***REMOVED***) {
+      const coords = geometry.coordinates
+      setCoordinates(coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join(***REMOVED***\n***REMOVED***))
+    } else if (geometry.type === ***REMOVED***Point***REMOVED***) {
+      const coords = geometry.coordinates
+      setCoordinates(`${coords[1]}, ${coords[0]}`)
     }
-  }, [map, currentDrawType])
+  }
 
   useEffect(() => {
     if (map === undefined) return
@@ -180,7 +229,6 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       console.log(***REMOVED***draw complete***REMOVED***, e)
       setGeojson(e.data?.geojson)
       updateCoordinatesFromGeoJSON(e.data?.geojson)
-      map.disableDraw(currentDrawType) // Disable drawing after shape is complete
       setIsDrawing(false)
     })
 
@@ -197,32 +245,6 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       onChange(geojson)
     }
   }, [geojson])
-
-  const handleCoordinatesChange = (e: string | undefined): void => {
-    setCoordinates(e ?? ***REMOVED******REMOVED***)
-    const newGeoJSON = createPolygonFromCoordinates(e ?? ***REMOVED******REMOVED***)
-    if (newGeoJSON) {
-      setGeojson(newGeoJSON)
-      setError(undefined)
-      // Clear existing shape and redraw with new coordinates
-      if (map) {
-        map.setDrawGeojson({
-          type: ***REMOVED***FeatureCollection***REMOVED***,
-          features: []
-        })
-        map.setDrawGeojson(newGeoJSON as GeoJSON.FeatureCollection)
-      }
-    } else {
-      setGeojson(undefined)
-      onChange(undefined) // Explicitly clear the value
-      if (map) {
-        map.setDrawGeojson({
-          type: ***REMOVED***FeatureCollection***REMOVED***,
-          features: []
-        })
-      }
-    }
-  }
 
   const hasValidShape = (geo: GeoJSON | undefined): boolean => {
     return geo !== undefined &&
@@ -259,6 +281,87 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       map.enableDraw(shapeType)
       setIsDrawing(true)
     }
+  }
+
+  const shouldShowShapeButtons = (coords: string): boolean => {
+    const validLines = coords.trim().split(***REMOVED***\n***REMOVED***)
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .filter(line => {
+        try {
+          const [lat, lon] = line.split(***REMOVED***,***REMOVED***).map(coord => parseFloat(coord.trim()))
+          return !isNaN(lat) && !isNaN(lon)
+        } catch {
+          return false
+        }
+      })
+    return validLines.length >= 2
+  }
+
+  const handleCoordinatesChange = (e: string | undefined): void => {
+    const newCoords = e ?? ***REMOVED******REMOVED***
+    setCoordinates(newCoords)
+    setShowShapeTypeButtons(shouldShowShapeButtons(newCoords))
+
+    try {
+      const newGeoJSON = createGeoJSONFromCoordinates(newCoords)
+      if (newGeoJSON) {
+        setGeojson(newGeoJSON)
+        setError(undefined)
+        if (map) {
+          map.setDrawGeojson({
+            type: ***REMOVED***FeatureCollection***REMOVED***,
+            features: []
+          })
+          map.setDrawGeojson(newGeoJSON as GeoJSON.FeatureCollection)
+        }
+      } else {
+        setGeojson(undefined)
+        onChange(undefined)
+        if (map) {
+          map.setDrawGeojson({
+            type: ***REMOVED***FeatureCollection***REMOVED***,
+            features: []
+          })
+        }
+      }
+    } catch (e) {
+      setError(***REMOVED***Invalid coordinate format***REMOVED***)
+    }
+  }
+
+  // Reload shape on the map
+  useEffect(() => {
+    if (map === undefined) return
+
+    if (geojson !== undefined && ***REMOVED***features***REMOVED*** in geojson) {
+      map.setDrawGeojson(geojson)
+      map.disableDraw(currentDrawType) // Disable drawing when there***REMOVED***s a shape
+      setIsDrawing(false)
+      // Update coordinates display and shape type buttons
+      updateCoordinatesFromGeoJSON(geojson)
+      setShowShapeTypeButtons(shouldShowShapeButtons(coordinates))
+    } else {
+      map.enableDraw(currentDrawType)
+      setIsDrawing(true)
+    }
+  }, [map, currentDrawType])
+
+  const applyShapeType = (shapeType: EMapShape): void => {
+    const newGeoJSON = createGeoJSONFromCoordinates(coordinates, shapeType)
+    if (newGeoJSON) {
+      setGeojson(newGeoJSON)
+      setError(undefined)
+      if (map) {
+        map.setDrawGeojson({
+          type: ***REMOVED***FeatureCollection***REMOVED***,
+          features: []
+        })
+        map.setDrawGeojson(newGeoJSON as GeoJSON.FeatureCollection)
+      }
+    }
+    // Don***REMOVED***t hide the buttons anymore
+    // setShowShapeTypeButtons(false)
   }
 
   return <div className="relative">
@@ -329,12 +432,30 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
       </div>
       <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
       <div className="mt-4">
+        <div className="flex justify-between items-center mb-2">
+          <span>Enter coordinates (latitude, longitude) one pair per line.</span>
+          {showShapeTypeButtons && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => { applyShapeType(EMapShape.linestring) }}
+                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm"
+              >
+                Create Path
+              </button>
+              <button
+                onClick={() => { applyShapeType(EMapShape.polygon) }}
+                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm"
+              >
+                Create Polygon
+              </button>
+            </div>
+          )}
+        </div>
         <TextArea
           error={error}
           className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
           id={`${field.id}-coordinates`}
           testId={`${field.id}-coordinates`}
-          label="Enter coordinates (latitude, longitude) one pair per line."
           value={coordinates}
           onChange={handleCoordinatesChange}
           placeholder="61.2181, -149.9003&#10;61.2182, -149.9004&#10;61.2183, -149.9005"
