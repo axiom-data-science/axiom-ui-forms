@@ -1,6 +1,6 @@
 {
-    "label": "Nested test form",
-    "id": "nestedTestForm",
+    "label": "Wizard test form",
+    "id": "wizardTestForm",
     "wizard_steps": [
         {
             "id": "step1",
@@ -21,6 +21,30 @@
                 }
             ]
         },
+        {
+          "id": "map-step",
+          "label": "Map step",
+          "fields": [
+              {
+                  "id": "map",
+                  "label": "Map",
+                  "type": "geojson",
+                  "required": false
+              }
+          ]
+      },
+      {
+        "id": "time-step",
+        "label": "Time step",
+        "fields": [
+            {
+                "id": "date",
+                "label": "Start date",
+                "type": "date",
+                "required": false
+            }
+        ]
+    },
         {
             "id": "step2",
             "label": "Step 2",
