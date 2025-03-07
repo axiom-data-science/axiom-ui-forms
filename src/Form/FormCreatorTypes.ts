@@ -151,6 +151,7 @@ interface IGeoJSONField extends IFormFieldRoot {
 export interface IFormSection {
   id: string
   label?: string
+  description?: string
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]

@@ -1,8 +1,8 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
 import { type IFormValues, type IForm, type IValueChangeFn, type IFormField, type IWizardStep, type IFormSection } from '@/Form/FormCreatorTypes'
-import { copyAndAddPathToFields } from '@/Form/helpers'
+import { copyAndAddPathToFields, getFieldsFromFormSection } from '@/Form/helpers'
 import { utils } from '@axdspub/axiom-ui-utilities'
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { CaretLeftIcon, CaretRightIcon, ExclamationTriangleIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import React, { useEffect, useState, type ReactElement } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -125,14 +125,14 @@ const FormSection = ({
   const hasFields = fields.length > 0
   const hasWizardSteps = wizardSteps.length > 0
   if (hasPages && hasFields) {
-    pages.push({
+    pages.unshift({
       id: 'default',
       label: 'Default',
       fields
     })
   }
   if ((hasPages || hasFields) && hasWizardSteps) {
-    wizardSteps.push({
+    wizardSteps.unshift({
       id: 'default',
       order: -10,
       label: 'Default',
@@ -156,41 +156,116 @@ const FormSection = ({
 
 export const WizardNav = ({
   form,
-  activeId
+  activeId,
+  sections,
+  sectionStatus
 }: {
   form: IForm
   activeId: string | null
+  sections?: IFormSection[]
+  sectionStatus: IFormSectionStatus
 }): ReactElement => {
+  const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
   return (
-    <div className='flex flex-row gap-1 justify-evenly'>{
-      form?.wizard_steps?.map(p => {
+    <div className='flex flex-row gap-1 justify-evenly relative align-middle'>
+      <div className='h-[2px] -m-[1px] top-3 bg-slate-300 absolute left-0 right-0 z-0' />
+      {
+      steps.map((p, i) => {
         return (
-          <Link to={`${p.id}`} key={p.id} className={`${utils.createButtonClass({
-            className: `flex-grow text-center border-none text-sm hover:bg-slate-100${activeId === p.id ? ' bg-slate-100' : ''}`
-          })}`} type='default'>{p.label}</Link>
+          <div key={p.id} className='flex-grow text-center z-10 relative'>
+            <Link to={`${p.id}`} className={`${utils.createButtonClass({
+              className: `px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? 'bg-slate-600 text-white' : 'hover:bg-slate-100'}`
+            })}`} type='default'>{p.label}</Link>
+            {
+              i < steps.length - 1 && steps.length > 1
+                ? <span className='absolute right-0 w-4 h-full bg-white'><CaretRightIcon className='w-4 h-6 fill-slate-300 stroke-slate-300' /></span>
+                : ''
+            }
+            <p className='text-xs text-center mt-4'>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
+            <p className='text-xs text-center mt-2'>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
+          </div>
         )
       })
     }</div>
   )
 }
 
-export interface IWizardLayoutProps {
+export const WizardNavSmall = ({
+  form,
+  activeId,
+  sections,
+  sectionStatus
+}: {
   form: IForm
-  sections?: IWizardStep[]
-  formValueState: IFormValueState
-  onChange?: IValueChangeFn
-  ContentComponent?: React.FC<{
-    activeId: string | null
-    form: IForm
-    formValueState: IFormValueState
-    onChange?: IValueChangeFn
-  }>
-  NavComponent?: React.FC<{
-    form: IForm
-    Step: string | null
-  }>
-  className?: string
+  activeId: string | null
+  sections?: IFormSection[]
+  sectionStatus: IFormSectionStatus
+}): ReactElement => {
+  const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
+  const stepsMap = Object.fromEntries(steps.map(p => [p.id, p]))
+  const currentStep = stepsMap[activeId ?? ''] ?? steps[0]
+  const currentIndex = steps.indexOf(currentStep)
+  const nextIndex = currentIndex + 1
+  const prevIndex = currentIndex - 1
+  return (
+    <div className='flex flex-row gap-4 justify-end'>{
+      prevIndex >= 0
+        ? <Link to={`${steps[prevIndex].id}`} className={utils.createButtonClass({
+          className: 'px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
+        })} type='default'><CaretLeftIcon className='inline' /> Previous</Link>
+        : <span className={utils.createButtonClass({
+          className: 'px-4 bg-white border-none text-sm text-slate-400'
+        })}>Previous</span>
+      }
+      {
+        nextIndex < steps.length
+          ? <Link to={`${steps[nextIndex].id}`} className={utils.createButtonClass({
+            className: 'px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
+          })} type='default'>Next <CaretRightIcon className='inline' /></Link>
+          : <span className={utils.createButtonClass({
+            className: 'px-4 bg-white border-none text-sm text-slate-400'
+          })}>Next</span>
+      }
+    </div>
+  )
 }
+
+export interface IWizardLayoutProps extends IPageLayoutProps {
+  SmallNavComponent?: React.FC<{
+    form: IForm
+    sections?: IFormSection[]
+    activeId: string | null
+    sectionStatus: IFormSectionStatus
+    className?: string
+  }>
+}
+
+const testField = (field: IFormField, formValues: IFormValues): boolean => {
+  const val = formValues[field.id]
+  return val !== undefined && val !== null && val !== ''
+}
+
+const calculateSectionStatus = (sections: IFormSection[], formValueState: IFormValueState): IFormSectionStatus => {
+  const [formValues] = formValueState
+  return Object.fromEntries(sections.map(s => {
+    const fields = getFieldsFromFormSection(s).filter(f => f.type !== 'object')
+    const total = fields.length
+    const completed = fields.filter(f => testField(f, formValues)).length
+    const required = fields.filter(f => f.required)
+    const requiredTotal = required.length
+    const requiredCompleted = required.filter(f => testField(f, formValues)).length
+    const valid = requiredTotal === requiredCompleted
+    return [s.id, { completed, total, requiredTotal, requiredCompleted, valid }]
+  }))
+}
+
+export type IFormSectionStatus = Record<string, {
+  completed: number
+  total: number
+  requiredTotal: number
+  requiredCompleted: number
+  valid: boolean
+}>
 
 export const ActiveWizardPage = ({
   activeId,
@@ -219,13 +294,42 @@ const WizardLayout = ({
   onChange,
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
-  className = 'flex flex-col gap-4'
-}: IPageLayoutProps): ReactElement => {
+  SmallNavComponent = WizardNavSmall,
+  className = 'flex flex-col gap-16 pt-8'
+}: IWizardLayoutProps): ReactElement => {
+  if (sections === undefined) {
+    return <></>
+  }
   const activeId = useParams().step ?? form?.wizard_steps?.[0]?.id ?? null
+  const [sectionStatus, setSectionStatus] = useState<IFormSectionStatus>(calculateSectionStatus(sections, formValueState))
+  useEffect(() => {
+    setSectionStatus(calculateSectionStatus(sections, formValueState))
+  }, [formValueState, sections])
+
+  const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
+
   return (
     <div className={className}>
-      <NavComponent form={form} sections={sections} activeId={activeId} />
-      <ContentComponent activeId={activeId} formSection={sections?.find(s => s.id === activeId) ?? sections?.[0]} form={form} formValueState={formValueState} onChange={onChange} />
+      <NavComponent
+          form={form}
+          sections={sections}
+          activeId={activeId}
+          sectionStatus={sectionStatus}
+        />
+      <ContentComponent
+          activeId={activeId}
+          formSection={formSection}
+          form={form}
+          formValueState={formValueState}
+          sectionStatus={sectionStatus}
+          onChange={onChange}
+          />
+      <SmallNavComponent
+        form={form}
+        sections={sections}
+        activeId={activeId}
+        sectionStatus={sectionStatus}
+        />
     </div>
   )
 }
@@ -239,12 +343,14 @@ const PageNav = ({
   sections?: IFormSection[]
   activeId: string | null
 }): ReactElement => {
+  const params = useParams()
+  const path = params.step ? `${params.step}/` : ''
   return (
-    <div className='flex flex-col gap-1 w-[200px]'>{
+    <div className='flex flex-col  w-[200px]  border-slate-200'>{
       sections?.map(p => {
         return (
-          <Link to={`${p.id}`} key={p.id} className={`${utils.createButtonClass({
-            className: `border-none text-sm hover:bg-slate-100 text-left${activeId === p.id ? ' bg-slate-100' : ''}`
+          <Link to={`${path}${p.id}`} key={p.id} className={`${utils.createButtonClass({
+            className: `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? 'bg-slate-700 text-white' : 'hover:bg-slate-200'}`
           })}`} type='default'>{p.label}</Link>
         )
       })
@@ -265,11 +371,13 @@ interface IPageLayoutProps {
     formSection?: IFormSection
     formValueState: IFormValueState
     onChange?: IValueChangeFn
+    sectionStatus: IFormSectionStatus
   }>
   NavComponent?: React.FC<{
     form: IForm
     sections?: IFormSection[]
     activeId: string | null
+    sectionStatus: IFormSectionStatus
   }>
   className?: string
 }
@@ -291,6 +399,11 @@ const ActivePage = ({
 }): ReactElement => {
   return (
     <div className={className}>
+            {
+        formSection?.description !== undefined
+          ? <p className='pb-4 border-b border-slate-200 text-sm'><InfoCircledIcon className='inline-block' /> {formSection.description}</p>
+          : ''
+      }
       <FormSection formSection={formSection} formValueState={formValueState} form={form} onChange={onChange} />
     </div>
   )
@@ -305,11 +418,32 @@ const PageLayout = ({
   NavComponent = PageNav,
   className = 'flex flex-row gap-8'
 }: IPageLayoutProps): ReactElement => {
-  const activeId = useParams().page ?? form?.pages?.[0]?.id ?? null
+  if (sections === undefined) {
+    return <></>
+  }
+
+  const params = useParams()
+  const activeId = params.page ?? params.page2 ?? sections[0]?.id ?? null
+  const [sectionStatus, setSectionStatus] = useState<IFormSectionStatus>(calculateSectionStatus(sections, formValueState))
+  useEffect(() => {
+    setSectionStatus(calculateSectionStatus(sections, formValueState))
+  }, [formValueState, sections])
   return (
     <div className={className}>
-      <NavComponent form={form} sections={sections} activeId={activeId} />
-      <ContentComponent activeId={activeId} formSection={sections?.find(s => s.id === activeId) ?? sections?.[0]} form={form} formValueState={formValueState} onChange={onChange} />
+      <NavComponent
+        form={form}
+        sections={sections}
+        activeId={activeId}
+        sectionStatus={sectionStatus}
+        />
+      <ContentComponent
+        activeId={activeId}
+        formSection={sections?.find(s => s.id === activeId) ?? sections?.[0]}
+        form={form}
+        formValueState={formValueState}
+        onChange={onChange}
+        sectionStatus={sectionStatus}
+        />
     </div>
   )
 }
