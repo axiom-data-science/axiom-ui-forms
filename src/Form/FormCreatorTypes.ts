@@ -107,19 +107,37 @@ export interface IBooleanField extends IFormFieldRoot {
   value?: 'boolean'
 }
 
+interface IDateFieldConstraints {
+  minDate?: string
+  maxDate?: string
+}
+
 interface IDateField extends IFormFieldRoot {
   type: 'date'
   value?: 'date'
+  constraints?: IDateFieldConstraints
+}
+
+interface ITimeFieldConstraints {
+  minTime?: string
+  maxTime?: string
 }
 
 interface ITimeField extends IFormFieldRoot {
   type: 'time'
   value?: 'time'
+  constraints?: ITimeFieldConstraints
+}
+
+interface IDateTimeConstraints {
+  minDateTime?: string
+  maxDateTime?: string
 }
 
 interface IDateTimeField extends IFormFieldRoot {
   type: 'datetime'
   value?: 'datetime'
+  constraints?: IDateTimeConstraints
 }
 
 interface IContainerField extends IFormFieldRoot {
