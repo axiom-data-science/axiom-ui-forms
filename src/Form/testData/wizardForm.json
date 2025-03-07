@@ -24,6 +24,7 @@
         {
             "id": "step2",
             "label": "Step 2",
+            "description": "Description for step 2.. etc etc etc",
             "fields": [
                 {
                     "id": "description",

@@ -1,4 +1,4 @@
-import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IPage } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IPage, type IFormSection } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
 
 export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
   return field?.fields ?? []
@@ -57,18 +57,6 @@ export function copyAndAddPathToFields<T extends IForm | IFormFieldSection | IOb
   return form
 }
 
-export function copyAndAddPathToPages (formOrContainer: IForm): IForm {
-  const form = JSON.parse(JSON.stringify(formOrContainer)) as IForm
-  // const fields = getFields(form.fields)
-  form.pages = form?.pages?.map(page => {
-    page.fields = page.fields.map(field => {
-      return addFieldPath(field)
-    })
-    return page
-  })
-  return form
-}
-
 export function getFieldValue (field: IFormField, formValues: IFormValues): IValueType | IValueType[] | undefined {
   return formValues[getPathFromField(field)]
 }
@@ -92,6 +80,13 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
   return true
 }
 
+export function getFieldsFromFormSection (formSection: IFormSection): IFormField[] {
+  const pageFields = formSection?.pages?.map(p => getFields(p.fields)).flat(1)
+  const wizardFields = formSection?.wizard_steps?.map(p => getFields(p.fields)).flat(1)
+  const fields = getFields((formSection?.fields ?? [])).concat(pageFields ?? []).concat(wizardFields ?? [])
+  return fields
+}
+
 export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: IFormValues): IFormValues {
   Object.keys(formValues).forEach(key => {
     const field = form?.fields?.find(f => f.id === key)
@@ -100,9 +95,7 @@ export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: 
     }
   })
 
-  const pageFields = form?.pages?.map(p => getFields(p.fields)).flat(1)
-  const wizardFields = form?.wizard_steps?.map(p => getFields(p.fields)).flat(1)
-  const fields = getFields((form?.fields ?? [])).concat(pageFields ?? []).concat(wizardFields ?? [])
+  const fields = getFieldsFromFormSection(form)
   const fieldIds = fields.map(f => f.id)
   const newFormValues = Object.fromEntries(Object.entries(formValues).filter(([key]) => fieldIds.includes(key)))
   return newFormValues

@@ -40,10 +40,14 @@ const App = (): ReactElement => {
             <Route path="/set-tester" element={<SetTester />} />
             <Route path="/map-tester" element={<MapTester />} />
             <Route path="/page-form/" element={<PagedFormWrap />}>
-              <Route path=***REMOVED***:page***REMOVED*** element={<PagedFormWrap />} />
+              <Route path=***REMOVED***:page***REMOVED*** element={<PagedFormWrap />}>
+                <Route path=***REMOVED***:step2***REMOVED*** element={<PagedFormWrap />} />
+              </Route>
             </Route>
             <Route path=***REMOVED***/wizard-form***REMOVED*** element={<WizardFormWrap />}>
-              <Route path=***REMOVED***:step***REMOVED*** element={<WizardFormWrap />} />
+              <Route path=***REMOVED***:step***REMOVED*** element={<WizardFormWrap />}>
+                <Route path=***REMOVED***:page2***REMOVED*** element={<WizardFormWrap />} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>
