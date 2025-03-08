@@ -55,7 +55,6 @@ Test form config [here](https://axiom-ui-forms.srv.axds.co/)
 }
 ```
 
-
 ```ts
 import React, {type ReactElement} from ***REMOVED***react***REMOVED***
 import { FormCreator, type IForm, type IFormValues } from ***REMOVED***@axdspub/axiom-ui-forms***REMOVED***
@@ -68,8 +67,88 @@ export default ExampleForm = ({formConfig}: {formConfig: IForm}): ReactElement =
     },[formValues])
 
     return (
-        <FormCreator form={formConfig} formValueState={} >
+        <FormCreator form={formConfig} formValueState={formValueState} />
     )
+}
+
+```
+
+## Config to create a form with wizard steps using config
+
+```json
+{
+    "id": "example",
+    "label": "Example form",
+    "description": "This is just an example",
+    "wizard_steps":[
+      {
+        "id":"intro",
+        "label":"Introduction",
+        "order": 0,
+        "fields":[
+            {
+              "id": "title",
+              "type": "text",
+              "label": "Title"
+          },
+          {
+              "id": "description",
+              "type": "long_text",
+              "label": "Description"
+          }
+        ]
+
+      },
+      {
+        "id": "map",
+        "label": "Step 2",
+        "order": 1,
+        "fields": [
+          {
+            "id": "map",
+            "type": "geojson",
+            "label": "Location"
+          }
+        ]
+      },
+      {
+        "id": "about",
+        "label": "About yourself",
+        "order": 2,
+        "pages":[
+          {
+            "id": "favorites",
+            "label": "Favorites",
+            "fields": [
+                {
+                  "id": "favorites_list",
+                  "type": "text",
+                  "label": "List your favorite things",
+                  "multiple": true
+                }
+            ]
+          },
+          {
+            "id":"sign",
+            "label": "Signature",
+            "fields": [
+              {
+                  "id": "agree",
+                  "type": "boolean",
+                  "label": "Do you agree?"
+              },
+              {
+                  "id": "signature",
+                  "type": "text",
+                  "label": "Sign your name then"
+              }
+            ]
+          }
+        ]
+
+      }
+
+    ]
 }
 
 ```
@@ -167,6 +246,7 @@ export default ExampleForm = ({schema}:{schema: JSONSchema7 }): ReactElement => 
 }
 
 ```
+
 
 # Create a form using a schema, and modify it with a form config
 
