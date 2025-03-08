@@ -47,8 +47,9 @@ const config = [
         file: ***REMOVED***library/index.js***REMOVED***,
         format: ***REMOVED***es***REMOVED***,
         sourcemap: true,
+        inlineDynamicImports: true,
         globals
-      },
+      }
       /* {
         file: ***REMOVED***library/browser.js***REMOVED***,
         format: ***REMOVED***iife***REMOVED***,
@@ -56,13 +57,13 @@ const config = [
         sourcemap: true,
         globals
       }, */
-      {
+      /* {
         file: ***REMOVED***library/umd.js***REMOVED***,
         format: ***REMOVED***umd***REMOVED***,
         name: ***REMOVED***AxiomUIforms***REMOVED***,
         sourcemap: true,
         globals
-      }
+      } */
     ],
     plugins: [
       nodePolyfills(),
