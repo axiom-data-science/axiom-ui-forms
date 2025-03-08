@@ -49,7 +49,7 @@ const config = [
         sourcemap: true,
         inlineDynamicImports: true,
         globals
-      }
+      },
       /* {
         file: 'library/browser.js',
         format: 'iife',
@@ -57,13 +57,14 @@ const config = [
         sourcemap: true,
         globals
       }, */
-      /* {
+      {
         file: 'library/umd.js',
         format: 'umd',
         name: 'AxiomUIforms',
         sourcemap: true,
+        inlineDynamicImports: true,
         globals
-      } */
+      }
     ],
     plugins: [
       nodePolyfills(),
