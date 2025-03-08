@@ -1,4 +1,4 @@
-import { type IFormField } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 export const FieldLabelText = (field: IFormField): ReactElement => {

@@ -3,7 +3,7 @@ import React, { type ReactNode, useState, type ReactElement } from ***REMOVED***
 import FormOutput from ***REMOVED***@/Form/Manage/FormMappedOutput***REMOVED***
 import FormConfigInput from ***REMOVED***@/Form/Manage/FormConfigInput***REMOVED***
 import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
-import Form from ***REMOVED***@/Form/FormCreator***REMOVED***
+import Form from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import formAtom from ***REMOVED***@/state/formAtom***REMOVED***
 import { RawFormOutput } from ***REMOVED***@/Form/Manage/RawFormOutput***REMOVED***
@@ -12,7 +12,7 @@ import { getQueryParam, updateUrlParam } from ***REMOVED***@/helpers***REMOVED**
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { CheckIcon, Cross1Icon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
-import { type IForm, type IFormValues } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 
 type IDisplayType = ***REMOVED***stack***REMOVED*** | ***REMOVED***tab***REMOVED***

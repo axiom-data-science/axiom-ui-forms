@@ -1,6 +1,6 @@
 import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
-import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 

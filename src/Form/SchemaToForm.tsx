@@ -4,8 +4,8 @@ import { type JSONSchema7 } from ***REMOVED***json-schema***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 import testSchema from ***REMOVED***@/Form/testData/testSchema.json***REMOVED***
-import { type IForm, type IFormValues } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
-import FormCreator from ***REMOVED***@/Form/FormCreator***REMOVED***
+import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { ExclamationTriangleIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import ObjectInput from ***REMOVED***@/Form/Components/Inputs/Object***REMOVED***
 import { objectToSchema, schemaToFormObject, validateAgainstSchema, validateSchema } from ***REMOVED***@/Form/schemaToFormHelpers***REMOVED***

@@ -1,4 +1,4 @@
-import { type IForm } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 import { addFieldPath, getFields } from ***REMOVED***@/Form/helpers***REMOVED***
 import { Input } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***

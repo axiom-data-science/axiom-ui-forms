@@ -210,6 +210,7 @@ export interface IFormFieldProps {
 }
 
 export type IFormValues = Record<string, IValueType | IValueType[]>
+export type IFormValueState = [IFormValues, (v: IFormValues) => void]
 
 export type IFormInputComponent = React.FC<IFormFieldProps>
 
@@ -219,6 +220,6 @@ export interface IFieldInputProps {
   form: IForm
   field: IFormField
   onChange: IValueChangeFn
-  formValueState: [IFormValues, (v: IFormValues) => void]
+  formValueState: IFormValueState
   value?: IValueType
 }

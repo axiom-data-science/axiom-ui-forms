@@ -1,5 +1,5 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
-import { type IFieldInputProps } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import React, { type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
 
 const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {

@@ -1,4 +1,4 @@
-import { type IForm } from ***REMOVED***@/Form/FormCreatorTypes***REMOVED***
+import { type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
 import { base64ToJson, getQueryParam, jsonToBase64, updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 import { atom } from ***REMOVED***jotai***REMOVED***
