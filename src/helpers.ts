@@ -1,4 +1,4 @@
-import { type IValueType, type IFormValues } from '@/Form/FormCreatorTypes'
+import { type IValueType, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { decode, encode } from 'cbor-x'
 
 export function jsonToBase64<T = JSON> (json: T): string {

@@ -7,7 +7,7 @@ import { useAtom } from 'jotai'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import formValuesAtom from '@/state/formValuesAtom'
 import { copyAndAddPathToFields, getFields } from '@/Form/helpers'
-import { type IFormValues, type IForm } from '@/Form/FormCreatorTypes'
+import { type IFormValues, type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
 
 interface IOutputRecord {

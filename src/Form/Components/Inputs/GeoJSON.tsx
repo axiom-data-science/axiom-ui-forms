@@ -1,6 +1,6 @@
 import { Button, TextArea } from '@axdspub/axiom-ui-utilities'
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
+import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from '@axdspub/axiom-maps'
 import { type GeoJSON } from 'geojson'
 import React, { useEffect, useState, type ReactElement } from 'react'

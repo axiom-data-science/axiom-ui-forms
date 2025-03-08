@@ -1,5 +1,5 @@
 import { FieldLabelText } from '@/Form/Components/FieldLabel'
-import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
+import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import { Checkbox } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 

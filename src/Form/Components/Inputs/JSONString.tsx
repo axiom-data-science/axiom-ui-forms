@@ -1,5 +1,5 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
+import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
 import React, { useState, type ReactElement } from 'react'
 

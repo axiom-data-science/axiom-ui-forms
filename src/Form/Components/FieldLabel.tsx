@@ -1,4 +1,4 @@
-import { type IFormField } from '@/Form/FormCreatorTypes'
+import { type IFormField } from '@/Form/Creator/FormCreatorTypes'
 import React, { type ReactElement } from 'react'
 
 export const FieldLabelText = (field: IFormField): ReactElement => {

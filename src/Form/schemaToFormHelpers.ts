@@ -1,4 +1,4 @@
-import { type IForm, type IFormField, type IFormFieldType, type IFormValues } from '@/Form/FormCreatorTypes'
+import { type IForm, type IFormField, type IFormFieldType, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import Ajv, { type ValidateFunction } from 'ajv'
 import GenerateSchema from 'generate-schema'
 import { type JSONSchema7, type JSONSchema7Type, type JSONSchema7Definition } from 'json-schema'

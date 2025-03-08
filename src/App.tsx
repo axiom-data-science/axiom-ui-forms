@@ -6,14 +6,14 @@ import MapTester from '@/Form/MapTester'
 import SchemaToForm from '@/Form/SchemaToForm'
 import pagedFormJson from '@/Form/testData/pagedForm.json'
 import wizardFormJson from '@/Form/testData/wizardForm.json'
-import { type IForm, type IFormValues } from '@/Form/FormCreatorTypes'
-import { FormCreator } from '@/Form'
+import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
+import Form from '@/Form/Creator/FormCreator'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-  <FormCreator form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' />
+  <Form form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' />
   <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
   </div>
   )
@@ -23,7 +23,7 @@ const WizardFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-        <FormCreator form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' />
+        <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' />
         <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
       </div>
   )
@@ -35,19 +35,17 @@ const App = (): ReactElement => {
     <div className='h-screen flex flex-col gap-4'>
       <BrowserRouter>
           <Routes>
-            <Route path='/' element={<FormManager />} />
+            <Route path='/' element={<FormManager />}>
+              <Route path='*' element={<FormManager />} />
+            </Route>
             <Route path='/schema-to-form' element={<SchemaToForm />} />
             <Route path="/set-tester" element={<SetTester />} />
             <Route path="/map-tester" element={<MapTester />} />
             <Route path="/page-form/" element={<PagedFormWrap />}>
-              <Route path=':page' element={<PagedFormWrap />}>
-                <Route path=':step2' element={<PagedFormWrap />} />
-              </Route>
+              <Route path='*' element={<PagedFormWrap />} />
             </Route>
             <Route path='/wizard-form' element={<WizardFormWrap />}>
-              <Route path=':step' element={<WizardFormWrap />}>
-                <Route path=':page2' element={<WizardFormWrap />} />
-              </Route>
+              <Route path='*' element={<WizardFormWrap />} />
             </Route>
           </Routes>
         </BrowserRouter>

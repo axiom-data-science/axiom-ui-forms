@@ -1,4 +1,4 @@
-import { type IFormField, type IForm } from '@/Form/FormCreatorTypes'
+import { type IFormField, type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
 import { copyAndAddPathToFields, getPathFromField } from '@/Form/helpers'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'

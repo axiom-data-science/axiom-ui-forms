@@ -1,4 +1,5 @@
-import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IPage, type IFormSection } from '@/Form/FormCreatorTypes'
+import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
+import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IPage, type IFormSection, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
 
 export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
   return field?.fields ?? []
@@ -99,4 +100,23 @@ export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: 
   const fieldIds = fields.map(f => f.id)
   const newFormValues = Object.fromEntries(Object.entries(formValues).filter(([key]) => fieldIds.includes(key)))
   return newFormValues
+}
+
+const testField = (field: IFormField, formValues: IFormValues): boolean => {
+  const val = formValues[field.id]
+  return val !== undefined && val !== null && val !== ''
+}
+
+export const calculateSectionStatus = (sections: IFormSection[], formValueState: IFormValueState): IFormSectionStatus => {
+  const [formValues] = formValueState
+  return Object.fromEntries(sections.map(s => {
+    const fields = getFieldsFromFormSection(s).filter(f => f.type !== 'object')
+    const total = fields.length
+    const completed = fields.filter(f => testField(f, formValues)).length
+    const required = fields.filter(f => f.required)
+    const requiredTotal = required.length
+    const requiredCompleted = required.filter(f => testField(f, formValues)).length
+    const valid = requiredTotal === requiredCompleted
+    return [s.id, { completed, total, requiredTotal, requiredCompleted, valid }]
+  }))
 }

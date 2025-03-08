@@ -1,4 +1,4 @@
-import { type IForm } from '@/Form/FormCreatorTypes'
+import { type IForm } from '@/Form/Creator/FormCreatorTypes'
 import testForm from '@/Form/testData/nestedForm.json'
 import { base64ToJson, getQueryParam, jsonToBase64, updateUrlParam } from '@/helpers'
 import { atom } from 'jotai'

@@ -1,4 +1,4 @@
-import { type IFormValues } from '@/Form/FormCreatorTypes'
+import { type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
 
 import formValuesAtom from '@/state/formValuesAtom'

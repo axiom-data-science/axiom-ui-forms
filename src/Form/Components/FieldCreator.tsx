@@ -1,5 +1,5 @@
 import inputMap from '@/Form/Components/Inputs/inputMap'
-import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType, type IForm } from '@/Form/FormCreatorTypes'
+import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType, type IForm, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
 import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, getPathFromField } from '@/Form/helpers'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
@@ -13,7 +13,7 @@ interface IFieldCreator {
   className?: string
   defaultClassName?: string
   value?: IValueType | IValueType[]
-  formValueState: [IFormValues, (v: IFormValues) => void]
+  formValueState: IFormValueState
 }
 
 const toolButtonClass = 'border-white hover:border-single hover:border-1 hover:border-slate-400'

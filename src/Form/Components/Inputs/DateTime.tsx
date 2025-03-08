@@ -1,5 +1,5 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type IFieldInputProps } from '@/Form/FormCreatorTypes'
+import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import React, { type ReactElement, useState } from 'react'
 
 const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {

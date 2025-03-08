@@ -1,4 +1,4 @@
-import { type IForm, type IFormField } from '@/Form/FormCreatorTypes'
+import { type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement, useState, useEffect } from 'react'
@@ -7,12 +7,7 @@ const validateForm = (form: IForm): string | undefined => {
   if (form.label === undefined) {
     return ('Label is required')
   }
-  if (form.fields === undefined) {
-    return ('At least one field is required')
-  }
-  if (form.fields.length > Object.keys(Object.fromEntries(form.fields.map((field: IFormField) => [field.id, field]))).length) {
-    return ('Field IDs must be unique')
-  }
+
   return undefined
 }
 

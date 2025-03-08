@@ -1,4 +1,4 @@
-import { type IFormValues } from '@/Form/FormCreatorTypes'
+import { type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { base64ToJson, getQueryParam, jsonToBase64, updateUrlParam } from '@/helpers'
 import { atom } from 'jotai'
 
