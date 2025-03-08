@@ -16,7 +16,7 @@ React library that allows:
 
 ## Create a form using a config
 
-Test form config [here](https://axiom-ui-forms.srv.axds.co/)
+Test form config [here](https://axiom-ui-forms.srv.axds.co/). Note: currently, forms with wizards or pages require that the parent route includes `*` (only tested with `react-router-dom@7`). Todo: make url navigation on form optional.
 
 ```json
 {
