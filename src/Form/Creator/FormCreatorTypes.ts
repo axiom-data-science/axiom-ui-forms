@@ -195,6 +195,11 @@ export interface IForm {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
+  settings?: {
+    url_navigable?: boolean
+    class_name?: string
+    show_progress?: boolean
+  }
 }
 
 export interface IFormWithPages {
