@@ -23,7 +23,7 @@ const WizardFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-        <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' />
+        <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={false} />
         <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
       </div>
   )

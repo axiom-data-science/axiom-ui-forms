@@ -2,6 +2,7 @@ import { type IFormValues, type IForm, type IValueChangeFn } from '@/Form/Creato
 import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
 import { copyAndAddPathToFields } from '@/Form/helpers'
+import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { useEffect, useState, type ReactElement } from 'react'
 
 export interface IFormCreatorProps {
@@ -11,6 +12,7 @@ export interface IFormCreatorProps {
   error?: string
   onChange?: IValueChangeFn
   className?: string
+  urlNavigable?: boolean
 }
 
 const FormCreator = ({
@@ -19,7 +21,8 @@ const FormCreator = ({
   note,
   error,
   onChange,
-  className
+  className,
+  urlNavigable = true
 }: IFormCreatorProps): ReactElement => {
   const [activeForm, setActiveForm] = useState<IForm | null>(null)
   useEffect(() => {
@@ -30,10 +33,24 @@ const FormCreator = ({
     return <p>Processing</p>
   }
 
+  activeForm.settings = {
+    url_navigable: urlNavigable,
+    ...activeForm.settings
+  }
+
   return (
-    <div className={className}>
+
+    <div className={utils.makeClassName({
+      className: activeForm?.settings?.class_name,
+      defaultClassName: className
+    })}>
         <FormHeader form={activeForm} note={note} error={error} />
-        <FormSection formSection={activeForm} formValueState={formValueState} form={activeForm} onChange={onChange} />
+        <FormSection
+          formSection={activeForm}
+          formValueState={formValueState}
+          form={activeForm}
+          onChange={onChange}
+          />
     </div>
   )
 }
@@ -46,17 +63,4 @@ export type IFormSectionStatus = Record<string, {
   valid: boolean
 }>
 
-const Form = (props: IFormCreatorProps): ReactElement => {
-  return (
-    <FormCreator {...props} />
-  )
-  /* return (
-    <Routes>
-      <Route path='/' element={<FormCreator {...props} />}>
-          <Route path='*' element={<FormCreator {...props} />} />
-      </Route>
-    </Routes>
-  ) */
-}
-
-export default Form
+export default FormCreator
