@@ -1,5 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+import babel from '@rollup/plugin-babel'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 import json from '@rollup/plugin-json'
@@ -44,12 +45,13 @@ const config = [
         globals
       }, */
       {
-        file: 'library/index.js',
-        format: 'es',
+        dir: 'library/esm',
+        format: 'esm',
         sourcemap: true,
-        inlineDynamicImports: true,
+        chunkFileNames: 'chunks/[name]-[hash].js',
+        // inlineDynamicImports: true,
         globals
-      },
+      }//,
       /* {
         file: 'library/browser.js',
         format: 'iife',
@@ -57,20 +59,24 @@ const config = [
         sourcemap: true,
         globals
       }, */
-      {
-        file: 'library/umd.js',
+      /* {
+        dir: 'library/umd',
         format: 'umd',
         name: 'AxiomUIforms',
         sourcemap: true,
-        inlineDynamicImports: true,
+        // inlineDynamicImports: true,
         globals
-      }
+      } */
     ],
     plugins: [
       nodePolyfills(),
       json(),
       resolve({ preferBuiltins: false, browser: true }),
       commonjs(),
+      /* babel({
+        babelHelpers: 'bundled',
+        presets: ['@babel/preset-react']
+      }), */
       alias({
         entries: {
           '@/*': './src'
