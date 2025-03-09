@@ -1,5 +1,6 @@
 import resolve from ***REMOVED***@rollup/plugin-node-resolve***REMOVED***
 import commonjs from ***REMOVED***@rollup/plugin-commonjs***REMOVED***
+import babel from ***REMOVED***@rollup/plugin-babel***REMOVED***
 import typescript from ***REMOVED***@rollup/plugin-typescript***REMOVED***
 import dts from ***REMOVED***rollup-plugin-dts***REMOVED***
 import json from ***REMOVED***@rollup/plugin-json***REMOVED***
@@ -44,12 +45,13 @@ const config = [
         globals
       }, */
       {
-        file: ***REMOVED***library/index.js***REMOVED***,
-        format: ***REMOVED***es***REMOVED***,
+        dir: ***REMOVED***library/esm***REMOVED***,
+        format: ***REMOVED***esm***REMOVED***,
         sourcemap: true,
-        inlineDynamicImports: true,
+        chunkFileNames: ***REMOVED***chunks/[name]-[hash].js***REMOVED***,
+        // inlineDynamicImports: true,
         globals
-      },
+      }//,
       /* {
         file: ***REMOVED***library/browser.js***REMOVED***,
         format: ***REMOVED***iife***REMOVED***,
@@ -57,20 +59,24 @@ const config = [
         sourcemap: true,
         globals
       }, */
-      {
-        file: ***REMOVED***library/umd.js***REMOVED***,
+      /* {
+        dir: ***REMOVED***library/umd***REMOVED***,
         format: ***REMOVED***umd***REMOVED***,
         name: ***REMOVED***AxiomUIforms***REMOVED***,
         sourcemap: true,
-        inlineDynamicImports: true,
+        // inlineDynamicImports: true,
         globals
-      }
+      } */
     ],
     plugins: [
       nodePolyfills(),
       json(),
       resolve({ preferBuiltins: false, browser: true }),
       commonjs(),
+      /* babel({
+        babelHelpers: ***REMOVED***bundled***REMOVED***,
+        presets: [***REMOVED***@babel/preset-react***REMOVED***]
+      }), */
       alias({
         entries: {
           ***REMOVED***@/****REMOVED***: ***REMOVED***./src***REMOVED***
