@@ -3,7 +3,6 @@ import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { copyAndAddPathToFields } from ***REMOVED***@/Form/helpers***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import { Route, Routes } from ***REMOVED***react-router-dom***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -49,12 +48,15 @@ export type IFormSectionStatus = Record<string, {
 
 const Form = (props: IFormCreatorProps): ReactElement => {
   return (
+    <FormCreator {...props} />
+  )
+  /* return (
     <Routes>
       <Route path=***REMOVED***/***REMOVED*** element={<FormCreator {...props} />}>
           <Route path=***REMOVED*******REMOVED*** element={<FormCreator {...props} />} />
       </Route>
     </Routes>
-  )
+  ) */
 }
 
 export default Form

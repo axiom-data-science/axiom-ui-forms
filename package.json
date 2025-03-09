@@ -1,6 +1,6 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.2.1-alpha.7",
+  "version": "0.2.1-alpha.8",
   "private": false,
   "main": "./library/umd/library.js",
   "module": "./library/esm/library.js",
