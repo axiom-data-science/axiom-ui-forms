@@ -7,7 +7,7 @@ import SingleSelect from ***REMOVED***@/Form/Components/Inputs/SingleSelect***RE
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import JSONStringInput from ***REMOVED***@/Form/Components/Inputs/JSONString***REMOVED***
 import NumberInput from ***REMOVED***@/Form/Components/Inputs/Number***REMOVED***
-import GeoJSONInput from ***REMOVED***@/Form/Components/Inputs/GeoJSON***REMOVED***
+import GeoJSONInput from ***REMOVED***@/Form/Components/Inputs/GeoJSONInputLoader***REMOVED***
 import DateTimeInput from ***REMOVED***@/Form/Components/Inputs/DateTime***REMOVED***
 import DateInput from ***REMOVED***@/Form/Components/Inputs/Date***REMOVED***
 import TimeInput from ***REMOVED***@/Form/Components/Inputs/Time***REMOVED***

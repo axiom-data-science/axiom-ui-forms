@@ -1,7 +1,9 @@
 import { Button, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { AxiomOpenLayersMap, EMapShape, type IMapDrawEvent, type IMap, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
+
+import { EMapShape, type IMap, type IMapDrawEvent, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
+import { OpenLayersMap as Map } from ***REMOVED***@axdspub/axiom-maps/library/openlayers***REMOVED***
 import { type GeoJSON } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { TrashIcon, SquareIcon, BorderSolidIcon, DrawingPinFilledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -92,7 +94,7 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
   }
 }
 
-const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   console.log(***REMOVED***INITIAL VALUE***REMOVED***, value)
   const initialGeoJSON = value as unknown as GeoJSON
   const initialMapConfig = calculateCenterFromGeoJSON(initialGeoJSON)
@@ -478,7 +480,7 @@ const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElemen
           </div>
         )}
       </div>
-      <AxiomOpenLayersMap {...MAP_CONFIG} setState={setMapState} />
+      <Map {...MAP_CONFIG} setState={setMapState} />
       <div className="mt-4">
         <div className="flex justify-between items-center mb-2">
           <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
