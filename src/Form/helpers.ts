@@ -1,5 +1,5 @@
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IPage, type IFormSection, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IFormSection, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
 export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
   return field?.fields ?? []
@@ -25,13 +25,6 @@ export const addFieldPath = (field: IFormField, parentPath?: string[]): IFormFie
 export const getUniqueFormFields = (form: IForm): IFormField[] => {
   const fieldMap = Object.fromEntries((form?.fields ?? []).map(f => [f.id, f]))
   return Object.values(fieldMap)
-}
-
-export const getFieldsFromPage = (page: IPage): IFormField[] => {
-  if (page === undefined) {
-    return []
-  }
-  return getFields(page.fields)
 }
 
 export const getFields = (fields?: Array<{ id: string, fields?: IFormField[] }>): IFormField[] => {
@@ -82,21 +75,21 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
 }
 
 export function getFieldsFromFormSection (formSection: IFormSection): IFormField[] {
-  const pageFields = formSection?.pages?.map(p => getFields(p.fields)).flat(1)
-  const wizardFields = formSection?.wizard_steps?.map(p => getFields(p.fields)).flat(1)
+  const pageFields = formSection?.pages?.map(p => getFieldsFromFormSection(p)).flat(1)
+  const wizardFields = formSection?.wizard_steps?.map(p => getFieldsFromFormSection(p)).flat(1)
   const fields = getFields((formSection?.fields ?? [])).concat(pageFields ?? []).concat(wizardFields ?? [])
   return fields
 }
 
 export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: IFormValues): IFormValues {
+  const fields = getFieldsFromFormSection(form)
   Object.keys(formValues).forEach(key => {
-    const field = form?.fields?.find(f => f.id === key)
+    const field = fields?.find(f => f.id === key)
     if (field !== undefined && !checkCondition(field, formValues)) {
       formValues[key] = undefined
     }
   })
 
-  const fields = getFieldsFromFormSection(form)
   const fieldIds = fields.map(f => f.id)
   const newFormValues = Object.fromEntries(Object.entries(formValues).filter(([key]) => fieldIds.includes(key)))
   return newFormValues

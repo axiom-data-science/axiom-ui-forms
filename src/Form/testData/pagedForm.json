@@ -36,6 +36,27 @@
                     "label": "Do u agree?",
                     "type": "boolean",
                     "required": true
+                },
+                {
+                  "label": "Pick one",
+                  "id": "pick-one",
+                  "type": "select",
+                  "required": true,
+                  "multiple": false,
+                  "options": [
+                    {
+                      "label": "This",
+                      "value": "this"
+                    },
+                    {
+                      "label": "That",
+                      "value": "that"
+                    },
+                    {
+                      "label": "The other",
+                      "value": "the-other"
+                    }
+                  ]
                 }
 
             ]
@@ -43,8 +64,13 @@
         {
             "id": "page3",
             "label": "Page 3",
-            "fields": [
-                {
+            "wizard_steps": [
+              {
+                "id": "step-1",
+                "label": "Step 1",
+                "order": 0,
+                "fields": [
+                  {
                     "label": "Select one",
                     "id": "color",
                     "type": "select",
@@ -64,7 +90,15 @@
                         "value": "blue"
                       }
                     ]
-                  },
+                  }
+
+                ]
+              },
+              {
+                "id": "step-2",
+                "label": "Step 2",
+                "order": 1,
+                "fields": [
                   {
                     "label": "Pick a size",
                     "id": "size",
@@ -87,6 +121,9 @@
                       }
                     ]
                   }
+
+                ]
+              }
             ]
         },
         {

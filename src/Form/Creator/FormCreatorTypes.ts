@@ -152,7 +152,6 @@ export interface IObjectField extends IContainerField {
 
 export interface IFormFieldSection extends IContainerField {
   type: ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
-  skip_path: true
 }
 
 export interface IFormFieldPage extends IFormFieldSection {
