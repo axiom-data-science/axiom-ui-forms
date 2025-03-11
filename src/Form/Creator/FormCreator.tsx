@@ -1,4 +1,4 @@
-import { type IFormValues, type IForm, type IValueChangeFn } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { copyAndAddPathToFields } from ***REMOVED***@/Form/helpers***REMOVED***
@@ -13,6 +13,7 @@ export interface IFormCreatorProps {
   onChange?: IValueChangeFn
   className?: string
   urlNavigable?: boolean
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
 
 const FormCreator = ({
@@ -22,7 +23,8 @@ const FormCreator = ({
   error,
   onChange,
   className,
-  urlNavigable = true
+  urlNavigable = true,
+  inputOverrides
 }: IFormCreatorProps): ReactElement => {
   const [activeForm, setActiveForm] = useState<IForm | null>(null)
   useEffect(() => {
@@ -50,6 +52,7 @@ const FormCreator = ({
           formValueState={formValueState}
           form={activeForm}
           onChange={onChange}
+          inputOverrides={inputOverrides}
           />
     </div>
   )

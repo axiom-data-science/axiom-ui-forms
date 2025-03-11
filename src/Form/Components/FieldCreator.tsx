@@ -2,7 +2,7 @@ import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType, type IForm, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { CheckIcon, CopyIcon, Cross1Icon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { set } from ***REMOVED***lodash***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -14,6 +14,7 @@ interface IFieldCreator {
   defaultClassName?: string
   value?: IValueType | IValueType[]
   formValueState: IFormValueState
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
 
 const toolButtonClass = ***REMOVED***border-white hover:border-single hover:border-1 hover:border-slate-400***REMOVED***
@@ -124,7 +125,14 @@ const OneOfMultiple = ({
   )
 }
 
-const MultipleFieldCreator = ({ form, field, onChange, value, formValueState }: IFieldCreator): ReactElement => {
+const MultipleFieldCreator = ({
+  form,
+  field,
+  onChange,
+  value,
+  formValueState,
+  inputOverrides
+}: IFieldCreator): ReactElement => {
   const [formValues, setFormValues] = formValueState
   const defaultOnChange = (v: IValueType[] | undefined): void => {
     const formValuesCopy = structuredClone(formValues)
@@ -143,7 +151,10 @@ const MultipleFieldCreator = ({ form, field, onChange, value, formValueState }: 
       : [null]
   ) as IValueType[] */
 
-  const InputComponent = inputMap[field.type]
+  const InputComponent = {
+    ...inputMap,
+    ...(inputOverrides ?? {})
+  }[field.type]
 
   return <div>
     {
@@ -171,10 +182,14 @@ const FieldCreator = ({
   onChange,
   className,
   defaultClassName = ***REMOVED***py-2 flex flex-col gap-8***REMOVED***,
-  formValueState
+  formValueState,
+  inputOverrides
 }: IFieldCreator): ReactElement | null => {
   const [formValues, setFormValues] = formValueState
-  const InputComponent = inputMap[field.type]
+  const InputComponent = {
+    ...inputMap,
+    ...(inputOverrides ?? {})
+  }[field.type]
 
   const updateFormValues = (v: IFormValues): void => {
     setFormValues(cleanUnusedDependenciesFromFormValues(form, v))
@@ -196,11 +211,28 @@ const FieldCreator = ({
       defaultClassName
     })}>{
       field.multiple === true
-        ? <MultipleFieldCreator field={field} form={form} onChange={onChange} value={initialValue} formValueState={formValueState} />
-        : <InputComponent field={field} form={form} onChange={onChange ?? defaultOnChange} value={Array.isArray(initialValue) ? initialValue[0] : initialValue} formValueState={formValueState} />
+        ? <MultipleFieldCreator
+            field={field}
+            form={form}
+            onChange={onChange}
+            value={initialValue}
+            formValueState={formValueState}
+            inputOverrides={inputOverrides}
+          />
+        : <InputComponent
+            field={field}
+            form={form}
+            onChange={onChange ?? defaultOnChange}
+            value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
+            formValueState={formValueState}
+            inputOverrides={inputOverrides}
+          />
 
     }</div>
-    : <p>No component definition for {field.type} ({field.id})</p>
+    : <div>
+        <p className=***REMOVED***font-bold mb-2***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline***REMOVED*** /> {field.label ?? ***REMOVED******REMOVED***}</p>
+        <p className=***REMOVED***p-4 text-sm bg-slate-100***REMOVED***>No component definition for <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>type</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.type}</span> at <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>id</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.id}</span></p>
+      </div>
 }
 
 export default FieldCreator

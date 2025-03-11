@@ -23,7 +23,7 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
+export type IFormField = ITextField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
 export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***geojson***REMOVED*** | `custom:${string}`
 export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
@@ -44,15 +44,28 @@ interface IFormFieldRoot {
   level?: number
   value?: IValueType
   conditions?: IFieldConditions
+  settings?: Record<string, unknown>
+}
+
+interface INumberValueInput extends IFormFieldRoot {
+  value?: ***REMOVED***number***REMOVED***
+  constraints?: {
+    min?: number
+    max?: number
+  }
+}
+
+export interface INumberField extends INumberValueInput {
+  type: ***REMOVED***number***REMOVED***
 }
 
 interface IStringValueInput extends IFormFieldRoot {
-  value?: ***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***
+  value?: ***REMOVED***text***REMOVED***
   placeholder?: string
 }
 
 interface ITextField extends IStringValueInput {
-  type: ***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***
+  type: ***REMOVED***text***REMOVED***
 }
 
 interface ILongTextField extends IStringValueInput {
@@ -226,4 +239,6 @@ export interface IFieldInputProps {
   onChange: IValueChangeFn
   formValueState: IFormValueState
   value?: IValueType
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  className?: string
 }

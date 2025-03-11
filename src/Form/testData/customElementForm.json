@@ -1,0 +1,230 @@
+{
+    "label": "Test form with custom element",
+    "id": "wizardTestForm",
+    "wizard_steps": [
+        {
+            "id": "step1",
+            "label": "Step 1",
+            "fields": [
+                {
+                    "id": "short",
+                    "label": "Custom number input component",
+                    "type": "custom:number",
+                    "required": false,
+                    "multiple": true,
+                    "constraints": {
+                        "min": 20,
+                        "max": 80
+                    },
+                    "settings": {
+                        "step": 0.1
+                    }
+                },
+                {
+                    "id": "long",
+                    "label": "Long string component",
+                    "type": "long_text",
+                    "required": false,
+                    "multiple": false
+                }
+            ]
+        },
+        {
+          "id": "map-step",
+          "label": "Map step",
+          "fields": [
+              {
+                  "id": "map",
+                  "label": "Map",
+                  "type": "geojson",
+                  "required": false
+              }
+          ]
+      },
+      {
+        "id": "time-step",
+        "label": "Time step",
+        "fields": [
+            {
+                "id": "date",
+                "label": "Start date",
+                "type": "date",
+                "required": false
+            }
+        ]
+    },
+        {
+            "id": "step2",
+            "label": "Step 2",
+            "description": "Description for step 2.. etc etc etc",
+            "fields": [
+                {
+                    "id": "description",
+                    "label": "Description",
+                    "type": "long_text",
+                    "required": false
+                },
+                {
+                    "id": "agree",
+                    "label": "Do u agree?",
+                    "type": "boolean",
+                    "required": true
+                }
+
+            ]
+        },
+        {
+            "id": "step3",
+            "label": "Step 3",
+            "pages":[
+                {
+                    "id": "p1",
+                    "label": "Page 1",
+                    "fields": [
+                        {
+                            "label": "Do a ranking",
+                            "id": "ranking",
+                            "type": "custom:number"
+                        },
+                        {
+                            "label": "Select one",
+                            "id": "color",
+                            "type": "select",
+                            "required": true,
+                            "multiple": false,
+                            "options": [
+                              {
+                                "label": "Red",
+                                "value": "red"
+                              },
+                              {
+                                "label": "Green",
+                                "value": "green"
+                              },
+                              {
+                                "label": "Blue",
+                                "value": "blue"
+                              }
+                            ]
+                          }
+
+                    ]
+                }
+            ],
+            "fields": [
+                
+                  {
+                    "label": "Pick a size",
+                    "id": "size",
+                    "type": "radio",
+                    "required": false,
+                    "layout": "vertical",
+                    "multiple": true,
+                    "options": [
+                      {
+                        "label": "Small",
+                        "value": "small"
+                      },
+                      {
+                        "label": "Medium",
+                        "value": "medium"
+                      },
+                      {
+                        "label": "Large",
+                        "value": "large"
+                      }
+                    ]
+                  }
+            ]
+        },
+        {
+            "id": "step4",
+            "label": "Step 4",
+            "fields": [
+                {
+                    "label": "Address",
+                    "id": "address",
+                    "type": "object",
+                    "required": true,
+                    "layout": "vertical",
+                    "multiple": true,
+                    "fields": [
+                      {
+                        "id": "street",
+                        "label": "Street",
+                        "type": "text",
+                        "required": true
+                      },
+                      {
+                        "id": "city_state_zip",
+                        "type": "object",
+                        "required": false,
+                        "layout": "horizontal",
+                        "label": "",
+                        "fields": [
+                          {
+                            "id": "city",
+                            "label": "City",
+                            "type": "text",
+                            "required": true
+                          },
+                          {
+                            "id": "state",
+                            "label": "State",
+                            "type": "text",
+                            "required": true
+                          },
+                          {
+                            "id": "zip",
+                            "label": "Zip",
+                            "type": "text",
+                            "required": true
+                          }
+                        ]
+                      },
+                      {
+                        "id": "notes",
+                        "label": "Notes",
+                        "type": "text",
+                        "multiple": true
+                      },
+                      {
+                        "id": "family",
+                        "label": "Family members",
+                        "type": "object",
+                        "multiple": true,
+                        "fields": [
+                          {
+                            "id": "name",
+                            "label": "Name",
+                            "type": "object",
+                            "layout": "horizontal",
+                            "fields": [
+                              {
+                                "id": "firstName",
+                                "label": "First name",
+                                "type": "text"
+                              },
+                              {
+                                "id": "lastName",
+                                "label": "Last name",
+                                "type": "text"
+                              }
+                            ]
+                          },
+                          {
+                            "id": "age",
+                            "label": "Age",
+                            "type": "text",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+
+            ]
+        }
+    ]
+
+}

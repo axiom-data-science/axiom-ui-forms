@@ -132,6 +132,7 @@ const WizardLayout = ({
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
   className = ***REMOVED***flex flex-col gap-16 pt-8***REMOVED***,
+  inputOverrides,
   level
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
@@ -170,6 +171,7 @@ const WizardLayout = ({
         <ContentComponent
             activeIdState={activeIdState}
             formSection={formSection}
+            inputOverrides={inputOverrides}
             form={form}
             formValueState={formValueState}
             sectionStatus={sectionStatus}
