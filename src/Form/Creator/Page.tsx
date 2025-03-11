@@ -1,5 +1,5 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormValueState, type IForm, type IFormSection, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormValueState, type IForm, type IFormSection, type IValueChangeFn, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/Form/helpers'
@@ -49,6 +49,7 @@ export interface IPageLayoutProps {
     activeIdState: [string | null, (v: string | null) => void]
     form: IForm
     level: number
+    inputOverrides?: Record<string, React.FC<IFieldInputProps>>
     formSection?: IFormSection
     formValueState: IFormValueState
     onChange?: IValueChangeFn
@@ -62,6 +63,7 @@ export interface IPageLayoutProps {
     level: number
   }>
   className?: string
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
 
 export const ActivePage = ({
@@ -69,12 +71,14 @@ export const ActivePage = ({
   form,
   formValueState,
   formSection,
+  inputOverrides,
   onChange,
   className = 'flex flex-col gap-2 flex-grow',
   level
 }: {
   activeIdState: [string | null, (v: string | null) => void]
   form: IForm
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   formSection?: IFormSection
   formValueState: IFormValueState
   onChange?: IValueChangeFn
@@ -88,7 +92,7 @@ export const ActivePage = ({
             ? <p className='pb-4 border-b border-slate-200 text-sm'><InfoCircledIcon className='inline-block' /> {formSection.description}</p>
             : ''
         }
-        <FormSection formSection={formSection} formValueState={formValueState} form={form} onChange={onChange} level={level + 1} />
+        <FormSection formSection={formSection} formValueState={formValueState} inputOverrides={inputOverrides} form={form} onChange={onChange} level={level + 1} />
       </div>
   )
 }
@@ -98,6 +102,7 @@ const PageLayout = ({
   sections,
   formValueState,
   onChange,
+  inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
   className = 'flex flex-row gap-8',
@@ -140,6 +145,7 @@ const PageLayout = ({
         <ContentComponent
           activeIdState={activeIdState}
           formSection={formSection}
+          inputOverrides={inputOverrides}
           form={form}
           formValueState={formValueState}
           onChange={onChange}

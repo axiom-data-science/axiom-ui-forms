@@ -1,4 +1,4 @@
-import { type IForm, type IFormSection, type IFormValueState, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
+import { type IFieldInputProps, type IForm, type IFormSection, type IFormValueState, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
 import FormFields from '@/Form/Creator/FormFields'
 import PageLayout from '@/Form/Creator/Page'
 import WizardLayout from '@/Form/Creator/Wizard'
@@ -9,13 +9,15 @@ const FormSection = ({
   formValueState,
   form,
   onChange,
-  level = 0
+  level = 0,
+  inputOverrides
 }: {
   formSection?: IFormSection
   formValueState: IFormValueState
   form: IForm
   onChange?: IValueChangeFn
   level?: number
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 
 }): ReactElement => {
   if (formSection === undefined) {
@@ -47,11 +49,11 @@ const FormSection = ({
         <>
           {
             hasWizardSteps
-              ? <WizardLayout form={form} sections={wizardSteps} formValueState={formValueState} onChange={onChange} level={level} />
+              ? <WizardLayout form={form} sections={wizardSteps} formValueState={formValueState} onChange={onChange} level={level} inputOverrides={inputOverrides} />
 
               : hasPages
-                ? <PageLayout form={form} sections={pages} formValueState={formValueState} onChange={onChange} level={level} />
-                : <FormFields form={form} fields={fields} formValueState={formValueState} onChange={onChange} />
+                ? <PageLayout form={form} sections={pages} formValueState={formValueState} onChange={onChange} level={level} inputOverrides={inputOverrides} />
+                : <FormFields form={form} fields={fields} formValueState={formValueState} onChange={onChange} inputOverrides={inputOverrides} />
           }
         </>
   )

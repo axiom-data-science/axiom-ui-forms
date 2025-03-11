@@ -23,7 +23,7 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
+export type IFormField = ITextField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
 
 export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson' | `custom:${string}`
 export type ISectionFormFieldType = 'section' | 'page'
@@ -44,15 +44,28 @@ interface IFormFieldRoot {
   level?: number
   value?: IValueType
   conditions?: IFieldConditions
+  settings?: Record<string, unknown>
+}
+
+interface INumberValueInput extends IFormFieldRoot {
+  value?: 'number'
+  constraints?: {
+    min?: number
+    max?: number
+  }
+}
+
+export interface INumberField extends INumberValueInput {
+  type: 'number'
 }
 
 interface IStringValueInput extends IFormFieldRoot {
-  value?: 'text' | 'number'
+  value?: 'text'
   placeholder?: string
 }
 
 interface ITextField extends IStringValueInput {
-  type: 'text' | 'number'
+  type: 'text'
 }
 
 interface ILongTextField extends IStringValueInput {
@@ -226,4 +239,6 @@ export interface IFieldInputProps {
   onChange: IValueChangeFn
   formValueState: IFormValueState
   value?: IValueType
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  className?: string
 }

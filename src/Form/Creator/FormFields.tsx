@@ -1,5 +1,5 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
-import { type IForm, type IFormField, type IFormValues, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
+import { type IFieldInputProps, type IForm, type IFormField, type IFormValues, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
 import React, { type ReactElement } from 'react'
 
 const FormFields = ({
@@ -7,13 +7,15 @@ const FormFields = ({
   fields,
   formValueState,
   onChange,
-  className = 'flex flex-col gap-2'
+  className = 'flex flex-col gap-2',
+  inputOverrides
 }: {
   form: IForm
   fields?: IFormField[]
   formValueState: [IFormValues, (v: IFormValues) => void]
   onChange?: IValueChangeFn
   className?: string
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }): ReactElement => {
   return (
       <>
@@ -24,7 +26,7 @@ const FormFields = ({
             {
               fields?.map((field) => {
                 return (
-                  <FieldCreator onChange={onChange} form={form} field={field} key={field.id} formValueState={formValueState} />
+                  <FieldCreator onChange={onChange} form={form} field={field} key={field.id} formValueState={formValueState} inputOverrides={inputOverrides}/>
                 )
               })
             }
