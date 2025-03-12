@@ -136,20 +136,13 @@ const MultipleFieldCreator = ({
   const [formValues, setFormValues] = formValueState
   const defaultOnChange = (v: IValueType[] | undefined): void => {
     const formValuesCopy = structuredClone(formValues)
-    set(formValuesCopy, getPathFromField(field), v)
+    const fieldPath = getPathFromField(field)
+    set(formValuesCopy, fieldPath, v)
     setFormValues(formValuesCopy)
   }
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
   const initialValues = (initialVal !== undefined ? (Array.isArray(initialVal) ? initialVal : [initialVal]) : [null])
-
-  /* const initialValues = (
-    formValues[getPathFromField(field)] !== undefined
-      ? Array.isArray(formValues[getPathFromField(field)])
-        ? formValues[getPathFromField(field)]
-        : [formValues[getPathFromField(field)]]
-      : [null]
-  ) as IValueType[] */
 
   const InputComponent = {
     ...inputMap,
@@ -201,7 +194,8 @@ const FieldCreator = ({
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
     const formValuesCopy = structuredClone(formValues)
-    set(formValuesCopy, getPathFromField(field), v)
+    const fieldPath = getPathFromField(field)
+    set(formValuesCopy, fieldPath, v)
     updateFormValues(formValuesCopy)
   }
   const initialValue = value !== undefined ? value : getFieldValue(field, formValues)

@@ -39,7 +39,7 @@ interface IFormFieldRoot {
   required?: boolean
   label?: string | null | undefined
   multiple?: boolean
-  path?: string[]
+  path?: IFormField[]
   fullPath?: string[]
   level?: number
   value?: IValueType

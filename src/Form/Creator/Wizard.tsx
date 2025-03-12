@@ -26,12 +26,13 @@ export const WizardNav = ({
   const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
   const [activeId, setActiveId] = activeIdState
   return (
-      <div className=***REMOVED***flex flex-row gap-1 justify-evenly relative align-middle***REMOVED***>
-        <div className=***REMOVED***h-[2px] -m-[1px] top-3 bg-slate-300 absolute left-0 right-0 z-0***REMOVED*** />
+      <div className=***REMOVED***relative***REMOVED***>
+        <div className=***REMOVED***h-[2px] top-5 bg-slate-300 absolute left-0 right-0 z-0***REMOVED*** />
+        <div className=***REMOVED***flex flex-row gap-1***REMOVED***>
         {
         steps.map((p, i) => {
           return (
-            <div key={p.id} className=***REMOVED***flex-grow text-center z-10 relative***REMOVED***>
+            <div key={p.id} className=***REMOVED***flex-grow first:flex-shrink last:flex-shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative***REMOVED***>
               <NavElement
                 path={path}
                 id={p.id}
@@ -43,15 +44,16 @@ export const WizardNav = ({
               </NavElement>
               {
                 i < steps.length - 1 && steps.length > 1
-                  ? <span className=***REMOVED***absolute right-0 w-4 h-full bg-white***REMOVED***><CaretRightIcon className=***REMOVED***w-4 h-6 fill-slate-300 stroke-slate-300***REMOVED*** /></span>
+                  ? <span className=***REMOVED***hidden absolute right-0 top-2 w-4 h-full bg-white***REMOVED***><CaretRightIcon className=***REMOVED***w-4 h-6 fill-slate-300 stroke-slate-300***REMOVED*** /></span>
                   : ***REMOVED******REMOVED***
               }
-              <p className=***REMOVED***text-xs text-center mt-4***REMOVED***>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
-              <p className=***REMOVED***text-xs text-center mt-2***REMOVED***>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
+              <p className=***REMOVED***text-xs mt-4***REMOVED***>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
+              <p className=***REMOVED***text-xs mt-2***REMOVED***>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
             </div>
           )
         })
       }</div>
+      </div>
   )
 }
 

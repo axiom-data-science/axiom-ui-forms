@@ -16,32 +16,30 @@ const ObjectInput = ({ form, field, onChange, value, formValueState }: IFieldInp
             ? <FieldLabel {...field} />
             : null
         }
-        <div className={`p-4 bg-slate-100 ${cl}`}>
+        <div className={`p-4 bg-slate-100  ${cl}`}>
         {
           field.fields.map((childField) => {
-            const id = (field.path ?? [field.id]).concat(childField.id).join(***REMOVED***.***REMOVED***)
-            if (childField.type === ***REMOVED***object***REMOVED***) {
-              childField.path = field.path !== undefined ? field.path.concat(id) : [id]
-              childField.level = field.level !== undefined ? field.level + 1 : 1
-            }
+            const key = (field.path ?? [field.id]).concat(childField.id).join(***REMOVED***.***REMOVED***)
 
             return (
               <FieldCreator
                 formValueState={formValueState}
-                onChange={field.skip_path === true
-                  ? undefined
-                  : (e) => {
-                      initialValue[childField.id] = e
-                      onChange({ ...initialValue })
-                    }}
+                onChange={(e) => {
+                  if (childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true) {
+                    onChange(e)
+                  } else {
+                    initialValue[childField.id] = e
+                    onChange({ ...initialValue })
+                  }
+                }}
                 className={utils.makeClassName({
                   defaultClassName: ***REMOVED***p-0***REMOVED***,
                   className: fc
                 })}
                 value={initialValue[childField.id]}
-                field={{ ...childField, id }}
+                field={childField}
                 form={form}
-                key={id}
+                key={key}
               />
             )
           })
