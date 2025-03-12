@@ -26,12 +26,13 @@ export const WizardNav = ({
   const path = params.slice(0, level).join('/')
   const [activeId, setActiveId] = activeIdState
   return (
-      <div className='flex flex-row gap-1 justify-evenly relative align-middle'>
-        <div className='h-[2px] -m-[1px] top-3 bg-slate-300 absolute left-0 right-0 z-0' />
+      <div className='relative'>
+        <div className='h-[2px] top-5 bg-slate-300 absolute left-0 right-0 z-0' />
+        <div className='flex flex-row gap-1'>
         {
         steps.map((p, i) => {
           return (
-            <div key={p.id} className='flex-grow text-center z-10 relative'>
+            <div key={p.id} className='flex-grow first:flex-shrink last:flex-shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative'>
               <NavElement
                 path={path}
                 id={p.id}
@@ -43,15 +44,16 @@ export const WizardNav = ({
               </NavElement>
               {
                 i < steps.length - 1 && steps.length > 1
-                  ? <span className='absolute right-0 w-4 h-full bg-white'><CaretRightIcon className='w-4 h-6 fill-slate-300 stroke-slate-300' /></span>
+                  ? <span className='hidden absolute right-0 top-2 w-4 h-full bg-white'><CaretRightIcon className='w-4 h-6 fill-slate-300 stroke-slate-300' /></span>
                   : ''
               }
-              <p className='text-xs text-center mt-4'>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
-              <p className='text-xs text-center mt-2'>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
+              <p className='text-xs mt-4'>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
+              <p className='text-xs mt-2'>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
             </div>
           )
         })
       }</div>
+      </div>
   )
 }
 

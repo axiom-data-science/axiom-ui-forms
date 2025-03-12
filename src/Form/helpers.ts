@@ -1,22 +1,23 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormFieldSection, type IObjectField, type IForm, type IFormField, type IValueType, type IFormValues, type IFormSection, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
+import { type IForm, type IFormField, type IValueType, type IFormValues, type IFormSection, type IFormValueState, type IPage, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
+import { get } from 'lodash'
 
 export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
   return field?.fields ?? []
 }
 
-export const addFieldPath = (field: IFormField, parentPath?: string[]): IFormField => {
+export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
   if (field.type === 'object' && field.skip_path === true) {
     field.path = parentPath !== undefined ? parentPath.slice() : []
     field.level = parentPath !== undefined ? parentPath.length : 0
   } else {
-    const newSegment = field.id // `${field.id}${field.multiple === true ? '[]' : ''}`
-    field.path = parentPath !== undefined ? parentPath.concat(newSegment) : [newSegment]
+    const newSegment = field // `${field.id}${field.multiple === true ? '[]' : ''}`
+    field.path = parentPath !== undefined ? parentPath.slice().concat(newSegment) : [newSegment]
     field.level = parentPath !== undefined ? parentPath.length + 1 : 1
   }
   if ((field.type === 'object' || field.type === 'section') && field.fields !== undefined) {
     field.fields = field.fields.map(childField => {
-      return addFieldPath(childField, field.path)
+      return addFieldPath(childField, field.path?.slice())
     })
   }
   return field
@@ -42,12 +43,27 @@ export const getFields = (fields?: Array<{ id: string, fields?: IFormField[] }>)
   return all
 }
 
-export function copyAndAddPathToFields<T extends IForm | IFormFieldSection | IObjectField> (formOrContainer: T): T {
-  const form = JSON.parse(JSON.stringify(formOrContainer)) as T
-  // const fields = getFields(form.fields)
-  form.fields = form?.fields?.map(field => {
-    return addFieldPath(field)
-  })
+function addPathsToFormSections (section: IFormSection): IFormSection {
+  if (section.pages !== undefined) {
+    section.pages = section.pages.map(page => {
+      return addPathsToFormSections(page)
+    }) as IPage[]
+  }
+  if (section.wizard_steps !== undefined) {
+    section.wizard_steps = section.wizard_steps.map(wizardStep => {
+      return addPathsToFormSections(wizardStep)
+    }) as IWizardStep[]
+  }
+  if (section.fields !== undefined) {
+    section.fields = section.fields.map(field => {
+      return addFieldPath(field)
+    })
+  }
+  return section
+}
+
+export function copyAndAddPathToFields (formOrContainer: IForm): IForm {
+  const form = addPathsToFormSections(JSON.parse(JSON.stringify(formOrContainer))) as IForm
   return form
 }
 
@@ -57,7 +73,7 @@ export function getFieldValue (field: IFormField, formValues: IFormValues): IVal
 
 export function getPathFromField (field: IFormField): string {
   // console.log(`${field.path !== undefined ? field.path.join('.') : 'nopath'} = ${field.id}`)
-  return field.path !== undefined ? field.path.join('.') : field.id
+  return field.path !== undefined ? field.path.filter(f => !(f.type === 'object' && f.skip_path === true)).map(f => f.id).join('.') : field.id
 }
 
 // THIS DOESN'T HANDLE NESTED YET
@@ -95,8 +111,17 @@ export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: 
   return newFormValues
 }
 
+export const makeJsonPath = (field: IFormField, index: number = 0): string => {
+  if (field.path === undefined) {
+    return field.id
+  } else {
+    return field.path.map(f => f.multiple ? `${f.id}[${index}]` : f.id).join('.')
+  }
+}
+
 const testField = (field: IFormField, formValues: IFormValues): boolean => {
-  const val = formValues[field.id]
+  const path = makeJsonPath(field)
+  const val = get(formValues, path) // formValues[field.id]
   return val !== undefined && val !== null && val !== ''
 }
 
