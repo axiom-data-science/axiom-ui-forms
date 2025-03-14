@@ -1,6 +1,5 @@
 import resolve from ***REMOVED***@rollup/plugin-node-resolve***REMOVED***
 import commonjs from ***REMOVED***@rollup/plugin-commonjs***REMOVED***
-import babel from ***REMOVED***@rollup/plugin-babel***REMOVED***
 import typescript from ***REMOVED***@rollup/plugin-typescript***REMOVED***
 import dts from ***REMOVED***rollup-plugin-dts***REMOVED***
 import json from ***REMOVED***@rollup/plugin-json***REMOVED***
@@ -49,6 +48,7 @@ const config = [
         format: ***REMOVED***esm***REMOVED***,
         sourcemap: true,
         chunkFileNames: ***REMOVED***chunks/[name]-[hash].js***REMOVED***,
+        preserveModules: true,
         // inlineDynamicImports: true,
         globals
       }//,
