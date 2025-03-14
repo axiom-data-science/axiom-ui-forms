@@ -29,6 +29,7 @@
 
     },
     "ignorePatterns": [
+        "tailwind.config.js",
         "**/build/*",
         "**/library/*",
         "**/node_modules/*",
