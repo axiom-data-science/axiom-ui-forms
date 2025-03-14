@@ -18,6 +18,20 @@ export interface IFormCreatorProps {
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
 
+const FormStatus = ({ form, formValueState }: { form: IForm, formValueState: IFormValueState }): ReactElement => {
+  const [status, setStatus] = useState<IFormSectionStatus>(calculateSectionStatus([form], formValueState))
+  useEffect(() => {
+    setStatus(calculateSectionStatus([form], formValueState))
+  }, [formValueState, form])
+
+  return (
+    <>
+    <p className=***REMOVED***text-xs mt-4***REMOVED***>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
+    <p className=***REMOVED***text-xs mt-2***REMOVED***>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
+    </>
+  )
+}
+
 const FormCreator = ({
   form,
   formValueState,
@@ -40,20 +54,6 @@ const FormCreator = ({
   activeForm.settings = {
     url_navigable: urlNavigable,
     ...activeForm.settings
-  }
-
-  const FormStatus = ({ form, formValueState }: { form: IForm, formValueState: IFormValueState }): ReactElement => {
-    const [status, setStatus] = useState<IFormSectionStatus>(calculateSectionStatus([form], formValueState))
-    useEffect(() => {
-      setStatus(calculateSectionStatus([form], formValueState))
-    }, [formValueState, form])
-
-    return (
-      <>
-      <p className=***REMOVED***text-xs mt-4***REMOVED***>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
-      <p className=***REMOVED***text-xs mt-2***REMOVED***>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
-      </>
-    )
   }
 
   return (
