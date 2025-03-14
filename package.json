@@ -1,9 +1,9 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "private": false,
   "main": "./library/umd/library.js",
-  "module": "./library/esm/library.js",
+  "module": "./library/esm/src/library.js",
   "types": "./library/axiom-ui-forms.d.ts",
   "files": [
     "library/**"
