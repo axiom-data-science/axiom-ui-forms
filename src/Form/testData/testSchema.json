@@ -19,9 +19,9 @@
         "color": {
             "type": "string",
             "enum": [
-                {"const": "red"},
-                {"const": "blue"},
-                {"const": "green"}
+                "red",
+                "blue",
+                "green"
               ]
         },
         "size": {
@@ -29,9 +29,9 @@
             "items": {
                 "type": "string",
                 "enum": [
-                    {"const": "small"},
-                    {"const": "medium"},
-                    {"const": "large"}
+                    "small",
+                    "medium",
+                    "large"
                   ]
             }
         },

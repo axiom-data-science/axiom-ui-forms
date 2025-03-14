@@ -3,12 +3,17 @@ import { Tabs, TextArea } from '@axdspub/axiom-ui-utilities'
 import { type JSONSchema7 } from 'json-schema'
 import React, { useEffect, useState, type ReactElement } from 'react'
 
-import testSchema from '@/Form/testData/testSchema.json'
+import testSchema from '@/Form/testData/pttSchema.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormCreator from '@/Form/Creator/FormCreator'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import ObjectInput from '@/Form/Components/Inputs/Object'
-import { objectToSchema, schemaToFormObject, validateAgainstSchema, validateSchema } from '@/Form/schemaToFormHelpers'
+import { schemaToFormObject, validateAgainstSchema, validateSchema } from '@/Form/schemaToFormHelpers'
+import GenerateSchema from 'generate-schema'
+
+const objectToSchema = (ob: unknown): JSONSchema7 => {
+  return GenerateSchema.json('Schema', ob) as JSONSchema7
+}
 
 const isValidJson = (ob: unknown): boolean => {
   try {
@@ -24,20 +29,25 @@ const SchemaToForm = (): ReactElement => {
   const [form, setForm] = useState<IForm | undefined>(undefined)
   const [objectInput, setObjectInput] = useState<unknown>(undefined)
   const [formValues, setFormValues] = useState<IFormValues>({})
-  const [error, setError] = useState<string | undefined>(validateSchema(schema))
+  const [error, setError] = useState<string | undefined>(undefined)
   const [str, setStr] = useState<string | undefined>(JSON.stringify(testSchema, null, 2))
   const [formOutputErrors, setFormOutputErrors] = useState<string[] | undefined>(undefined)
   useEffect(() => {
     if (str !== '' && str !== undefined) {
       try {
         const ob = JSON.parse(str)
-        const validationResponse = validateSchema(ob)
-        setError(validationResponse)
-        if (validationResponse === undefined) {
-          setSchema(ob as JSONSchema7)
-          setForm(schemaToFormObject(ob as JSONSchema7))
-        }
-      } catch {
+        validateSchema(ob).then(validationResponse => {
+          setError(validationResponse.error)
+          if (validationResponse.schema !== undefined) {
+            setSchema(validationResponse.schema)
+            setForm(schemaToFormObject(validationResponse.schema))
+          }
+        }).catch(e => {
+          console.error(e)
+          setError('Invalid JSON')
+        })
+      } catch (e) {
+        console.error(e)
         setError('Invalid JSON')
       }
     } else {

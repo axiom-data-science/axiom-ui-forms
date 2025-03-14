@@ -1,12 +1,15 @@
 import { type IForm, type IFormField, type IFormFieldType, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import Ajv, { type ValidateFunction } from 'ajv'
-import GenerateSchema from 'generate-schema'
+
 import { type JSONSchema7, type JSONSchema7Type, type JSONSchema7Definition } from 'json-schema'
 
 import metaSchemaDraftV7 from 'ajv/lib/refs/json-schema-draft-07.json'
 import metaSchemaDraftV6 from 'ajv/lib/refs/json-schema-draft-06.json'
 import metaSchemaV5 from 'ajv/lib/refs/json-schema-2020-12/schema.json'
 import metaSchemaV4 from 'ajv/lib/refs/json-schema-2019-09/schema.json'
+
+import { resolveRefs } from '@/Form/resolveRefs'
+import { omit } from 'lodash'
 
 const getValidator = (schema: number): ValidateFunction => {
   const ajv = new Ajv({ strict: false })
@@ -24,18 +27,20 @@ const getValidator = (schema: number): ValidateFunction => {
   }
 }
 
-export const objectToSchema = (ob: unknown): JSONSchema7 => {
-  return GenerateSchema.json('Schema', ob) as JSONSchema7
-}
-
-export const validateSchema = (schemaOb: unknown, version: number = 6): string | undefined => {
+export const validateSchema = async (schemaOb: unknown, version: number = 6): Promise<{ schema?: JSONSchema7, error?: string }> => {
   const ajv = new Ajv({ strict: false })
   const validator = getValidator(version)
   const valid = validator(schemaOb)
   if (!valid) {
-    return ajv.errorsText(validator.errors)
+    return { error: ajv.errorsText(validator.errors) }
   }
-  return undefined
+  // const v = ajv.compile<JSONSchema7>(schemaOb as JSONSchema7)
+  /* registerSchema(schemaOb as SchemaObject, 'https://axds.co/test')
+  const bundledSchema = await bundle('https://axds.co/test')
+  return { schema: bundledSchema as JSONSchema7 } */
+
+  const resolved = resolveRefs(schemaOb as JSONSchema7)
+  return { schema: resolved }
 }
 
 export const validateAgainstSchema = (schema: JSONSchema7, formValues: IFormValues): string[] | undefined => {
@@ -82,6 +87,12 @@ const getFieldType = (schema: JSONSchema7): IFormFieldType => {
       return 'text'
     } else if (schemaType === 'number' || schemaType === 'integer') {
       return 'number'
+    } else if (schema.format === 'date-time') {
+      return 'datetime'
+    } else if (schema.format === 'date') {
+      return 'date'
+    } else if (schema.format === 'time') {
+      return 'time'
     }
     return 'long_text'
   } else if (schemaType === 'boolean') {
@@ -134,26 +145,49 @@ export const getLabelFromSchema = (schema: JSONSchema7Type | JSONSchema7Definiti
   return String(getValueFromSchema(schema))
 }
 
-const schemaToFormField = (schema: JSONSchema7, property: string, multiple?: boolean): IFormField => {
-  if (schema.type === 'array') {
-    return schemaToFormField(schema.items as JSONSchema7, property, true)
+const schemaToFormField = (schema: JSONSchema7, property: string, schemaField: JSONSchema7, multiple?: boolean): IFormField => {
+  if (schemaField === undefined) {
+    return {
+      id: makeFormFieldId([schema.$id, property]),
+      label: property,
+      type: 'text',
+      multiple
+    }
   }
-  const type = getFieldType(schema)
+  if (typeof schemaField === 'boolean') {
+    return {
+      id: makeFormFieldId([schema.$id, property]),
+      label: property,
+      type: 'boolean',
+      multiple
+    }
+  }
+  if (schemaField.type === 'array' && schemaField.items !== undefined) {
+    return schemaToFormField(schemaField, property, schemaField.items as JSONSchema7, true)
+  }
+  if (schemaField.anyOf !== undefined && schemaField.anyOf.length === 2 && schemaField.anyOf.filter(d => typeof d !== 'boolean' && d.type === 'null').length === 1) {
+    const notNull = schemaField.anyOf.filter(d => typeof d !== 'boolean' && d.type !== 'null')[0]
+    return schemaToFormField(schemaField, property, { ...omit(schemaField, 'anyOf'), ...(typeof notNull !== 'boolean' ? notNull : {}) }, multiple)
+  }
+  const type = getFieldType(schemaField)
   const id = makeFormFieldId([
-    schema.$id,
+    schemaField.$id,
     property,
-    schema.title?.toLowerCase().replace(' ', '-')
+    schemaField.title?.toLowerCase().replace(' ', '-')
   ])
   const label = makeLabel([
-    schema.title,
+    schemaField.title,
     property
   ])
-  const ob: Pick<IFormField, 'id' | 'label' | 'multiple'> = {
+  const schemaRequired = schema.required ?? []
+  const ob: Pick<IFormField, 'id' | 'label' | 'description' | 'multiple' | 'required'> = {
     id,
     label,
-    multiple
+    description: schemaField.description,
+    multiple,
+    required: schemaRequired.includes(property) ?? false
   }
-  if (type === 'text' || type === 'number' || type === 'long_text' || type === 'boolean') {
+  if (type === 'text' || type === 'number' || type === 'long_text' || type === 'boolean' || type === 'datetime' || type === 'date' || type === 'time') {
     return {
       ...ob,
       type
@@ -161,7 +195,7 @@ const schemaToFormField = (schema: JSONSchema7, property: string, multiple?: boo
   }
 
   if (type === 'select' || type === 'checkbox') {
-    const schemaOptions = schema.enum ?? schema.oneOf ?? schema.anyOf ?? []
+    const schemaOptions = schemaField.enum ?? schemaField.oneOf ?? schemaField.anyOf ?? []
     const options = schemaOptions.map(e => {
       const value = getValueFromSchema(e)
       const label = getLabelFromSchema(e)
@@ -179,11 +213,11 @@ const schemaToFormField = (schema: JSONSchema7, property: string, multiple?: boo
     }
   }
   if (type === 'object') {
-    const properties = schema.properties ?? {}
+    const properties = schemaField.properties ?? {}
     const fields: IFormField[] = []
     for (const key in properties) {
       if (properties[key] !== undefined && typeof properties[key] !== 'boolean') {
-        fields.push(schemaToFormField(properties[key], key))
+        fields.push(schemaToFormField(schemaField, key, properties[key]))
       }
     }
     return {
@@ -205,7 +239,7 @@ export const schemaToFormObject = (schema: JSONSchema7): IForm => {
   const formFields: IFormField[] = []
   for (const key in schema.properties) {
     if (schema.properties[key] !== undefined && typeof schema.properties[key] !== 'boolean') {
-      formFields.push(schemaToFormField(schema.properties[key], key))
+      formFields.push(schemaToFormField(schema, key, schema.properties[key]))
     }
   }
   return {
