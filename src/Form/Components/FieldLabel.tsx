@@ -3,12 +3,26 @@ import React, { type ReactElement } from 'react'
 
 export const FieldLabelText = (field: IFormField): ReactElement => {
   return (
-    <strong>{field.label} { field.required === true ? <span className='text-red-500'>*</span> : ''}</strong>
+    <p><strong>{field.label} { field.required === true ? <span className='text-red-500'>*</span> : ''}</strong></p>
+  )
+}
+
+export const FieldDescriptionText = (field: IFormField): ReactElement => {
+  return (
+    <>{
+      field.description !== undefined
+        ? <p className='text-xs py-2'>{field.description}</p>
+        : ''
+    }</>
   )
 }
 
 const FieldLabel = (field: IFormField): ReactElement => {
-  return <p className='pb-2'><FieldLabelText {...field} /></p>
+  return <>
+    <FieldLabelText {...field} />
+    <FieldDescriptionText {...field} />
+
+  </>
 }
 
 export default FieldLabel
