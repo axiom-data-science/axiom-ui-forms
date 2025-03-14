@@ -23,9 +23,9 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IFormFieldSection
+export type IFormField = ITextField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomFIeld
 
-export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson' | `custom:${string}`
+export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson' | 'geometry' | `custom:${string}`
 export type ISectionFormFieldType = 'section' | 'page'
 
 interface IFieldConditions {
@@ -38,6 +38,7 @@ interface IFormFieldRoot {
   type: string
   required?: boolean
   label?: string | null | undefined
+  description?: string | null | undefined
   multiple?: boolean
   path?: IFormField[]
   fullPath?: string[]
@@ -74,6 +75,10 @@ interface ILongTextField extends IStringValueInput {
 
 interface IJSONField extends IFormFieldRoot {
   type: 'json'
+}
+
+interface ICustomFIeld extends IFormFieldRoot {
+  type: `custom:${string}`
 }
 
 interface ISelectOption {
@@ -174,6 +179,13 @@ export interface IFormFieldPage extends IFormFieldSection {
 interface IGeoJSONField extends IFormFieldRoot {
   type: 'geojson'
   value?: 'geojson'
+  exclude_types?: string[]
+  include_types?: string[]
+}
+
+interface IGeometryField extends IFormFieldRoot {
+  type: 'geometry'
+  value?: 'geometry'
   exclude_types?: string[]
   include_types?: string[]
 }
