@@ -3,7 +3,7 @@ import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 export const FieldLabelText = (field: IFormField): ReactElement => {
   return (
-    <p><strong>{field.label} { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}</strong></p>
+    <strong>{field.label} { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}</strong>
   )
 }
 
@@ -19,7 +19,7 @@ export const FieldDescriptionText = (field: IFormField): ReactElement => {
 
 const FieldLabel = (field: IFormField): ReactElement => {
   return <>
-    <FieldLabelText {...field} />
+    <p><FieldLabelText {...field} /></p>
     <FieldDescriptionText {...field} />
 
   </>
