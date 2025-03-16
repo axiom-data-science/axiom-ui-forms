@@ -1,6 +1,6 @@
 import { TextArea } from '@axdspub/axiom-ui-utilities'
 import { set, isArray, isObject, get } from 'lodash'
-import React, { type ReactElement, useEffect, useState } from 'react'
+import React, { type ReactElement, useState } from 'react'
 
 function flattenObjectToPaths (obj: any, prefix: string = ''): Record<string, any> {
   return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
@@ -20,21 +20,18 @@ function flattenObjectToPaths (obj: any, prefix: string = ''): Record<string, an
 const SetTester = (): ReactElement => {
   const [vals, setVals] = useState('')
   const [paths, setPaths] = useState('')
-  const [out, setOut] = useState({})
 
   const [obStr, setObStr] = useState('')
   const [ob, setOb] = useState({})
   const [getStr, setGetStr] = useState('')
 
-  useEffect(() => {
-    const newOut = {}
-    const pathsToEval = paths.split('\n')
-    const valsToEval = vals.split('\n')
-    pathsToEval.forEach((path, i) => {
-      set(newOut, path.replace(/\s+/g, ''), valsToEval[i] ?? '')
-    })
-    setOut(newOut)
-  }, [paths, vals])
+  const out = {}
+  const pathsToEval = paths.split('\n')
+  const valsToEval = vals.split('\n')
+  pathsToEval.forEach((path, i) => {
+    set(out, path.replace(/\s+/g, ''), valsToEval[i] ?? '')
+  })
+
   return (
         <div className='p-20'>
         <h1 className='font-bold font-xl'>Set Tester</h1>

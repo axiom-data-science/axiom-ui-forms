@@ -5,7 +5,7 @@ import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import FormMappingInput from '@/Form/Manage/FormMappingInput'
 import testForm from '@/Form/testData/nestedForm.json'
 import { Checkbox, Input, TextArea } from '@axdspub/axiom-ui-utilities'
-import React, { useEffect, useState, type ReactElement } from 'react'
+import React, { useState, type ReactElement } from 'react'
 
 const FieldMap = ({ field, mappingState }: { field: IFormField, mappingState: [IFormMapping, (m: IFormMapping) => void] }): ReactElement => {
   const isContainer = field.type === 'object' || field.type === 'section'
@@ -35,26 +35,37 @@ const FieldMap = ({ field, mappingState }: { field: IFormField, mappingState: [I
 }
 
 const MapTester = (): ReactElement => {
-  const [inputObject, setInputObject] = useState<IForm>(copyAndAddPathToFields(testForm as IForm))
+  // const [inputObject, setInputObject] = useState<IForm>(copyAndAddPathToFields(testForm as IForm))
   const [mapping, setMapping] = useState<IFormMapping>({
     fields: {},
     $targetSchema: ''
   })
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [str, setStr] = useState<string | undefined>(JSON.stringify(inputObject))
-  useEffect(() => {
-    try {
-      const ob = JSON.parse(str === '' || str === undefined ? '{}' : str)
-      setInputObject({
-        fields: [],
-        label: '',
-        id: '',
-        ...ob
-      })
-    } catch {
-      setError('Invalid JSON')
-    }
-  }, [str])
+  // const [error, setError] = useState<string | undefined>(undefined)
+  const [str, setStr] = useState<string | undefined>(JSON.stringify(testForm, null, 2))
+
+  let error
+  let inputObjectNoPaths: IForm | undefined
+  let inputObject: IForm | undefined
+
+  try {
+    const ob = JSON.parse(str === '' || str === undefined ? '{}' : str)
+    inputObjectNoPaths = {
+      fields: [],
+      label: '',
+      id: '',
+      ...ob
+    } satisfies IForm
+
+    inputObject = copyAndAddPathToFields({
+      fields: [],
+      label: '',
+      id: '',
+      ...ob
+    })
+  } catch {
+    error = 'Invalid JSON'
+  }
+
   return (
         <div className='p-20 h-full'>
             <h1 className='font-bold'>Map Tester</h1>
@@ -73,16 +84,20 @@ const MapTester = (): ReactElement => {
                     testId='object'
                     wrapperClassName='h-full relative'
                     className='h-full'
-                    value={JSON.stringify(inputObject, null, 2)}
+                    value={inputObjectNoPaths !== undefined ? JSON.stringify(inputObjectNoPaths, null, 2) : str}
                     onChange={(e) => {
                       setStr(e)
                     }}
-                    after={<CopyButton string={JSON.stringify(inputObject, null, 2)} className='pointer-events-auto absolute right-8 top-12' />}
+                    after={<CopyButton string={JSON.stringify(inputObjectNoPaths, null, 2)} className='pointer-events-auto absolute right-8 top-12' />}
                 />
                 </div>
                 <div>
                     <div className='hidden'>
-                      <FormMappingInput form={inputObject} mappingState={[mapping, setMapping]} />
+                      {
+                        inputObject !== undefined
+                          ? <FormMappingInput form={inputObject} mappingState={[mapping, setMapping]} />
+                          : ''
+                      }
                     </div>
                     <div className='flex flex-col gap-2'>
                     {

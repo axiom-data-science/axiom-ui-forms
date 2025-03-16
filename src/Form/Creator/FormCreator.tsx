@@ -4,7 +4,7 @@ import FormSection from '@/Form/Creator/FormSection'
 import { calculateSectionStatus, copyAndAddPathToFields } from '@/Form/helpers'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import { type JSONSchema7 } from 'json-schema'
-import React, { useEffect, useState, type ReactElement } from 'react'
+import React, { type ReactElement } from 'react'
 
 export interface IFormCreatorProps {
   form: IForm
@@ -19,10 +19,7 @@ export interface IFormCreatorProps {
 }
 
 const FormStatus = ({ form, formValueState }: { form: IForm, formValueState: IFormValueState }): ReactElement => {
-  const [status, setStatus] = useState<IFormSectionStatus>(calculateSectionStatus([form], formValueState))
-  useEffect(() => {
-    setStatus(calculateSectionStatus([form], formValueState))
-  }, [formValueState, form])
+  const status = calculateSectionStatus([form], formValueState)
 
   return (
     <>
@@ -42,14 +39,7 @@ const FormCreator = ({
   urlNavigable = true,
   inputOverrides
 }: IFormCreatorProps): ReactElement => {
-  const [activeForm, setActiveForm] = useState<IForm | null>(null)
-  useEffect(() => {
-    const newForm = copyAndAddPathToFields(form)
-    setActiveForm(newForm)
-  }, [form])
-  if (activeForm === null) {
-    return <p>Processing</p>
-  }
+  const activeForm = copyAndAddPathToFields(form)
 
   activeForm.settings = {
     url_navigable: urlNavigable,

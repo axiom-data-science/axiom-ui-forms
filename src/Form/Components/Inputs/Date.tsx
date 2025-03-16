@@ -1,18 +1,14 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
-import React, { type ReactElement, useState, useEffect } from 'react'
+import React, { type ReactElement, useState } from 'react'
 
 const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   if (field.type !== 'date') {
     return <p>Field config for {field.id} is missing &apos;options&apos;</p>
   }
-  const [inputValue, setInputValue] = useState('')
+
   const [error, setError] = useState<string | null>(null)
   const { minDate, maxDate } = field.constraints ?? {}
-
-  useEffect(() => {
-    setInputValue(formatValue(value as string))
-  }, [value])
 
   // Convert the value to the format expected by date input (YYYY-MM-DD)
   const formatValue = (val: string | undefined | null): string => {
@@ -33,6 +29,8 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
     }
   }
 
+  const inputValue = formatValue(value as string)
+
   const validateDate = (dateStr: string): string | null => {
     if (!minDate && !maxDate) return null
 
@@ -50,16 +48,14 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newInputValue = e.target.value
-    setInputValue(newInputValue)
-
+    const newValue = e.target.value
     // Only notify parent of change if we have a complete valid date
-    if (newInputValue) {
+    if (newValue) {
       // Create date in UTC by appending T00:00:00Z to the input value
-      const date = new Date(newInputValue + 'T00:00:00Z')
+      const date = new Date(newValue + 'T00:00:00Z')
       // Check if it's a valid date and the year is reasonable (4 digits)
       if (!isNaN(date.getTime()) && date.getUTCFullYear() > 999) {
-        const validationError = validateDate(newInputValue)
+        const validationError = validateDate(newValue)
         setError(validationError)
         if (!validationError) {
           onChange(date.toISOString())

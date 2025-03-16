@@ -1,5 +1,5 @@
 import FormManager from '@/Form/Manage/Manage'
-import React, { useEffect, useState, type ReactElement } from 'react'
+import React, { useState, type ReactElement } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SetTester from '@/SetTester'
 import MapTester from '@/Form/MapTester'
@@ -26,7 +26,7 @@ const WizardFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-        <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={false} />
+        <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
         <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
       </div>
   )
@@ -45,11 +45,6 @@ const CustomElementFormWrap = (): ReactElement => {
           'custom:number': ({ field, value, onChange }: IFieldInputProps) => {
             const numberField = field as INumberField
             const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
-            useEffect(() => {
-              if (value !== undefined && value !== null) {
-                setTempValue(+value)
-              }
-            }, [value])
             const min = numberField?.constraints?.min ?? 0
             const max = numberField?.constraints?.max ?? 100
             const step = Number(numberField?.settings?.step ?? (max - min) / 100)
