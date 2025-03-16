@@ -4,7 +4,7 @@ import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { calculateSectionStatus, copyAndAddPathToFields } from ***REMOVED***@/Form/helpers***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema7 } from ***REMOVED***json-schema***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -19,10 +19,7 @@ export interface IFormCreatorProps {
 }
 
 const FormStatus = ({ form, formValueState }: { form: IForm, formValueState: IFormValueState }): ReactElement => {
-  const [status, setStatus] = useState<IFormSectionStatus>(calculateSectionStatus([form], formValueState))
-  useEffect(() => {
-    setStatus(calculateSectionStatus([form], formValueState))
-  }, [formValueState, form])
+  const status = calculateSectionStatus([form], formValueState)
 
   return (
     <>
@@ -42,14 +39,7 @@ const FormCreator = ({
   urlNavigable = true,
   inputOverrides
 }: IFormCreatorProps): ReactElement => {
-  const [activeForm, setActiveForm] = useState<IForm | null>(null)
-  useEffect(() => {
-    const newForm = copyAndAddPathToFields(form)
-    setActiveForm(newForm)
-  }, [form])
-  if (activeForm === null) {
-    return <p>Processing</p>
-  }
+  const activeForm = copyAndAddPathToFields(form)
 
   activeForm.settings = {
     url_navigable: urlNavigable,

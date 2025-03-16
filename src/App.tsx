@@ -1,5 +1,5 @@
 import FormManager from ***REMOVED***@/Form/Manage/Manage***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { BrowserRouter, Route, Routes } from ***REMOVED***react-router-dom***REMOVED***
 import SetTester from ***REMOVED***@/SetTester***REMOVED***
 import MapTester from ***REMOVED***@/Form/MapTester***REMOVED***
@@ -26,7 +26,7 @@ const WizardFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-        <Form form={wizardFormJson as IForm} formValueState={formValueState} className=***REMOVED***p-20***REMOVED*** urlNavigable={false} />
+        <Form form={wizardFormJson as IForm} formValueState={formValueState} className=***REMOVED***p-20***REMOVED*** urlNavigable={true} />
         <pre className=***REMOVED***p-20 bg-slate-200 text-xs***REMOVED***>{JSON.stringify(formValueState[0], null, 2)}</pre>
       </div>
   )
@@ -45,11 +45,6 @@ const CustomElementFormWrap = (): ReactElement => {
           ***REMOVED***custom:number***REMOVED***: ({ field, value, onChange }: IFieldInputProps) => {
             const numberField = field as INumberField
             const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
-            useEffect(() => {
-              if (value !== undefined && value !== null) {
-                setTempValue(+value)
-              }
-            }, [value])
             const min = numberField?.constraints?.min ?? 0
             const max = numberField?.constraints?.max ?? 100
             const step = Number(numberField?.settings?.step ?? (max - min) / 100)

@@ -265,6 +265,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
     setShowShapeTypeButtons(shouldShowShapeButtons(newCoords))
   }
 
+  // i think this has to stay - we***REMOVED***re basically staying in sync with dom element outside of react
   useEffect(() => {
     if (map === undefined) return
 
@@ -285,6 +286,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
     })
   }, [map])
 
+  // can we get rid of this?
   useEffect(() => {
     if (geojson !== undefined) {
       onChange(geojson.geometry)

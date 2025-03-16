@@ -1,26 +1,23 @@
+import ActiveIdProvider, { ActiveIDContext } from ***REMOVED***@/Form/Creator/ActiveIdProvider***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IFormValueState, type IForm, type IFormSection, type IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/Form/helpers***REMOVED***
 import { InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useContext, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 
 const PageNav = ({
   form,
   sections,
-  activeIdState,
   level
 }: {
   form: IForm
   sections?: IFormSection[]
-  activeIdState: [string | null, (v: string | null) => void]
   level: number
 }): ReactElement => {
-  const [activeId, setActiveState] = activeIdState
-  const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
-  const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
+  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
   return (
       <div className=***REMOVED***flex flex-col  w-[200px]  border-slate-200***REMOVED***>{
         sections?.map(p => {
@@ -30,7 +27,7 @@ const PageNav = ({
               path={path}
               id={p.id}
               navigable={form?.settings?.url_navigable ?? true}
-              onClick={() => { setActiveState(p.id) }}
+              onClick={() => { setActiveId?.(p.id) }}
               className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? ***REMOVED***bg-slate-700 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
             >{p.label}</NavElement>
           )
@@ -46,7 +43,6 @@ export interface IPageLayoutProps {
   onChange?: IValueChangeFn
   level: number
   ContentComponent?: React.FC<{
-    activeIdState: [string | null, (v: string | null) => void]
     form: IForm
     level: number
     inputOverrides?: Record<string, React.FC<IFieldInputProps>>
@@ -58,7 +54,6 @@ export interface IPageLayoutProps {
   NavComponent?: React.FC<{
     form: IForm
     sections?: IFormSection[]
-    activeIdState: [string | null, (v: string | null) => void]
     sectionStatus: IFormSectionStatus
     level: number
   }>
@@ -67,7 +62,6 @@ export interface IPageLayoutProps {
 }
 
 export const ActivePage = ({
-  activeIdState,
   form,
   formValueState,
   formSection,
@@ -76,7 +70,6 @@ export const ActivePage = ({
   className = ***REMOVED***flex flex-col gap-2 flex-grow***REMOVED***,
   level
 }: {
-  activeIdState: [string | null, (v: string | null) => void]
   form: IForm
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   formSection?: IFormSection
@@ -112,47 +105,34 @@ const PageLayout = ({
     return <></>
   }
 
-  const params = useParams()[***REMOVED*******REMOVED***]?.split(***REMOVED***/***REMOVED***) ?? []
-  const activeIdState = useState<string | null>(form?.settings?.url_navigable
-    ? params[level] ?? sections[0]?.id ?? null
+  const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
+  const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
+  const id = form?.settings?.url_navigable
+    ? (params[level] && params[level] !== ***REMOVED******REMOVED***) ? params[level] : (sections[0]?.id ?? null)
     : sections[0]?.id ?? null
-  )
+  const sectionStatus = calculateSectionStatus(sections, formValueState)
+  const formSection = sections?.find(s => s.id === id) ?? sections?.[0]
 
-  const [sectionStatus, setSectionStatus] = useState<IFormSectionStatus>(calculateSectionStatus(sections, formValueState))
-  useEffect(() => {
-    setSectionStatus(calculateSectionStatus(sections, formValueState))
-  }, [formValueState, sections])
-
-  const [formSection, setFormSection] = useState<IFormSection | undefined>(sections?.find(s => s.id === activeIdState[0]) ?? sections?.[0])
-  useEffect(() => {
-    setFormSection(sections?.find(s => s.id === activeIdState[0]) ?? sections?.[0])
-  }, [activeIdState[0]])
-
-  useEffect(() => {
-    if (form?.settings?.url_navigable === true && params[level] !== activeIdState[0]) {
-      activeIdState[1](params[level] ?? sections[0]?.id ?? null)
-    }
-  }, [useParams()[***REMOVED*******REMOVED***]])
   return (
-      <div className={className}>
-        <NavComponent
-          form={form}
-          sections={sections}
-          sectionStatus={sectionStatus}
-          activeIdState={activeIdState}
-          level={level}
-          />
-        <ContentComponent
-          activeIdState={activeIdState}
-          formSection={formSection}
-          inputOverrides={inputOverrides}
-          form={form}
-          formValueState={formValueState}
-          onChange={onChange}
-          sectionStatus={sectionStatus}
-          level={level}
-          />
-      </div>
+      <ActiveIdProvider path={path} id={id}>
+        <div className={className}>
+          <NavComponent
+            form={form}
+            sections={sections}
+            sectionStatus={sectionStatus}
+            level={level}
+            />
+          <ContentComponent
+            formSection={formSection}
+            inputOverrides={inputOverrides}
+            form={form}
+            formValueState={formValueState}
+            onChange={onChange}
+            sectionStatus={sectionStatus}
+            level={level}
+            />
+        </div>
+      </ActiveIdProvider>
   )
 }
 

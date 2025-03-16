@@ -1,18 +1,17 @@
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { Tabs, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema7 } from ***REMOVED***json-schema***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useMemo, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 import testSchema from ***REMOVED***@/Form/testData/pttSchema.json***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { ExclamationTriangleIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import ObjectInput from ***REMOVED***@/Form/Components/Inputs/Object***REMOVED***
 import { schemaToFormObject, validateAgainstSchema, validateSchema } from ***REMOVED***@/Form/schemaToFormHelpers***REMOVED***
-import GenerateSchema from ***REMOVED***generate-schema***REMOVED***
+import toJsonSchema from ***REMOVED***to-json-schema***REMOVED***
 
 const objectToSchema = (ob: unknown): JSONSchema7 => {
-  return GenerateSchema.json(***REMOVED***Schema***REMOVED***, ob) as JSONSchema7
+  return toJsonSchema(ob) as JSONSchema7
 }
 
 const isValidJson = (ob: unknown): boolean => {
@@ -25,39 +24,35 @@ const isValidJson = (ob: unknown): boolean => {
 }
 
 const SchemaToForm = (): ReactElement => {
-  const [schema, setSchema] = useState<JSONSchema7 | undefined>(undefined)
-  const [form, setForm] = useState<IForm | undefined>(undefined)
-  const [objectInput, setObjectInput] = useState<unknown>(undefined)
+  const [objectInput, setObjectInput] = useState<string | undefined>(undefined)
   const [formValues, setFormValues] = useState<IFormValues>({})
   const [error, setError] = useState<string | undefined>(undefined)
   const [str, setStr] = useState<string | undefined>(JSON.stringify(testSchema, null, 2))
-  const [formOutputErrors, setFormOutputErrors] = useState<string[] | undefined>(undefined)
-  useEffect(() => {
-    if (str !== ***REMOVED******REMOVED*** && str !== undefined) {
-      try {
-        const ob = JSON.parse(str)
-        validateSchema(ob).then(validationResponse => {
-          setError(validationResponse.error)
-          if (validationResponse.schema !== undefined) {
-            setSchema(validationResponse.schema)
-            setForm(schemaToFormObject(validationResponse.schema))
-          }
-        }).catch(e => {
-          console.error(e)
-          setError(***REMOVED***Invalid JSON***REMOVED***)
-        })
-      } catch (e) {
-        console.error(e)
-        setError(***REMOVED***Invalid JSON***REMOVED***)
+
+  let form: IForm | undefined
+  let schema: JSONSchema7 | undefined
+
+  if (str !== ***REMOVED******REMOVED*** && str !== undefined) {
+    try {
+      const ob = JSON.parse(str)
+      const validationResponse = validateSchema(ob)
+
+      if (validationResponse.schema !== undefined) {
+        schema = validationResponse.schema
+        form = schemaToFormObject(validationResponse.schema)
       }
-    } else {
-      setSchema(undefined)
-      setForm(undefined)
+    } catch (e) {
+      console.error(e)
+      setError(***REMOVED***Invalid JSON***REMOVED***)
     }
-  }, [str])
-  useEffect(() => {
-    setFormOutputErrors(validateAgainstSchema(schema ?? {}, formValues))
-  }, [formValues])
+  }
+  const formOutputErrors = useMemo(() => {
+    return validateAgainstSchema(schema ?? {}, formValues)
+  }, [schema, formValues])
+  // const formOutputErrors = validateAgainstSchema(schema ?? {}, formValues)
+  const schemaObjectIsValid = objectInput !== undefined && isValidJson(objectInput)
+  const schemaObjectError = objectInput !== undefined && !schemaObjectIsValid ? ***REMOVED***Invalid JSON***REMOVED*** : undefined
+  const schemaFromObject = schemaObjectIsValid ? objectToSchema(JSON.parse(objectInput)) : undefined
   return (
     <div className=***REMOVED***flex flex-col h-full gap-4 p-20***REMOVED***>
         <h1 className=***REMOVED***text-2xl***REMOVED***>Schema to Form</h1>
@@ -137,7 +132,8 @@ const SchemaToForm = (): ReactElement => {
                                   value={JSON.stringify(form, null, 2)}
                                   className=***REMOVED***h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-blue-900 text-white***REMOVED***
                                   onChange={(e) => {
-                                    setForm(e !== undefined ? JSON.parse(e) : undefined)
+                                    // setForm(e !== undefined ? JSON.parse(e) : undefined)
+                                    setStr(e)
                                   }}
                                   />
 
@@ -153,20 +149,25 @@ const SchemaToForm = (): ReactElement => {
                   <TextArea
                     id=***REMOVED***jsonInput***REMOVED***
                     testId=***REMOVED***jsonInput***REMOVED***
-                    value={JSON.stringify(objectInput, null, 2)}
+                    value={objectInput}
                     onChange={(e) => {
-                      setObjectInput(e !== undefined ? JSON.parse(e) : undefined)
+                      setObjectInput(e)
                     }}
                     />
+                    {
+                      schemaObjectError !== undefined
+                        ? <p className=***REMOVED***text-rose-800***REMOVED***>{schemaObjectError}</p>
+                        : ***REMOVED******REMOVED***
+                    }
                   <div className=***REMOVED***relative***REMOVED***>
                             {
                               objectInput !== undefined && isValidJson(objectInput)
                                 ? <>
-                                <CopyButton string={JSON.stringify(objectToSchema(objectInput) ?? ***REMOVED******REMOVED***, null, 2)} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** />
+                                <CopyButton string={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ***REMOVED******REMOVED***} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** />
                                 <TextArea
                                   id=***REMOVED***convertedObject***REMOVED***
                                   testId=***REMOVED***convertedObject***REMOVED***
-                                  value={JSON.stringify(objectToSchema(ObjectInput), null, 2)}
+                                  value={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ***REMOVED******REMOVED***}
                                   className=***REMOVED***h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-green-900 text-white***REMOVED***
                                   />
 

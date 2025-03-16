@@ -27,7 +27,7 @@ const getValidator = (schema: number): ValidateFunction => {
   }
 }
 
-export const validateSchema = async (schemaOb: unknown, version: number = 6): Promise<{ schema?: JSONSchema7, error?: string }> => {
+export const validateSchema = (schemaOb: unknown, version: number = 6): { schema?: JSONSchema7, error?: string } => {
   const ajv = new Ajv({ strict: false })
   const validator = getValidator(version)
   const valid = validator(schemaOb)
@@ -55,10 +55,14 @@ export const validateAgainstSchema = (schema: JSONSchema7, formValues: IFormValu
   return undefined
 }
 
+const makeRandom = (): string => {
+  return crypto !== undefined ? crypto.randomUUID() : Math.random().toString(36).substring(2)
+}
+
 const makeFormFieldId = (options: Array<string | number | undefined | null>): string => {
   const validOptions = options.filter((o) => o !== undefined && o !== null)
   if (validOptions.length === 0) {
-    return crypto !== undefined ? crypto.randomUUID() : Math.random().toString(36).substring(2)
+    return makeRandom()
   }
   return String(validOptions[0])
 }
@@ -98,6 +102,9 @@ const getFieldType = (schema: JSONSchema7): IFormFieldType => {
   } else if (schemaType === ***REMOVED***boolean***REMOVED***) {
     return ***REMOVED***boolean***REMOVED***
   } else if (schemaType === ***REMOVED***object***REMOVED***) {
+    return ***REMOVED***object***REMOVED***
+  }
+  if (!schemaType && (schema.anyOf !== undefined || schema.enum !== undefined)) {
     return ***REMOVED***object***REMOVED***
   }
 
@@ -213,6 +220,7 @@ const schemaToFormField = (schema: JSONSchema7, property: string, schemaField: J
     }
   }
   if (type === ***REMOVED***object***REMOVED***) {
+    // const anyOfAsProps = schemaField.anyOf !== undefined && schemaField.anyOf.filter(d => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type !== ***REMOVED***null***REMOVED***).length > 0
     const properties = schemaField.properties ?? {}
     const fields: IFormField[] = []
     for (const key in properties) {
@@ -220,6 +228,30 @@ const schemaToFormField = (schema: JSONSchema7, property: string, schemaField: J
         fields.push(schemaToFormField(schemaField, key, properties[key]))
       }
     }
+
+    const ofArr = (schemaField.anyOf ?? []).concat(schemaField.allOf ?? [])
+
+    ofArr.forEach((anyOf) => {
+      const anyOfId = schemaField.$id
+      if (typeof anyOf !== ***REMOVED***boolean***REMOVED*** && anyOf.type !== ***REMOVED***null***REMOVED***) {
+        const field = schemaToFormField(
+          schemaField,
+          anyOfId ?? makeRandom(),
+          typeof anyOf === ***REMOVED***boolean***REMOVED***
+            ? anyOf
+            : {
+                title: anyOf.title ?? ***REMOVED******REMOVED***,
+                ...anyOf
+              },
+          true
+        )
+        if (anyOfId === undefined && field.type === ***REMOVED***object***REMOVED***) {
+          field.skip_path = true
+        }
+        fields.push(field)
+      }
+    })
+
     return {
       ...ob,
       type,

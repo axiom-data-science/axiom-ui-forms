@@ -5,7 +5,7 @@ import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOV
 import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
 import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
 import { Checkbox, Input, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const FieldMap = ({ field, mappingState }: { field: IFormField, mappingState: [IFormMapping, (m: IFormMapping) => void] }): ReactElement => {
   const isContainer = field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***
@@ -35,26 +35,37 @@ const FieldMap = ({ field, mappingState }: { field: IFormField, mappingState: [I
 }
 
 const MapTester = (): ReactElement => {
-  const [inputObject, setInputObject] = useState<IForm>(copyAndAddPathToFields(testForm as IForm))
+  // const [inputObject, setInputObject] = useState<IForm>(copyAndAddPathToFields(testForm as IForm))
   const [mapping, setMapping] = useState<IFormMapping>({
     fields: {},
     $targetSchema: ***REMOVED******REMOVED***
   })
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [str, setStr] = useState<string | undefined>(JSON.stringify(inputObject))
-  useEffect(() => {
-    try {
-      const ob = JSON.parse(str === ***REMOVED******REMOVED*** || str === undefined ? ***REMOVED***{}***REMOVED*** : str)
-      setInputObject({
-        fields: [],
-        label: ***REMOVED******REMOVED***,
-        id: ***REMOVED******REMOVED***,
-        ...ob
-      })
-    } catch {
-      setError(***REMOVED***Invalid JSON***REMOVED***)
-    }
-  }, [str])
+  // const [error, setError] = useState<string | undefined>(undefined)
+  const [str, setStr] = useState<string | undefined>(JSON.stringify(testForm, null, 2))
+
+  let error
+  let inputObjectNoPaths: IForm | undefined
+  let inputObject: IForm | undefined
+
+  try {
+    const ob = JSON.parse(str === ***REMOVED******REMOVED*** || str === undefined ? ***REMOVED***{}***REMOVED*** : str)
+    inputObjectNoPaths = {
+      fields: [],
+      label: ***REMOVED******REMOVED***,
+      id: ***REMOVED******REMOVED***,
+      ...ob
+    } satisfies IForm
+
+    inputObject = copyAndAddPathToFields({
+      fields: [],
+      label: ***REMOVED******REMOVED***,
+      id: ***REMOVED******REMOVED***,
+      ...ob
+    })
+  } catch {
+    error = ***REMOVED***Invalid JSON***REMOVED***
+  }
+
   return (
         <div className=***REMOVED***p-20 h-full***REMOVED***>
             <h1 className=***REMOVED***font-bold***REMOVED***>Map Tester</h1>
@@ -73,16 +84,20 @@ const MapTester = (): ReactElement => {
                     testId=***REMOVED***object***REMOVED***
                     wrapperClassName=***REMOVED***h-full relative***REMOVED***
                     className=***REMOVED***h-full***REMOVED***
-                    value={JSON.stringify(inputObject, null, 2)}
+                    value={inputObjectNoPaths !== undefined ? JSON.stringify(inputObjectNoPaths, null, 2) : str}
                     onChange={(e) => {
                       setStr(e)
                     }}
-                    after={<CopyButton string={JSON.stringify(inputObject, null, 2)} className=***REMOVED***pointer-events-auto absolute right-8 top-12***REMOVED*** />}
+                    after={<CopyButton string={JSON.stringify(inputObjectNoPaths, null, 2)} className=***REMOVED***pointer-events-auto absolute right-8 top-12***REMOVED*** />}
                 />
                 </div>
                 <div>
                     <div className=***REMOVED***hidden***REMOVED***>
-                      <FormMappingInput form={inputObject} mappingState={[mapping, setMapping]} />
+                      {
+                        inputObject !== undefined
+                          ? <FormMappingInput form={inputObject} mappingState={[mapping, setMapping]} />
+                          : ***REMOVED******REMOVED***
+                      }
                     </div>
                     <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
                     {

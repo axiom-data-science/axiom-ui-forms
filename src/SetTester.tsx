@@ -1,6 +1,6 @@
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { set, isArray, isObject, get } from ***REMOVED***lodash***REMOVED***
-import React, { type ReactElement, useEffect, useState } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
 function flattenObjectToPaths (obj: any, prefix: string = ***REMOVED******REMOVED***): Record<string, any> {
   return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
@@ -20,21 +20,18 @@ function flattenObjectToPaths (obj: any, prefix: string = ***REMOVED******REMOVE
 const SetTester = (): ReactElement => {
   const [vals, setVals] = useState(***REMOVED******REMOVED***)
   const [paths, setPaths] = useState(***REMOVED******REMOVED***)
-  const [out, setOut] = useState({})
 
   const [obStr, setObStr] = useState(***REMOVED******REMOVED***)
   const [ob, setOb] = useState({})
   const [getStr, setGetStr] = useState(***REMOVED******REMOVED***)
 
-  useEffect(() => {
-    const newOut = {}
-    const pathsToEval = paths.split(***REMOVED***\n***REMOVED***)
-    const valsToEval = vals.split(***REMOVED***\n***REMOVED***)
-    pathsToEval.forEach((path, i) => {
-      set(newOut, path.replace(/\s+/g, ***REMOVED******REMOVED***), valsToEval[i] ?? ***REMOVED******REMOVED***)
-    })
-    setOut(newOut)
-  }, [paths, vals])
+  const out = {}
+  const pathsToEval = paths.split(***REMOVED***\n***REMOVED***)
+  const valsToEval = vals.split(***REMOVED***\n***REMOVED***)
+  pathsToEval.forEach((path, i) => {
+    set(out, path.replace(/\s+/g, ***REMOVED******REMOVED***), valsToEval[i] ?? ***REMOVED******REMOVED***)
+  })
+
   return (
         <div className=***REMOVED***p-20***REMOVED***>
         <h1 className=***REMOVED***font-bold font-xl***REMOVED***>Set Tester</h1>
