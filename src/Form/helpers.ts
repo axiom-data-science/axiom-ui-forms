@@ -67,8 +67,14 @@ export function copyAndAddPathToFields (formOrContainer: IForm): IForm {
   return form
 }
 
+function getValueFromPath (path: string, formValues: IFormValues): IValueType | IValueType[] | undefined {
+  return get(formValues, path)
+}
+
 export function getFieldValue (field: IFormField, formValues: IFormValues): IValueType | IValueType[] | undefined {
-  return formValues[getPathFromField(field)]
+  const path = makeJsonPath(field)
+  const val = getValueFromPath(path, formValues) // formValues[field.id]
+  return val
 }
 
 export function getPathFromField (field: IFormField): string {
@@ -82,10 +88,13 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
     const dependsOn = Array.isArray(field.conditions.dependsOn) ? field.conditions.dependsOn : [field.conditions.dependsOn]
 
     const val = field.conditions.value
-    return dependsOn.every(d => val !== undefined
-      ? formValues[d] === val
-      : formValues !== null && formValues[d] !== undefined && formValues[d] !== false
-    )
+    const check = dependsOn.every(d => {
+      const fieldValue = getValueFromPath(d, formValues)
+      return val !== undefined
+        ? fieldValue === val
+        : fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ***REMOVED******REMOVED***
+    })
+    return check
   }
   return true
 }
@@ -120,8 +129,7 @@ export const makeJsonPath = (field: IFormField, index: number = 0): string => {
 }
 
 const testField = (field: IFormField, formValues: IFormValues): boolean => {
-  const path = makeJsonPath(field)
-  const val = get(formValues, path) // formValues[field.id]
+  const val = getFieldValue(field, formValues)
   return val !== undefined && val !== null && val !== ***REMOVED******REMOVED***
 }
 
