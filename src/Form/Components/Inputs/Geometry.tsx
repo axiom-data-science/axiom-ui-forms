@@ -416,8 +416,9 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
     // setShowShapeTypeButtons(false)
   }
 
-  return <div className="relative">
-      <FieldLabel {...field} />
+  return <div>
+    <FieldLabel {...field} />
+  <div className="relative">
       <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
         <div className="tooltip-container relative group">
           <Button
@@ -527,6 +528,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
             setError(***REMOVED***Invalid JSON***REMOVED***)
           }
         }} />}
+    </div>
     </div>
 }
 
