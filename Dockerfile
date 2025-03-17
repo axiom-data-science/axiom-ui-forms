@@ -14,12 +14,13 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY public  public
+COPY index.html index.html
 COPY src  src
-COPY .eslintrc.json craco.config.js tailwind.config.js tsconfig.json tsconfig.paths.json ./
+COPY .eslintrc.json vite.config.ts tailwind.config.js tsconfig.json tsconfig.paths.json ./
 COPY --from=deps /app/node_modules ./node_modules
 RUN npm run build
 
-# Production image, copy all the files and run craco
+# Production image, copy all the files and run vite
 FROM nginx:1.25.1 AS nginx
 WORKDIR /app
 
