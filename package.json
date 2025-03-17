@@ -93,7 +93,6 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@craco/craco": "^7.1.0",
     "@types/lodash": "^4.17.12",
     "@types/rison": "^0.1.0",
     "@types/to-json-schema": "^0.2.4",
