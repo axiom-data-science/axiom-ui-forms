@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 # TODO: Maybe revisit this, as we probably shouldn***REMOVED***t be relying on
@@ -8,7 +8,7 @@ COPY .npmrc ./
 RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # RUN apk --no-cache add curl
 WORKDIR /app
