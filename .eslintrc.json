@@ -30,6 +30,7 @@
     },
     "ignorePatterns": [
         "tailwind.config.js",
+        "vite.config.ts",
         "**/build/*",
         "**/library/*",
         "**/node_modules/*",

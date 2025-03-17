@@ -26,7 +26,8 @@
   },
   "include": [
     "src",
-    "rollup.config.mjs"
+    "rollup.config.mjs",
+     "vite.config.ts"
   ],
   "extends": "./tsconfig.paths.json"
 }
