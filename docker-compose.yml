@@ -4,9 +4,6 @@ services:
     build:
       context:      .
       dockerfile:   Dockerfile
-      extra_hosts:
-      - "npm-registry.srv.axiomptk:10.2.3.4"
-      - "npm-registry.srv.axiomptk:10.2.10.2"
     ports:
     - "8787:80"
     # profiles:
