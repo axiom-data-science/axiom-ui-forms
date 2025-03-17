@@ -4,10 +4,10 @@ import { type IForm, type IFormSection, type IWizardStep } from ***REMOVED***@/F
 import { type IPageLayoutProps, ActivePage } from ***REMOVED***@/Form/Creator/Page***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CaretRightIcon, CaretLeftIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { useContext, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
-import ActiveIdProvider, { ActiveIDContext } from ***REMOVED***@/Form/Creator/ActiveIdProvider***REMOVED***
+import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 
 export const WizardNav = ({
   form,
@@ -21,7 +21,7 @@ export const WizardNav = ({
   level: number
 }): ReactElement => {
   const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
-  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
+  const { activeId, setActiveId, path } = useFormSectionContext()
 
   return (
       <div className=***REMOVED***relative***REMOVED***>
@@ -36,7 +36,7 @@ export const WizardNav = ({
                 id={p.id}
                 navigable={form?.settings?.url_navigable ?? true}
                 className={`px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? ***REMOVED***bg-slate-600 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-100***REMOVED***}`}
-                onClick={() => { setActiveId?.(p.id) }}
+                onClick={() => { setActiveId(p.id) }}
               >
                 {p.label}
               </NavElement>
@@ -66,7 +66,7 @@ export const WizardNavSmall = ({
   sectionStatus: IFormSectionStatus
   level: number
 }): ReactElement => {
-  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
+  const { activeId, setActiveId, path } = useFormSectionContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
   const stepsMap = Object.fromEntries(steps.map(p => [p.id, p]))
   const currentStep = stepsMap[activeId ?? ***REMOVED******REMOVED***] ?? steps[0]
@@ -83,7 +83,7 @@ export const WizardNavSmall = ({
               path={path}
               id={steps[prevIndex].id}
               navigable={form?.settings?.url_navigable ?? true}
-              onClick={() => { setActiveId?.(steps[prevIndex].id) }}
+              onClick={() => { setActiveId(steps[prevIndex].id) }}
               >
                 <CaretLeftIcon className=***REMOVED***inline***REMOVED*** /> Previous
             </NavElement>
@@ -98,7 +98,7 @@ export const WizardNavSmall = ({
                 id={steps[nextIndex].id}
                 navigable={form?.settings?.url_navigable ?? true}
                 className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700***REMOVED***
-                onClick={() => { setActiveId?.(steps[nextIndex].id) }}
+                onClick={() => { setActiveId(steps[nextIndex].id) }}
                 >
                   Next <CaretRightIcon className=***REMOVED***inline***REMOVED*** />
               </NavElement>
@@ -144,7 +144,7 @@ const WizardLayout = ({
   const sectionStatus = calculateSectionStatus(sections, formValueState)
 
   return (
-    <ActiveIdProvider path={params.slice(0, level).join(***REMOVED***/***REMOVED***)} id={id}>
+    <FormSectionContextProvider path={params.slice(0, level).join(***REMOVED***/***REMOVED***)} id={id}>
       <div className={className}>
         <NavComponent
             form={form}
@@ -169,7 +169,7 @@ const WizardLayout = ({
           level={level}
           />
       </div>
-      </ActiveIdProvider>
+      </FormSectionContextProvider>
   )
 }
 

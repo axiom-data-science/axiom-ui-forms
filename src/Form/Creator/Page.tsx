@@ -1,11 +1,11 @@
-import ActiveIdProvider, { ActiveIDContext } from ***REMOVED***@/Form/Creator/ActiveIdProvider***REMOVED***
+import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IFormValueState, type IForm, type IFormSection, type IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/Form/helpers***REMOVED***
 import { InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { useContext, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 
 const PageNav = ({
@@ -17,7 +17,7 @@ const PageNav = ({
   sections?: IFormSection[]
   level: number
 }): ReactElement => {
-  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
+  const { activeId, setActiveId, path } = useFormSectionContext()
   return (
       <div className=***REMOVED***flex flex-col  w-[200px]  border-slate-200***REMOVED***>{
         sections?.map(p => {
@@ -27,7 +27,7 @@ const PageNav = ({
               path={path}
               id={p.id}
               navigable={form?.settings?.url_navigable ?? true}
-              onClick={() => { setActiveId?.(p.id) }}
+              onClick={() => { setActiveId(p.id) }}
               className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? ***REMOVED***bg-slate-700 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
             >{p.label}</NavElement>
           )
@@ -114,7 +114,7 @@ const PageLayout = ({
   const formSection = sections?.find(s => s.id === id) ?? sections?.[0]
 
   return (
-      <ActiveIdProvider path={path} id={id}>
+      <FormSectionContextProvider path={path} id={id}>
         <div className={className}>
           <NavComponent
             form={form}
@@ -132,7 +132,7 @@ const PageLayout = ({
             level={level}
             />
         </div>
-      </ActiveIdProvider>
+      </FormSectionContextProvider>
   )
 }
 
