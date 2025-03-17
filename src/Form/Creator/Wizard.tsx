@@ -4,10 +4,10 @@ import { type IForm, type IFormSection, type IWizardStep } from '@/Form/Creator/
 import { type IPageLayoutProps, ActivePage } from '@/Form/Creator/Page'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
-import React, { useContext, type ReactElement } from 'react'
+import React, { type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
-import ActiveIdProvider, { ActiveIDContext } from '@/Form/Creator/ActiveIdProvider'
+import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 
 export const WizardNav = ({
   form,
@@ -21,7 +21,7 @@ export const WizardNav = ({
   level: number
 }): ReactElement => {
   const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
-  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
+  const { activeId, setActiveId, path } = useFormSectionContext()
 
   return (
       <div className='relative'>
@@ -36,7 +36,7 @@ export const WizardNav = ({
                 id={p.id}
                 navigable={form?.settings?.url_navigable ?? true}
                 className={`px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? 'bg-slate-600 text-white' : 'hover:bg-slate-100'}`}
-                onClick={() => { setActiveId?.(p.id) }}
+                onClick={() => { setActiveId(p.id) }}
               >
                 {p.label}
               </NavElement>
@@ -66,7 +66,7 @@ export const WizardNavSmall = ({
   sectionStatus: IFormSectionStatus
   level: number
 }): ReactElement => {
-  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
+  const { activeId, setActiveId, path } = useFormSectionContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
   const stepsMap = Object.fromEntries(steps.map(p => [p.id, p]))
   const currentStep = stepsMap[activeId ?? ''] ?? steps[0]
@@ -83,7 +83,7 @@ export const WizardNavSmall = ({
               path={path}
               id={steps[prevIndex].id}
               navigable={form?.settings?.url_navigable ?? true}
-              onClick={() => { setActiveId?.(steps[prevIndex].id) }}
+              onClick={() => { setActiveId(steps[prevIndex].id) }}
               >
                 <CaretLeftIcon className='inline' /> Previous
             </NavElement>
@@ -98,7 +98,7 @@ export const WizardNavSmall = ({
                 id={steps[nextIndex].id}
                 navigable={form?.settings?.url_navigable ?? true}
                 className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
-                onClick={() => { setActiveId?.(steps[nextIndex].id) }}
+                onClick={() => { setActiveId(steps[nextIndex].id) }}
                 >
                   Next <CaretRightIcon className='inline' />
               </NavElement>
@@ -144,7 +144,7 @@ const WizardLayout = ({
   const sectionStatus = calculateSectionStatus(sections, formValueState)
 
   return (
-    <ActiveIdProvider path={params.slice(0, level).join('/')} id={id}>
+    <FormSectionContextProvider path={params.slice(0, level).join('/')} id={id}>
       <div className={className}>
         <NavComponent
             form={form}
@@ -169,7 +169,7 @@ const WizardLayout = ({
           level={level}
           />
       </div>
-      </ActiveIdProvider>
+      </FormSectionContextProvider>
   )
 }
 

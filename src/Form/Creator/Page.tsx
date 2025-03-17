@@ -1,11 +1,11 @@
-import ActiveIdProvider, { ActiveIDContext } from '@/Form/Creator/ActiveIdProvider'
+import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import { type IFormValueState, type IForm, type IFormSection, type IValueChangeFn, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/Form/helpers'
 import { InfoCircledIcon } from '@radix-ui/react-icons'
-import React, { useContext, type ReactElement } from 'react'
+import React, { type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 
 const PageNav = ({
@@ -17,7 +17,7 @@ const PageNav = ({
   sections?: IFormSection[]
   level: number
 }): ReactElement => {
-  const { activeId, setActiveId, path } = useContext(ActiveIDContext)
+  const { activeId, setActiveId, path } = useFormSectionContext()
   return (
       <div className='flex flex-col  w-[200px]  border-slate-200'>{
         sections?.map(p => {
@@ -27,7 +27,7 @@ const PageNav = ({
               path={path}
               id={p.id}
               navigable={form?.settings?.url_navigable ?? true}
-              onClick={() => { setActiveId?.(p.id) }}
+              onClick={() => { setActiveId(p.id) }}
               className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? 'bg-slate-700 text-white' : 'hover:bg-slate-200'}`}
             >{p.label}</NavElement>
           )
@@ -114,7 +114,7 @@ const PageLayout = ({
   const formSection = sections?.find(s => s.id === id) ?? sections?.[0]
 
   return (
-      <ActiveIdProvider path={path} id={id}>
+      <FormSectionContextProvider path={path} id={id}>
         <div className={className}>
           <NavComponent
             form={form}
@@ -132,7 +132,7 @@ const PageLayout = ({
             level={level}
             />
         </div>
-      </ActiveIdProvider>
+      </FormSectionContextProvider>
   )
 }
 
