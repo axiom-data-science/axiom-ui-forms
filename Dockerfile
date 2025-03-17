@@ -26,7 +26,7 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-COPY --from=builder /app/build/ /usr/share/nginx/html
+COPY --from=builder /app/dist/ /usr/share/nginx/html
 
 COPY ./docker/nginx/conf.d/* /etc/nginx/conf.d/
 
