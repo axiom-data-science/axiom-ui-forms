@@ -1,5 +1,5 @@
 import FormManager from '@/Form/Manage/Manage'
-import React, { useState, type ReactElement } from 'react'
+import React, { createContext, useContext, useState, type ReactElement } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SetTester from '@/SetTester'
 import MapTester from '@/Form/MapTester'
@@ -11,6 +11,7 @@ import { type INumberField, type IForm, type IFormValues, type IFieldInputProps 
 import Form from '@/Form/Creator/FormCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { Slider } from '@axdspub/axiom-ui-utilities'
+import ExternalMetadataExample from '@/Form/ExternalMetadataExample'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -32,10 +33,14 @@ const WizardFormWrap = (): ReactElement => {
   )
 }
 
+interface ICustomFormProp { label: string }
+const CustomContext = createContext<ICustomFormProp>({ label: '' })
+
 const CustomElementFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
-    <div>
+    <CustomContext.Provider value={{ label: 'Custom Label' }}>
+      <div>
       <Form
         form={customElementFormJson as IForm}
         formValueState={formValueState}
@@ -43,12 +48,14 @@ const CustomElementFormWrap = (): ReactElement => {
         urlNavigable={false}
         inputOverrides={{
           'custom:number': ({ field, value, onChange }: IFieldInputProps) => {
+            const { label: labelFromContext } = useContext(CustomContext)
             const numberField = field as INumberField
             const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
             const min = numberField?.constraints?.min ?? 0
             const max = numberField?.constraints?.max ?? 100
             const step = Number(numberField?.settings?.step ?? (max - min) / 100)
             return (<div>
+              <h2 className='p-4 text-xl bg-rose-800 text-white'>{labelFromContext}</h2>
               <FieldLabel {...field} />
               <div className='flex flex-row gap-4'>
                 <p className='font-bold w-[80px]'>{tempValue}</p>
@@ -60,22 +67,21 @@ const CustomElementFormWrap = (): ReactElement => {
                   max={max}
                   onChange={(v: number): void => {
                     setTempValue(v)
-                  }}
+                  } }
                   onChangeComplete={(v: number): void => {
                     setTempValue(v)
                     onChange(v)
-                  }}
+                  } }
                   id={field.id}
                   testId={field.id}
-                  step={step}
-                  />
+                  step={step} />
               </div>
             </div>)
           }
-        }}
-        />
+        }} />
       <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
     </div>
+    </CustomContext.Provider>
   )
 }
 
@@ -100,6 +106,7 @@ const App = (): ReactElement => {
             <Route path="/custom-form-element" element={<CustomElementFormWrap />}>
               <Route path='*' element={<CustomElementFormWrap />} />
             </Route>
+            <Route path='/custom-element-context' element={<ExternalMetadataExample />} />
           </Routes>
         </BrowserRouter>
     </div>
