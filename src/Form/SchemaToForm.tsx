@@ -1,17 +1,17 @@
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { Tabs, TextArea } from '@axdspub/axiom-ui-utilities'
-import { type JSONSchema7 } from 'json-schema'
+import { type JSONSchema6 } from 'json-schema'
 import React, { useMemo, useState, type ReactElement } from 'react'
 
-import testSchema from '@/Form/testData/pttSchema.json'
+import testSchema from '@/Form/testData/pttSchema2Fixed.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormCreator from '@/Form/Creator/FormCreator'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { schemaToFormObject, validateAgainstSchema, validateSchema } from '@/Form/schemaToFormHelpers'
 import toJsonSchema from 'to-json-schema'
 
-const objectToSchema = (ob: unknown): JSONSchema7 => {
-  return toJsonSchema(ob) as JSONSchema7
+const objectToSchema = (ob: unknown): JSONSchema6 => {
+  return toJsonSchema(ob) as JSONSchema6
 }
 
 const isValidJson = (ob: unknown): boolean => {
@@ -30,7 +30,7 @@ const SchemaToForm = (): ReactElement => {
   const [str, setStr] = useState<string | undefined>(JSON.stringify(testSchema, null, 2))
 
   let form: IForm | undefined
-  let schema: JSONSchema7 | undefined
+  let schema: JSONSchema6 | undefined
 
   if (str !== '' && str !== undefined) {
     try {
@@ -77,13 +77,13 @@ const SchemaToForm = (): ReactElement => {
                             content: <div>{
                               schema !== undefined
                                 ? <>
-                              <p>{formOutputErrors !== undefined
+                              <div>{formOutputErrors !== undefined
                                 ? <>Errors: <ul className='text-rose-800 text-xs list-disc p-4'>{
                                   formOutputErrors.map((e) => {
                                     return <li key={e}>{e}</li>
                                   })
                                   }</ul></>
-                                : 'Form output is valid'}</p>
+                                : 'Form output is valid'}</div>
                               <div className='p-10 relative bg-yellow-200'>
                               <CopyButton string={JSON.stringify(form ?? '', null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
                               <pre>{JSON.stringify(formValues ?? '', null, 2)}</pre>

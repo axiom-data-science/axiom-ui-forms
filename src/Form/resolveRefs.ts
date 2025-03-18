@@ -1,6 +1,6 @@
-import { type JSONSchema7 } from 'json-schema'
+import { type JSONSchema6 } from 'json-schema'
 
-export function resolveRefs<T extends JSONSchema7> (schema: T, root: JSONSchema7 = schema): T {
+export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6 = schema): T {
   if (typeof schema !== 'object' || schema === null) return schema
 
   if (schema.$ref) {
