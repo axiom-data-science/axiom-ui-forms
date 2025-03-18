@@ -101,6 +101,24 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
   const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(EMapShape.polygon)
   const [isDrawing, setIsDrawing] = useState<boolean>(false)
 
+  // Draw settings
+  const drawEnabled = field.settings?.drawEnabled !== false // Default to true if not specified
+  const drawPolygonEnabled = field.settings?.drawPolygonEnabled !== false && drawEnabled // Default to true if drawEnabled and not specified
+  const drawPathEnabled = field.settings?.drawPathEnabled !== false && drawEnabled // Default to true if drawEnabled and not specified
+  const drawPointEnabled = field.settings?.drawPointEnabled !== false && drawEnabled // Default to true if drawEnabled and not specified
+  const showCoordinateInput = field.settings?.showCoordinateInput !== false // Default to true if not specified
+
+  // Set initial draw type based on enabled tools
+  useEffect(() => {
+    if (drawPolygonEnabled) {
+      setCurrentDrawType(EMapShape.polygon)
+    } else if (drawPathEnabled) {
+      setCurrentDrawType(EMapShape.linestring)
+    } else if (drawPointEnabled) {
+      setCurrentDrawType(EMapShape.point)
+    }
+  }, [drawPolygonEnabled, drawPathEnabled, drawPointEnabled])
+
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
     height: ***REMOVED***500px***REMOVED***,
@@ -117,7 +135,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
     tools: {
       draw: {
         shape: currentDrawType,
-        enabled: true
+        enabled: drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled)
       }
     }
   }
@@ -418,100 +436,114 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
 
   return <div>
     <FieldLabel {...field} />
-  <div className="relative">
-      <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
-        <div className="tooltip-container relative group">
-          <Button
-            onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
-            className={`p-2 rounded-lg shadow-lg ${
-              currentDrawType === EMapShape.polygon && isDrawing
-                ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
-                : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
-            } text-black w-10 h-10 flex items-center justify-center`}
-          >
-            <SquareIcon className="w-5 h-5 rotate-45" />
-            <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-              Draw Polygon
-            </span>
-          </Button>
-        </div>
-        <div className="tooltip-container relative group">
-          <Button
-            onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
-            className={`p-2 rounded-lg shadow-lg ${
-              currentDrawType === EMapShape.linestring && isDrawing
-                ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
-                : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
-            } text-black w-10 h-10 flex items-center justify-center`}
-          >
-            <BorderSolidIcon className="w-5 h-5" />
-            <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-              Draw Path
-            </span>
-          </Button>
-        </div>
-        <div className="tooltip-container relative group">
-          <Button
-            onClick={() => { handleDrawTypeChange(EMapShape.point) }}
-            className={`p-2 rounded-lg shadow-lg ${
-              currentDrawType === EMapShape.point && isDrawing
-                ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
-                : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
-            } text-black w-10 h-10 flex items-center justify-center`}
-          >
-            <DrawingPinFilledIcon className="w-5 h-5" />
-            <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-              Draw Point
-            </span>
-          </Button>
-        </div>
-        {hasValidShape(geojson) && (
-          <div className="tooltip-container relative group">
-            <Button
-              onClick={clearShape}
-              className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
-            >
-              <TrashIcon className="w-5 h-5" />
-              <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-                Clear Shape
-              </span>
-            </Button>
-          </div>
-        )}
-      </div>
-      <Map {...MAP_CONFIG} setState={setMapState} />
-      <div className="mt-4">
-        <div className="flex justify-between items-center mb-2">
-          <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
-          {showShapeTypeButtons && (
-            <div className="flex gap-2">
+    <div className="relative">
+      {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
+        <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
+          {drawPolygonEnabled && (
+            <div className="tooltip-container relative group">
               <Button
-                onClick={() => { applyShapeType(EMapShape.linestring) }}
-                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
+                onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
+                className={`p-2 rounded-lg shadow-lg ${
+                  currentDrawType === EMapShape.polygon && isDrawing
+                    ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
+                    : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
+                } text-black w-10 h-10 flex items-center justify-center`}
               >
-                <BorderSolidIcon className="w-4 h-4" />
-                Create Path
+                <SquareIcon className="w-5 h-5 rotate-45" />
+                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                  Draw Polygon
+                </span>
               </Button>
+            </div>
+          )}
+          {drawPathEnabled && (
+            <div className="tooltip-container relative group">
               <Button
-                onClick={() => { applyShapeType(EMapShape.polygon) }}
-                className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
+                onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
+                className={`p-2 rounded-lg shadow-lg ${
+                  currentDrawType === EMapShape.linestring && isDrawing
+                    ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
+                    : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
+                } text-black w-10 h-10 flex items-center justify-center`}
               >
-                <SquareIcon className="w-4 h-4 rotate-45" />
-                Create Polygon
+                <BorderSolidIcon className="w-5 h-5" />
+                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                  Draw Path
+                </span>
+              </Button>
+            </div>
+          )}
+          {drawPointEnabled && (
+            <div className="tooltip-container relative group">
+              <Button
+                onClick={() => { handleDrawTypeChange(EMapShape.point) }}
+                className={`p-2 rounded-lg shadow-lg ${
+                  currentDrawType === EMapShape.point && isDrawing
+                    ? ***REMOVED***bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]***REMOVED***
+                    : ***REMOVED***bg-gray-100 hover:bg-gray-50***REMOVED***
+                } text-black w-10 h-10 flex items-center justify-center`}
+              >
+                <DrawingPinFilledIcon className="w-5 h-5" />
+                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                  Draw Point
+                </span>
+              </Button>
+            </div>
+          )}
+          {hasValidShape(geojson) && (
+            <div className="tooltip-container relative group">
+              <Button
+                onClick={clearShape}
+                className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
+              >
+                <TrashIcon className="w-5 h-5" />
+                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                  Clear Shape
+                </span>
               </Button>
             </div>
           )}
         </div>
-        <TextArea
-          error={error}
-          className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
-          id={`${field.id}-coordinates`}
-          testId={`${field.id}-coordinates`}
-          value={coordinates}
-          onChange={handleCoordinatesChange}
-          placeholder="61.2181, -149.9003&#10;61.2182, -149.9004&#10;61.2183, -149.9005"
-        />
-      </div>
+      )}
+      <Map {...MAP_CONFIG} setState={setMapState} />
+      {showCoordinateInput && (
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-2">
+            <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
+            {drawEnabled && showShapeTypeButtons && (
+              <div className="flex gap-2">
+                {drawPathEnabled && (
+                  <Button
+                    onClick={() => { applyShapeType(EMapShape.linestring) }}
+                    className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
+                  >
+                    <BorderSolidIcon className="w-4 h-4" />
+                    Create Path
+                  </Button>
+                )}
+                {drawPolygonEnabled && (
+                  <Button
+                    onClick={() => { applyShapeType(EMapShape.polygon) }}
+                    className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
+                  >
+                    <SquareIcon className="w-4 h-4 rotate-45" />
+                    Create Polygon
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+          <TextArea
+            error={error}
+            className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
+            id={`${field.id}-coordinates`}
+            testId={`${field.id}-coordinates`}
+            value={coordinates}
+            onChange={handleCoordinatesChange}
+            placeholder="61.2181, -149.9003&#10;61.2182, -149.9004&#10;61.2183, -149.9005"
+          />
+        </div>
+      )}
       {showGeoJSONInput && <TextArea
         error={error}
         className=***REMOVED***min-h-[500px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
@@ -529,7 +561,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
           }
         }} />}
     </div>
-    </div>
+  </div>
 }
 
 export default GeoJSONInput
