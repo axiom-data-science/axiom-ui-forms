@@ -1,14 +1,15 @@
+import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { calculateSectionStatus, copyAndAddPathToFields } from ***REMOVED***@/Form/helpers***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { type JSONSchema7 } from ***REMOVED***json-schema***REMOVED***
+import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
-  schema?: JSONSchema7
+  schema?: JSONSchema6
   formValueState: [IFormValues, (v: IFormValues) => void]
   note?: string
   error?: string
@@ -37,7 +38,8 @@ const FormCreator = ({
   onChange,
   className,
   urlNavigable = true,
-  inputOverrides
+  inputOverrides,
+  schema
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
 
@@ -47,7 +49,14 @@ const FormCreator = ({
   }
 
   return (
-
+    <FormContext.Provider value={{
+      form: activeForm,
+      formValues: formValueState[0],
+      setFormValues: formValueState[1],
+      inputOverrides,
+      schema,
+      urlNavigable: activeForm.settings.url_navigable
+    }}>
     <div className={utils.makeClassName({
       className: activeForm?.settings?.class_name,
       defaultClassName: className
@@ -60,12 +69,10 @@ const FormCreator = ({
         }
         <FormSection
           formSection={activeForm}
-          formValueState={formValueState}
-          form={activeForm}
           onChange={onChange}
-          inputOverrides={inputOverrides}
           />
     </div>
+    </FormContext.Provider>
   )
 }
 

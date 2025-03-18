@@ -1,5 +1,6 @@
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
-import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType, type IForm, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -8,13 +9,10 @@ import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED*
 
 interface IFieldCreator {
   field: IFormField
-  form: IForm
   onChange?: IValueChangeFn
   className?: string
   defaultClassName?: string
   value?: IValueType | IValueType[]
-  formValueState: IFormValueState
-  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
 
 const toolButtonClass = ***REMOVED***border-white hover:border-single hover:border-1 hover:border-slate-400***REMOVED***
@@ -54,23 +52,18 @@ const DeleteMultiple = ({
 const OneOfMultiple = ({
   InputComponent,
   field,
-  form,
   value,
   index,
   onChange,
-  values,
-  formValueState
+  values
 
 }: {
   InputComponent: React.FC<IFieldInputProps>
   field: IFormField
-  form: IForm
   value: IValueType
   index: number
   onChange: (v: IValueType[] | undefined) => void
   values: IValueType[]
-  formValueState: [IFormValues, (v: IFormValues) => void]
-
 }): ReactElement => {
   const addValue = (v: IValueType | null): void => {
     const newValues = [...values]
@@ -81,8 +74,6 @@ const OneOfMultiple = ({
   return (
     <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
           <InputComponent
-          formValueState={formValueState}
-          form={form}
           field={{
             ...field,
             required: false,
@@ -126,14 +117,11 @@ const OneOfMultiple = ({
 }
 
 const MultipleFieldCreator = ({
-  form,
   field,
   onChange,
-  value,
-  formValueState,
-  inputOverrides
+  value
 }: IFieldCreator): ReactElement => {
-  const [formValues, setFormValues] = formValueState
+  const { formValues, setFormValues, inputOverrides } = useFormContext()
   const defaultOnChange = (v: IValueType[] | undefined): void => {
     const formValuesCopy = structuredClone(formValues)
     const fieldPath = getPathFromField(field)
@@ -153,10 +141,8 @@ const MultipleFieldCreator = ({
     {
       initialValues?.map((value, index) => {
         return <OneOfMultiple
-          formValueState={formValueState}
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
-          form={form}
           field={field}
           value={value}
           index={index}
@@ -170,15 +156,12 @@ const MultipleFieldCreator = ({
 
 const FieldCreator = ({
   field,
-  form,
   value,
   onChange,
   className,
-  defaultClassName = ***REMOVED***py-2 flex flex-col gap-8***REMOVED***,
-  formValueState,
-  inputOverrides
+  defaultClassName = ***REMOVED***py-2 flex flex-col gap-8***REMOVED***
 }: IFieldCreator): ReactElement | null => {
-  const [formValues, setFormValues] = formValueState
+  const { form, inputOverrides, setFormValues, formValues } = useFormContext()
   const InputComponent = {
     ...inputMap,
     ...(inputOverrides ?? {})
@@ -207,19 +190,13 @@ const FieldCreator = ({
       field.multiple === true
         ? <MultipleFieldCreator
             field={field}
-            form={form}
             onChange={onChange}
             value={initialValue}
-            formValueState={formValueState}
-            inputOverrides={inputOverrides}
           />
         : <InputComponent
             field={field}
-            form={form}
             onChange={onChange ?? defaultOnChange}
             value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
-            formValueState={formValueState}
-            inputOverrides={inputOverrides}
           />
 
     }</div>
