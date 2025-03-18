@@ -18,7 +18,7 @@ const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-  <Form form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' />
+  <Form form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
   <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
   </div>
   )

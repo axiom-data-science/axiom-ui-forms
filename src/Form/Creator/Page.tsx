@@ -78,7 +78,25 @@ export const ActivePage = ({
   )
 }
 
-const PageLayout = ({
+const PageLayout = (props: IPageLayoutProps): ReactElement => {
+  if (props.sections === undefined) {
+    return <></>
+  }
+  const { urlNavigable } = useFormContext()
+  const params = (useParams()['*'] ?? '').split('/')
+  const path = params.slice(0, props.level).join('/')
+  const id = urlNavigable
+    ? (params[props.level] && params[props.level] !== '') ? params[props.level] : (props.sections[0]?.id ?? null)
+    : props.sections[0]?.id ?? null
+
+  return (
+    <FormSectionContextProvider path={path} id={id}>
+      <PageLayoutContent {...props} />
+    </FormSectionContextProvider>
+  )
+}
+
+const PageLayoutContent = ({
 
   sections,
   onChange,
@@ -92,17 +110,13 @@ const PageLayout = ({
     return <></>
   }
 
-  const { urlNavigable, setFormValues, formValues } = useFormContext()
-  const params = (useParams()['*'] ?? '').split('/')
-  const path = params.slice(0, level).join('/')
-  const id = urlNavigable
-    ? (params[level] && params[level] !== '') ? params[level] : (sections[0]?.id ?? null)
-    : sections[0]?.id ?? null
+  const { setFormValues, formValues } = useFormContext()
   const sectionStatus = calculateSectionStatus(sections, [formValues, setFormValues])
-  const formSection = sections?.find(s => s.id === id) ?? sections?.[0]
+  const { activeId } = useFormSectionContext()
+  const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
 
   return (
-      <FormSectionContextProvider path={path} id={id}>
+
         <div className={className}>
           <NavComponent
             sections={sections}
@@ -116,7 +130,6 @@ const PageLayout = ({
             level={level}
             />
         </div>
-      </FormSectionContextProvider>
   )
 }
 
