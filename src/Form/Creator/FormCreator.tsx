@@ -2,10 +2,10 @@ import { FormContext } from '@/Form/Creator/FormContextProvider'
 import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
 import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
-import { calculateSectionStatus, copyAndAddPathToFields } from '@/Form/helpers'
-import { utils } from '@axdspub/axiom-ui-utilities'
+import { calculateSectionStatus, copyAndAddPathToFields, getFieldsFromFormSection, getFieldValue, updateFormValuesWithFieldValueInPlace } from '@/Form/helpers'
+import { Loader, utils } from '@axdspub/axiom-ui-utilities'
 import { type JSONSchema6 } from 'json-schema'
-import React, { type ReactElement } from 'react'
+import React, { useEffect, useState, type ReactElement } from 'react'
 
 export interface IFormCreatorProps {
   form: IForm
@@ -48,31 +48,55 @@ const FormCreator = ({
     ...activeForm.settings
   }
 
+  const [formValues, setFormValues] = formValueState
+  const [isReady, setIsReady] = useState(false)
+  useEffect(() => {
+    const formValuesCopy = structuredClone(formValues)
+    getFieldsFromFormSection(activeForm).forEach(field => {
+      if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
+        updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
+      }
+    })
+    setFormValues(formValuesCopy)
+    setIsReady(true)
+  }, [form])
+
+  console.log('isReady', isReady)
+  if (isReady) {
+    console.log('formValues', formValues)
+  }
+
   return (
-    <FormContext.Provider value={{
-      form: activeForm,
-      formValues: formValueState[0],
-      setFormValues: formValueState[1],
-      inputOverrides,
-      schema,
-      urlNavigable: activeForm.settings.url_navigable
-    }}>
-    <div className={utils.makeClassName({
-      className: activeForm?.settings?.class_name,
-      defaultClassName: className
-    })}>
-        <FormHeader form={activeForm} note={note} error={error} />
-        {
-          activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
-            ? <FormStatus form={activeForm} formValueState={formValueState} />
-            : ''
-        }
-        <FormSection
-          formSection={activeForm}
-          onChange={onChange}
-          />
-    </div>
-    </FormContext.Provider>
+    <>
+    {
+      !isReady
+        ? <Loader className='pt-20' />
+        : <FormContext.Provider value={{
+          form: activeForm,
+          formValues,
+          setFormValues,
+          inputOverrides,
+          schema,
+          urlNavigable: activeForm.settings.url_navigable
+        }}>
+            <div className={utils.makeClassName({
+              className: activeForm?.settings?.class_name,
+              defaultClassName: className
+            })}>
+                <FormHeader form={activeForm} note={note} error={error} />
+                {
+                  activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
+                    ? <FormStatus form={activeForm} formValueState={formValueState} />
+                    : ''
+                }
+                <FormSection
+                  formSection={activeForm}
+                  onChange={onChange}
+                  />
+            </div>
+          </FormContext.Provider>
+    }
+    </>
   )
 }
 

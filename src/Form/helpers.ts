@@ -1,6 +1,6 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import { type IForm, type IFormField, type IValueType, type IFormValues, type IFormSection, type IFormValueState, type IPage, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
-import { get } from 'lodash'
+import { get, set } from 'lodash'
 
 export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
   return field?.fields ?? []
@@ -114,10 +114,20 @@ export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: 
       formValues[key] = undefined
     }
   })
-
   const fieldIds = fields.map(f => f.id)
   const newFormValues = Object.fromEntries(Object.entries(formValues).filter(([key]) => fieldIds.includes(key)))
   return newFormValues
+}
+
+export function updateFormValuesWithFieldValueInPlace (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): void {
+  const fieldPath = getPathFromField(field)
+  set(formValues, fieldPath, newValue)
+}
+
+export function updateFormValuesWithFieldValue (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): IFormValues {
+  const formValuesCopy = structuredClone(formValues)
+  updateFormValuesWithFieldValueInPlace(field, newValue, formValuesCopy)
+  return formValuesCopy
 }
 
 export const makeJsonPath = (field: IFormField, index: number = 0): string => {

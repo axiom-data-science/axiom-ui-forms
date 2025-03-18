@@ -1,10 +1,9 @@
 import inputMap from '@/Form/Components/Inputs/inputMap'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
-import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
-import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, getPathFromField } from '@/Form/helpers'
+import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
+import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, updateFormValuesWithFieldValue } from '@/Form/helpers'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
-import { set } from 'lodash'
 import React, { useState, type ReactElement } from 'react'
 
 interface IFieldCreator {
@@ -123,9 +122,7 @@ const MultipleFieldCreator = ({
 }: IFieldCreator): ReactElement => {
   const { formValues, setFormValues, inputOverrides } = useFormContext()
   const defaultOnChange = (v: IValueType[] | undefined): void => {
-    const formValuesCopy = structuredClone(formValues)
-    const fieldPath = getPathFromField(field)
-    set(formValuesCopy, fieldPath, v)
+    const formValuesCopy = updateFormValuesWithFieldValue(field, v, formValues)
     setFormValues(formValuesCopy)
   }
 
@@ -167,21 +164,18 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  const updateFormValues = (v: IFormValues): void => {
-    setFormValues(cleanUnusedDependenciesFromFormValues(form, v))
-  }
-
   if (!checkCondition(field, formValues)) {
     return null
   }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
-    const formValuesCopy = structuredClone(formValues)
-    const fieldPath = getPathFromField(field)
-    set(formValuesCopy, fieldPath, v)
-    updateFormValues(formValuesCopy)
+    const formValuesCopy = updateFormValuesWithFieldValue(field, v as IValueType, formValues)
+    setFormValues(cleanUnusedDependenciesFromFormValues(form, formValuesCopy))
   }
+  const onChangeFn = onChange ?? defaultOnChange
+
   const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
+  console.log(`initialValue: ${field.id}`, initialValue)
   return InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
@@ -195,7 +189,7 @@ const FieldCreator = ({
           />
         : <InputComponent
             field={field}
-            onChange={onChange ?? defaultOnChange}
+            onChange={onChangeFn}
             value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
           />
 

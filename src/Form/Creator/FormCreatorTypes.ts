@@ -43,13 +43,12 @@ interface IFormFieldRoot {
   path?: IFormField[]
   fullPath?: string[]
   level?: number
-  value?: IValueType
+  defaultValue?: IValueType | IValueType[]
   conditions?: IFieldConditions
   settings?: Record<string, unknown>
 }
 
 interface INumberValueInput extends IFormFieldRoot {
-  value?: 'number'
   constraints?: {
     min?: number
     max?: number
@@ -61,7 +60,6 @@ export interface INumberField extends INumberValueInput {
 }
 
 interface IStringValueInput extends IFormFieldRoot {
-  value?: 'text'
   placeholder?: string
 }
 
@@ -100,11 +98,10 @@ interface ISelectableInput extends IFormFieldRoot {
 }
 
 interface ISingleSelectableInput extends ISelectableInput {
-  value?: 'text' | 'number'
 }
 
 interface IMultiSelectableInput extends ISelectableInput {
-  values?: Array<'text' | 'number'>
+  defaultValues?: Array<string | number>
 }
 
 export interface ISelectField extends ISingleSelectableInput {
@@ -122,7 +119,6 @@ export interface ICheckboxField extends IMultiSelectableInput {
 
 export interface IBooleanField extends IFormFieldRoot {
   type: 'boolean'
-  value?: 'boolean'
 }
 
 interface IDateFieldConstraints {
@@ -132,7 +128,6 @@ interface IDateFieldConstraints {
 
 interface IDateField extends IFormFieldRoot {
   type: 'date'
-  value?: 'date'
   constraints?: IDateFieldConstraints
 }
 
@@ -143,7 +138,6 @@ interface ITimeFieldConstraints {
 
 interface ITimeField extends IFormFieldRoot {
   type: 'time'
-  value?: 'time'
   constraints?: ITimeFieldConstraints
 }
 
@@ -154,7 +148,6 @@ interface IDateTimeConstraints {
 
 interface IDateTimeField extends IFormFieldRoot {
   type: 'datetime'
-  value?: 'datetime'
   constraints?: IDateTimeConstraints
 }
 
@@ -178,14 +171,12 @@ export interface IFormFieldPage extends IFormFieldSection {
 
 interface IGeoJSONField extends IFormFieldRoot {
   type: 'geojson'
-  value?: 'geojson'
   exclude_types?: string[]
   include_types?: string[]
 }
 
 interface IGeometryField extends IFormFieldRoot {
   type: 'geometry'
-  value?: 'geometry'
   exclude_types?: string[]
   include_types?: string[]
 }
