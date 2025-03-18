@@ -1,6 +1,6 @@
-import { type JSONSchema7 } from ***REMOVED***json-schema***REMOVED***
+import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
-export function resolveRefs<T extends JSONSchema7> (schema: T, root: JSONSchema7 = schema): T {
+export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6 = schema): T {
   if (typeof schema !== ***REMOVED***object***REMOVED*** || schema === null) return schema
 
   if (schema.$ref) {

@@ -1,17 +1,17 @@
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { Tabs, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { type JSONSchema7 } from ***REMOVED***json-schema***REMOVED***
+import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import React, { useMemo, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
-import testSchema from ***REMOVED***@/Form/testData/pttSchema.json***REMOVED***
+import testSchema from ***REMOVED***@/Form/testData/pttSchema2Fixed.json***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { ExclamationTriangleIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { schemaToFormObject, validateAgainstSchema, validateSchema } from ***REMOVED***@/Form/schemaToFormHelpers***REMOVED***
 import toJsonSchema from ***REMOVED***to-json-schema***REMOVED***
 
-const objectToSchema = (ob: unknown): JSONSchema7 => {
-  return toJsonSchema(ob) as JSONSchema7
+const objectToSchema = (ob: unknown): JSONSchema6 => {
+  return toJsonSchema(ob) as JSONSchema6
 }
 
 const isValidJson = (ob: unknown): boolean => {
@@ -30,7 +30,7 @@ const SchemaToForm = (): ReactElement => {
   const [str, setStr] = useState<string | undefined>(JSON.stringify(testSchema, null, 2))
 
   let form: IForm | undefined
-  let schema: JSONSchema7 | undefined
+  let schema: JSONSchema6 | undefined
 
   if (str !== ***REMOVED******REMOVED*** && str !== undefined) {
     try {
@@ -77,13 +77,13 @@ const SchemaToForm = (): ReactElement => {
                             content: <div>{
                               schema !== undefined
                                 ? <>
-                              <p>{formOutputErrors !== undefined
+                              <div>{formOutputErrors !== undefined
                                 ? <>Errors: <ul className=***REMOVED***text-rose-800 text-xs list-disc p-4***REMOVED***>{
                                   formOutputErrors.map((e) => {
                                     return <li key={e}>{e}</li>
                                   })
                                   }</ul></>
-                                : ***REMOVED***Form output is valid***REMOVED***}</p>
+                                : ***REMOVED***Form output is valid***REMOVED***}</div>
                               <div className=***REMOVED***p-10 relative bg-yellow-200***REMOVED***>
                               <CopyButton string={JSON.stringify(form ?? ***REMOVED******REMOVED***, null, 2)} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** />
                               <pre>{JSON.stringify(formValues ?? ***REMOVED******REMOVED***, null, 2)}</pre>

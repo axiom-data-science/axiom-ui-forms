@@ -1,7 +1,7 @@
 import { type IForm, type IFormField, type IFormFieldType, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Ajv, { type ValidateFunction } from ***REMOVED***ajv***REMOVED***
 
-import { type JSONSchema7, type JSONSchema7Type, type JSONSchema7Definition } from ***REMOVED***json-schema***REMOVED***
+import { type JSONSchema6Type, type JSONSchema6Definition, type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
 import metaSchemaDraftV7 from ***REMOVED***ajv/lib/refs/json-schema-draft-07.json***REMOVED***
 import metaSchemaDraftV6 from ***REMOVED***ajv/lib/refs/json-schema-draft-06.json***REMOVED***
@@ -27,23 +27,27 @@ const getValidator = (schema: number): ValidateFunction => {
   }
 }
 
-export const validateSchema = (schemaOb: unknown, version: number = 6): { schema?: JSONSchema7, error?: string } => {
+export const validateSchema = (schemaOb: unknown, version: number = 6): { schema?: JSONSchema6, error?: string, unrefed?: JSONSchema6 } => {
   const ajv = new Ajv({ strict: false })
   const validator = getValidator(version)
   const valid = validator(schemaOb)
   if (!valid) {
     return { error: ajv.errorsText(validator.errors) }
   }
-  // const v = ajv.compile<JSONSchema7>(schemaOb as JSONSchema7)
+  // const v = ajv.compile<JSONSchema6>(schemaOb as JSONSchema6)
   /* registerSchema(schemaOb as SchemaObject, ***REMOVED***https://axds.co/test***REMOVED***)
   const bundledSchema = await bundle(***REMOVED***https://axds.co/test***REMOVED***)
-  return { schema: bundledSchema as JSONSchema7 } */
+  return { schema: bundledSchema as JSONSchema6 } */
 
-  const resolved = resolveRefs(schemaOb as JSONSchema7)
-  return { schema: resolved }
+  const resolved = resolveRefs(structuredClone(schemaOb) as JSONSchema6)
+  return { schema: resolved, unrefed: schemaOb as JSONSchema6 }
 }
 
-export const validateAgainstSchema = (schema: JSONSchema7, formValues: IFormValues): string[] | undefined => {
+export const validateAgainstSchema = (schema: JSONSchema6, formValues: IFormValues): string[] | undefined => {
+  const validSchema = validateSchema(schema)
+  if (validSchema.error !== undefined) {
+    return [validSchema.error]
+  }
   const ajv = new Ajv({ strict: false, allErrors: true })
   const validator = ajv.compile(schema)
   const valid = validator(formValues)
@@ -80,7 +84,7 @@ const makeLabel = (options: Array<string | number | undefined | null>): string |
     }).join(***REMOVED*** ***REMOVED***)
 }
 
-const getFieldType = (schema: JSONSchema7): IFormFieldType => {
+const getFieldType = (schema: JSONSchema6): IFormFieldType => {
   const schemaType = schema.type
   if (schemaType === ***REMOVED***string***REMOVED*** || schemaType === ***REMOVED***number***REMOVED*** || schemaType === ***REMOVED***integer***REMOVED***) {
     if (schema.enum !== undefined || schema.oneOf !== undefined) {
@@ -111,7 +115,7 @@ const getFieldType = (schema: JSONSchema7): IFormFieldType => {
   return ***REMOVED***text***REMOVED***
 }
 
-export const getValueFromSchema = (schema: JSONSchema7Type | JSONSchema7Definition | undefined): string | number | boolean | undefined => {
+export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definition | undefined): string | number | boolean | undefined => {
   if (schema === undefined || schema === null) {
     return undefined
   }
@@ -130,7 +134,7 @@ export const getValueFromSchema = (schema: JSONSchema7Type | JSONSchema7Definiti
   return undefined
 }
 
-export const getLabelFromSchema = (schema: JSONSchema7Type | JSONSchema7Definition | undefined): string | undefined => {
+export const getLabelFromSchema = (schema: JSONSchema6Type | JSONSchema6Definition | undefined): string | undefined => {
   if (schema === undefined || schema === null) {
     return undefined
   }
@@ -152,7 +156,7 @@ export const getLabelFromSchema = (schema: JSONSchema7Type | JSONSchema7Definiti
   return String(getValueFromSchema(schema))
 }
 
-const schemaToFormField = (schema: JSONSchema7, property: string, schemaField: JSONSchema7, multiple?: boolean): IFormField => {
+const schemaToFormField = (schema: JSONSchema6, property: string, schemaField: JSONSchema6, multiple?: boolean): IFormField => {
   if (schemaField === undefined) {
     return {
       id: makeFormFieldId([schema.$id, property]),
@@ -170,7 +174,7 @@ const schemaToFormField = (schema: JSONSchema7, property: string, schemaField: J
     }
   }
   if (schemaField.type === ***REMOVED***array***REMOVED*** && schemaField.items !== undefined) {
-    return schemaToFormField(schemaField, property, schemaField.items as JSONSchema7, true)
+    return schemaToFormField(schemaField, property, schemaField.items as JSONSchema6, true)
   }
   if (schemaField.anyOf !== undefined && schemaField.anyOf.length === 2 && schemaField.anyOf.filter(d => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type === ***REMOVED***null***REMOVED***).length === 1) {
     const notNull = schemaField.anyOf.filter(d => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type !== ***REMOVED***null***REMOVED***)[0]
@@ -267,7 +271,7 @@ const schemaToFormField = (schema: JSONSchema7, property: string, schemaField: J
   }
 }
 
-export const schemaToFormObject = (schema: JSONSchema7): IForm => {
+export const schemaToFormObject = (schema: JSONSchema6): IForm => {
   const formFields: IFormField[] = []
   for (const key in schema.properties) {
     if (schema.properties[key] !== undefined && typeof schema.properties[key] !== ***REMOVED***boolean***REMOVED***) {
