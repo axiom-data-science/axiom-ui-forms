@@ -118,7 +118,25 @@ export interface IWizardLayoutProps extends IPageLayoutProps {
   }>
 }
 
-const WizardLayout = ({
+const WizardLayout = (props: IPageLayoutProps): ReactElement => {
+  if (props.sections === undefined) {
+    return <></>
+  }
+  const { urlNavigable } = useFormContext()
+  const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
+  const path = params.slice(0, props.level).join(***REMOVED***/***REMOVED***)
+  const id = urlNavigable
+    ? (params[props.level] && params[props.level] !== ***REMOVED******REMOVED***) ? params[props.level] : (props.sections[0]?.id ?? null)
+    : props.sections[0]?.id ?? null
+
+  return (
+    <FormSectionContextProvider path={path} id={id}>
+      <WizardLayoutContent {...props} />
+    </FormSectionContextProvider>
+  )
+}
+
+const WizardLayoutContent = ({
   sections,
   onChange,
   ContentComponent = ActivePage,
@@ -130,17 +148,13 @@ const WizardLayout = ({
   if (sections === undefined) {
     return <></>
   }
-  const { form, formValues, setFormValues } = useFormContext()
-  const params = useParams()[***REMOVED*******REMOVED***]?.split(***REMOVED***/***REMOVED***)?.filter(d => d !== ***REMOVED******REMOVED***) ?? []
-  const id = form?.settings?.url_navigable
-    ? params[level] ?? sections[0]?.id ?? null
-    : sections[0]?.id ?? null
-
-  const formSection = sections?.find(s => s.id === id) ?? sections?.[0]
+  const { formValues, setFormValues } = useFormContext()
+  const { activeId } = useFormSectionContext()
+  const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
   const sectionStatus = calculateSectionStatus(sections, [formValues, setFormValues])
 
   return (
-    <FormSectionContextProvider path={params.slice(0, level).join(***REMOVED***/***REMOVED***)} id={id}>
+
       <div className={className}>
         <NavComponent
             sections={sections}
@@ -159,7 +173,6 @@ const WizardLayout = ({
           level={level}
           />
       </div>
-      </FormSectionContextProvider>
   )
 }
 
