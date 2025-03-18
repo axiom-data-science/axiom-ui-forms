@@ -4,7 +4,7 @@ import { type ICompositeValueType, type IFieldInputProps } from '@/Form/Creator/
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
-const ObjectInput = ({ form, field, onChange, value, formValueState }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
   if (field.type === 'object' && field.fields !== undefined) {
     const cl = `${field.layout === 'horizontal' ? `flex flex-row gap-4  ${field.label !== undefined ? 'px-0' : ''}` : 'flex flex-col gap-4'}`
@@ -23,7 +23,6 @@ const ObjectInput = ({ form, field, onChange, value, formValueState }: IFieldInp
 
             return (
               <FieldCreator
-                formValueState={formValueState}
                 onChange={(e) => {
                   if (childField.type === 'object' && childField.skip_path === true) {
                     onChange(e)
@@ -38,7 +37,6 @@ const ObjectInput = ({ form, field, onChange, value, formValueState }: IFieldInp
                 })}
                 value={initialValue[childField.id]}
                 field={childField}
-                form={form}
                 key={key}
               />
             )

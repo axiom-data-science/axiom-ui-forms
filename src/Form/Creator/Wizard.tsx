@@ -1,6 +1,6 @@
 import { calculateSectionStatus } from '@/Form/helpers'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IForm, type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
 import { type IPageLayoutProps, ActivePage } from '@/Form/Creator/Page'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
@@ -8,20 +8,20 @@ import React, { type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
+import { useFormContext } from '@/Form/Creator/FormContextProvider'
 
 export const WizardNav = ({
-  form,
   sections,
   sectionStatus,
   level
 }: {
-  form: IForm
   sections?: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
 }): ReactElement => {
   const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
   const { activeId, setActiveId, path } = useFormSectionContext()
+  const { urlNavigable } = useFormContext()
 
   return (
       <div className='relative'>
@@ -34,7 +34,7 @@ export const WizardNav = ({
               <NavElement
                 path={path}
                 id={p.id}
-                navigable={form?.settings?.url_navigable ?? true}
+                navigable={urlNavigable ?? true}
                 className={`px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? 'bg-slate-600 text-white' : 'hover:bg-slate-100'}`}
                 onClick={() => { setActiveId(p.id) }}
               >
@@ -56,17 +56,16 @@ export const WizardNav = ({
 }
 
 export const WizardNavSmall = ({
-  form,
   sections,
   sectionStatus,
   level
 }: {
-  form: IForm
   sections?: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
 }): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
+  const { urlNavigable } = useFormContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
   const stepsMap = Object.fromEntries(steps.map(p => [p.id, p]))
   const currentStep = stepsMap[activeId ?? ''] ?? steps[0]
@@ -82,7 +81,7 @@ export const WizardNavSmall = ({
               className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
               path={path}
               id={steps[prevIndex].id}
-              navigable={form?.settings?.url_navigable ?? true}
+              navigable={urlNavigable ?? true}
               onClick={() => { setActiveId(steps[prevIndex].id) }}
               >
                 <CaretLeftIcon className='inline' /> Previous
@@ -96,7 +95,7 @@ export const WizardNavSmall = ({
             ? <NavElement
                 path={path}
                 id={steps[nextIndex].id}
-                navigable={form?.settings?.url_navigable ?? true}
+                navigable={urlNavigable ?? true}
                 className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
                 onClick={() => { setActiveId(steps[nextIndex].id) }}
                 >
@@ -112,7 +111,6 @@ export const WizardNavSmall = ({
 
 export interface IWizardLayoutProps extends IPageLayoutProps {
   SmallNavComponent?: React.FC<{
-    form: IForm
     level: number
     sections?: IFormSection[]
     sectionStatus: IFormSectionStatus
@@ -121,49 +119,41 @@ export interface IWizardLayoutProps extends IPageLayoutProps {
 }
 
 const WizardLayout = ({
-  form,
   sections,
-  formValueState,
   onChange,
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
   className = 'flex flex-col gap-16 pt-8',
-  inputOverrides,
   level
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
   }
+  const { form, formValues, setFormValues } = useFormContext()
   const params = useParams()['*']?.split('/')?.filter(d => d !== '') ?? []
   const id = form?.settings?.url_navigable
     ? params[level] ?? sections[0]?.id ?? null
     : sections[0]?.id ?? null
 
   const formSection = sections?.find(s => s.id === id) ?? sections?.[0]
-  const sectionStatus = calculateSectionStatus(sections, formValueState)
+  const sectionStatus = calculateSectionStatus(sections, [formValues, setFormValues])
 
   return (
     <FormSectionContextProvider path={params.slice(0, level).join('/')} id={id}>
       <div className={className}>
         <NavComponent
-            form={form}
             sections={sections}
-
             sectionStatus={sectionStatus}
             level={level}
           />
         <ContentComponent
             formSection={formSection}
-            inputOverrides={inputOverrides}
-            form={form}
-            formValueState={formValueState}
             sectionStatus={sectionStatus}
             onChange={onChange}
             level={level}
             />
         <SmallNavComponent
-          form={form}
           sections={sections}
           sectionStatus={sectionStatus}
           level={level}

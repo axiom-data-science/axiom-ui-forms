@@ -1,14 +1,15 @@
+import { FormContext } from '@/Form/Creator/FormContextProvider'
 import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
 import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
 import { calculateSectionStatus, copyAndAddPathToFields } from '@/Form/helpers'
 import { utils } from '@axdspub/axiom-ui-utilities'
-import { type JSONSchema7 } from 'json-schema'
+import { type JSONSchema6 } from 'json-schema'
 import React, { type ReactElement } from 'react'
 
 export interface IFormCreatorProps {
   form: IForm
-  schema?: JSONSchema7
+  schema?: JSONSchema6
   formValueState: [IFormValues, (v: IFormValues) => void]
   note?: string
   error?: string
@@ -37,7 +38,8 @@ const FormCreator = ({
   onChange,
   className,
   urlNavigable = true,
-  inputOverrides
+  inputOverrides,
+  schema
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
 
@@ -47,7 +49,14 @@ const FormCreator = ({
   }
 
   return (
-
+    <FormContext.Provider value={{
+      form: activeForm,
+      formValues: formValueState[0],
+      setFormValues: formValueState[1],
+      inputOverrides,
+      schema,
+      urlNavigable: activeForm.settings.url_navigable
+    }}>
     <div className={utils.makeClassName({
       className: activeForm?.settings?.class_name,
       defaultClassName: className
@@ -60,12 +69,10 @@ const FormCreator = ({
         }
         <FormSection
           formSection={activeForm}
-          formValueState={formValueState}
-          form={activeForm}
           onChange={onChange}
-          inputOverrides={inputOverrides}
           />
     </div>
+    </FormContext.Provider>
   )
 }
 
