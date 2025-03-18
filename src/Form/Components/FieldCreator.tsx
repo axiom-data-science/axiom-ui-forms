@@ -1,10 +1,9 @@
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { type IFormValues, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
+import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, updateFormValuesWithFieldValue } from ***REMOVED***@/Form/helpers***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import { set } from ***REMOVED***lodash***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 interface IFieldCreator {
@@ -123,9 +122,7 @@ const MultipleFieldCreator = ({
 }: IFieldCreator): ReactElement => {
   const { formValues, setFormValues, inputOverrides } = useFormContext()
   const defaultOnChange = (v: IValueType[] | undefined): void => {
-    const formValuesCopy = structuredClone(formValues)
-    const fieldPath = getPathFromField(field)
-    set(formValuesCopy, fieldPath, v)
+    const formValuesCopy = updateFormValuesWithFieldValue(field, v, formValues)
     setFormValues(formValuesCopy)
   }
 
@@ -167,21 +164,18 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  const updateFormValues = (v: IFormValues): void => {
-    setFormValues(cleanUnusedDependenciesFromFormValues(form, v))
-  }
-
   if (!checkCondition(field, formValues)) {
     return null
   }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
-    const formValuesCopy = structuredClone(formValues)
-    const fieldPath = getPathFromField(field)
-    set(formValuesCopy, fieldPath, v)
-    updateFormValues(formValuesCopy)
+    const formValuesCopy = updateFormValuesWithFieldValue(field, v as IValueType, formValues)
+    setFormValues(cleanUnusedDependenciesFromFormValues(form, formValuesCopy))
   }
+  const onChangeFn = onChange ?? defaultOnChange
+
   const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
+  console.log(`initialValue: ${field.id}`, initialValue)
   return InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
@@ -195,7 +189,7 @@ const FieldCreator = ({
           />
         : <InputComponent
             field={field}
-            onChange={onChange ?? defaultOnChange}
+            onChange={onChangeFn}
             value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
           />
 

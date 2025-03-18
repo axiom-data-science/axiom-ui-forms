@@ -43,13 +43,12 @@ interface IFormFieldRoot {
   path?: IFormField[]
   fullPath?: string[]
   level?: number
-  value?: IValueType
+  defaultValue?: IValueType | IValueType[]
   conditions?: IFieldConditions
   settings?: Record<string, unknown>
 }
 
 interface INumberValueInput extends IFormFieldRoot {
-  value?: ***REMOVED***number***REMOVED***
   constraints?: {
     min?: number
     max?: number
@@ -61,7 +60,6 @@ export interface INumberField extends INumberValueInput {
 }
 
 interface IStringValueInput extends IFormFieldRoot {
-  value?: ***REMOVED***text***REMOVED***
   placeholder?: string
 }
 
@@ -100,11 +98,10 @@ interface ISelectableInput extends IFormFieldRoot {
 }
 
 interface ISingleSelectableInput extends ISelectableInput {
-  value?: ***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***
 }
 
 interface IMultiSelectableInput extends ISelectableInput {
-  values?: Array<***REMOVED***text***REMOVED*** | ***REMOVED***number***REMOVED***>
+  defaultValues?: Array<string | number>
 }
 
 export interface ISelectField extends ISingleSelectableInput {
@@ -122,7 +119,6 @@ export interface ICheckboxField extends IMultiSelectableInput {
 
 export interface IBooleanField extends IFormFieldRoot {
   type: ***REMOVED***boolean***REMOVED***
-  value?: ***REMOVED***boolean***REMOVED***
 }
 
 interface IDateFieldConstraints {
@@ -132,7 +128,6 @@ interface IDateFieldConstraints {
 
 interface IDateField extends IFormFieldRoot {
   type: ***REMOVED***date***REMOVED***
-  value?: ***REMOVED***date***REMOVED***
   constraints?: IDateFieldConstraints
 }
 
@@ -143,7 +138,6 @@ interface ITimeFieldConstraints {
 
 interface ITimeField extends IFormFieldRoot {
   type: ***REMOVED***time***REMOVED***
-  value?: ***REMOVED***time***REMOVED***
   constraints?: ITimeFieldConstraints
 }
 
@@ -154,7 +148,6 @@ interface IDateTimeConstraints {
 
 interface IDateTimeField extends IFormFieldRoot {
   type: ***REMOVED***datetime***REMOVED***
-  value?: ***REMOVED***datetime***REMOVED***
   constraints?: IDateTimeConstraints
 }
 
@@ -178,14 +171,12 @@ export interface IFormFieldPage extends IFormFieldSection {
 
 interface IGeoJSONField extends IFormFieldRoot {
   type: ***REMOVED***geojson***REMOVED***
-  value?: ***REMOVED***geojson***REMOVED***
   exclude_types?: string[]
   include_types?: string[]
 }
 
 interface IGeometryField extends IFormFieldRoot {
   type: ***REMOVED***geometry***REMOVED***
-  value?: ***REMOVED***geometry***REMOVED***
   exclude_types?: string[]
   include_types?: string[]
 }

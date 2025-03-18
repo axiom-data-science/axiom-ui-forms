@@ -12,6 +12,7 @@ import Form from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { Slider } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import ExternalMetadataExample from ***REMOVED***@/Form/ExternalMetadataExample***REMOVED***
+import FormWithDefaults from ***REMOVED***@/Form/FormWithDefaults***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -107,6 +108,7 @@ const App = (): ReactElement => {
               <Route path=***REMOVED*******REMOVED*** element={<CustomElementFormWrap />} />
             </Route>
             <Route path=***REMOVED***/custom-element-context***REMOVED*** element={<ExternalMetadataExample />} />
+            <Route path=***REMOVED***/form-with-defaults***REMOVED*** element={<FormWithDefaults />} />
           </Routes>
         </BrowserRouter>
     </div>

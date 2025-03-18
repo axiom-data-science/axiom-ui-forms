@@ -2,10 +2,10 @@ import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***RE
 import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
-import { calculateSectionStatus, copyAndAddPathToFields } from ***REMOVED***@/Form/helpers***REMOVED***
-import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { calculateSectionStatus, copyAndAddPathToFields, getFieldsFromFormSection, getFieldValue, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/Form/helpers***REMOVED***
+import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -48,31 +48,55 @@ const FormCreator = ({
     ...activeForm.settings
   }
 
+  const [formValues, setFormValues] = formValueState
+  const [isReady, setIsReady] = useState(false)
+  useEffect(() => {
+    const formValuesCopy = structuredClone(formValues)
+    getFieldsFromFormSection(activeForm).forEach(field => {
+      if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
+        updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
+      }
+    })
+    setFormValues(formValuesCopy)
+    setIsReady(true)
+  }, [form])
+
+  console.log(***REMOVED***isReady***REMOVED***, isReady)
+  if (isReady) {
+    console.log(***REMOVED***formValues***REMOVED***, formValues)
+  }
+
   return (
-    <FormContext.Provider value={{
-      form: activeForm,
-      formValues: formValueState[0],
-      setFormValues: formValueState[1],
-      inputOverrides,
-      schema,
-      urlNavigable: activeForm.settings.url_navigable
-    }}>
-    <div className={utils.makeClassName({
-      className: activeForm?.settings?.class_name,
-      defaultClassName: className
-    })}>
-        <FormHeader form={activeForm} note={note} error={error} />
-        {
-          activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
-            ? <FormStatus form={activeForm} formValueState={formValueState} />
-            : ***REMOVED******REMOVED***
-        }
-        <FormSection
-          formSection={activeForm}
-          onChange={onChange}
-          />
-    </div>
-    </FormContext.Provider>
+    <>
+    {
+      !isReady
+        ? <Loader className=***REMOVED***pt-20***REMOVED*** />
+        : <FormContext.Provider value={{
+          form: activeForm,
+          formValues,
+          setFormValues,
+          inputOverrides,
+          schema,
+          urlNavigable: activeForm.settings.url_navigable
+        }}>
+            <div className={utils.makeClassName({
+              className: activeForm?.settings?.class_name,
+              defaultClassName: className
+            })}>
+                <FormHeader form={activeForm} note={note} error={error} />
+                {
+                  activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
+                    ? <FormStatus form={activeForm} formValueState={formValueState} />
+                    : ***REMOVED******REMOVED***
+                }
+                <FormSection
+                  formSection={activeForm}
+                  onChange={onChange}
+                  />
+            </div>
+          </FormContext.Provider>
+    }
+    </>
   )
 }
 
