@@ -23,7 +23,7 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomFIeld
+export type IFormField = ITextField | IConstantField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomFIeld
 
 export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***geojson***REMOVED*** | ***REMOVED***geometry***REMOVED*** | `custom:${string}`
 export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
@@ -48,6 +48,10 @@ interface IFormFieldRoot {
   settings?: Record<string, unknown>
 }
 
+export interface IConstantField extends IFormFieldRoot {
+  type: ***REMOVED***constant***REMOVED***
+  defaultValue: IValueType
+}
 interface INumberValueInput extends IFormFieldRoot {
   constraints?: {
     min?: number

@@ -12,6 +12,7 @@ import GeometryInput from ***REMOVED***@/Form/Components/Inputs/GeometryInputLoa
 import DateTimeInput from ***REMOVED***@/Form/Components/Inputs/DateTime***REMOVED***
 import DateInput from ***REMOVED***@/Form/Components/Inputs/Date***REMOVED***
 import TimeInput from ***REMOVED***@/Form/Components/Inputs/Time***REMOVED***
+import ConstantInput from ***REMOVED***@/Form/Components/Inputs/Constant***REMOVED***
 
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
@@ -26,7 +27,8 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   geometry: GeometryInput,
   datetime: DateTimeInput,
   date: DateInput,
-  time: TimeInput
+  time: TimeInput,
+  constant: ConstantInput
 }
 
 export default inputMap
