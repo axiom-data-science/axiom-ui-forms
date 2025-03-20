@@ -156,3 +156,14 @@ export const calculateSectionStatus = (sections: IFormSection[], formValueState:
     return [s.id, { completed, total, requiredTotal, requiredCompleted, valid }]
   }))
 }
+
+export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormValues): IFormValues => {
+  const formValuesCopy = structuredClone(formValues)
+  const formWithPaths = copyAndAddPathToFields(form)
+  getFieldsFromFormSection(formWithPaths).forEach(field => {
+    if (field.defaultValue !== undefined && getFieldValue(field, formValuesCopy) === undefined) {
+      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
+    }
+  })
+  return formValuesCopy
+}
