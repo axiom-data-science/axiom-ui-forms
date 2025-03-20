@@ -6,6 +6,7 @@ import MapTester from ***REMOVED***@/Form/MapTester***REMOVED***
 import SchemaToForm from ***REMOVED***@/Form/SchemaToForm***REMOVED***
 import pagedFormJson from ***REMOVED***@/Form/testData/pagedForm.json***REMOVED***
 import wizardFormJson from ***REMOVED***@/Form/testData/wizardForm.json***REMOVED***
+import pttOilSpillForm from ***REMOVED***@/Form/testData/pttFormConfigOpenOilModel.json***REMOVED***
 import customElementFormJson from ***REMOVED***@/Form/testData/customElementForm.json***REMOVED***
 import { type INumberField, type IForm, type IFormValues, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Form from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
@@ -13,6 +14,8 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { Slider } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import ExternalMetadataExample from ***REMOVED***@/Form/ExternalMetadataExample***REMOVED***
 import FormWithDefaults from ***REMOVED***@/Form/FormWithDefaults***REMOVED***
+import { assignDefaultValuesToFormValues } from ***REMOVED***@/Form/helpers***REMOVED***
+import { CopyableJSONOutput } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -86,6 +89,17 @@ const CustomElementFormWrap = (): ReactElement => {
   )
 }
 
+const PTTOilFormWrap = (): ReactElement => {
+  const form = pttOilSpillForm as IForm
+  const formValueState = useState<IFormValues>(assignDefaultValuesToFormValues(form, {}))
+  return (
+    <>
+    <Form className=***REMOVED***p-20***REMOVED*** formValueState={formValueState} form={form} />
+      <CopyableJSONOutput string={JSON.stringify(formValueState[0], null, 2)} />
+    </>
+  )
+}
+
 const App = (): ReactElement => {
   return (
 
@@ -109,6 +123,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path=***REMOVED***/custom-element-context***REMOVED*** element={<ExternalMetadataExample />} />
             <Route path=***REMOVED***/form-with-defaults***REMOVED*** element={<FormWithDefaults />} />
+            <Route path="/ptt-oil" element={<PTTOilFormWrap />}>
+              <Route path="*" element={<PTTOilFormWrap />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>
