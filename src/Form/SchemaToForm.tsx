@@ -3,11 +3,11 @@ import { Tabs, TextArea } from '@axdspub/axiom-ui-utilities'
 import { type JSONSchema6 } from 'json-schema'
 import React, { useMemo, useState, type ReactElement } from 'react'
 
-import testSchema from '@/Form/testData/pttSchema2Fixed.json'
+import testSchema from '@/Form/testData/pttSchemaModified.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormCreator from '@/Form/Creator/FormCreator'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
-import { schemaToFormObject, validateAgainstSchema, validateSchema } from '@/Form/schemaToFormHelpers'
+import { getSchemaPaths, schemaToFormObject, validateAgainstSchema, validateSchema } from '@/Form/schemaToFormHelpers'
 import toJsonSchema from 'to-json-schema'
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
@@ -97,86 +97,111 @@ const SchemaToForm = (): ReactElement => {
                         />
                 }
             </div>
-            <div className='h-full bg-slate-100 p-8 overflow-auto'>
-                <div className='flex flex-col gap-2'>
-                  <p>Schema</p>
+            <div className='h-full flex flex-col gap-10 bg-slate-100 p-8 overflow-auto'>
+                <Tabs
+                  tabs={[
+                    {
+                      label: 'Schema',
+                      id: 'schema',
+                      content: <>
+                      <div className='flex flex-col gap-2'>
 
-                    <p className={`${error !== undefined ? 'text-rose-800' : 'text-green-800'}`}>
-                        {error ?? 'No errors'}
-                    </p>
+                          <p className={`${error !== undefined ? 'text-rose-800' : 'text-green-800'}`}>
+                              {error ?? 'No errors'}
+                          </p>
 
-                  <div className='relative'>
-                      <CopyButton string={JSON.stringify(schema, null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
-                      <TextArea
-                          id='schemaInput'
-                          testId='schemaInput'
-                          value={JSON.stringify(schema, null, 2)}
-                          className={`h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x ${error !== undefined ? 'bg-rose-100' : 'bg-green-100'}`}
+                        <div className='relative'>
+                            <CopyButton string={JSON.stringify(schema, null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
+                            <TextArea
+                                id='schemaInput'
+                                testId='schemaInput'
+                                value={JSON.stringify(schema, null, 2)}
+                                className={`h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x ${error !== undefined ? 'bg-rose-100' : 'bg-green-100'}`}
+                                onChange={(e) => {
+                                  setStr(e)
+                                }}
+                            />
+                        </div>
+                      </div>
+                      <div className='flex flex-col gap-2'>
+
+                                <p>UI Config</p>
+                                <div className='relative'>
+                                  {
+                                    form !== undefined
+                                      ? <>
+                                      <CopyButton string={JSON.stringify(form ?? '', null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
+                                      <TextArea
+                                        id='formInput'
+                                        testId='formInput'
+                                        value={JSON.stringify(form, null, 2)}
+                                        className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-blue-900 text-white'
+                                        onChange={(e) => {
+                                          // setForm(e !== undefined ? JSON.parse(e) : undefined)
+                                          setStr(e)
+                                        }}
+                                        />
+
+                                      </>
+                                      : 'Waiting on valid schema'
+                                  }
+
+                                </div>
+
+                      </div>
+                      <div className='flex flex-col gap-2'>
+                        <p>Paste JSON to convert to schema</p>
+                        <TextArea
+                          id='jsonInput'
+                          testId='jsonInput'
+                          value={objectInput}
                           onChange={(e) => {
-                            setStr(e)
+                            setObjectInput(e)
                           }}
-                      />
-                  </div>
-                </div>
-                <div className='flex flex-col gap-2'>
+                          />
+                          {
+                            schemaObjectError !== undefined
+                              ? <p className='text-rose-800'>{schemaObjectError}</p>
+                              : ''
+                          }
+                        <div className='relative'>
+                                  {
+                                    objectInput !== undefined && isValidJson(objectInput)
+                                      ? <>
+                                      <CopyButton string={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ''} className='absolute right-10 top-10 pointer-events-auto' />
+                                      <TextArea
+                                        id='convertedObject'
+                                        testId='convertedObject'
+                                        value={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ''}
+                                        className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-green-900 text-white'
+                                        />
 
-                          <p>UI Config</p>
-                          <div className='relative'>
+                                      </>
+                                      : 'Waiting on valid object input'
+                                  }
+
+                                </div>
+                      </div>
+                      </>
+                    },
+                    {
+                      label: 'Form config overrides',
+                      id: 'overrides',
+                      content: <div className='flex flex-row gap-4'>
+                          <div className=''>
                             {
-                              form !== undefined
-                                ? <>
-                                <CopyButton string={JSON.stringify(form ?? '', null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
-                                <TextArea
-                                  id='formInput'
-                                  testId='formInput'
-                                  value={JSON.stringify(form, null, 2)}
-                                  className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-blue-900 text-white'
-                                  onChange={(e) => {
-                                    // setForm(e !== undefined ? JSON.parse(e) : undefined)
-                                    setStr(e)
-                                  }}
-                                  />
+                              schema !== undefined
+                                ? getSchemaPaths(schema).map((p) => {
+                                  return <p key={p}>{p}</p>
+                                })
 
-                                </>
                                 : 'Waiting on valid schema'
                             }
-
-                          </div>
-
-                </div>
-                <div className='flex flex-col gap-2'>
-                  <p>Paste JSON to convert to schema</p>
-                  <TextArea
-                    id='jsonInput'
-                    testId='jsonInput'
-                    value={objectInput}
-                    onChange={(e) => {
-                      setObjectInput(e)
-                    }}
-                    />
-                    {
-                      schemaObjectError !== undefined
-                        ? <p className='text-rose-800'>{schemaObjectError}</p>
-                        : ''
+                            </div>
+                        </div>
                     }
-                  <div className='relative'>
-                            {
-                              objectInput !== undefined && isValidJson(objectInput)
-                                ? <>
-                                <CopyButton string={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ''} className='absolute right-10 top-10 pointer-events-auto' />
-                                <TextArea
-                                  id='convertedObject'
-                                  testId='convertedObject'
-                                  value={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ''}
-                                  className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-green-900 text-white'
-                                  />
-
-                                </>
-                                : 'Waiting on valid object input'
-                            }
-
-                          </div>
-                </div>
+                  ]}
+                  />
 
             </div>
         </div>
