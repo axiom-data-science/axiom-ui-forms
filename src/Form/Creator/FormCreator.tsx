@@ -1,11 +1,11 @@
 import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { calculateSectionStatus, copyAndAddPathToFields, getFieldsFromFormSection, getFieldValue, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/Form/helpers***REMOVED***
-import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useContext, type ReactElement } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -19,8 +19,9 @@ export interface IFormCreatorProps {
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
 
-const FormStatus = ({ form, formValueState }: { form: IForm, formValueState: IFormValueState }): ReactElement => {
-  const status = calculateSectionStatus([form], formValueState)
+const FormStatus = (): ReactElement => {
+  const { form, formValues, setFormValues } = useContext(FormContext)
+  const status = calculateSectionStatus([form], [formValues, setFormValues])
 
   return (
     <>
@@ -42,6 +43,12 @@ const FormCreator = ({
   schema
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
+  const activeFormValues = structuredClone(formValueState[0])
+  getFieldsFromFormSection(activeForm).forEach(field => {
+    if (field.defaultValue !== undefined && getFieldValue(field, activeFormValues) === undefined) {
+      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, activeFormValues)
+    }
+  })
 
   activeForm.settings = {
     url_navigable: urlNavigable,
@@ -49,36 +56,16 @@ const FormCreator = ({
   }
 
   const [formValues, setFormValues] = formValueState
-  const [isReady, setIsReady] = useState(false)
-  useEffect(() => {
-    const formValuesCopy = structuredClone(formValues)
-    getFieldsFromFormSection(activeForm).forEach(field => {
-      if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
-        updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
-      }
-    })
-    setFormValues(formValuesCopy)
-    setIsReady(true)
-  }, [form])
-
-  console.log(***REMOVED***isReady***REMOVED***, isReady)
-  if (isReady) {
-    console.log(***REMOVED***formValues***REMOVED***, formValues)
-  }
 
   return (
-    <>
-    {
-      !isReady
-        ? <Loader className=***REMOVED***pt-20***REMOVED*** />
-        : <FormContext.Provider value={{
-          form: activeForm,
-          formValues,
-          setFormValues,
-          inputOverrides,
-          schema,
-          urlNavigable: activeForm.settings.url_navigable
-        }}>
+    <FormContext.Provider value={{
+      form: activeForm,
+      formValues,
+      setFormValues,
+      inputOverrides,
+      schema,
+      urlNavigable: activeForm.settings.url_navigable
+    }}>
             <div className={utils.makeClassName({
               className: activeForm?.settings?.class_name,
               defaultClassName: className
@@ -86,7 +73,7 @@ const FormCreator = ({
                 <FormHeader form={activeForm} note={note} error={error} />
                 {
                   activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
-                    ? <FormStatus form={activeForm} formValueState={formValueState} />
+                    ? <FormStatus />
                     : ***REMOVED******REMOVED***
                 }
                 <FormSection
@@ -95,8 +82,6 @@ const FormCreator = ({
                   />
             </div>
           </FormContext.Provider>
-    }
-    </>
   )
 }
 
