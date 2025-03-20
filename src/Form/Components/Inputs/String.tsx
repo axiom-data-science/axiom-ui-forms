@@ -4,14 +4,20 @@ import { Input } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
 const StringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
-  const initialValue = value !== undefined ? value : ''
+  const initialValue = value !== undefined ? String(value) : ''
+  /* const [val, setVal] = useState<string | undefined>(initialValue !== undefined && initialValue !== null ? String(initialValue) : '')
+  useDeferredValue(val)
+  const newVal = useDeferredValue(val)
+  useEffect(() => {
+    onChange(newVal === '' ? undefined : newVal)
+  }, [newVal]) */
   return <div>
       <Input
         id={field.id}
         testId={field.id}
-        value={initialValue !== undefined && initialValue !== null ? String(initialValue) : ''}
+        value={initialValue}
         label={<FieldLabel {...field} />} onChange={(e) => {
-          onChange(e)
+          onChange(e === '' ? undefined : e)
         }} /></div>
 }
 
