@@ -6,6 +6,7 @@ import MapTester from '@/Form/MapTester'
 import SchemaToForm from '@/Form/SchemaToForm'
 import pagedFormJson from '@/Form/testData/pagedForm.json'
 import wizardFormJson from '@/Form/testData/wizardForm.json'
+import pttOilSpillForm from '@/Form/testData/pttFormConfigOpenOilModel.json'
 import customElementFormJson from '@/Form/testData/customElementForm.json'
 import { type INumberField, type IForm, type IFormValues, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import Form from '@/Form/Creator/FormCreator'
@@ -13,6 +14,8 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import { Slider } from '@axdspub/axiom-ui-utilities'
 import ExternalMetadataExample from '@/Form/ExternalMetadataExample'
 import FormWithDefaults from '@/Form/FormWithDefaults'
+import { assignDefaultValuesToFormValues } from '@/Form/helpers'
+import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -86,6 +89,17 @@ const CustomElementFormWrap = (): ReactElement => {
   )
 }
 
+const PTTOilFormWrap = (): ReactElement => {
+  const form = pttOilSpillForm as IForm
+  const formValueState = useState<IFormValues>(assignDefaultValuesToFormValues(form, {}))
+  return (
+    <>
+    <Form className='p-20' formValueState={formValueState} form={form} />
+      <CopyableJSONOutput string={JSON.stringify(formValueState[0], null, 2)} />
+    </>
+  )
+}
+
 const App = (): ReactElement => {
   return (
 
@@ -109,6 +123,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path='/custom-element-context' element={<ExternalMetadataExample />} />
             <Route path='/form-with-defaults' element={<FormWithDefaults />} />
+            <Route path="/ptt-oil" element={<PTTOilFormWrap />}>
+              <Route path="*" element={<PTTOilFormWrap />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>
