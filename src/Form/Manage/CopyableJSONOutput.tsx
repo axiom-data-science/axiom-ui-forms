@@ -67,7 +67,7 @@ export const CopyableJSONOutput = ({ string, label }: { string: string, label: s
         })
     }}>
       <CopyButton string={string} className=***REMOVED***text-slate-400 absolute top-4 right-4***REMOVED*** wrapperClassName=***REMOVED***absolute top-0 right-0 bottom-0 left-0***REMOVED*** />
-      <pre className=***REMOVED***p-10 bg-slate-200 hover:bg-slate-300 text-slate-600 select-none cursor-pointer***REMOVED***>
+      <pre className=***REMOVED***p-10 bg-slate-200 hover:bg-slate-300 text-slate-600 select-none cursor-pointer font-mono text-xs***REMOVED***>
         {string}
       </pre>
     </div>
