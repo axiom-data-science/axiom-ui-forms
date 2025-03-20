@@ -23,9 +23,9 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | IConstantField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomFIeld
+export type IFormField = ITextField | IConstantField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IObjectListField | IOneOfField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomFIeld
 
-export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'geojson' | 'geometry' | `custom:${string}`
+export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'objectList' | 'oneOf' | 'geojson' | 'geometry' | `custom:${string}`
 export type ISectionFormFieldType = 'section' | 'page'
 
 interface IFieldConditions {
@@ -163,6 +163,18 @@ interface IContainerField extends IFormFieldRoot {
 
 export interface IObjectField extends IContainerField {
   type: 'object'
+}
+
+export interface IObjectListField extends IContainerField {
+  type: 'objectList'
+}
+
+export interface IOneOfField extends IContainerField {
+  type: 'oneOf'
+  discriminator?: {
+    mapping?: Record<string, string>
+    propertyName?: string
+  }
 }
 
 export interface IFormFieldSection extends IContainerField {

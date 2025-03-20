@@ -13,6 +13,7 @@ import DateTimeInput from '@/Form/Components/Inputs/DateTime'
 import DateInput from '@/Form/Components/Inputs/Date'
 import TimeInput from '@/Form/Components/Inputs/Time'
 import ConstantInput from '@/Form/Components/Inputs/Constant'
+import OneOfInput from '@/Form/Components/Inputs/OneOfInput'
 
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
@@ -23,6 +24,7 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   select: SingleSelect,
   radio: Radio,
   object: ObjectInput,
+  oneOf: OneOfInput,
   geojson: GeoJSONInput,
   geometry: GeometryInput,
   datetime: DateTimeInput,
