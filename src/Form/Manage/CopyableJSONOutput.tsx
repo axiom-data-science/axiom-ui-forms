@@ -52,7 +52,7 @@ export const CopyButton = ({
     </button>
   )
 }
-export const CopyableJSONOutput = ({ string, label }: { string: string, label: string }): ReactElement => {
+export const CopyableJSONOutput = ({ string, label }: { string: string, label?: string }): ReactElement => {
   return <div>
     {label !== undefined
       ? <h2 className=***REMOVED***text-lg pb-4 font-bold***REMOVED***>{label}</h2>
