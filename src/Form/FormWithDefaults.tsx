@@ -1,5 +1,6 @@
-import { FormCreator } from ***REMOVED***@/Form***REMOVED***
+import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { assignDefaultValuesToFormValues } from ***REMOVED***@/Form/helpers***REMOVED***
 import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
 const form: IForm = {
@@ -77,7 +78,7 @@ const form: IForm = {
 }
 
 const FormWithDefaults = (): ReactElement => {
-  const formValueState = useState<IFormValues>({})
+  const formValueState = useState<IFormValues>(assignDefaultValuesToFormValues(form, {}))
   return (
     <div className=***REMOVED***p-20 flex-col gap-10***REMOVED***>
         <FormCreator form={form} formValueState={formValueState} />
