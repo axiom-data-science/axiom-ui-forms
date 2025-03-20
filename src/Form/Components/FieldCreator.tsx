@@ -175,7 +175,7 @@ const FieldCreator = ({
   const onChangeFn = onChange ?? defaultOnChange
 
   const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
-  console.log(`initialValue: ${field.id}`, initialValue)
+
   return InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
