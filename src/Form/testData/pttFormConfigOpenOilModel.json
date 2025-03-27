@@ -9,7 +9,7 @@
                 {
                     "id": "geojson",
                     "label": "Geojson",
-                    "description": "GeoJSON describing a polygon within which to seed drifters. To use this parameter, also have `seed_flag==\"geojson\"`.",
+                    "description": "GeoJSON **describing** a polygon within which to seed drifters. To use this parameter, also have `seed_flag==\"geojson\"`.",
                     "required": false,
                     "type": "geometry",
                     "settings": {
