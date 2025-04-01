@@ -8,6 +8,7 @@ import { InfoCircledIcon } from '@radix-ui/react-icons'
 import React, { type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
+import InlineMarkdown from '@/Form/Components/InlineMarkdown'
 
 const PageNav = ({
   sections,
@@ -70,7 +71,7 @@ export const ActivePage = ({
       <div className={className}>
               {
           formSection?.description !== undefined
-            ? <p className='pb-4 border-b border-slate-200 text-sm'><InfoCircledIcon className='inline-block' /> {formSection.description}</p>
+            ? <p className=' text-sm'><InfoCircledIcon className='inline -mt-1' /> <InlineMarkdown>{formSection.description}</InlineMarkdown></p>
             : ''
         }
         <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
