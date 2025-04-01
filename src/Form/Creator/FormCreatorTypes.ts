@@ -42,6 +42,7 @@ interface IFormFieldRoot {
   multiple?: boolean
   path?: IFormField[]
   fullPath?: string[]
+  destPath?: string
   level?: number
   defaultValue?: IValueType | IValueType[]
   conditions?: IFieldConditions
@@ -56,6 +57,9 @@ interface INumberValueInput extends IFormFieldRoot {
   constraints?: {
     min?: number
     max?: number
+  }
+  settings?: {
+    step?: number
   }
 }
 
@@ -231,6 +235,27 @@ export interface IForm {
     class_name?: string
     show_progress?: boolean
   }
+}
+
+export type IFormFieldOverride = Partial<IFormField> & { prop: string }
+
+export interface IFormSectionOverride extends IFormOverride {}
+
+interface IPageOverride extends Omit<IFormOverride, ***REMOVED***pages***REMOVED***> {
+
+}
+
+interface IWizardStepOverride extends Omit<IFormOverride, ***REMOVED***wizard_steps***REMOVED***> {
+
+}
+
+export interface IFormOverride {
+  id?: string
+  label?: string
+  description?: string
+  pages?: IPageOverride[]
+  wizard_steps?: IWizardStepOverride[]
+  fields?: IFormFieldOverride[]
 }
 
 export interface IFormWithPages {

@@ -1,4 +1,4 @@
-import { type IForm, type IFormField, type IFormFieldType, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Ajv, { type ValidateFunction } from ***REMOVED***ajv***REMOVED***
 import addFormats from ***REMOVED***ajv-formats***REMOVED***
 
@@ -12,6 +12,7 @@ import metaSchemaV4 from ***REMOVED***ajv/lib/refs/json-schema-2019-09/schema.js
 import { resolveRefs } from ***REMOVED***@/Form/resolveRefs***REMOVED***
 import { omit } from ***REMOVED***lodash***REMOVED***
 import { type ISelectOptionProps } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { copyAndAddPathToFields, getFieldsFromFormSection, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
 
 const getValidator = (schema: number): ValidateFunction => {
   const ajv = new Ajv({
@@ -353,6 +354,127 @@ const schemaToFormField = ({
   }
 }
 
+export function mergeObjects<T extends Record<string, any>> (objects: T[]): T {
+  const initialValue: T = {} as unknown as T
+  return objects.reduce<T>((acc, obj) => ({ ...acc, ...obj }), initialValue)
+}
+
+const mergeFormFields = ({
+  fieldOverrides,
+  schemaForm,
+  formFieldsOverrideMap
+}: {
+  fieldOverrides?: IFormFieldOverride[]
+  schemaForm: IForm
+  formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
+}): IFormField[] => {
+  const schemaFormObject = buildFormObject(schemaForm)
+  return (fieldOverrides ?? []).map(field => {
+    const schemaField = schemaFormObject[field.prop]
+    const pageField = {
+      ...mergeObjects<IFormFieldOverride | IFormField>([
+        schemaField,
+        mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[field.prop] ?? {})),
+        field
+      ])
+    }
+    const id = pageField.id ?? makeFormFieldId([pageField.id])
+    return {
+      type: pageField.type ?? ***REMOVED***text***REMOVED***,
+      id,
+      label: pageField.label ?? makeLabel([id]) ?? ***REMOVED***Default***REMOVED***,
+      ...pageField
+    }
+  }) as IFormField[]
+}
+
+const mergeFormSections = ({
+  sectionOverrides,
+  schemaForm,
+  formFieldsOverrideMap
+
+}: {
+  sectionOverrides?: IFormSectionOverride[]
+  schemaForm: IForm
+  formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
+
+}): IFormSection[] => {
+  const sections = (sectionOverrides ?? []).map((sectionToMerge, index) => {
+    const sectionFields = mergeFormFields({
+      fieldOverrides: sectionToMerge.fields,
+      schemaForm,
+      formFieldsOverrideMap
+    })
+    const sectionId = sectionToMerge.id ?? makeFormFieldId([sectionToMerge.id, index])
+    return {
+      id: sectionId ?? makeFormFieldId([sectionId, index]),
+      label: sectionToMerge.label ?? makeLabel([sectionId]),
+      ...sectionToMerge,
+      fields: sectionToMerge.fields !== undefined
+        ? sectionFields
+        : undefined,
+      wizard_steps: sectionToMerge.wizard_steps !== undefined
+        ? mergeFormSections({
+          sectionOverrides: sectionToMerge.wizard_steps,
+          schemaForm,
+          formFieldsOverrideMap
+        })
+        : undefined,
+      pages: sectionToMerge.pages !== undefined
+        ? mergeFormSections({
+          sectionOverrides: sectionToMerge.pages,
+          schemaForm,
+          formFieldsOverrideMap
+        })
+        : undefined
+    }
+  })
+  return sections as IFormSection[]
+}
+
+export const overridesAndSchemaToFormObject = ({
+  formOverrides,
+  formFieldOverrides,
+  schema
+}: {
+  formOverrides?: IFormOverride[]
+  formFieldOverrides?: IFormFieldOverride[][]
+  schema: JSONSchema6
+}): IForm => {
+  const schemaForm = schemaToFormObject(schema)
+  const form: IForm = {
+    id: schemaForm.id,
+    label: schemaForm.label
+  }
+  const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
+  const formFieldsByProp = formFieldOverrides?.map(overrides => Object.fromEntries(overrides.map(override => [override.prop, override]))) ?? []
+
+  form.pages = mergedFormOverrides.pages !== undefined
+    ? mergeFormSections({
+      sectionOverrides: mergedFormOverrides.pages,
+      schemaForm,
+      formFieldsOverrideMap: formFieldsByProp
+    }) as IPage[]
+    : undefined
+  form.wizard_steps = mergedFormOverrides.wizard_steps !== undefined
+    ? mergeFormSections({
+      sectionOverrides: mergedFormOverrides.wizard_steps,
+      schemaForm,
+      formFieldsOverrideMap: formFieldsByProp
+    }) as IWizardStep[]
+    : undefined
+
+  form.fields = mergedFormOverrides.fields !== undefined
+    ? mergeFormFields({
+      fieldOverrides: mergedFormOverrides.fields,
+      schemaForm,
+      formFieldsOverrideMap: formFieldsByProp
+    })
+    : undefined
+
+  return form
+}
+
 export const schemaToFormObject = (schema: JSONSchema6): IForm => {
   const formFields: IFormField[] = []
   for (const key in schema.properties) {
@@ -370,6 +492,12 @@ export const schemaToFormObject = (schema: JSONSchema6): IForm => {
     label: schema.title ?? ***REMOVED***Untitled***REMOVED***,
     fields: formFields
   }
+}
+
+export const buildFormObject = (form: IForm): Record<string, IFormField> => {
+  const formCopy = copyAndAddPathToFields(form)
+  const fields = getFieldsFromFormSection(formCopy)
+  return Object.fromEntries(fields.map(field => [getPathFromField(field), field]))
 }
 
 export const getSchemaPaths = (schema: any, prefix = ***REMOVED******REMOVED***): string[] => {

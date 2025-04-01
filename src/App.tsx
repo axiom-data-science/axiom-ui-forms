@@ -16,6 +16,9 @@ import ExternalMetadataExample from ***REMOVED***@/Form/ExternalMetadataExample*
 import FormWithDefaults from ***REMOVED***@/Form/FormWithDefaults***REMOVED***
 import { assignDefaultValuesToFormValues } from ***REMOVED***@/Form/helpers***REMOVED***
 import { CopyableJSONOutput } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
+import SchemaToFormWizard from ***REMOVED***@/Form/SchemaToFormWizard***REMOVED***
+import CodeEditor from ***REMOVED***@/Form/CodeEditor***REMOVED***
+import SchemaWithOverridesTest from ***REMOVED***@/Form/SchemaWithOverridesTest***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -126,6 +129,13 @@ const App = (): ReactElement => {
             <Route path="/ptt-oil" element={<PTTOilFormWrap />}>
               <Route path="*" element={<PTTOilFormWrap />} />
             </Route>
+            <Route path="/schema-to-form-wizard" element={<SchemaToFormWizard />}>
+              <Route path="*" element={<SchemaToFormWizard />} />
+            </Route>
+            <Route path="/schema-override-test" element={<SchemaWithOverridesTest />}>
+              <Route path="*" element={<SchemaWithOverridesTest />} />
+            </Route>
+            <Route path="/json-editor" element={<CodeEditor />} />
           </Routes>
         </BrowserRouter>
     </div>
