@@ -1,3 +1,4 @@
+import JSONInputLoader from '@/Form/Components/Inputs/JSONInputLoader'
 import { type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { TextArea } from '@axdspub/axiom-ui-utilities'
@@ -38,16 +39,20 @@ const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => vo
                    : ''
                  }
                  <div className='h-full relative'>
-                <CopyButton string={JSON.stringify(form, null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
-                 <TextArea
-                      id='formManager'
-                      testId='formManager'
-                      value={JSON.stringify(form, null, 2)}
-                      className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-xl bg-slate-100'
+                 <JSONInputLoader
+                      field={
+                        {
+                          id: 'formManager',
+                          label: null,
+                          type: 'json'
+                        }
+                      }
+                      value={JSON.stringify(form)}
+                      className='h-full'
                       onChange={(e) => {
-                        setStr(e)
+                        setStr(String(e))
                       }}
-                 />
+                      />
                  </div>
             </div>
   )
