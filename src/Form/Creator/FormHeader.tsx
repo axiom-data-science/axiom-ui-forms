@@ -1,6 +1,8 @@
+import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
 import type { IForm } from ***REMOVED***@/library***REMOVED***
 import { ExclamationTriangleIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import Markdown from ***REMOVED***react-markdown***REMOVED***
 
 const FormHeader = ({
   form, note, error
@@ -11,18 +13,18 @@ const FormHeader = ({
   error?: string
 }): ReactElement => {
   return (
-    <>
-      <h2 className=***REMOVED***text-2xl pb-4 font-bold***REMOVED***>{form.label}</h2>
+    <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
+      <h2 className=***REMOVED***text-2xl font-bold***REMOVED***>{form.label}</h2>
       {note !== undefined
-        ? <p className=***REMOVED***pb-4***REMOVED***>{note}</p>
+        ? <Markdown>{note}</Markdown>
         : null}
       {error !== undefined
-        ? <p className=***REMOVED***pb-4 text-rose-800***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline mr-2***REMOVED*** /> {error}</p>
+        ? <p className=***REMOVED***pb-4 text-rose-800***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline mr-2***REMOVED*** /> <InlineMarkdown>{error}</InlineMarkdown></p>
         : null}
       {form.description !== undefined
-        ? <p className=***REMOVED***pb-4***REMOVED***>{form.description}</p>
+        ? <Markdown>{form.description}</Markdown>
         : null}
-    </>
+    </div>
   )
 }
 
