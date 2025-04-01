@@ -16,6 +16,7 @@ export interface IFormCreatorProps {
   error?: string
   onChange?: IValueChangeFn
   className?: string
+  defaultClassName?: string
   urlNavigable?: boolean
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
@@ -81,6 +82,7 @@ const FormCreator = ({
   error,
   onChange,
   className,
+  defaultClassName = ***REMOVED***flex flex-col gap-2 flex-grow***REMOVED***,
   urlNavigable = true,
   inputOverrides,
   schema
@@ -111,7 +113,8 @@ const FormCreator = ({
     }}>
             <div className={utils.makeClassName({
               className: activeForm?.settings?.class_name,
-              defaultClassName: className
+              defaultClassName,
+              extras: [className]
             })}>
                 <FormHeader form={activeForm} note={note} error={error} />
                 {
