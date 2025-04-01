@@ -13,7 +13,16 @@ const isValidNumber = (value: string): boolean => {
 }
 
 const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProps & { max: number, min?: number, step?: number }): ReactElement => {
+  const updateTemp = (value: string | number | undefined): void => {
+    if (value !== undefined && isValidNumber(String(value))) {
+      setTempValue(+value)
+      setTempTextValue(String(value))
+    } else {
+      setTempTextValue(value !== undefined ? String(value) : undefined)
+    }
+  }
   const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
+  const [tempTextValue, setTempTextValue] = useState<string | undefined>(value !== undefined ? String(value) : undefined)
   const [mode, setMode] = useState<***REMOVED***slider***REMOVED*** | ***REMOVED***text***REMOVED***>(***REMOVED***slider***REMOVED***)
 
   return (<div>
@@ -26,10 +35,10 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
         min={min ?? 0}
         max={max}
         onChange={(v: number): void => {
-          setTempValue(v)
+          updateTemp(v)
         } }
         onChangeComplete={(v: number): void => {
-          setTempValue(v)
+          updateTemp(v)
           onChange(v)
         } }
         id={field.id}
@@ -48,20 +57,21 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
               <Input
               id={`slider-text-${field.id}`}
               testId={`slider-text-${field.id}`}
-              value={tempValue !== undefined && tempValue !== null ? String(tempValue) : ***REMOVED******REMOVED***}
+              value={tempTextValue !== undefined && tempTextValue !== null ? String(tempTextValue) : ***REMOVED******REMOVED***}
               className=***REMOVED***w-[50px] text-xs text-right***REMOVED***
               size=***REMOVED***xs***REMOVED***
               label={undefined}
               onChange={(e) => {
-                setTempValue(tempValue)
+                updateTemp(e)
               }} />
               <Cross2Icon className=***REMOVED***flex-none inline w-5 h-5 m-1 cursor-pointer***REMOVED*** color=***REMOVED***red***REMOVED*** onClick={() => {
                 setMode(***REMOVED***slider***REMOVED***)
               }} />
-              <CheckIcon className={`flex-none inline w-5 h-5 m-1 ${isValidNumber(String(tempValue)) ? ***REMOVED***cursor-pointer***REMOVED*** : ***REMOVED***opacity-50***REMOVED***}`} color=***REMOVED***green***REMOVED*** onClick={() => {
-                if (isValidNumber(String(tempValue))) {
+              <CheckIcon className={`flex-none inline w-5 h-5 m-1 ${isValidNumber(String(tempTextValue)) ? ***REMOVED***cursor-pointer***REMOVED*** : ***REMOVED***opacity-50***REMOVED***}`} color=***REMOVED***green***REMOVED*** onClick={() => {
+                if (isValidNumber(String(tempTextValue))) {
                   setMode(***REMOVED***slider***REMOVED***)
-                  onChange(tempValue)
+                  updateTemp(tempTextValue)
+                  onChange(tempTextValue)
                 }
               }} />
               </>
