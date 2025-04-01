@@ -1,5 +1,5 @@
 export { default as BooleanInput } from './Boolean'
-export { default as JSONStringInput } from './JSONString'
+export { default as JSONInput } from './JSON'
 export { default as NumberInput } from './Number'
 export { default as TextInput } from './String'
 export { default as LongTextInput } from './LongString'
