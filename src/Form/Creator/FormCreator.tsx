@@ -1,11 +1,12 @@
 import { FormContext } from '@/Form/Creator/FormContextProvider'
-import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
 import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
 import { calculateSectionStatus, copyAndAddPathToFields, getFieldsFromFormSection, getFieldValue, updateFormValuesWithFieldValueInPlace } from '@/Form/helpers'
-import { utils } from '@axdspub/axiom-ui-utilities'
+import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/Form/schemaToFormHelpers'
+import { Loader, utils } from '@axdspub/axiom-ui-utilities'
 import { type JSONSchema6 } from 'json-schema'
-import React, { useContext, type ReactElement } from 'react'
+import React, { useContext, useEffect, useState, type ReactElement } from 'react'
 
 export interface IFormCreatorProps {
   form: IForm
@@ -28,6 +29,48 @@ const FormStatus = (): ReactElement => {
     <p className='text-xs mt-4'>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
     <p className='text-xs mt-2'>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
     </>
+  )
+}
+
+export const SchemaFormCreator = ({
+  label,
+  id,
+  schema,
+  formOverrides,
+  formFieldOverrides,
+  ...props
+}: Omit<IFormCreatorProps, 'form'> & {
+  id?: string
+  label?: string
+  schema: JSONSchema6
+  formOverrides?: IFormOverride[]
+  formFieldOverrides?: IFormFieldOverride[][]
+}): ReactElement => {
+  const [form, setForm] = useState<IForm | undefined>(undefined)
+  useEffect(() => {
+    const newForm = formOverrides === undefined
+      ? schemaToFormObject(schema)
+      : overridesAndSchemaToFormObject({
+        formOverrides,
+        formFieldOverrides,
+        schema
+      }) // Convert the JSON schema to a form object
+    if (id !== undefined) {
+      newForm.id = id
+    }
+    if (label !== undefined) {
+      newForm.label = label
+    }
+    setForm(newForm)
+  }, [schema, formOverrides, formFieldOverrides, id, label])
+
+  return (
+    <>{
+      form !== undefined
+        ? <FormCreator form={form} {...props} />
+        : <div className='p-5 bg-slate-200 text-xs'><Loader className='pt-20' /></div>
+    }</>
+
   )
 }
 

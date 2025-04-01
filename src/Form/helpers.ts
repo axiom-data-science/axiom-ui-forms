@@ -63,7 +63,7 @@ function addPathsToFormSections (section: IFormSection): IFormSection {
 }
 
 export function copyAndAddPathToFields (formOrContainer: IForm): IForm {
-  const form = addPathsToFormSections(JSON.parse(JSON.stringify(formOrContainer))) as IForm
+  const form = addPathsToFormSections(structuredClone(formOrContainer)) as IForm
   return form
 }
 
