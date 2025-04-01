@@ -1,3 +1,4 @@
+import JSONInputLoader from ***REMOVED***@/Form/Components/Inputs/JSONInputLoader***REMOVED***
 import { type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
@@ -38,16 +39,20 @@ const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => vo
                    : ***REMOVED******REMOVED***
                  }
                  <div className=***REMOVED***h-full relative***REMOVED***>
-                <CopyButton string={JSON.stringify(form, null, 2)} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** />
-                 <TextArea
-                      id=***REMOVED***formManager***REMOVED***
-                      testId=***REMOVED***formManager***REMOVED***
-                      value={JSON.stringify(form, null, 2)}
-                      className=***REMOVED***h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-xl bg-slate-100***REMOVED***
+                 <JSONInputLoader
+                      field={
+                        {
+                          id: ***REMOVED***formManager***REMOVED***,
+                          label: null,
+                          type: ***REMOVED***json***REMOVED***
+                        }
+                      }
+                      value={JSON.stringify(form)}
+                      className=***REMOVED***h-full***REMOVED***
                       onChange={(e) => {
-                        setStr(e)
+                        setStr(String(e))
                       }}
-                 />
+                      />
                  </div>
             </div>
   )
