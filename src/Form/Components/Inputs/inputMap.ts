@@ -5,7 +5,7 @@ import ObjectInput from ***REMOVED***@/Form/Components/Inputs/Object***REMOVED**
 import Radio from ***REMOVED***@/Form/Components/Inputs/RadioGroup***REMOVED***
 import SingleSelect from ***REMOVED***@/Form/Components/Inputs/SingleSelect***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import JSONStringInput from ***REMOVED***@/Form/Components/Inputs/JSONString***REMOVED***
+import JSONStringInput from ***REMOVED***@/Form/Components/Inputs/JSONInputLoader***REMOVED***
 import NumberInput from ***REMOVED***@/Form/Components/Inputs/Number***REMOVED***
 import GeoJSONInput from ***REMOVED***@/Form/Components/Inputs/GeoJSONInputLoader***REMOVED***
 import GeometryInput from ***REMOVED***@/Form/Components/Inputs/GeometryInputLoader***REMOVED***
