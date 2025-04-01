@@ -371,19 +371,22 @@ const mergeFormFields = ({
   const schemaFormObject = buildFormObject(schemaForm)
   return (fieldOverrides ?? []).map(field => {
     const schemaField = schemaFormObject[field.prop]
-    const pageField = {
+    const sectionField = {
       ...mergeObjects<IFormFieldOverride | IFormField>([
-        schemaField,
+        {
+          ...schemaField,
+          destPath: field.prop
+        },
         mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[field.prop] ?? {})),
         field
       ])
     }
-    const id = pageField.id ?? makeFormFieldId([pageField.id])
+    const id = sectionField.id ?? makeFormFieldId([sectionField.id])
     return {
-      type: pageField.type ?? ***REMOVED***text***REMOVED***,
+      type: sectionField.type ?? ***REMOVED***text***REMOVED***,
       id,
-      label: pageField.label ?? makeLabel([id]) ?? ***REMOVED***Default***REMOVED***,
-      ...pageField
+      label: sectionField.label ?? makeLabel([id]) ?? ***REMOVED***Default***REMOVED***,
+      ...sectionField
     }
   }) as IFormField[]
 }
