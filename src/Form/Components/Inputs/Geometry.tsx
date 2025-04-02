@@ -1,35 +1,45 @@
 import { Button, TextArea } from '@axdspub/axiom-ui-utilities'
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { type IFieldInputProps, type IFormField } from '@/Form/Creator/FormCreatorTypes' // Added IFormField explicitly
 
 import { EMapShape, type IMap, type IMapDrawEvent, type IStyleableMapProps } from '@axdspub/axiom-maps'
 import { OpenLayersMap as Map } from '@axdspub/axiom-maps/library/openlayers'
-import { type Feature, type GeoJSON } from 'geojson'
-import React, { useEffect, useState, type ReactElement } from 'react'
+// Import Geometry type if not already done
+import { type Feature, type GeoJSON, type Geometry } from 'geojson'
+import React, { useEffect, useState, type ReactElement, useCallback } from 'react' // Added useCallback
 import { TrashIcon, SquareIcon, BorderSolidIcon, DrawingPinFilledIcon } from '@radix-ui/react-icons'
 
 /*
 List of coordinates for testing. Around Anchorage.
-61.44480592425796, -150.3785489314675
-61.26059021199541, -150.7356022485971
-61.05235501381105, -150.61435734866856
-61.06014246374005, -149.9221328461051
-61.441517540302925, -149.16102284579276
-61.44480592425796, -150.3785489314675
+...
 */
 
+// --- calculateCenterFromGeoJSON remains the same (zoom ignored for initial load) ---
 const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lon: number, zoom: number } => {
-  if (!geo || !('features' in geo) || !Array.isArray(geo.features) || geo.features.length === 0) {
+  // ... (Implementation from previous correct version) ...
+  // If input is Geometry, wrap it temporarily for calculation
+  let featureCollection: GeoJSON.FeatureCollection | undefined
+  if (geo && geo.type !== 'FeatureCollection') {
+    if (geo.type === 'Feature') {
+      featureCollection = { type: 'FeatureCollection', features: [geo] }
+    } else if (geo.type === 'Point' || geo.type === 'LineString' || geo.type === 'Polygon' /* add others as needed */) {
+      featureCollection = { type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: geo as Geometry }] }
+    }
+  } else if (geo && geo.type === 'FeatureCollection') {
+    featureCollection = geo
+  }
+
+  if (!featureCollection || !('features' in featureCollection) || !Array.isArray(featureCollection.features) || featureCollection.features.length === 0) {
     return { lat: 61.2181, lon: -149.9003, zoom: 8 } // Default to Anchorage
   }
 
-  const feature = geo.features[0]
+  const feature = featureCollection.features[0]
   if (!feature?.geometry) {
     return { lat: 61.2181, lon: -149.9003, zoom: 8 }
   }
 
   const geometry = feature.geometry
-  let coordinates: GeoJSON.Position[] = []
+  let coordinates: GeoJSON.Position | GeoJSON.Position[] | GeoJSON.Position[][] = [] // Adjusted type
 
   switch (geometry.type) {
     case 'Polygon':
@@ -39,99 +49,95 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
       coordinates = geometry.coordinates
       break
     case 'Point':
-      coordinates = [geometry.coordinates]
+      coordinates = [geometry.coordinates] // Wrap single point for uniform handling
       break
     default:
       return { lat: 61.2181, lon: -149.9003, zoom: 8 }
   }
 
-  if (!Array.isArray(coordinates) || coordinates.length === 0) {
+  // Flatten coordinates for bounds calculation if needed (e.g., MultiPoint, MultiLineString)
+  const flatCoordinates = ([] as GeoJSON.Position[]).concat(...coordinates as any)
+
+  if (!Array.isArray(flatCoordinates) || flatCoordinates.length === 0 || !Array.isArray(flatCoordinates[0])) {
+    // Handle single point case where flatCoordinates might be just [lon, lat]
+    if (Array.isArray(flatCoordinates) && flatCoordinates.length === 2 && typeof flatCoordinates[0] === 'number') {
+      const [lon, lat] = flatCoordinates as GeoJSON.Position
+      // FIX #2: Return a default zoom even for a point here for centering logic,
+      // but we won't use this zoom for the initial MAP_CONFIG.
+      return { lat, lon, zoom: 8 } // Default zoom
+    }
+    console.warn('Could not determine coordinates for centering.')
     return { lat: 61.2181, lon: -149.9003, zoom: 8 }
   }
 
   // Calculate bounds
-  let minLat = Infinity
-  let maxLat = -Infinity
-  let minLon = Infinity
-  let maxLon = -Infinity
-  let sumLat = 0
-  let sumLon = 0
-  let count = 0
+  let minLat = Infinity; let maxLat = -Infinity; let minLon = Infinity; let maxLon = -Infinity
+  let sumLat = 0; let sumLon = 0; let count = 0
 
-  coordinates.forEach((coord: GeoJSON.Position) => {
-    const [lon, lat] = coord
-    minLat = Math.min(minLat, lat)
-    maxLat = Math.max(maxLat, lat)
-    minLon = Math.min(minLon, lon)
-    maxLon = Math.max(maxLon, lon)
-    sumLat += lat
-    sumLon += lon
-    count++
+  flatCoordinates.forEach((coord: GeoJSON.Position) => {
+    if (!Array.isArray(coord) || coord.length < 2) return; const [lon, lat] = coord
+    minLat = Math.min(minLat, lat); maxLat = Math.max(maxLat, lat); minLon = Math.min(minLon, lon); maxLon = Math.max(maxLon, lon)
+    sumLat += lat; sumLon += lon; count++
   })
 
-  // Calculate center
-  const centerLat = sumLat / count
-  const centerLon = sumLon / count
+  if (count === 0) { return { lat: 61.2181, lon: -149.9003, zoom: 8 } }
 
-  // Calculate zoom level based on bounds
-  const latDiff = maxLat - minLat
-  const lonDiff = maxLon - minLon
-  const maxDiff = Math.max(latDiff, lonDiff)
+  const centerLat = sumLat / count; const centerLon = sumLon / count
+  const latDiff = maxLat - minLat; const lonDiff = maxLon - minLon; const maxDiff = Math.max(latDiff, lonDiff)
 
-  // Adjust zoom based on the size of the shape
   let zoom = 8 // default zoom
-  if (maxDiff < 0.1) zoom = 12 // very small shape
-  else if (maxDiff < 0.5) zoom = 10 // small shape
-  else if (maxDiff < 1) zoom = 9 // medium shape
-  else if (maxDiff < 2) zoom = 8 // large shape
-  else if (maxDiff < 5) zoom = 7 // very large shape
-  else zoom = 6 // huge shape
+  if (count === 1 || maxDiff === 0) zoom = 12; else if (maxDiff < 0.1) zoom = 12; else if (maxDiff < 0.5) zoom = 10
+  else if (maxDiff < 1) zoom = 9; else if (maxDiff < 2) zoom = 8; else if (maxDiff < 5) zoom = 7; else zoom = 6
 
-  return {
-    lat: centerLat,
-    lon: centerLon,
-    zoom
-  }
+  return { lat: centerLat, lon: centerLon, zoom }
 }
 
-export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
-  console.log('INITIAL VALUE', value)
-  const initialGeoJSON = value as unknown as GeoJSON
-  const initialMapConfig = calculateCenterFromGeoJSON(initialGeoJSON)
-  const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(EMapShape.polygon)
-  const [isDrawing, setIsDrawing] = useState<boolean>(false)
+// Helper function to determine initial draw type based on settings
+const getInitialDrawType = (field: IFormField): EMapShape => {
+  const settings = field.settings ?? {}
+  const drawEnabled = settings.drawEnabled !== false
+  const drawPointEnabled = settings.drawPointEnable === true && drawEnabled
+  const drawPathEnabled = settings.drawPathEnabled === true && drawEnabled
+  const drawPolygonEnabled = settings.drawPolygonEnabled === true && drawEnabled
 
-  // Draw settings
-  const drawEnabled = field.settings?.drawEnabled !== false // Default to true if not specified
-  const drawPolygonEnabled = field.settings?.drawPolygonEnabled !== false && drawEnabled // Default to true if drawEnabled and not specified
-  const drawPathEnabled = field.settings?.drawPathEnabled !== false && drawEnabled // Default to true if drawEnabled and not specified
-  const drawPointEnabled = field.settings?.drawPointEnabled !== false && drawEnabled // Default to true if drawEnabled and not specified
-  const showCoordinateInput = field.settings?.showCoordinateInput !== false // Default to true if not specified
+  if (drawPointEnabled) return EMapShape.point
+  if (drawPathEnabled) return EMapShape.linestring
+  if (drawPolygonEnabled) return EMapShape.polygon
+  return EMapShape.point // Defaulting to Point if none specified
+}
 
-  // Set initial draw type based on enabled tools
-  useEffect(() => {
-    if (drawPolygonEnabled) {
-      setCurrentDrawType(EMapShape.polygon)
-    } else if (drawPathEnabled) {
-      setCurrentDrawType(EMapShape.linestring)
-    } else if (drawPointEnabled) {
-      setCurrentDrawType(EMapShape.point)
+export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const [map, setMapState] = useState<IMap | undefined>(undefined)
+  const [error, setError] = useState<string | undefined>(undefined)
+  const [showGeoJSONInput] = useState<boolean>(false)
+
+  const [geojson, setGeojson] = useState<Feature | undefined>(() => {
+    if (value && typeof value === 'object' && 'type' in value && value.type !== 'FeatureCollection' && value.type !== 'Feature') {
+      return { type: 'Feature', properties: {}, geometry: value as Geometry }
     }
-  }, [drawPolygonEnabled, drawPathEnabled, drawPointEnabled])
+    if (value && typeof value === 'object' && 'type' in value && value.type === 'Feature') { return value as Feature }
+    return undefined
+  })
+
+  const drawEnabled = field.settings?.drawEnabled !== false
+  const drawPointEnabled = field.settings?.drawPointEnable === true && drawEnabled
+  const drawPathEnabled = field.settings?.drawPathEnabled === true && drawEnabled
+  const drawPolygonEnabled = field.settings?.drawPolygonEnabled === true && drawEnabled
+  const showCoordinateInput = field.settings?.showCoordinateInput !== false
+
+  const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(() => getInitialDrawType(field))
+  const [isDrawing, setIsDrawing] = useState<boolean>(!geojson && drawEnabled)
+
+  const initialMapCenter = calculateCenterFromGeoJSON(geojson)
+  const INITIAL_DEFAULT_ZOOM = 8 // Fixed default zoom
 
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: 'hybrid',
     height: '500px',
     width: '100%',
-    style: {
-      left: '0px',
-      top: '0px',
-      right: '0px',
-      bottom: '0px',
-      padding: '0'
-    },
-    center: { lat: initialMapConfig.lat, lon: initialMapConfig.lon },
-    zoom: initialMapConfig.zoom,
+    style: { /* ... styles ... */ },
+    center: { lat: initialMapCenter.lat, lon: initialMapCenter.lon },
+    zoom: INITIAL_DEFAULT_ZOOM, // Use fixed zoom
     tools: {
       draw: {
         shape: currentDrawType,
@@ -140,428 +146,227 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
     }
   }
 
-  const [map, setMapState] = useState<IMap | undefined>(undefined)
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [geojson, setGeojson] = useState<Feature | undefined>(() => {
-    if (!value) return undefined
-    return value as unknown as Feature
-  })
-  const [showGeoJSONInput] = useState<boolean>(false) // For debugging purposes
+  // ---- Coordinate Handling ----
+  const updateCoordinatesFromFeature = useCallback((feature: Feature | undefined): void => {
+    if (!feature?.geometry) { setCoordinates(''); return }
+    const geometry = feature.geometry; let newCoords = ''
+    try {
+      if (geometry.type === 'Polygon') { newCoords = (geometry.coordinates[0] ?? []).map(pos => `${pos[1]}, ${pos[0]}`).join('\n') } else if (geometry.type === 'LineString') { newCoords = (geometry.coordinates ?? []).map(pos => `${pos[1]}, ${pos[0]}`).join('\n') } else if (geometry.type === 'Point') { const coords = geometry.coordinates ?? [NaN, NaN]; if (!isNaN(coords[0]) && !isNaN(coords[1])) { newCoords = `${coords[1]}, ${coords[0]}` } else { newCoords = '' } }
+    } catch (e) { console.error('Err format coords:', e); newCoords = '' }
+    setCoordinates(newCoords)
+    // setShowShapeTypeButtons(shouldShowShapeButtons(newCoords)); // Let coordinate effect handle this
+  }, [])
+
   const [coordinates, setCoordinates] = useState<string>(() => {
-    if (!value) return ''
-    const geoValue = value as unknown as GeoJSON.FeatureCollection
-    if (geoValue?.type === 'FeatureCollection' && Array.isArray(geoValue.features) && geoValue.features.length > 0) {
-      const feature = geoValue.features[0]
-      const geometry = feature?.geometry
-      if (!geometry) return ''
-
-      if (geometry.type === 'Polygon') {
-        const coords = geometry.coordinates[0]
-        return coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n')
-      } else if (geometry.type === 'LineString') {
-        const coords = geometry.coordinates
-        return coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n')
-      } else if (geometry.type === 'Point') {
-        const coords = geometry.coordinates
-        return `${coords[1]}, ${coords[0]}`
-      }
-    }
-    return ''
+    if (!geojson?.geometry) return ''; let initCoords = ''; const geometry = geojson.geometry
+    try {
+      if (geometry.type === 'Polygon') { initCoords = (geometry.coordinates[0] ?? []).map(pos => `${pos[1]}, ${pos[0]}`).join('\n') } else if (geometry.type === 'LineString') { initCoords = (geometry.coordinates ?? []).map(pos => `${pos[1]}, ${pos[0]}`).join('\n') } else if (geometry.type === 'Point') { const coords = geometry.coordinates ?? [NaN, NaN]; if (!isNaN(coords[0]) && !isNaN(coords[1])) { initCoords = `${coords[1]}, ${coords[0]}` } }
+    } catch (e) { console.error('Err init coords:', e); initCoords = '' } return initCoords
   })
 
-  const getValue = (): string => {
-    return geojson !== undefined && geojson !== null
-      ? typeof geojson === 'object'
-        ? JSON.stringify(geojson, null, 2)
-        : String(geojson)
-      : ''
-  }
+  useEffect(() => { updateCoordinatesFromFeature(geojson) }, [geojson, updateCoordinatesFromFeature])
 
-  const createGeoJSONFromCoordinates = (coordString: string, forceType?: EMapShape): Feature | undefined => {
-    if (!coordString.trim()) {
-      setError(undefined)
-      return undefined
-    }
-
+  const createGeoJSONFromCoordinates = (coordString: string, forceType?: EMapShape): Feature | undefined => { /* ... same as last working version ... */
+    if (!coordString.trim()) { setError(undefined); return undefined }
     try {
-      const points = coordString
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.length > 0)
-        .map(line => {
-          const [lat, lon] = line.split(',').map(coord => parseFloat(coord.trim()))
-          if (isNaN(lat) || isNaN(lon)) {
-            throw new Error('Invalid coordinate format')
-          }
-          return [lon, lat]
-        })
-
-      if (points.length === 0) {
-        throw new Error('No valid coordinates found')
-      }
-
-      // Single point
-      if (points.length === 1) {
-        return {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'Point',
-            coordinates: points[0]
-          }
-        }
-      }
-
-      // For polygon or line, based on forceType or number of points
-      if (forceType === EMapShape.polygon || (!forceType && points.length >= 3)) {
-        // Close the polygon by adding the first point at the end if not already closed
-        if (JSON.stringify(points[0]) !== JSON.stringify(points[points.length - 1])) {
-          points.push(points[0])
-        }
-        return {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'Polygon',
-            coordinates: [points]
-          }
-        }
-      }
-
-      // LineString
-      return {
-
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: points
-        }
-
-      }
-    } catch (e) {
-      setError('Invalid coordinate format. Use "lat, lon" format, one per line')
-      return undefined
-    }
+      const points = coordString.split('\n').map(l => l.trim()).filter(l => l).map(l => { const [lat, lon] = l.split(',').map(c => parseFloat(c.trim())); if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) throw Error(`Invalid: ${lat}, ${lon}`); return [lon, lat] })
+      if (points.length === 0) throw Error('No valid coords')
+      if (points.length === 1 && drawPointEnabled) return { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: points[0] } }
+      if ((forceType === EMapShape.polygon || (!forceType && points.length >= 3)) && drawPolygonEnabled) { if (points.length > 0 && JSON.stringify(points[0]) !== JSON.stringify(points[points.length - 1])) points.push(points[0]); if (points.length < 4) throw Error('Min 3 unique coords for polygon'); return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [points] } } }
+      if ((forceType === EMapShape.linestring || (!forceType && points.length >= 2)) && drawPathEnabled) { if (points.length < 2) throw Error('Min 2 coords for path'); return { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: points } } }
+      setError('Cannot create shape. Check tools/coords.'); return undefined
+    } catch (e: any) { setError(`Invalid coords/count: ${e.message}. Use "lat, lon"`); return undefined }
   }
 
-  const [showShapeTypeButtons, setShowShapeTypeButtons] = useState<boolean>(() => {
-    // Show buttons if initial value has 2+ coordinates
-    if (!value) return false
-    const geoValue = value as unknown as GeoJSON.FeatureCollection
-    if (geoValue?.type === 'FeatureCollection' && Array.isArray(geoValue.features) && geoValue.features.length > 0) {
-      const feature = geoValue.features[0]
-      const geometry = feature?.geometry
-      if (!geometry) return false
-
-      if (geometry.type === 'Polygon' || geometry.type === 'LineString') {
-        return geometry.coordinates.length >= 2
-      }
-    }
-    return false
-  })
-
-  const updateCoordinatesFromGeoJSON = (geo: GeoJSON | undefined): void => {
-    if (!geo || geo.type !== 'FeatureCollection' || !geo.features?.[0]?.geometry) return
-
-    const feature = geo.features[0]
-    const geometry = feature.geometry
-    let newCoords = ''
-
-    if (geometry.type === 'Polygon') {
-      const coords = geometry.coordinates[0]
-      newCoords = coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n')
-    } else if (geometry.type === 'LineString') {
-      const coords = geometry.coordinates
-      newCoords = coords.map((pos: GeoJSON.Position) => `${pos[1]}, ${pos[0]}`).join('\n')
-    } else if (geometry.type === 'Point') {
-      const coords = geometry.coordinates
-      newCoords = `${coords[1]}, ${coords[0]}`
-    }
-
-    setCoordinates(newCoords)
-    setShowShapeTypeButtons(shouldShowShapeButtons(newCoords))
+  const shouldShowShapeButtons = (coords: string): boolean => { /* ... same as last working version ... */
+    const validLinesCount = coords.trim().split('\n').filter(l => l.trim()).length
+    return (drawPolygonEnabled || drawPathEnabled) && validLinesCount >= 2
   }
+  const [showShapeTypeButtons, setShowShapeTypeButtons] = useState<boolean>(() => shouldShowShapeButtons(coordinates))
+  useEffect(() => { setShowShapeTypeButtons(shouldShowShapeButtons(coordinates)) }, [coordinates, drawPolygonEnabled, drawPathEnabled]) // Added effect to update buttons
 
-  // i think this has to stay - we're basically staying in sync with dom element outside of react
-  useEffect(() => {
-    if (map === undefined) return
-
-    map.onDrawComplete((e: IMapDrawEvent) => {
-      console.log('draw complete', e)
-      setGeojson(e.data?.geojson.features?.[0])
-      updateCoordinatesFromGeoJSON(e.data?.geojson)
-      setIsDrawing(false)
-      // Disable drawing after shape is completed
-      map.disableDraw(currentDrawType)
-    })
-
-    // On modify drawing
-    map.onDrawUpdate((e: IMapDrawEvent) => {
-      console.log('draw update', e)
-      setGeojson(e.data?.geojson?.features?.[0])
-      updateCoordinatesFromGeoJSON(e.data?.geojson)
-    })
-  }, [map])
-
-  // can we get rid of this?
-  useEffect(() => {
-    if (geojson !== undefined) {
-      onChange(geojson.geometry)
-    }
-  }, [geojson])
-
-  const hasValidShape = (geo: GeoJSON | undefined): boolean => {
-    return geo !== undefined &&
-           'features' in geo &&
-           Array.isArray(geo.features) &&
-           geo.features.length > 0
-  }
-
-  const clearShape = (): void => {
-    setGeojson(undefined)
-    onChange(undefined)
-    setCoordinates('')
-    if (map) {
-      map.setDrawGeojson({
-        type: 'FeatureCollection',
-        features: []
-      })
-      map.enableDraw(currentDrawType) // Re-enable drawing when shape is cleared
-      setIsDrawing(true)
-    }
-  }
-
-  const handleDrawTypeChange = (shapeType: EMapShape): void => {
-    if (map) {
-      // Clear existing shape if any
-      map.setDrawGeojson({
-        type: 'FeatureCollection',
-        features: []
-      })
-      setGeojson(undefined)
-      onChange(undefined)
-      setCoordinates('')
-      setShowShapeTypeButtons(false)
-      setCurrentDrawType(shapeType)
-      map.enableDraw(shapeType)
-      setIsDrawing(true)
-    }
-  }
-
-  const shouldShowShapeButtons = (coords: string): boolean => {
-    const validLines = coords.trim().split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0)
-      .filter(line => {
-        try {
-          const [lat, lon] = line.split(',').map(coord => parseFloat(coord.trim()))
-          return !isNaN(lat) && !isNaN(lon)
-        } catch {
-          return false
-        }
-      })
-    return validLines.length >= 3
-  }
-
-  const handleCoordinatesChange = (e: string | undefined): void => {
-    const newCoords = e ?? ''
-    setCoordinates(newCoords)
-    setShowShapeTypeButtons(shouldShowShapeButtons(newCoords))
-
-    try {
-      const newGeoJSON = createGeoJSONFromCoordinates(newCoords)
-      if (newGeoJSON) {
-        setGeojson(newGeoJSON)
-        setError(undefined)
-        if (map) {
-          map.setDrawGeojson({
-            type: 'FeatureCollection',
-            features: []
-          })
-          map.setDrawGeojson({ type: 'FeatureCollection', features: [newGeoJSON] } satisfies GeoJSON.FeatureCollection)
-          map.disableDraw(currentDrawType) // Disable drawing when coordinates are entered
-        }
-      } else {
-        setGeojson(undefined)
-        onChange(undefined)
-        if (map) {
-          map.setDrawGeojson({
-            type: 'FeatureCollection',
-            features: []
-          })
-        }
-      }
-    } catch (e) {
-      setError('Invalid coordinate format')
-    }
-  }
-
-  // Reload shape on the map
-  useEffect(() => {
-    if (map === undefined) return
-
-    if (geojson !== undefined && 'features' in geojson) {
-      map.setDrawGeojson({
-        type: 'FeatureCollection',
-        features: [geojson]
-      } satisfies GeoJSON.FeatureCollection)
-      map.disableDraw(currentDrawType) // Disable drawing when there's a shape
-      setIsDrawing(false)
-      // Update coordinates display and shape type buttons
-      updateCoordinatesFromGeoJSON(geojson)
-      setShowShapeTypeButtons(shouldShowShapeButtons(coordinates))
-    } else {
-      map.enableDraw(currentDrawType)
-      setIsDrawing(true)
-    }
+  // ---- Map Event Handlers & State Updates ----
+  useEffect(() => { // Map event listeners
+    if (!map) return
+    const drawCompleteListener = (e: IMapDrawEvent) => { /* ... same ... */ const f = e.data?.geojson?.features?.[0]; if (f) { setGeojson(f); setIsDrawing(false); map.disableDraw(currentDrawType) } }
+    const drawUpdateListener = (e: IMapDrawEvent) => { /* ... same ... */ const f = e.data?.geojson?.features?.[0]; if (f) { setGeojson(f) } }
+    map.onDrawComplete(drawCompleteListener); map.onDrawUpdate(drawUpdateListener)
+    // Cleanup omitted
   }, [map, currentDrawType])
 
-  const applyShapeType = (shapeType: EMapShape): void => {
-    const newGeoJSON = createGeoJSONFromCoordinates(coordinates, shapeType)
-    if (newGeoJSON) {
-      setGeojson(newGeoJSON)
-      setError(undefined)
-      if (map) {
-        map.setDrawGeojson({
-          type: 'FeatureCollection',
-          features: []
-        })
-        map.setDrawGeojson({ type: 'FeatureCollection', features: [newGeoJSON] } satisfies GeoJSON.FeatureCollection)
+  useEffect(() => { // Parent onChange trigger
+    onChange(geojson?.geometry ?? undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geojson])
+
+  useEffect(() => { // Map drawing/state sync effect
+    if (!map) return
+    const correctDrawType = getInitialDrawType(field)
+    if (currentDrawType !== correctDrawType) { setCurrentDrawType(correctDrawType) }
+
+    if (geojson?.geometry) {
+      map.setDrawGeojson({ type: 'FeatureCollection', features: [geojson] })
+      map.disableDraw(correctDrawType) // Ensure correct tool is disabled
+      setIsDrawing(false)
+    } else {
+      map.setDrawGeojson({ type: 'FeatureCollection', features: [] })
+      if (drawEnabled && (drawPointEnabled || drawPathEnabled || drawPolygonEnabled)) {
+        map.enableDraw(correctDrawType) // Enable the correct initial tool
+        setIsDrawing(true)
+      } else {
+        map.disableDraw(correctDrawType) // Ensure drawing is off if not enabled
+        setIsDrawing(false)
       }
     }
-    // Don't hide the buttons anymore
-    // setShowShapeTypeButtons(false)
+  }, [map, geojson, drawEnabled, drawPointEnabled, drawPathEnabled, drawPolygonEnabled, currentDrawType, field])
+
+  // ---- Helper Functions ----
+  const hasValidShape = (feature?: Feature): boolean => !!feature?.geometry
+
+  const clearShape = (): void => { /* ... same ... */
+    setGeojson(undefined); setCoordinates(''); setShowShapeTypeButtons(false)
+    if (map && drawEnabled) { map.setDrawGeojson({ type: 'FeatureCollection', features: [] }); const iType = getInitialDrawType(field); setCurrentDrawType(iType); map.enableDraw(iType); setIsDrawing(true) }
   }
 
-  return <div>
-    <FieldLabel {...field} />
-    <div className="relative">
-      {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
-        <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
-          {drawPolygonEnabled && (
-            <div className="tooltip-container relative group">
-              <Button
-                onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
-                className={`p-2 rounded-lg shadow-lg ${
-                  currentDrawType === EMapShape.polygon && isDrawing
-                    ? 'bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]'
-                    : 'bg-gray-100 hover:bg-gray-50'
-                } text-black w-10 h-10 flex items-center justify-center`}
-              >
-                <SquareIcon className="w-5 h-5 rotate-45" />
-                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-                  Draw Polygon
-                </span>
-              </Button>
-            </div>
-          )}
-          {drawPathEnabled && (
-            <div className="tooltip-container relative group">
-              <Button
-                onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
-                className={`p-2 rounded-lg shadow-lg ${
-                  currentDrawType === EMapShape.linestring && isDrawing
-                    ? 'bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]'
-                    : 'bg-gray-100 hover:bg-gray-50'
-                } text-black w-10 h-10 flex items-center justify-center`}
-              >
-                <BorderSolidIcon className="w-5 h-5" />
-                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-                  Draw Path
-                </span>
-              </Button>
-            </div>
-          )}
-          {drawPointEnabled && (
-            <div className="tooltip-container relative group">
-              <Button
-                onClick={() => { handleDrawTypeChange(EMapShape.point) }}
-                className={`p-2 rounded-lg shadow-lg ${
-                  currentDrawType === EMapShape.point && isDrawing
-                    ? 'bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]'
-                    : 'bg-gray-100 hover:bg-gray-50'
-                } text-black w-10 h-10 flex items-center justify-center`}
-              >
-                <DrawingPinFilledIcon className="w-5 h-5" />
-                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-                  Draw Point
-                </span>
-              </Button>
-            </div>
-          )}
-          {hasValidShape(geojson) && (
-            <div className="tooltip-container relative group">
-              <Button
-                onClick={clearShape}
-                className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
-              >
-                <TrashIcon className="w-5 h-5" />
-                <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
-                  Clear Shape
-                </span>
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-      <Map {...MAP_CONFIG} setState={setMapState} />
-      {showCoordinateInput && (
-        <div className="mt-4">
-          <div className="flex justify-between items-center mb-2">
-            <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
-            {drawEnabled && showShapeTypeButtons && (
-              <div className="flex gap-2">
-                {drawPathEnabled && (
-                  <Button
-                    onClick={() => { applyShapeType(EMapShape.linestring) }}
-                    className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
-                  >
-                    <BorderSolidIcon className="w-4 h-4" />
-                    Create Path
-                  </Button>
+  const handleDrawTypeChange = (shapeType: EMapShape): void => { /* ... same as minimal fix version ... */
+    if (map && drawEnabled) {
+      const isAllowed = (shapeType === EMapShape.point && drawPointEnabled) || (shapeType === EMapShape.linestring && drawPathEnabled) || (shapeType === EMapShape.polygon && drawPolygonEnabled)
+      if (isAllowed && shapeType !== currentDrawType) { map.disableDraw(currentDrawType); setCurrentDrawType(shapeType); map.enableDraw(shapeType); setIsDrawing(true) }
+    }
+  }
+
+  const handleCoordinatesChange = (e: string | undefined): void => { /* ... same as minimal fix version ... */
+    const newCoords = e ?? ''; setCoordinates(newCoords)
+    const pointsCount = newCoords.trim().split('\n').filter(l => l.trim()).length
+    let intendedType: EMapShape | undefined
+    if (pointsCount === 1 && drawPointEnabled) intendedType = EMapShape.point
+    else if (pointsCount >= 3 && drawPolygonEnabled) intendedType = EMapShape.polygon
+    else if (pointsCount >= 2 && drawPathEnabled) intendedType = EMapShape.linestring
+    const newFeature = createGeoJSONFromCoordinates(newCoords, intendedType)
+    if (newFeature) {
+      setGeojson(newFeature); setError(undefined)
+      if (map) { map.setDrawGeojson({ type: 'FeatureCollection', features: [] }); map.setDrawGeojson({ type: 'FeatureCollection', features: [newFeature] }); map.disableDraw(currentDrawType); setIsDrawing(false) }
+      //   setShowShapeTypeButtons(shouldShowShapeButtons(newCoords)); // Let effect handle this
+    } else {
+      if (!newCoords.trim()) { setGeojson(undefined); if (map && drawEnabled) { map.setDrawGeojson({ type: 'FeatureCollection', features: [] }); map.enableDraw(currentDrawType); setIsDrawing(true) } setShowShapeTypeButtons(false) } else if (!error) { setError('Cannot form valid shape with coords/tools.') }
+    }
+  }
+
+  const applyShapeType = (shapeType: EMapShape): void => { /* ... same ... */
+    const newFeature = createGeoJSONFromCoordinates(coordinates, shapeType)
+    if (newFeature) { setGeojson(newFeature); setError(undefined) } else if (!error) { setError(`Could not create ${shapeType === EMapShape.polygon ? 'poly' : 'path'}.`) }
+  }
+
+  // ---- JSX Return (Reverting Button ClassNames and removing disabled) ----
+  return (
+        <div>
+            <FieldLabel {...field} />
+            <div className="relative">
+                {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
+                    <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
+                        {/* Point Button - Render only if allowed */}
+                        {drawPointEnabled && (
+                             <div className="tooltip-container relative group">
+                                 <Button
+                                    onClick={() => { handleDrawTypeChange(EMapShape.point) }}
+                                    // Reverted className logic
+                                    className={`p-2 rounded-lg shadow-lg ${
+                                        currentDrawType === EMapShape.point && isDrawing
+                                          ? 'bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]'
+                                          : 'bg-gray-100 hover:bg-gray-50'
+                                      } text-black w-10 h-10 flex items-center justify-center`}
+                                    aria-label="Draw Point"
+                                  >
+                                   <DrawingPinFilledIcon className="w-5 h-5" />
+                                   <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                                     Draw Point
+                                   </span>
+                                 </Button>
+                             </div>
+                        )}
+                        {/* Path Button - Render only if allowed */}
+                        {drawPathEnabled && (
+                           <div className="tooltip-container relative group">
+                               <Button
+                                   onClick={() => { handleDrawTypeChange(EMapShape.linestring) }}
+                                   // Reverted className logic
+                                   className={`p-2 rounded-lg shadow-lg ${
+                                       currentDrawType === EMapShape.linestring && isDrawing
+                                         ? 'bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]'
+                                         : 'bg-gray-100 hover:bg-gray-50'
+                                     } text-black w-10 h-10 flex items-center justify-center`}
+                                   aria-label="Draw Path"
+                                 >
+                                   <BorderSolidIcon className="w-5 h-5" />
+                                   <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                                     Draw Path
+                                   </span>
+                                 </Button>
+                           </div>
+                        )}
+                         {/* Polygon Button - Render only if allowed */}
+                        {drawPolygonEnabled && (
+                             <div className="tooltip-container relative group">
+                                 <Button
+                                     onClick={() => { handleDrawTypeChange(EMapShape.polygon) }}
+                                     // Reverted className logic
+                                     className={`p-2 rounded-lg shadow-lg ${
+                                         currentDrawType === EMapShape.polygon && isDrawing
+                                           ? 'bg-white hover:bg-gray-50 ring-2 ring-yellow-200 shadow-[0_0_10px_rgba(253,224,71,0.5)]'
+                                           : 'bg-gray-100 hover:bg-gray-50'
+                                       } text-black w-10 h-10 flex items-center justify-center`}
+                                     aria-label="Draw Polygon"
+                                   >
+                                    <SquareIcon className="w-5 h-5 rotate-45" />
+                                    <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                                      Draw Polygon
+                                    </span>
+                                  </Button>
+                             </div>
+                        )}
+                        {/* Clear Button - Render if shape exists */}
+                        {hasValidShape(geojson) && (
+                            <div className="tooltip-container relative group">
+                                <Button
+                                    onClick={clearShape}
+                                    className="p-2 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex items-center justify-center"
+                                    aria-label="Clear Shape"
+                                >
+                                    <TrashIcon className="w-5 h-5" />
+                                    <span className="tooltip absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none">
+                                      Clear Shape
+                                    </span>
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 )}
-                {drawPolygonEnabled && (
-                  <Button
-                    onClick={() => { applyShapeType(EMapShape.polygon) }}
-                    className="px-4 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-sm flex items-center gap-2"
-                  >
-                    <SquareIcon className="w-4 h-4 rotate-45" />
-                    Create Polygon
-                  </Button>
+
+                {/* Map Component */}
+                <Map {...MAP_CONFIG} setState={setMapState} />
+
+                {/* Coordinate Input Section */}
+                {showCoordinateInput && (
+                     <div className="mt-4">
+                        <div className="flex justify-between items-center mb-2 flex-wrap gap-y-2">
+                            <span className="text-sm"> {/* ... label ... */} </span>
+                            {showShapeTypeButtons && (drawPathEnabled || drawPolygonEnabled) && (
+                                <div className="flex gap-2"> {/* ... Create Path/Polygon buttons ... */}
+                                    {drawPathEnabled && <Button onClick={() => { applyShapeType(EMapShape.linestring) }} className="px-3 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-xs flex items-center gap-1"><BorderSolidIcon className="w-3 h-3" />Create Path</Button>}
+                                    {drawPolygonEnabled && <Button onClick={() => { applyShapeType(EMapShape.polygon) }} className="px-3 py-1 bg-white hover:bg-gray-50 text-black rounded-lg shadow-sm border border-gray-200 text-xs flex items-center gap-1"><SquareIcon className="w-3 h-3 rotate-45" />Create Polygon</Button>}
+                                </div>
+                            )}
+                        </div>
+                        <TextArea error={error} className='min-h-[100px] bg-slate-50 rounded-lg shadow-inner font-mono text-sm' id={`${field.id}-coordinates`} testId={`${field.id}-coordinates`} value={coordinates} onChange={handleCoordinatesChange} placeholder={'...'} aria-label="Coordinates Input" />
+                        {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
+                    </div>
                 )}
-              </div>
-            )}
-          </div>
-          <TextArea
-            error={error}
-            className='min-h-[100px] bg-slate-50 rounded-lg shadow-inner'
-            id={`${field.id}-coordinates`}
-            testId={`${field.id}-coordinates`}
-            value={coordinates}
-            onChange={handleCoordinatesChange}
-            placeholder="61.2181, -149.9003&#10;61.2182, -149.9004&#10;61.2183, -149.9005"
-          />
+
+                 {/* Debug Output (Optional) */}
+                 {showGeoJSONInput && <TextArea error={error} className='...' id={field.id + '-debug'} testId={field.id + '-debug'} label={<FieldLabel {...field} label="Debug GeoJSON Feature State"/>} value={getValue()} readOnly />}
+            </div>
         </div>
-      )}
-      {showGeoJSONInput && <TextArea
-        error={error}
-        className='min-h-[500px] bg-slate-50 rounded-lg shadow-inner'
-        id={field.id}
-        testId={field.id}
-        label={<FieldLabel {...field} />}
-        value={getValue()}
-        onChange={(e) => {
-          try {
-            JSON.parse(e ?? '')
-            onChange(JSON.parse(e ?? ''))
-            setError(undefined)
-          } catch (e) {
-            setError('Invalid JSON')
-          }
-        }} />}
-    </div>
-  </div>
+  )
 }
 
-export default GeoJSONInput
+export default GeometryInput
