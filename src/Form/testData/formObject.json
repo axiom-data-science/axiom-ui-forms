@@ -1,0 +1,62 @@
+{
+    "label": "Form with object",
+    "id": "objectForm",
+    "fields": [
+        {
+          "label": "Address",
+          "id": "address",
+          "type": "object",
+          "required": true,
+          "layout": "vertical",
+          "multiple": true,
+          "fields": [
+            {
+              "id": "street",
+              "label": "Street",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "city_state_zip",
+              "type": "object",
+              "required": false,
+              "layout": "horizontal",
+              "label": "",
+              "fields": [
+                {
+                  "id": "city",
+                  "label": "City",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "state",
+                  "label": "State",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "zip",
+                  "label": "Zip",
+                  "type": "text",
+                  "required": true
+                }
+              ]
+            },
+            {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false,
+                "multiple": true,
+                "defaultValue": [
+                    "first",
+                    "second",
+                    "third"
+                ]
+            }
+          ]
+        }
+      ]
+
+}
