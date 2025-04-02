@@ -1,13 +1,10 @@
 import { type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
 import { base64ToJson, getQueryParam, jsonToBase64, updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 import { atom } from ***REMOVED***jotai***REMOVED***
 
-const exampleForm = structuredClone(testForm)
-
 const urlArg = ***REMOVED***form***REMOVED***
 const base64String = getQueryParam(urlArg)
-const baseFormAtom = atom<IForm>((base64String !== null ? base64ToJson<IForm>(base64String) : exampleForm) as any as IForm)
+const baseFormAtom = atom<IForm>((base64String !== null ? base64ToJson<IForm>(base64String) : {}) as any as IForm)
 const formAtom = atom(
   (get) => {
     return get(baseFormAtom)
