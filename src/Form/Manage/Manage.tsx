@@ -11,7 +11,7 @@ import formMappingAtom from ***REMOVED***@/state/formMappingAtom***REMOVED***
 import { getQueryParam, updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { CheckIcon, Cross1Icon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
+import testForm from ***REMOVED***@/Form/testData/formObject.json***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 
@@ -62,6 +62,9 @@ const FormManager = ({
   formState?: [IForm, (v: IForm) => void]
 }): ReactElement => {
   const [form, setForm] = formState ?? useAtom(formAtom)
+  if (Object.values(form).length === 0) {
+    setForm(structuredClone(testForm as IForm))
+  }
   const [mapping, setMapping] = mappingState ?? useAtom(formMappingAtom)
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   const sections = [
