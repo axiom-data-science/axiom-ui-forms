@@ -1,7 +1,9 @@
 import inputMap from '@/Form/Components/Inputs/inputMap'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
 import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
-import { checkCondition, cleanUnusedDependenciesFromFormValues, getFieldValue, updateFormValuesWithFieldValue } from '@/Form/helpers'
+import { getFieldValue } from '@/utils/getters'
+import { cleanUnusedDependenciesFromFormValues, updateFormValuesWithFieldValue } from '@/utils/manipulators'
+import { checkCondition } from '@/utils/validators'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import React, { useState, type ReactElement } from 'react'
@@ -73,12 +75,7 @@ const OneOfMultiple = ({
   return (
     <div className='flex flex-col gap-2'>
           <InputComponent
-          field={{
-            ...field,
-            required: false,
-            label: index > 0 ? null : field.label,
-            id: `${field.id}-${index}`
-          }}
+          field={field}
           value={value}
           onChange={(v) => {
             const newValues = [...values]
@@ -127,7 +124,7 @@ const MultipleFieldCreator = ({
   }
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
-  const initialValues = (initialVal !== undefined ? (Array.isArray(initialVal) ? initialVal : [initialVal]) : [null])
+  const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
 
   const InputComponent = {
     ...inputMap,
@@ -140,7 +137,13 @@ const MultipleFieldCreator = ({
         return <OneOfMultiple
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
-          field={field}
+          field={{
+            ...field,
+            index,
+            required: false,
+            label: index > 0 ? null : field.label,
+            id: `${field.id}-${index}`
+          }}
           value={value}
           index={index}
           onChange={onChange ?? defaultOnChange}
@@ -185,7 +188,6 @@ const FieldCreator = ({
         ? <MultipleFieldCreator
             field={field}
             onChange={onChange}
-            value={initialValue}
           />
         : <InputComponent
             field={field}

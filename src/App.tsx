@@ -14,11 +14,12 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import { Slider } from '@axdspub/axiom-ui-utilities'
 import ExternalMetadataExample from '@/Form/ExternalMetadataExample'
 import FormWithDefaults from '@/Form/FormWithDefaults'
-import { assignDefaultValuesToFormValues } from '@/Form/helpers'
+
 import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
 import SchemaToFormWizard from '@/Form/SchemaToFormWizard'
 import CodeEditor from '@/Form/CodeEditor'
 import SchemaWithOverridesTest from '@/Form/SchemaWithOverridesTest'
+import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})

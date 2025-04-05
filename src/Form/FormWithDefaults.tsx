@@ -1,6 +1,6 @@
 import FormCreator from '@/Form/Creator/FormCreator'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
-import { assignDefaultValuesToFormValues } from '@/Form/helpers'
+import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
 import React, { type ReactElement, useState } from 'react'
 
 const form: IForm = {

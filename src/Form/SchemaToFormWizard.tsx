@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 import { useState, type ReactElement } from 'react'
 import toJsonSchema from 'to-json-schema'
 import oikosLayer from '@/Form/testData/oikosLayer.json'
-import { getSchemaPaths, schemaToFormObject } from '@/Form/schemaToFormHelpers'
+import { getSchemaPaths, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import JSONInputLoader from '@/Form/Components/Inputs/JSONInputLoader'
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
