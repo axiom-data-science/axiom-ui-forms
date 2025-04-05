@@ -7,16 +7,34 @@ import { EditorView } from '@codemirror/view'
 import yamlParser from 'js-yaml'
 import { Button } from '@axdspub/axiom-ui-utilities'
 import { ExclamationTriangleIcon, UpdateIcon } from '@radix-ui/react-icons'
-import { type IFieldInputProps } from '@/library'
+import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
+
+const getFormatted = (val: string, fmt: string): string => {
+  if (fmt === 'json') {
+    const jsonObject = JSON.parse(val)
+    return JSON.stringify(jsonObject, null, 2)
+  } else {
+    const yamlObject = yamlParser.load(val)
+    return yamlParser.dump(yamlObject)
+  }
+}
+
+const tryGetFormatted = (val: string, fmt: string): string => {
+  try {
+    return getFormatted(val, fmt)
+  } catch (error) {
+    return val
+  }
+}
 
 const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const [format, setFormat] = useState<'json' | 'yaml'>('json')
   const [workingValue, setWorkingValue] = useState<string>(typeof value === 'object'
     ? JSON.stringify(value, null, 2)
     : (value !== undefined && value !== null
-        ? String(value)
+        ? tryGetFormatted(String(value), format)
         : ''
       )
   )
@@ -63,14 +81,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   // Format JSON or YAML
   const handleFormat = (): void => {
     try {
-      if (format === 'json') {
-        const jsonObject = JSON.parse(workingValue)
-        setWorkingValue(JSON.stringify(jsonObject, null, 2))
-        validateJson(workingValue)
-      } else {
-        const yamlObject = yamlParser.load(workingValue)
-        setWorkingValue(yamlParser.dump(yamlObject))
-      }
+      setWorkingValue(getFormatted(workingValue, format))
       setError(null)
     } catch (error) {
       setError('Formatting failed: Invalid data.')
