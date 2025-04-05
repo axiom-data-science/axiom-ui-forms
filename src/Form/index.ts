@@ -1,2 +1,2 @@
-export * from '@/Form/helpers'
+export * from '@/utils'
 export { default as FormCreator } from '@/Form/Creator/FormCreator'

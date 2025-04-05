@@ -1,6 +1,7 @@
 import { type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
-import { addFieldPath, getFields } from '@/Form/helpers'
+import { getFields } from '@/utils/getters'
+import { addFieldPath } from '@/utils/manipulators'
 import { Input } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 

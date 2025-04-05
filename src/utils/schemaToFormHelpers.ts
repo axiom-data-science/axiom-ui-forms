@@ -12,7 +12,8 @@ import metaSchemaV4 from 'ajv/lib/refs/json-schema-2019-09/schema.json'
 import { resolveRefs } from '@/Form/resolveRefs'
 import { omit } from 'lodash'
 import { type ISelectOptionProps } from '@axdspub/axiom-ui-utilities'
-import { copyAndAddPathToFields, getFieldsFromFormSection, getPathFromField } from '@/Form/helpers'
+import { getFieldsFromFormSection, getPathFromField } from '@/utils/getters'
+import { copyAndAddPathToFields } from '@/utils/manipulators'
 
 const getValidator = (schema: number): ValidateFunction => {
   const ajv = new Ajv({

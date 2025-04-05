@@ -7,7 +7,7 @@ import testSchema from '@/Form/testData/pttSchemaModified.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormCreator from '@/Form/Creator/FormCreator'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
-import { getSchemaPaths, schemaToFormObject, validateAgainstSchema, validateSchema } from '@/Form/schemaToFormHelpers'
+import { getSchemaPaths, schemaToFormObject, validateAgainstSchema, validateSchema } from '@/utils/schemaToFormHelpers'
 import toJsonSchema from 'to-json-schema'
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
