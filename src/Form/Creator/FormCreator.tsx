@@ -2,8 +2,10 @@ import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***RE
 import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
-import { calculateSectionStatus, copyAndAddPathToFields, getFieldsFromFormSection, getFieldValue, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/Form/helpers***REMOVED***
-import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/Form/schemaToFormHelpers***REMOVED***
+import { getFieldsFromFormSection, getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
+import { copyAndAddPathToFields, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
+import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import React, { useContext, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***

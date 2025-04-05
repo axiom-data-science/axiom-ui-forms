@@ -3,7 +3,7 @@ import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator*
 import { type IFormSection, type IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
-import { calculateSectionStatus } from ***REMOVED***@/Form/helpers***REMOVED***
+import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***

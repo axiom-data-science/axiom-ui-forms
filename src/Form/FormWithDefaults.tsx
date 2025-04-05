@@ -1,6 +1,6 @@
 import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { assignDefaultValuesToFormValues } from ***REMOVED***@/Form/helpers***REMOVED***
+import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulators***REMOVED***
 import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
 const form: IForm = {
