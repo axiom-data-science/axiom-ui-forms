@@ -37,6 +37,13 @@ const form: IForm = {
       type: ***REMOVED***geometry***REMOVED***,
       id: ***REMOVED***geom***REMOVED***,
       label: ***REMOVED***A geometry***REMOVED***,
+      settings: {
+        drawEnabled: true,
+        drawPolygonEnabled: false,
+        drawPathEnabled: false,
+        drawPointEnable: true,
+        showCoordinateInput: false
+      },
       defaultValue: {
         coordinates: [
           -120,
