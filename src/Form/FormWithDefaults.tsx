@@ -41,7 +41,7 @@ const form: IForm = {
         drawEnabled: true,
         drawPolygonEnabled: false,
         drawPathEnabled: false,
-        drawPointEnable: true,
+        drawPointEnabled: true,
         showCoordinateInput: false
       },
       defaultValue: {

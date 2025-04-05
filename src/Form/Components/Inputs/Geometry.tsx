@@ -1,6 +1,6 @@
 import { Button, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
-import { type IFieldInputProps, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED*** // Added IFormField explicitly
+import { type IGeometryField, type IFieldInputProps, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED*** // Added IFormField explicitly
 
 import { EMapShape, type IMap, type IMapDrawEvent, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import { OpenLayersMap as Map } from ***REMOVED***@axdspub/axiom-maps/library/openlayers***REMOVED***
@@ -61,7 +61,7 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
   if (!Array.isArray(flatCoordinates) || flatCoordinates.length === 0 || !Array.isArray(flatCoordinates[0])) {
     // Handle single point case where flatCoordinates might be just [lon, lat]
     if (Array.isArray(flatCoordinates) && flatCoordinates.length === 2 && typeof flatCoordinates[0] === ***REMOVED***number***REMOVED***) {
-      const [lon, lat] = flatCoordinates as GeoJSON.Position
+      const [lon, lat] = flatCoordinates as unknown as GeoJSON.Position
       // FIX #2: Return a default zoom even for a point here for centering logic,
       // but we won***REMOVED***t use this zoom for the initial MAP_CONFIG.
       return { lat, lon, zoom: 8 } // Default zoom
@@ -94,9 +94,9 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
 
 // Helper function to determine initial draw type based on settings
 const getInitialDrawType = (field: IFormField): EMapShape => {
-  const settings = field.settings ?? {}
+  const settings = (field as IGeometryField).settings ?? {}
   const drawEnabled = settings.drawEnabled !== false
-  const drawPointEnabled = settings.drawPointEnable === true && drawEnabled
+  const drawPointEnabled = settings.drawPointEnabled === true && drawEnabled
   const drawPathEnabled = settings.drawPathEnabled === true && drawEnabled
   const drawPolygonEnabled = settings.drawPolygonEnabled === true && drawEnabled
 
@@ -119,11 +119,13 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
     return undefined
   })
 
-  const drawEnabled = field.settings?.drawEnabled !== false
-  const drawPointEnabled = field.settings?.drawPointEnable === true && drawEnabled
-  const drawPathEnabled = field.settings?.drawPathEnabled === true && drawEnabled
-  const drawPolygonEnabled = field.settings?.drawPolygonEnabled === true && drawEnabled
-  const showCoordinateInput = field.settings?.showCoordinateInput !== false
+  const geomField = field as IGeometryField
+
+  const drawEnabled = geomField.settings?.drawEnabled !== false
+  const drawPointEnabled = geomField.settings?.drawPointEnabled === true && drawEnabled
+  const drawPathEnabled = geomField.settings?.drawPathEnabled === true && drawEnabled
+  const drawPolygonEnabled = geomField.settings?.drawPolygonEnabled === true && drawEnabled
+  const showCoordinateInput = geomField.settings?.showCoordinateInput !== false
 
   const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(() => getInitialDrawType(field))
   const [isDrawing, setIsDrawing] = useState<boolean>(!geojson && drawEnabled)
@@ -164,7 +166,9 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
     } catch (e) { console.error(***REMOVED***Err init coords:***REMOVED***, e); initCoords = ***REMOVED******REMOVED*** } return initCoords
   })
 
-  useEffect(() => { updateCoordinatesFromFeature(geojson) }, [geojson, updateCoordinatesFromFeature])
+  useEffect(() => {
+    updateCoordinatesFromFeature(geojson)
+  }, [geojson, updateCoordinatesFromFeature])
 
   const createGeoJSONFromCoordinates = (coordString: string, forceType?: EMapShape): Feature | undefined => { /* ... same as last working version ... */
     if (!coordString.trim()) { setError(undefined); return undefined }
@@ -188,21 +192,22 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
   // ---- Map Event Handlers & State Updates ----
   useEffect(() => { // Map event listeners
     if (!map) return
-    const drawCompleteListener = (e: IMapDrawEvent) => { /* ... same ... */ const f = e.data?.geojson?.features?.[0]; if (f) { setGeojson(f); setIsDrawing(false); map.disableDraw(currentDrawType) } }
-    const drawUpdateListener = (e: IMapDrawEvent) => { /* ... same ... */ const f = e.data?.geojson?.features?.[0]; if (f) { setGeojson(f) } }
+    const drawCompleteListener = (e: IMapDrawEvent): void => { /* ... same ... */ const f = e.data?.geojson?.features?.[0]; if (f) { setGeojson(f); setIsDrawing(false); map.disableDraw(currentDrawType) } }
+    const drawUpdateListener = (e: IMapDrawEvent): void => { /* ... same ... */ const f = e.data?.geojson?.features?.[0]; if (f) { setGeojson(f) } }
     map.onDrawComplete(drawCompleteListener); map.onDrawUpdate(drawUpdateListener)
     // Cleanup omitted
   }, [map, currentDrawType])
 
   useEffect(() => { // Parent onChange trigger
     onChange(geojson?.geometry ?? undefined)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geojson])
 
   useEffect(() => { // Map drawing/state sync effect
     if (!map) return
     const correctDrawType = getInitialDrawType(field)
-    if (currentDrawType !== correctDrawType) { setCurrentDrawType(correctDrawType) }
+    if (currentDrawType !== correctDrawType) {
+      setCurrentDrawType(correctDrawType)
+    }
 
     if (geojson?.geometry) {
       map.setDrawGeojson({ type: ***REMOVED***FeatureCollection***REMOVED***, features: [geojson] })
@@ -363,7 +368,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
                 )}
 
                  {/* Debug Output (Optional) */}
-                 {showGeoJSONInput && <TextArea error={error} className=***REMOVED***...***REMOVED*** id={field.id + ***REMOVED***-debug***REMOVED***} testId={field.id + ***REMOVED***-debug***REMOVED***} label={<FieldLabel {...field} label="Debug GeoJSON Feature State"/>} value={getValue()} readOnly />}
+                 {showGeoJSONInput && <TextArea error={error} className=***REMOVED***...***REMOVED*** id={field.id + ***REMOVED***-debug***REMOVED***} testId={field.id + ***REMOVED***-debug***REMOVED***} label={<FieldLabel {...field} label="Debug GeoJSON Feature State"/>} value={JSON.stringify(value, null, 2)} />}
             </div>
         </div>
   )
