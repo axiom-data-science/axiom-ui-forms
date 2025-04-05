@@ -44,16 +44,12 @@
               ]
             },
             {
-                "id": "notes",
-                "label": "Notes",
-                "type": "text",
-                "required": false,
-                "multiple": true,
-                "defaultValue": [
-                    "first",
-                    "second",
-                    "third"
-                ]
+              "id": "notes",
+              "label": "Notes",
+              "type": "long_text",
+              "required": false,
+              "multiple": true
+
             }
           ]
         }
