@@ -4,7 +4,7 @@ import { Input } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 const StringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
-  const initialValue = value !== undefined ? String(value) : ***REMOVED******REMOVED***
+  const initialValue = (value !== undefined && value !== null) ? String(value) : ***REMOVED******REMOVED***
   /* const [val, setVal] = useState<string | undefined>(initialValue !== undefined && initialValue !== null ? String(initialValue) : ***REMOVED******REMOVED***)
   useDeferredValue(val)
   const newVal = useDeferredValue(val)
@@ -17,7 +17,7 @@ const StringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
         testId={field.id}
         value={initialValue}
         label={<FieldLabel {...field} />} onChange={(e) => {
-          onChange(e === ***REMOVED******REMOVED*** ? undefined : e)
+          onChange((e === ***REMOVED******REMOVED*** || e === null) ? undefined : e)
         }} /></div>
 }
 

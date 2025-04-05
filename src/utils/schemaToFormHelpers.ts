@@ -12,7 +12,8 @@ import metaSchemaV4 from ***REMOVED***ajv/lib/refs/json-schema-2019-09/schema.js
 import { resolveRefs } from ***REMOVED***@/Form/resolveRefs***REMOVED***
 import { omit } from ***REMOVED***lodash***REMOVED***
 import { type ISelectOptionProps } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { copyAndAddPathToFields, getFieldsFromFormSection, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
+import { getFieldsFromFormSection, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
+import { copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
 
 const getValidator = (schema: number): ValidateFunction => {
   const ajv = new Ajv({

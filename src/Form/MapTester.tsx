@@ -1,6 +1,7 @@
 import { type IFormField, type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
-import { copyAndAddPathToFields, getPathFromField } from ***REMOVED***@/Form/helpers***REMOVED***
+import { getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
+import { copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
 import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***

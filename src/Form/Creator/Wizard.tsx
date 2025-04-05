@@ -1,4 +1,4 @@
-import { calculateSectionStatus } from ***REMOVED***@/Form/helpers***REMOVED***
+import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IFormSection, type IWizardStep } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IPageLayoutProps, ActivePage } from ***REMOVED***@/Form/Creator/Page***REMOVED***

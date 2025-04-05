@@ -35,7 +35,14 @@ const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
                   defaultClassName: ***REMOVED***p-0***REMOVED***,
                   className: fc
                 })}
-                value={initialValue[childField.id]}
+                // default to null here so that FormCreator doesn***REMOVED***t go out and look for the value again
+                // todo: update this so that it***REMOVED***s clearer. difference between undefined and null too small
+                value={(
+                  childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true
+                    ? initialValue
+                    : initialValue[childField.id]
+                ) ?? null
+                }
                 field={childField}
                 key={key}
               />

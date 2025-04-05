@@ -7,16 +7,34 @@ import { EditorView } from ***REMOVED***@codemirror/view***REMOVED***
 import yamlParser from ***REMOVED***js-yaml***REMOVED***
 import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { ExclamationTriangleIcon, UpdateIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import { type IFieldInputProps } from ***REMOVED***@/library***REMOVED***
+import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
+
+const getFormatted = (val: string, fmt: string): string => {
+  if (fmt === ***REMOVED***json***REMOVED***) {
+    const jsonObject = JSON.parse(val)
+    return JSON.stringify(jsonObject, null, 2)
+  } else {
+    const yamlObject = yamlParser.load(val)
+    return yamlParser.dump(yamlObject)
+  }
+}
+
+const tryGetFormatted = (val: string, fmt: string): string => {
+  try {
+    return getFormatted(val, fmt)
+  } catch (error) {
+    return val
+  }
+}
 
 const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const [format, setFormat] = useState<***REMOVED***json***REMOVED*** | ***REMOVED***yaml***REMOVED***>(***REMOVED***json***REMOVED***)
   const [workingValue, setWorkingValue] = useState<string>(typeof value === ***REMOVED***object***REMOVED***
     ? JSON.stringify(value, null, 2)
     : (value !== undefined && value !== null
-        ? String(value)
+        ? tryGetFormatted(String(value), format)
         : ***REMOVED******REMOVED***
       )
   )
@@ -63,14 +81,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   // Format JSON or YAML
   const handleFormat = (): void => {
     try {
-      if (format === ***REMOVED***json***REMOVED***) {
-        const jsonObject = JSON.parse(workingValue)
-        setWorkingValue(JSON.stringify(jsonObject, null, 2))
-        validateJson(workingValue)
-      } else {
-        const yamlObject = yamlParser.load(workingValue)
-        setWorkingValue(yamlParser.dump(yamlObject))
-      }
+      setWorkingValue(getFormatted(workingValue, format))
       setError(null)
     } catch (error) {
       setError(***REMOVED***Formatting failed: Invalid data.***REMOVED***)
