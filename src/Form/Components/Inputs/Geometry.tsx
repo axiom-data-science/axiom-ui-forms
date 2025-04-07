@@ -15,8 +15,12 @@ List of coordinates for testing. Around Anchorage.
 */
 
 // --- calculateCenterFromGeoJSON remains the same (zoom ignored for initial load) ---
-const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lon: number, zoom: number } => {
-  // ... (Implementation from previous correct version) ...
+const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined, defaultCenter?: { lat: number, lon: number, zoom: number }): { lat: number, lon: number, zoom: number } => {
+  // If default center is provided, use it
+  if (defaultCenter) {
+    return defaultCenter
+  }
+
   // If input is Geometry, wrap it temporarily for calculation
   let featureCollection: GeoJSON.FeatureCollection | undefined
   if (geo && geo.type !== ***REMOVED***FeatureCollection***REMOVED***) {
@@ -29,13 +33,16 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
     featureCollection = geo
   }
 
+  // Default to Anchorage if no valid GeoJSON
+  const DEFAULT_CENTER = { lat: 61.2181, lon: -149.9003, zoom: 8 }
+
   if (!featureCollection || !(***REMOVED***features***REMOVED*** in featureCollection) || !Array.isArray(featureCollection.features) || featureCollection.features.length === 0) {
-    return { lat: 61.2181, lon: -149.9003, zoom: 8 } // Default to Anchorage
+    return DEFAULT_CENTER
   }
 
   const feature = featureCollection.features[0]
   if (!feature?.geometry) {
-    return { lat: 61.2181, lon: -149.9003, zoom: 8 }
+    return DEFAULT_CENTER
   }
 
   const geometry = feature.geometry
@@ -52,7 +59,7 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
       coordinates = [geometry.coordinates] // Wrap single point for uniform handling
       break
     default:
-      return { lat: 61.2181, lon: -149.9003, zoom: 8 }
+      return DEFAULT_CENTER
   }
 
   // Flatten coordinates for bounds calculation if needed (e.g., MultiPoint, MultiLineString)
@@ -67,7 +74,7 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
       return { lat, lon, zoom: 8 } // Default zoom
     }
     console.warn(***REMOVED***Could not determine coordinates for centering.***REMOVED***)
-    return { lat: 61.2181, lon: -149.9003, zoom: 8 }
+    return DEFAULT_CENTER
   }
 
   // Calculate bounds
@@ -80,7 +87,7 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
     sumLat += lat; sumLon += lon; count++
   })
 
-  if (count === 0) { return { lat: 61.2181, lon: -149.9003, zoom: 8 } }
+  if (count === 0) { return DEFAULT_CENTER }
 
   const centerLat = sumLat / count; const centerLon = sumLon / count
   const latDiff = maxLat - minLat; const lonDiff = maxLon - minLon; const maxDiff = Math.max(latDiff, lonDiff)
@@ -130,8 +137,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
   const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(() => getInitialDrawType(field))
   const [isDrawing, setIsDrawing] = useState<boolean>(!geojson && drawEnabled)
 
-  const initialMapCenter = calculateCenterFromGeoJSON(geojson)
-  const INITIAL_DEFAULT_ZOOM = 8 // Fixed default zoom
+  const initialMapCenter = calculateCenterFromGeoJSON(geojson, geomField.settings?.defaultCenter)
 
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
@@ -139,7 +145,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
     width: ***REMOVED***100%***REMOVED***,
     style: { /* ... styles ... */ },
     center: { lat: initialMapCenter.lat, lon: initialMapCenter.lon },
-    zoom: INITIAL_DEFAULT_ZOOM, // Use fixed zoom
+    zoom: initialMapCenter.zoom,
     tools: {
       draw: {
         shape: currentDrawType,

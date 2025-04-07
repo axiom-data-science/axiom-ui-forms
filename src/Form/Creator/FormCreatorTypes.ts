@@ -207,6 +207,11 @@ export interface IGeometryField extends IFormFieldRoot {
     drawPointEnabled?: boolean
     showCoordinateInput?: boolean
     height?: string
+    defaultCenter?: {
+      lat: number
+      lon: number
+      zoom: number
+    }
   }
 }
 
