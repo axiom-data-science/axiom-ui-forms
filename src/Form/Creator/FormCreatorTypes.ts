@@ -206,6 +206,7 @@ export interface IGeometryField extends IFormFieldRoot {
     drawPathEnabled?: boolean
     drawPointEnabled?: boolean
     showCoordinateInput?: boolean
+    height?: string
   }
 }
 
