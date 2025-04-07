@@ -268,7 +268,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
             <FieldLabel {...field} />
             <div className="relative">
                 {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
-                    <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
+                    <div className="absolute z-20 top-4 right-4 flex flex-col gap-2">
                         {/* Point Button - Render only if allowed */}
                         {drawPointEnabled && (
                              <div className="tooltip-container relative group">
