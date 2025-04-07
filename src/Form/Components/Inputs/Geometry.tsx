@@ -135,7 +135,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
 
   const MAP_CONFIG: IStyleableMapProps = {
     baseLayerKey: ***REMOVED***hybrid***REMOVED***,
-    height: ***REMOVED***500px***REMOVED***,
+    height: geomField.settings?.height ?? ***REMOVED***500px***REMOVED***,
     width: ***REMOVED***100%***REMOVED***,
     style: { /* ... styles ... */ },
     center: { lat: initialMapCenter.lat, lon: initialMapCenter.lon },
