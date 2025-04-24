@@ -80,8 +80,12 @@ interface ILongTextField extends IStringValueInput {
   type: 'long_text'
 }
 
-interface IJSONField extends IFormFieldRoot {
+export interface IJSONField extends IFormFieldRoot {
   type: 'json'
+  settings?: {
+    exportAsString?: boolean
+    allowEmpty?: boolean
+  }
 }
 
 interface ICustomField extends IFormFieldRoot {
@@ -213,21 +217,18 @@ export interface IFormSection {
   id: string
   label?: string
   description?: string
+  order?: number
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
 }
 
-export interface IPage extends Omit<IForm, 'pages'> {
-  id: string
-  label: string
-  description?: string
-  fields: IFormField[]
+export interface IPage extends Omit<IFormSection, 'pages'> {
 
 }
 
-export interface IWizardStep extends Omit<IForm, 'wizard_steps'> {
-  order: number
+export interface IWizardStep extends Omit<IFormSection, 'wizard_steps'> {
+
 }
 
 export interface IForm {

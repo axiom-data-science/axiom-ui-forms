@@ -7,7 +7,7 @@ import { EditorView } from '@codemirror/view'
 import yamlParser from 'js-yaml'
 import { Button } from '@axdspub/axiom-ui-utilities'
 import { ExclamationTriangleIcon, UpdateIcon } from '@radix-ui/react-icons'
-import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { type IJSONField, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 
@@ -30,6 +30,9 @@ const tryGetFormatted = (val: string, fmt: string): string => {
 }
 
 const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+  const jsonField = field as IJSONField
+  const exportAsString = jsonField?.settings?.exportAsString ?? false
+  const allowEmpty = jsonField?.settings?.allowEmpty ?? false
   const [format, setFormat] = useState<'json' | 'yaml'>('json')
   const [workingValue, setWorkingValue] = useState<string>(typeof value === 'object'
     ? JSON.stringify(value, null, 2)
@@ -41,25 +44,33 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   const [error, setError] = useState<string | null>(null)
 
   // Validate JSON and display error
-  const validateJson = (val: string): void => {
+  const validateJson = (val: string): boolean => {
     try {
-      if (val.trim() !== '') {
-        JSON.parse(val)
+      if (val.trim() === '') {
+        setError(null)
+        return true
       }
+      JSON.parse(val)
       setError(null) // Clear error if valid
+      return true
     } catch (err) {
       setError('Invalid JSON: ' + (err as Error).message)
+      return false
     }
   }
 
-  const validateYaml = (val: string): void => {
+  const validateYaml = (val: string): boolean => {
     try {
-      if (val.trim() !== '') {
-        yamlParser.load(val)
+      if (val.trim() === '') {
+        setError(null)
+        return true
       }
+      yamlParser.load(val)
       setError(null)
+      return true
     } catch (err) {
       setError('Invalid YAML: ' + (err as Error).message)
+      return false
     }
   }
 
@@ -67,14 +78,19 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   const handleChange = (val: string): void => {
     setWorkingValue(val)
     if (format === 'json') {
-      validateJson(val)
-      onChange(val)
+      if (validateJson(val)) {
+        if (!allowEmpty && val.trim() === '') {
+          val = '{}'
+        }
+        onChange(exportAsString ? val : JSON.parse(val))
+      }
     } else if (format === 'yaml') {
-      validateYaml(val)
-      const ob = yamlParser.load(val)
-      const json = JSON.stringify(ob, null, 2)
-      validateJson(json)
-      onChange(json)
+      if (validateYaml(val)) {
+        const json = JSON.stringify(val === '' && !allowEmpty ? '{}' : yamlParser.load(val), null, 2)
+        if (validateJson(json)) {
+          onChange(exportAsString ? json : JSON.parse(json))
+        }
+      }
     }
   }
 
@@ -135,7 +151,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         </span>
       {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-50"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
       <CodeMirror
-        value={workingValue}
+        value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
         className='h-full'
         height='550px'
         extensions={[

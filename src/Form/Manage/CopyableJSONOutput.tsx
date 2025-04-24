@@ -1,6 +1,6 @@
 import { utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'
-import React, { type ReactElement, useState } from 'react'
+import React, { type ReactElement, type ReactNode, useState } from 'react'
 
 export const CopyButton = ({
   string,
@@ -8,7 +8,10 @@ export const CopyButton = ({
   defaultClassName = 'text-lg text-slate-400 pointer-events-none',
   className,
   defaultWrapperClassName,
-  wrapperClassName
+  wrapperClassName,
+  ToCopyElement,
+  OnCopiedElement
+
 }: {
   string: string
   defaultClassName?: string
@@ -16,6 +19,8 @@ export const CopyButton = ({
   defaultWrapperClassName?: string
   wrapperClassName?: string
   size?: 'sm' | 'med' | 'lg' | 'xlg'
+  ToCopyElement?: ReactNode
+  OnCopiedElement?: ReactNode
 }): ReactElement => {
   const [copied, setCopied] = useState(false)
   return (
@@ -35,14 +40,14 @@ export const CopyButton = ({
         })
     }}>
       {copied
-        ? <span className={utils.makeClassName({
+        ? OnCopiedElement ?? <span className={utils.makeClassName({
           className,
           defaultClassName
         })}><CheckIcon className={utils.makeClassName({
           className: 'bg-slate-600 text-white rounded-full',
           extras: [utils.getIconClassForSize(size)]
         })} /></span>
-        : <CopyIcon className={utils.makeClassName({
+        : ToCopyElement ?? <CopyIcon className={utils.makeClassName({
           className,
           defaultClassName,
           extras: [utils.getIconClassForSize(size)]

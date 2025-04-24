@@ -9,14 +9,15 @@ import FormCreator from '@/Form/Creator/FormCreator'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { getSchemaPaths, schemaToFormObject, validateAgainstSchema, validateSchema } from '@/utils/schemaToFormHelpers'
 import toJsonSchema from 'to-json-schema'
+import { JSONInput } from '@/Form/Components/Inputs'
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
   return toJsonSchema(ob) as JSONSchema6
 }
 
-const isValidJson = (ob: unknown): boolean => {
+const isValidJson = (ob: string): boolean => {
   try {
-    JSON.stringify(ob)
+    JSON.parse(ob)
     return true
   } catch {
     return false
@@ -32,20 +33,19 @@ const SchemaToForm = (): ReactElement => {
   let form: IForm | undefined
   let schema: JSONSchema6 | undefined
 
-  if (str !== '' && str !== undefined) {
-    try {
-      const ob = JSON.parse(str)
-      const validationResponse = validateSchema(ob)
+  try {
+    const ob = JSON.parse(str === undefined || str === '' ? '{}' : str)
+    const validationResponse = validateSchema(ob)
 
-      if (validationResponse.schema !== undefined) {
-        schema = validationResponse.schema
-        form = schemaToFormObject(validationResponse.schema)
-      }
-    } catch (e) {
-      console.error(e)
-      setError('Invalid JSON')
+    if (validationResponse.schema !== undefined) {
+      schema = validationResponse.schema
+      form = schemaToFormObject(validationResponse.schema)
     }
+  } catch (e) {
+    console.error(e)
+    setError('Invalid JSON')
   }
+
   const formOutputErrors = useMemo(() => {
     return validateAgainstSchema(schema ?? {}, formValues)
   }, [schema, formValues])
@@ -103,7 +103,7 @@ const SchemaToForm = (): ReactElement => {
                     {
                       label: 'Schema',
                       id: 'schema',
-                      content: <>
+                      content: <div className='flex flex-col gap-4'>
                       <div className='flex flex-col gap-2'>
 
                           <p className={`${error !== undefined ? 'text-rose-800' : 'text-green-800'}`}>
@@ -111,54 +111,53 @@ const SchemaToForm = (): ReactElement => {
                           </p>
 
                         <div className='relative'>
-                            <CopyButton string={JSON.stringify(schema, null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
-                            <TextArea
-                                id='schemaInput'
-                                testId='schemaInput'
-                                value={JSON.stringify(schema, null, 2)}
-                                className={`h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x ${error !== undefined ? 'bg-rose-100' : 'bg-green-100'}`}
-                                onChange={(e) => {
-                                  setStr(e)
-                                }}
-                            />
+                            {/* <CopyButton string={JSON.stringify(schema, null, 2)} className='absolute right-10 top-10 pointer-events-auto' /> */}
+                            <JSONInput
+                              value={str}
+                              onChange={(e) => {
+                                setStr(e !== undefined ? String(e) : undefined)
+                              } }
+                              field={{
+                                id: 'schemaInput',
+                                label: 'Schema Input',
+                                type: 'json'
+                              }}
+                              />
+
                         </div>
                       </div>
                       <div className='flex flex-col gap-2'>
 
-                                <p>UI Config</p>
-                                <div className='relative'>
+                                  <p className='font-bold'>Converted Form</p>
                                   {
                                     form !== undefined
-                                      ? <>
-                                      <CopyButton string={JSON.stringify(form ?? '', null, 2)} className='absolute right-10 top-10 pointer-events-auto' />
-                                      <TextArea
-                                        id='formInput'
-                                        testId='formInput'
-                                        value={JSON.stringify(form, null, 2)}
-                                        className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-blue-900 text-white'
-                                        onChange={(e) => {
-                                          // setForm(e !== undefined ? JSON.parse(e) : undefined)
-                                          setStr(e)
-                                        }}
+                                      ? <div className='relative'>
+                                      <CopyButton string={JSON.stringify(form ?? '', null, 2)}
+                                        wrapperClassName='absolute right-5 bottom-5 pointer-events-auto'
                                         />
+                                      <pre className='p-5 text-blue-200 text-xs max-h-[400px] shadow-inner-x bg-blue-900 font-mono whitespace-pre-wrap overflow-auto'>
+                                        {JSON.stringify(form, null, 2)}
+                                      </pre>
+                                      </div>
 
-                                      </>
                                       : 'Waiting on valid schema'
                                   }
 
-                                </div>
-
                       </div>
                       <div className='flex flex-col gap-2'>
-                        <p>Paste JSON to convert to schema</p>
-                        <TextArea
-                          id='jsonInput'
-                          testId='jsonInput'
+                        <JSONInput
                           value={objectInput}
                           onChange={(e) => {
-                            setObjectInput(e)
+                            setObjectInput(e !== undefined ? String(e) : undefined)
+                          } }
+                          field={{
+                            id: 'objectInput',
+                            label: 'Paste JSON to convert to schema',
+                            type: 'json'
                           }}
+                          className='h-full mt-0 w-full flex-grow max-h-[400px] shadow-inner-x bg-blue-900 text-white'
                           />
+
                           {
                             schemaObjectError !== undefined
                               ? <p className='text-rose-800'>{schemaObjectError}</p>
@@ -182,7 +181,7 @@ const SchemaToForm = (): ReactElement => {
 
                                 </div>
                       </div>
-                      </>
+                      </div>
                     },
                     {
                       label: 'Form config overrides',

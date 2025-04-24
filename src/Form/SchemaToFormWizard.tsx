@@ -9,6 +9,9 @@ import toJsonSchema from 'to-json-schema'
 import oikosLayer from '@/Form/testData/oikosLayer.json'
 import { getSchemaPaths, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import JSONInputLoader from '@/Form/Components/Inputs/JSONInputLoader'
+import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
+import { Button } from '@axdspub/axiom-ui-utilities'
+import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
   return toJsonSchema(ob) as JSONSchema6
@@ -24,11 +27,19 @@ const inputOverrides = {
   'custom:form-output': (): ReactElement => {
     const [formValues] = useAtom(formValuesAtom)
     const formValueState = useState<IFormValues>({})
+    const form = schemaToFormObject(formValues.schema_input as JSONSchema6)
     return (
       <>{
         formValues.schema_input !== undefined
           ? <div className='p-5 bg-slate-200'>
-              <FormCreator className='m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white' form={schemaToFormObject(formValues.schema_input as JSONSchema6)} formValueState={formValueState} />
+
+              <FormCreator className='m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white' form={form} formValueState={formValueState} />
+              <CopyButton
+                string={JSON.stringify(form, null, 2)}
+                OnCopiedElement={<Button size='sm' type='submit' disabled={true}><CheckIcon className=' inline' /> Copied to clipboard</Button>}
+                ToCopyElement={<Button size='sm' type='submit'><CopyIcon className=' inline' /> Copy form config</Button>}
+
+              />
               </div>
           : <p>Waiting on schema input</p>
       }</>
@@ -63,6 +74,18 @@ const inputOverrides = {
                 </div>
             </div>
     )
+  },
+  'custom:schema_input': ({ field, value, onChange }: IFieldInputProps): ReactElement => {
+    /// const [formValues] = useAtom(formValuesAtom)
+    return (
+            <JSONInputLoader
+                field={field}
+                value={value}
+                onChange={(v) => {
+                  onChange(v)
+                }}
+                />
+    )
   }
 }
 
@@ -92,7 +115,7 @@ const SchemaToFormWizard = (): ReactElement => {
               fields: [
                 {
                   id: 'schema_input',
-                  type: 'json',
+                  type: 'custom:schema_input',
                   label: 'Schema',
                   description: 'Paste or edit JSON schema here.'
                 }
@@ -131,9 +154,9 @@ const SchemaToFormWizard = (): ReactElement => {
   const [formValues, setFormValues] = useAtom(formValuesAtom)
   useEffect(() => {
     try {
-      const ob = typeof formValues.object_input === 'string'
-        ? JSON.parse(formValues.object_input)
-        : formValues.object_input
+      const ob = typeof formValues.object_input === 'object'
+        ? formValues.object_input
+        : JSON.parse(formValues.object_input !== undefined && formValues.object_input !== null && formValues.object_input !== '' ? String(formValues.object_input) : '{}')
       const newSchemaInput = objectToSchema(ob)
       setFormValues((prev) => ({ ...prev, schema_input: newSchemaInput as IValueType }))
     } catch (e) {

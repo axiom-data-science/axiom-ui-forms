@@ -1,4 +1,4 @@
-export * from '@/utils/getters'
-export * from '@/utils/manipulators'
-export * from '@/utils/validators'
-export * from '@/utils/schemaToFormHelpers'
+export * as getters from '@/utils/getters'
+export * as manipulators from '@/utils/manipulators'
+export * as validators from '@/utils/validators'
+export * as schemaToFormUtils from '@/utils/schemaToFormHelpers'

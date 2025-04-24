@@ -1,2 +1,2 @@
 export { default as FieldCreator } from './FieldCreator'
-export * from './Inputs'
+export * as Inputs from './Inputs'
