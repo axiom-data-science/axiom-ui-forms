@@ -369,9 +369,10 @@ const mergeFormFields = ({
   schemaForm: IForm
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
 }): IFormField[] => {
-  const schemaFormObject = buildFormObject(schemaForm)
+  const schemaFieldMap = buildFieldMapFromForm(schemaForm)
+
   return (fieldOverrides ?? []).map(field => {
-    const schemaField = schemaFormObject[field.prop]
+    const schemaField = schemaFieldMap[field.prop]
     const sectionField = {
       ...mergeObjects<IFormFieldOverride | IFormField>([
         {
@@ -451,30 +452,28 @@ export const overridesAndSchemaToFormObject = ({
     label: schemaForm.label
   }
   const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
-  const formFieldsByProp = formFieldOverrides?.map(overrides => Object.fromEntries(overrides.map(override => [override.prop, override]))) ?? []
+  const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(overrides.map(override => [override.prop, override]))) ?? []
 
   form.pages = mergedFormOverrides.pages !== undefined
     ? mergeFormSections({
       sectionOverrides: mergedFormOverrides.pages,
       schemaForm,
-      formFieldsOverrideMap: formFieldsByProp
+      formFieldsOverrideMap: formFieldOverridesByProp
     }) as IPage[]
     : undefined
   form.wizard_steps = mergedFormOverrides.wizard_steps !== undefined
     ? mergeFormSections({
       sectionOverrides: mergedFormOverrides.wizard_steps,
       schemaForm,
-      formFieldsOverrideMap: formFieldsByProp
+      formFieldsOverrideMap: formFieldOverridesByProp
     }) as IWizardStep[]
     : undefined
 
-  form.fields = mergedFormOverrides.fields !== undefined
-    ? mergeFormFields({
-      fieldOverrides: mergedFormOverrides.fields,
-      schemaForm,
-      formFieldsOverrideMap: formFieldsByProp
-    })
-    : undefined
+  form.fields = mergeFormFields({
+    fieldOverrides: mergedFormOverrides.fields,
+    schemaForm,
+    formFieldsOverrideMap: formFieldOverridesByProp
+  })
 
   return form
 }
@@ -498,7 +497,7 @@ export const schemaToFormObject = (schema: JSONSchema6): IForm => {
   }
 }
 
-export const buildFormObject = (form: IForm): Record<string, IFormField> => {
+export const buildFieldMapFromForm = (form: IForm): Record<string, IFormField> => {
   const formCopy = copyAndAddPathToFields(form)
   const fields = getFieldsFromFormSection(formCopy)
   return Object.fromEntries(fields.map(field => [getPathFromField(field), field]))

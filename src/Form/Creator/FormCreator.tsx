@@ -8,7 +8,7 @@ import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import React, { useContext, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useContext, type ReactElement } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -49,23 +49,19 @@ export const SchemaFormCreator = ({
   formOverrides?: IFormOverride[]
   formFieldOverrides?: IFormFieldOverride[][]
 }): ReactElement => {
-  const [form, setForm] = useState<IForm | undefined>(undefined)
-  useEffect(() => {
-    const newForm = formOverrides === undefined
-      ? schemaToFormObject(schema)
-      : overridesAndSchemaToFormObject({
-        formOverrides,
-        formFieldOverrides,
-        schema
-      }) // Convert the JSON schema to a form object
-    if (id !== undefined) {
-      newForm.id = id
-    }
-    if (label !== undefined) {
-      newForm.label = label
-    }
-    setForm(newForm)
-  }, [schema, formOverrides, formFieldOverrides, id, label])
+  const form = formOverrides === undefined
+    ? schemaToFormObject(schema)
+    : overridesAndSchemaToFormObject({
+      formOverrides,
+      formFieldOverrides,
+      schema
+    }) // Convert the JSON schema to a form object
+  if (id !== undefined) {
+    form.id = id
+  }
+  if (label !== undefined) {
+    form.label = label
+  }
 
   return (
     <>{

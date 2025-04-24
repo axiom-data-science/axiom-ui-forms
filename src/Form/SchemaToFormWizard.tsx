@@ -9,6 +9,9 @@ import toJsonSchema from ***REMOVED***to-json-schema***REMOVED***
 import oikosLayer from ***REMOVED***@/Form/testData/oikosLayer.json***REMOVED***
 import { getSchemaPaths, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import JSONInputLoader from ***REMOVED***@/Form/Components/Inputs/JSONInputLoader***REMOVED***
+import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
+import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { CheckIcon, CopyIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
   return toJsonSchema(ob) as JSONSchema6
@@ -24,11 +27,19 @@ const inputOverrides = {
   ***REMOVED***custom:form-output***REMOVED***: (): ReactElement => {
     const [formValues] = useAtom(formValuesAtom)
     const formValueState = useState<IFormValues>({})
+    const form = schemaToFormObject(formValues.schema_input as JSONSchema6)
     return (
       <>{
         formValues.schema_input !== undefined
           ? <div className=***REMOVED***p-5 bg-slate-200***REMOVED***>
-              <FormCreator className=***REMOVED***m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white***REMOVED*** form={schemaToFormObject(formValues.schema_input as JSONSchema6)} formValueState={formValueState} />
+
+              <FormCreator className=***REMOVED***m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white***REMOVED*** form={form} formValueState={formValueState} />
+              <CopyButton
+                string={JSON.stringify(form, null, 2)}
+                OnCopiedElement={<Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***submit***REMOVED*** disabled={true}><CheckIcon className=***REMOVED*** inline***REMOVED*** /> Copied to clipboard</Button>}
+                ToCopyElement={<Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***submit***REMOVED***><CopyIcon className=***REMOVED*** inline***REMOVED*** /> Copy form config</Button>}
+
+              />
               </div>
           : <p>Waiting on schema input</p>
       }</>
@@ -63,6 +74,18 @@ const inputOverrides = {
                 </div>
             </div>
     )
+  },
+  ***REMOVED***custom:schema_input***REMOVED***: ({ field, value, onChange }: IFieldInputProps): ReactElement => {
+    /// const [formValues] = useAtom(formValuesAtom)
+    return (
+            <JSONInputLoader
+                field={field}
+                value={value}
+                onChange={(v) => {
+                  onChange(v)
+                }}
+                />
+    )
   }
 }
 
@@ -92,7 +115,7 @@ const SchemaToFormWizard = (): ReactElement => {
               fields: [
                 {
                   id: ***REMOVED***schema_input***REMOVED***,
-                  type: ***REMOVED***json***REMOVED***,
+                  type: ***REMOVED***custom:schema_input***REMOVED***,
                   label: ***REMOVED***Schema***REMOVED***,
                   description: ***REMOVED***Paste or edit JSON schema here.***REMOVED***
                 }
@@ -131,9 +154,9 @@ const SchemaToFormWizard = (): ReactElement => {
   const [formValues, setFormValues] = useAtom(formValuesAtom)
   useEffect(() => {
     try {
-      const ob = typeof formValues.object_input === ***REMOVED***string***REMOVED***
-        ? JSON.parse(formValues.object_input)
-        : formValues.object_input
+      const ob = typeof formValues.object_input === ***REMOVED***object***REMOVED***
+        ? formValues.object_input
+        : JSON.parse(formValues.object_input !== undefined && formValues.object_input !== null && formValues.object_input !== ***REMOVED******REMOVED*** ? String(formValues.object_input) : ***REMOVED***{}***REMOVED***)
       const newSchemaInput = objectToSchema(ob)
       setFormValues((prev) => ({ ...prev, schema_input: newSchemaInput as IValueType }))
     } catch (e) {
