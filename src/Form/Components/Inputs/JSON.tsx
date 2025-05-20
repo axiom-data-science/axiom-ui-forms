@@ -38,7 +38,9 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
     ? JSON.stringify(value, null, 2)
     : (value !== undefined && value !== null
         ? tryGetFormatted(String(value), format)
-        : ***REMOVED******REMOVED***
+        : allowEmpty
+          ? ***REMOVED******REMOVED***
+          : ***REMOVED***{}***REMOVED***
       )
   )
   const [error, setError] = useState<string | null>(null)
@@ -140,16 +142,16 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         </div>
       </div>
       <div className=***REMOVED*** relative flex-grow***REMOVED***>
-        <span className=***REMOVED***absolute right-6 bottom-4 pointer-events-auto z-50***REMOVED***>
+        <span className=***REMOVED***absolute right-6 bottom-4 pointer-events-auto z-40***REMOVED***>
         <CopyButton string={
           error === null && workingValue !== ***REMOVED******REMOVED***
             ? format === ***REMOVED***json***REMOVED***
               ? JSON.stringify(JSON.parse(workingValue), null, 2)
               : yamlParser.dump(workingValue)
             : workingValue
-        } className=***REMOVED***white z-50***REMOVED*** />
+        } className=***REMOVED***white z-40***REMOVED*** />
         </span>
-      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-50"><ExclamationTriangleIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-1***REMOVED*** /> {error}</p>}
+      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-1***REMOVED*** /> {error}</p>}
       <CodeMirror
         value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
         className=***REMOVED***h-full***REMOVED***
