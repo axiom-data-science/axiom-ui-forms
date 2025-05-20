@@ -31,7 +31,27 @@ describe('getters.ts', () => {
         path: [{ id: 'parent', multiple: true, type: 'text' }, { id: 'child', type: 'text' }]
       }
       const result = makeJsonPath(field)
-      expect(result).toBe('parent[0].child')
+      expect(result).toBe('parent[0].child.field3')
+    })
+    it('should construct the path correctly for a field with a path array and index', () => {
+      const field: IFormField = {
+        id: 'fieldWithIndex',
+        type: 'text',
+        path: [{ id: 'parent', multiple: true, type: 'text', index: 2 }, { id: 'child', type: 'text' }]
+      }
+      const result = makeJsonPath(field)
+      expect(result).toBe('parent[2].child.fieldWithIndex')
+    })
+    it('should construct the path correctly for a field with a path array and index in the field', () => {
+      const field: IFormField = {
+        id: 'fieldWithIndex',
+        type: 'text',
+        multiple: true,
+        index: 2,
+        path: [{ id: 'parent', multiple: true, type: 'text' }, { id: 'child', type: 'text' }]
+      }
+      const result = makeJsonPath(field)
+      expect(result).toBe('parent[0].child.fieldWithIndex[2]')
     })
   })
 
@@ -117,13 +137,29 @@ describe('getters.ts', () => {
         path: [{ id: 'parent', type: 'text' }, { id: 'child', type: 'text' }]
       }
       const result = getPathFromField(field)
-      expect(result).toBe('parent.child')
+      expect(result).toBe('parent.child.field12')
     })
 
     it('should return the field id if both destPath and path are undefined', () => {
       const field: IFormField = { id: 'field13', type: 'text' }
       const result = getPathFromField(field)
       expect(result).toBe('field13')
+    })
+    it('should ignore an object id in the path that is set to skip_path when constructing id', () => {
+      const field: IFormField = {
+        id: 'field1',
+        type: 'text',
+        path: [
+          {
+            id: 'parent',
+            type: 'object',
+            skip_path: true,
+            fields: []
+          }
+        ]
+      }
+      const result = getPathFromField(field)
+      expect(result).toBe('field1')
     })
   })
 

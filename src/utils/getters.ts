@@ -9,10 +9,11 @@ import get from 'lodash/get'
  * @returns The JSON path for the given field
  */
 export const makeJsonPath = (field: IFormField, index?: number): string => {
+  const fieldExtra = `${field.multiple && (field.index !== undefined || index !== undefined) ? `[${index ?? field.index}]` : ''}`
   if (field.destPath !== undefined) {
-    return `${field.destPath}${field.multiple && (field.index !== undefined || index !== undefined) ? `[${index ?? field.index}]` : ''}`
+    return `${field.destPath}${fieldExtra}`
   } else if (field.path === undefined) {
-    return field.id
+    return `${field.id}${fieldExtra}`
   } else {
     const path = field.path
     const pathLen = path.length
@@ -90,7 +91,7 @@ export function getPathFromField (field: IFormField): string {
   if (field.destPath) {
     return field.destPath
   }
-  return field.path !== undefined ? field.path.filter(f => !(f.type === 'object' && f.skip_path === true)).map(f => f.id).join('.') : field.id
+  return field.path !== undefined ? field.path.filter(f => !(f.type === 'object' && f.skip_path === true)).map(f => f.id).concat(field.id).join('.') : field.id
   // return makeJsonPath(field)
 }
 

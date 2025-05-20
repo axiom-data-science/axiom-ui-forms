@@ -38,7 +38,9 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
     ? JSON.stringify(value, null, 2)
     : (value !== undefined && value !== null
         ? tryGetFormatted(String(value), format)
-        : ''
+        : allowEmpty
+          ? ''
+          : '{}'
       )
   )
   const [error, setError] = useState<string | null>(null)
@@ -140,16 +142,16 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         </div>
       </div>
       <div className=' relative flex-grow'>
-        <span className='absolute right-6 bottom-4 pointer-events-auto z-50'>
+        <span className='absolute right-6 bottom-4 pointer-events-auto z-40'>
         <CopyButton string={
           error === null && workingValue !== ''
             ? format === 'json'
               ? JSON.stringify(JSON.parse(workingValue), null, 2)
               : yamlParser.dump(workingValue)
             : workingValue
-        } className='white z-50' />
+        } className='white z-40' />
         </span>
-      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-50"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
+      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
       <CodeMirror
         value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
         className='h-full'
