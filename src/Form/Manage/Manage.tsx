@@ -1,13 +1,10 @@
 import { Button, MultiAccordion, Tabs } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactNode, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import FormOutput from ***REMOVED***@/Form/Manage/FormMappedOutput***REMOVED***
 import FormConfigInput from ***REMOVED***@/Form/Manage/FormConfigInput***REMOVED***
-import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
 import Form from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import formAtom from ***REMOVED***@/state/formAtom***REMOVED***
 import { RawFormOutput } from ***REMOVED***@/Form/Manage/RawFormOutput***REMOVED***
-import formMappingAtom from ***REMOVED***@/state/formMappingAtom***REMOVED***
 import { getQueryParam, updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { CheckIcon, Cross1Icon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -65,7 +62,6 @@ const FormManager = ({
   if (Object.values(form).length === 0) {
     setForm(structuredClone(testForm as IForm))
   }
-  const [mapping, setMapping] = mappingState ?? useAtom(formMappingAtom)
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   const sections = [
     {
@@ -74,23 +70,6 @@ const FormManager = ({
       content: <FormConfigInput
           formState={[form, setForm]}
         />
-    },
-    {
-      id: ***REMOVED***mapping***REMOVED***,
-      label: ***REMOVED***Form mapping***REMOVED***,
-      content: <FormMappingInput
-          form={form}
-          mappingState={[mapping, setMapping]}
-        />
-    },
-    {
-      id: ***REMOVED***output***REMOVED***,
-      label: ***REMOVED***Mapped Output***REMOVED***,
-      content: <FormOutput
-        form={form}
-        formMapping={mapping}
-        formValueState={[formValues, setFormValues]}
-      />
     },
     {
       id: ***REMOVED***raw_output***REMOVED***,

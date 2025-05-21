@@ -91,12 +91,14 @@ describe(***REMOVED***mergers.ts***REMOVED***, () => {
             label: ***REMOVED***Object field***REMOVED***,
             skip_path: true,
             fields: [
-              mockTextField,
-              mockNumberField
+              { ...mockTextField },
+              { ...mockNumberField }
             ]
           }
         ]
       })
+
+      console.log(result?.textField)
 
       expect(result?.textField?.id).toEqual(***REMOVED***textField***REMOVED***)
       expect(result?.numberField?.id).toEqual(***REMOVED***numberField***REMOVED***)
@@ -109,8 +111,8 @@ describe(***REMOVED***mergers.ts***REMOVED***, () => {
             id: ***REMOVED***page1***REMOVED***,
             label: ***REMOVED***Page 1***REMOVED***,
             fields: [
-              mockTextField,
-              mockNumberField
+              { ...mockTextField },
+              { ...mockNumberField }
             ]
           }
         ]
@@ -246,7 +248,7 @@ describe(***REMOVED***mergers.ts***REMOVED***, () => {
         destPath: ***REMOVED***field1***REMOVED***
       })
 
-      expect({...result, destPath: undefined}).toEqual(schemaField)
+      expect({ ...result, destPath: undefined }).toEqual(schemaField)
     })
     it(***REMOVED***should return the original schema field when no matching overrides are found***REMOVED***, () => {
       const schemaField: IFormField = {
@@ -356,9 +358,9 @@ describe(***REMOVED***mergers.ts***REMOVED***, () => {
         fieldOverrides
       })
 
-      // console.log(mergedFormSection)
+      console.log(mergedFormSection)
 
-      // expect(mergedForm.length).toEqual(3)
+      expect(mergedFormSection?.pages?.length).toEqual(2)
     })
   })
 })

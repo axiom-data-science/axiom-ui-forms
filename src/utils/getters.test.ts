@@ -28,7 +28,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field3***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***field3***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
       }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***parent[0].child.field3***REMOVED***)
@@ -37,7 +37,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***fieldWithIndex***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED***, index: 2 }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED***, index: 2 }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
       }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***parent[2].child.fieldWithIndex***REMOVED***)
@@ -48,7 +48,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         type: ***REMOVED***text***REMOVED***,
         multiple: true,
         index: 2,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED***, multiple: true, index: 2 }]
       }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***parent[0].child.fieldWithIndex[2]***REMOVED***)
