@@ -28,7 +28,7 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'field3',
         type: 'text',
-        path: [{ id: 'parent', multiple: true, type: 'text' }, { id: 'child', type: 'text' }]
+        path: [{ id: 'parent', multiple: true, type: 'text' }, { id: 'child', type: 'text' }, { id: 'field3', type: 'text' }]
       }
       const result = makeJsonPath(field)
       expect(result).toBe('parent[0].child.field3')
@@ -37,7 +37,7 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'fieldWithIndex',
         type: 'text',
-        path: [{ id: 'parent', multiple: true, type: 'text', index: 2 }, { id: 'child', type: 'text' }]
+        path: [{ id: 'parent', multiple: true, type: 'text', index: 2 }, { id: 'child', type: 'text' }, { id: 'fieldWithIndex', type: 'text' }]
       }
       const result = makeJsonPath(field)
       expect(result).toBe('parent[2].child.fieldWithIndex')
@@ -48,7 +48,7 @@ describe('getters.ts', () => {
         type: 'text',
         multiple: true,
         index: 2,
-        path: [{ id: 'parent', multiple: true, type: 'text' }, { id: 'child', type: 'text' }]
+        path: [{ id: 'parent', multiple: true, type: 'text' }, { id: 'child', type: 'text' }, { id: 'fieldWithIndex', type: 'text', multiple: true, index: 2 }]
       }
       const result = makeJsonPath(field)
       expect(result).toBe('parent[0].child.fieldWithIndex[2]')

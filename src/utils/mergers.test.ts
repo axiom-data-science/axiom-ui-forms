@@ -91,12 +91,14 @@ describe('mergers.ts', () => {
             label: 'Object field',
             skip_path: true,
             fields: [
-              mockTextField,
-              mockNumberField
+              { ...mockTextField },
+              { ...mockNumberField }
             ]
           }
         ]
       })
+
+      console.log(result?.textField)
 
       expect(result?.textField?.id).toEqual('textField')
       expect(result?.numberField?.id).toEqual('numberField')
@@ -109,8 +111,8 @@ describe('mergers.ts', () => {
             id: 'page1',
             label: 'Page 1',
             fields: [
-              mockTextField,
-              mockNumberField
+              { ...mockTextField },
+              { ...mockNumberField }
             ]
           }
         ]
@@ -246,7 +248,7 @@ describe('mergers.ts', () => {
         destPath: 'field1'
       })
 
-      expect({...result, destPath: undefined}).toEqual(schemaField)
+      expect({ ...result, destPath: undefined }).toEqual(schemaField)
     })
     it('should return the original schema field when no matching overrides are found', () => {
       const schemaField: IFormField = {
@@ -356,9 +358,9 @@ describe('mergers.ts', () => {
         fieldOverrides
       })
 
-      // console.log(mergedFormSection)
+      console.log(mergedFormSection)
 
-      // expect(mergedForm.length).toEqual(3)
+      expect(mergedFormSection?.pages?.length).toEqual(2)
     })
   })
 })

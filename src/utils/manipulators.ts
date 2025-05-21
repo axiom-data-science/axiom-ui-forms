@@ -1,4 +1,4 @@
-import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from '@/utils/getters'
 import { checkCondition } from '@/utils/validators'
 import set from 'lodash/set'
@@ -93,4 +93,52 @@ export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormVa
     }
   })
   return formValuesCopy
+}
+
+const assignIndexToField = (field: IFormField, index: number): IFormField => {
+  return {
+    ...field,
+    index
+  }
+}
+
+const assignIndexToFields = (parentField: IObjectField, index: number): IFormField[] => {
+  return parentField.fields.map(f => {
+    if (f.path !== undefined && parentField.level !== undefined && f.path[parentField.level - 1] !== undefined) {
+      const newPath = f.path.slice()
+      newPath[parentField.level - 1] = {
+        ...parentField,
+        index
+      }
+      f.path = newPath
+    }
+    return {
+      ...f
+    }
+  })
+}
+
+export const createOneOfMultipleField = (field: IFormField, index: number): IFormField => {
+  const path = field.path ? field.path.slice() : undefined
+  if (path !== undefined) {
+    const last = assignIndexToField(path[path.length - 1], index)
+    path[path.length - 1] = last
+    if (last.type === 'object' && last.fields !== undefined) {
+      last.fields = assignIndexToFields(last, index)
+    }
+  }
+
+  const out = {
+    ...field,
+    path,
+    index,
+    required: false,
+    label: index > 0 ? null : field.label,
+    id: `${field.id}-${index}`
+  }
+
+  if (field.type === 'object' && field.fields !== undefined && out.type === 'object') {
+    out.fields = assignIndexToFields(field, index)
+  }
+  return out
 }

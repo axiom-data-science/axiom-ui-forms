@@ -91,7 +91,9 @@ export function getPathFromField (field: IFormField): string {
   if (field.destPath) {
     return field.destPath
   }
-  return field.path !== undefined ? field.path.filter(f => !(f.type === 'object' && f.skip_path === true)).map(f => f.id).concat(field.id).join('.') : field.id
+  return field.path !== undefined
+    ? field.path.filter(f => !(f.type === 'object' && f.skip_path === true)).map(f => f.id).join('.')
+    : field.id
   // return makeJsonPath(field)
 }
 
