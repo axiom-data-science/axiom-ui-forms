@@ -2,7 +2,7 @@ import { type IObjectField, type IFormField } from '@/Form/Creator/FormCreatorTy
 import { createOneOfMultipleField } from '@/utils/manipulators'
 import { describe, it, expect } from 'vitest'
 
-describe('getters.ts', () => {
+describe('manipulators.ts', () => {
   describe('createOneOfMultipleField', () => {
     it('should create a new field with the correct path and index', () => {
       const field: IFormField = {

@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState } from 'react'
+import React, { type ReactElement, useEffect, useState } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { yaml } from '@codemirror/lang-yaml'
@@ -34,16 +34,24 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   const exportAsString = jsonField?.settings?.exportAsString ?? false
   const allowEmpty = jsonField?.settings?.allowEmpty ?? false
   const [format, setFormat] = useState<'json' | 'yaml'>('json')
-  const [workingValue, setWorkingValue] = useState<string>(typeof value === 'object'
-    ? JSON.stringify(value, null, 2)
-    : (value !== undefined && value !== null
-        ? tryGetFormatted(String(value), format)
-        : allowEmpty
-          ? ''
-          : '{}'
-      )
-  )
+  const [workingValue, setWorkingValue] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
+  const [hasFocus, setHasFocus] = useState(false)
+
+  useEffect(() => {
+    if (!hasFocus) {
+      setWorkingValue(
+        typeof value === 'object'
+          ? JSON.stringify(value, null, 2)
+          : (value !== undefined && value !== null
+              ? tryGetFormatted(String(value), format)
+              : allowEmpty
+                ? ''
+                : '{}'
+            )
+      )
+    }
+  }, [value])
 
   // Validate JSON and display error
   const validateJson = (val: string): boolean => {
@@ -163,6 +171,14 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         ]}
         onChange={handleChange}
         theme="dark"
+        onFocus={() => {
+          console.log('FOCUS')
+          setHasFocus(true)
+        }}
+        onBlur={() => {
+          console.log('BLUR')
+          setHasFocus(false)
+        }}
       />
       </div>
 
