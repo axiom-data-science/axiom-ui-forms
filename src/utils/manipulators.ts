@@ -44,6 +44,42 @@ export function copyAndAddPathToFields (formOrContainer: IFormSection | IForm): 
   return form
 }
 
+function removeFieldPath (field: IFormField): IFormField {
+  field.path = undefined
+  field.level = undefined
+  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
+    field.fields = field.fields.map(childField => {
+      return removeFieldPath(childField)
+    })
+  }
+
+  return field
+}
+
+function removePathsFromFormSections (section: IFormSection): IFormSection {
+  if (section.pages !== undefined) {
+    section.pages = section.pages.map(page => {
+      return removePathsFromFormSections(page)
+    }) as IPage[]
+  }
+  if (section.wizard_steps !== undefined) {
+    section.wizard_steps = section.wizard_steps.map(wizardStep => {
+      return removePathsFromFormSections(wizardStep)
+    }) as IWizardStep[]
+  }
+  if (section.fields !== undefined) {
+    section.fields = section.fields.map(field => {
+      return removeFieldPath(field)
+    })
+  }
+  return section
+}
+
+export function copyAndRemovePathFromFields (formOrContainer: IFormSection | IForm): IForm {
+  const form = removePathsFromFormSections(structuredClone(formOrContainer)) as IForm
+  return form
+}
+
 function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], formValuesPath: string = ***REMOVED******REMOVED***): IFormValues {
   const formValuesCopy = structuredClone(formValues)
   Object.keys(formValues).forEach(key => {

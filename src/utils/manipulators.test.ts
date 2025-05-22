@@ -2,7 +2,7 @@ import { type IObjectField, type IFormField } from ***REMOVED***@/Form/Creator/F
 import { createOneOfMultipleField } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 
-describe(***REMOVED***getters.ts***REMOVED***, () => {
+describe(***REMOVED***manipulators.ts***REMOVED***, () => {
   describe(***REMOVED***createOneOfMultipleField***REMOVED***, () => {
     it(***REMOVED***should create a new field with the correct path and index***REMOVED***, () => {
       const field: IFormField = {

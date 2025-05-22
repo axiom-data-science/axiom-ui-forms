@@ -231,6 +231,12 @@ export interface IWizardStep extends Omit<IFormSection, ***REMOVED***wizard_step
 
 }
 
+export interface IFormSettings {
+  url_navigable?: boolean
+  class_name?: string
+  show_progress?: boolean
+}
+
 export interface IForm {
   id: string
   label: string
@@ -239,22 +245,18 @@ export interface IForm {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  settings?: {
-    url_navigable?: boolean
-    class_name?: string
-    show_progress?: boolean
-  }
+  settings?: IFormSettings
 }
 
 export type IFormFieldOverride = Partial<IFormField> & { prop: string }
 
-export interface IFormSectionOverride extends IFormOverride {}
+export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {}
 
-interface IPageOverride extends Omit<IFormOverride, ***REMOVED***pages***REMOVED***> {
+interface IPageOverride extends Omit<IFormSectionOverride, ***REMOVED***pages***REMOVED***> {
 
 }
 
-interface IWizardStepOverride extends Omit<IFormOverride, ***REMOVED***wizard_steps***REMOVED***> {
+interface IWizardStepOverride extends Omit<IFormSectionOverride, ***REMOVED***wizard_steps***REMOVED***> {
 
 }
 
@@ -265,6 +267,7 @@ export interface IFormOverride {
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
   fields?: IFormFieldOverride[]
+  settings?: IFormSettings
 }
 
 export interface IFormWithPages {

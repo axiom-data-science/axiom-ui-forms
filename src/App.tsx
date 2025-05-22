@@ -16,12 +16,13 @@ import ExternalMetadataExample from ***REMOVED***@/Form/ExternalMetadataExample*
 import FormWithDefaults from ***REMOVED***@/Form/FormWithDefaults***REMOVED***
 
 import { CopyableJSONOutput } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
-import SchemaToFormWizard from ***REMOVED***@/Form/SchemaToFormWizard***REMOVED***
+import SchemaToFormWizard from ***REMOVED***@/Form/Creator/SchemaToFormWizard***REMOVED***
 import CodeEditor from ***REMOVED***@/Form/CodeEditor***REMOVED***
 import SchemaWithOverridesTest from ***REMOVED***@/Form/SchemaWithOverridesTest***REMOVED***
 import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 import SchemaToFormPTT from ***REMOVED***@/Form/SchemaToFormPTT***REMOVED***
+import OilForm from ***REMOVED***@/PTT/Oil/OilForm***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -151,6 +152,7 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/json-editor" element={<CodeEditor />} />
             <Route path="/schema-to-form-ptt" element={<SchemaToFormPTT />} />
+            <Route path="/ptt/oil" element={<OilForm />} />
           </Routes>
         </BrowserRouter>
     </div>

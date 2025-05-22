@@ -447,13 +447,14 @@ export const overridesAndSchemaToFormObject = ({
   schema: JSONSchema6
 }): IForm => {
   const schemaForm = schemaToFormObject(schema)
+  const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
   const form: IForm = {
     id: schemaForm.id,
-    label: schemaForm.label
+    label: mergedFormOverrides?.label ?? schemaForm.label,
+    settings: mergedFormOverrides?.settings
   }
-  const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
-  const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(overrides.map(override => [override.prop, override]))) ?? []
 
+  const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(overrides.map(override => [override.prop, override]))) ?? []
   form.pages = mergedFormOverrides.pages !== undefined
     ? mergeFormSections({
       sectionOverrides: mergedFormOverrides.pages,

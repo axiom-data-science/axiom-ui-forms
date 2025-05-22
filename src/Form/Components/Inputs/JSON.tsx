@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement, useEffect, useState } from ***REMOVED***react***REMOVED***
 import CodeMirror from ***REMOVED***@uiw/react-codemirror***REMOVED***
 import { json } from ***REMOVED***@codemirror/lang-json***REMOVED***
 import { yaml } from ***REMOVED***@codemirror/lang-yaml***REMOVED***
@@ -34,16 +34,24 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   const exportAsString = jsonField?.settings?.exportAsString ?? false
   const allowEmpty = jsonField?.settings?.allowEmpty ?? false
   const [format, setFormat] = useState<***REMOVED***json***REMOVED*** | ***REMOVED***yaml***REMOVED***>(***REMOVED***json***REMOVED***)
-  const [workingValue, setWorkingValue] = useState<string>(typeof value === ***REMOVED***object***REMOVED***
-    ? JSON.stringify(value, null, 2)
-    : (value !== undefined && value !== null
-        ? tryGetFormatted(String(value), format)
-        : allowEmpty
-          ? ***REMOVED******REMOVED***
-          : ***REMOVED***{}***REMOVED***
-      )
-  )
+  const [workingValue, setWorkingValue] = useState<string>(***REMOVED******REMOVED***)
   const [error, setError] = useState<string | null>(null)
+  const [hasFocus, setHasFocus] = useState(false)
+
+  useEffect(() => {
+    if (!hasFocus) {
+      setWorkingValue(
+        typeof value === ***REMOVED***object***REMOVED***
+          ? JSON.stringify(value, null, 2)
+          : (value !== undefined && value !== null
+              ? tryGetFormatted(String(value), format)
+              : allowEmpty
+                ? ***REMOVED******REMOVED***
+                : ***REMOVED***{}***REMOVED***
+            )
+      )
+    }
+  }, [value])
 
   // Validate JSON and display error
   const validateJson = (val: string): boolean => {
@@ -163,6 +171,14 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         ]}
         onChange={handleChange}
         theme="dark"
+        onFocus={() => {
+          console.log(***REMOVED***FOCUS***REMOVED***)
+          setHasFocus(true)
+        }}
+        onBlur={() => {
+          console.log(***REMOVED***BLUR***REMOVED***)
+          setHasFocus(false)
+        }}
       />
       </div>
 

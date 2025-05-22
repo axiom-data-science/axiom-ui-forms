@@ -1,17 +1,18 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
-import { type IFormValues, type IForm, type IFieldInputProps, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IForm, type IFieldInputProps, type IValueType, type IFormFieldOverride, type IFormOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { atom, useAtom } from ***REMOVED***jotai***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import React, { useEffect } from ***REMOVED***react***REMOVED***
+import React, { useContext, useEffect } from ***REMOVED***react***REMOVED***
 import { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import toJsonSchema from ***REMOVED***to-json-schema***REMOVED***
-import { getSchemaPaths, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
+import { getSchemaPaths } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import JSONInputLoader from ***REMOVED***@/Form/Components/Inputs/JSONInputLoader***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
-import { CheckIcon, CopyIcon, Cross2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
+import { ArrowDownIcon, CheckIcon, CopyIcon, Cross2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import FormCreator, { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { set } from ***REMOVED***lodash***REMOVED***
+import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { copyAndRemovePathFromFields } from ***REMOVED***@/utils/manipulators***REMOVED***
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
   return toJsonSchema(ob) as JSONSchema6
@@ -22,34 +23,52 @@ const formValuesAtom = atom<IFormValues>({
   // schema_input: objectToSchema(oikosLayer) as IValueType
 })
 
+const FormFooter = (): ReactElement => {
+  const { form } = useContext(FormContext)
+  return (
+    <>
+            <CopyButton
+                string={JSON.stringify(form !== undefined
+                  ? copyAndRemovePathFromFields(form)
+                  : {}, null, 2)}
+                OnCopiedElement={<><CheckIcon className=***REMOVED*** inline***REMOVED*** /> Copied to clipboard</>}
+                ToCopyElement={<><CopyIcon className=***REMOVED*** inline***REMOVED*** /> Copy form config</>}
+
+              />
+    </>
+
+  )
+}
+
 const inputOverrides = {
 
   ***REMOVED***custom:form-output***REMOVED***: (): ReactElement => {
     const [formValues] = useAtom(formValuesAtom)
     const formValueState = useState<IFormValues>({})
-    const form = schemaToFormObject(formValues.schema_input as JSONSchema6)
     return (
       <>{
+
         formValues.schema_input !== undefined
           ? <div className=***REMOVED***p-5 bg-slate-200***REMOVED***>
 
-              <FormCreator className=***REMOVED***m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white***REMOVED*** form={form} formValueState={formValueState} />
-              <CopyButton
-                string={JSON.stringify(form, null, 2)}
-                OnCopiedElement={<><CheckIcon className=***REMOVED*** inline***REMOVED*** /> Copied to clipboard</>}
-                ToCopyElement={<><CopyIcon className=***REMOVED*** inline***REMOVED*** /> Copy form config</>}
+              <SchemaFormCreator
+                className=***REMOVED***m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white***REMOVED***
+                schema={formValues.schema_input as JSONSchema6}
+                formValueState={formValueState}
+                formFieldOverrides={formValues[***REMOVED***field-overrides***REMOVED***] !== undefined ? JSON.parse(`[${String(formValues[***REMOVED***field-overrides***REMOVED***])}]`) as unknown as IFormFieldOverride[][] : undefined}
+                formOverrides={formValues[***REMOVED***form-overrides***REMOVED***] as unknown as IFormOverride[]}
+                footer={<FormFooter />}
 
-              />
+                />
               </div>
           : <p>Waiting on schema input</p>
       }</>
     )
   },
-  ***REMOVED***custom:form-overrides***REMOVED***: ({ field, value, onChange }: IFieldInputProps): ReactElement => {
+  ***REMOVED***custom:field-overrides***REMOVED***: ({ field, value, onChange }: IFieldInputProps): ReactElement => {
     const [formValues] = useAtom(formValuesAtom)
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
     const schemaPaths = getSchemaPaths(schemaInput)
-    const [val, setVal] = useState<string | undefined>(typeof value === ***REMOVED***string***REMOVED*** ? value : undefined)
     return (
             <div>
                 <FieldLabel {...field} />
@@ -65,10 +84,38 @@ const inputOverrides = {
                     <JSONInputLoader
                       field={{ ...field, label: null, description: null }}
                       onChange={(e) => {
-                        setVal(e as string | undefined)
+                        // do some validation here
+                        onChange(JSON.stringify(e, null, 2))
+                      }}
+                      value={value ?? ***REMOVED***[]***REMOVED***}
+                    />
+                  </div>
+                </div>
+            </div>
+    )
+  },
+  ***REMOVED***custom:form-overrides***REMOVED***: ({ field, value, onChange }: IFieldInputProps): ReactElement => {
+    const [formValues] = useAtom(formValuesAtom)
+    const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
+    const schemaPaths = getSchemaPaths(schemaInput)
+    return (
+            <div>
+                <FieldLabel {...field} />
+                <div className=***REMOVED***flex flex-row gap-10***REMOVED***>
+                  <div className=***REMOVED***w-[300px] h-[600px] flex-none overflow-y-scroll bg-slate-200 p-4 whitespace-pre text-xs***REMOVED***>
+                    {
+                      schemaPaths.map(path => {
+                        return <p key={path}>{path}</p>
+                      })
+                    }
+                  </div>
+                  <div className=***REMOVED***flex-grow***REMOVED***>
+                    <JSONInputLoader
+                      field={{ ...field, label: null, description: null }}
+                      onChange={(e) => {
                         onChange(e)
                       }}
-                      value={val}
+                      value={value}
                     />
                   </div>
                 </div>
@@ -130,13 +177,17 @@ const ObjectToSchemaWizard = ({ setShow }: { setShow: (t: boolean) => void }): R
                   </span>
                   <span className=***REMOVED***absolute top-20 right-10 cursor-pointer***REMOVED*** onClick={() => {
                     setFormValues((prev) => {
-                      const newValues = { ...prev }
-                      set(newValues, ***REMOVED***schema_input***REMOVED***, schema)
+                      const newValues = {
+                        ...prev,
+                        schema_input: schema as IValueType
+                      }
                       return newValues
                     })
                     setShow(false)
                   }}>
                     Copy into form and close modal
+                      <CopyIcon className=***REMOVED***ml-4 -mr-4 inline w-8 h-8***REMOVED*** />
+                      <ArrowDownIcon className=***REMOVED***inline w-14 h-4***REMOVED*** />
                   </span>
                   </>
                 : <></>
@@ -159,11 +210,6 @@ const SchemaToFormWizard = (): ReactElement => {
               order: 1,
               fields: [
                 {
-                  id: ***REMOVED***test***REMOVED***,
-                  type: ***REMOVED***text***REMOVED***,
-                  label: ***REMOVED***Test***REMOVED***
-                },
-                {
                   id: ***REMOVED***schema_input***REMOVED***,
                   type: ***REMOVED***custom:schema_input***REMOVED***,
                   label: ***REMOVED***Schema***REMOVED***,
@@ -175,15 +221,31 @@ const SchemaToFormWizard = (): ReactElement => {
               ]
             },
             {
+              id: ***REMOVED***field-overrides***REMOVED***,
+              label: ***REMOVED***Field Overrides***REMOVED***,
+              order: 2,
+              fields: [
+                {
+                  id: ***REMOVED***field-overrides***REMOVED***,
+                  type: ***REMOVED***custom:field-overrides***REMOVED***,
+                  label: ***REMOVED***Field Overrides***REMOVED***,
+                  description: ***REMOVED***Override field properties and types.***REMOVED***,
+                  settings: {
+                    allowEmpty: true
+                  }
+                }
+              ]
+            },
+            {
               id: ***REMOVED***form-overrides***REMOVED***,
               label: ***REMOVED***Form Overrides***REMOVED***,
-              order: 2,
+              order: 3,
               fields: [
                 {
                   id: ***REMOVED***form-overrides***REMOVED***,
                   type: ***REMOVED***custom:form-overrides***REMOVED***,
                   label: ***REMOVED***Form Overrides***REMOVED***,
-                  description: ***REMOVED***Override form properties and/or re-arrange schema properties into sections and pages.***REMOVED***,
+                  description: ***REMOVED***Override form layout as well as individual properties and types.***REMOVED***,
                   settings: {
                     allowEmpty: true
                   }
