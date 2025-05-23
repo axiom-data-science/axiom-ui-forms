@@ -11,7 +11,12 @@ export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6
       refValue = refValue[key]
       if (!refValue) throw new Error(`Invalid reference: ${schema.$ref}`)
     }
-    return resolveRefs(refValue, root) as T // Recursively resolve
+
+    // Merge the original schema with the resolved reference
+    const mergedSchema = { ...refValue, ...schema }
+    delete mergedSchema.$ref // Remove $ref to avoid infinite recursion
+
+    return resolveRefs(mergedSchema, root) as T // Recursively resolve
   }
 
   if (Array.isArray(schema)) {
@@ -19,6 +24,8 @@ export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6
   }
 
   return Object.fromEntries(
-    Object.entries(schema).map(([key, value]) => [key, resolveRefs(value, root)])
+    Object.entries(schema).map(([key, value]) => {
+      return [key, resolveRefs(value, root)]
+    })
   ) as T
 }
