@@ -10,7 +10,9 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
     const check = dependsOn.every(d => {
       const fieldValue = getValueFromPath(d, formValues)
       return val !== undefined
-        ? fieldValue === val
+        ? val === false
+          ? fieldValue === null || fieldValue === undefined || fieldValue === false || fieldValue === ''
+          : fieldValue === val
         : fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ''
     })
     return check
