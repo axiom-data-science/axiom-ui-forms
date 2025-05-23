@@ -33,6 +33,8 @@ interface IFieldConditions {
   value: string | number | boolean
 }
 
+type IFieldConstraints = Record<string, unknown>
+
 interface IFormFieldRoot {
   id: string
   type: string
@@ -47,6 +49,7 @@ interface IFormFieldRoot {
   index?: number
   defaultValue?: IValueType | IValueType[]
   conditions?: IFieldConditions
+  constraints?: IFieldConstraints
   settings?: Record<string, unknown>
 }
 
@@ -134,7 +137,7 @@ export interface IBooleanField extends IFormFieldRoot {
   type: ***REMOVED***boolean***REMOVED***
 }
 
-interface IDateFieldConstraints {
+interface IDateFieldConstraints extends IFieldConstraints {
   minDate?: string
   maxDate?: string
 }
@@ -144,7 +147,7 @@ interface IDateField extends IFormFieldRoot {
   constraints?: IDateFieldConstraints
 }
 
-interface ITimeFieldConstraints {
+interface ITimeFieldConstraints extends IFieldConstraints {
   minTime?: string
   maxTime?: string
 }
@@ -154,7 +157,7 @@ interface ITimeField extends IFormFieldRoot {
   constraints?: ITimeFieldConstraints
 }
 
-interface IDateTimeConstraints {
+interface IDateTimeConstraints extends IFieldConstraints {
   minDateTime?: string
   maxDateTime?: string
 }

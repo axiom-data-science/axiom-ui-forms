@@ -152,7 +152,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/json-editor" element={<CodeEditor />} />
             <Route path="/schema-to-form-ptt" element={<SchemaToFormPTT />} />
-            <Route path="/ptt/oil" element={<OilForm />} />
+            <Route path="/ptt/oil" element={<OilForm />}>
+              <Route path="*" element={<OilForm />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>

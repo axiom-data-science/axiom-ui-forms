@@ -75,6 +75,16 @@ export const SchemaFormCreator = ({
   )
 }
 
+const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
+  const formValues: IFormValues = {}
+  getFieldsFromFormSection(form).forEach(field => {
+    if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
+      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValues)
+    }
+  })
+  return formValues
+}
+
 const FormCreator = ({
   form,
   formValueState,
@@ -89,14 +99,14 @@ const FormCreator = ({
   footer,
   header
 }: IFormCreatorProps): ReactElement => {
-  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>({})
   const activeForm = copyAndAddPathToFields(form)
-  const activeFormValues = structuredClone(formValues)
+  const activeFormValues = structuredClone(formValueState?.[0] ?? {})
   getFieldsFromFormSection(activeForm).forEach(field => {
     if (field.defaultValue !== undefined && getFieldValue(field, activeFormValues) === undefined) {
       updateFormValuesWithFieldValueInPlace(field, field.defaultValue, activeFormValues)
     }
   })
+  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>(seedFormValuesWithDefaults(activeForm))
 
   activeForm.settings = {
     url_navigable: urlNavigable,
