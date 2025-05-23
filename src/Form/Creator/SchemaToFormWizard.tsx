@@ -5,12 +5,12 @@ import { type JSONSchema6 } from 'json-schema'
 import React, { useContext, useEffect } from 'react'
 import { useState, type ReactElement } from 'react'
 import toJsonSchema from 'to-json-schema'
-import { getSchemaPaths } from '@/utils/schemaToFormHelpers'
+import { getSchemaPathDescriptors } from '@/utils/schemaToFormHelpers'
 import JSONInputLoader from '@/Form/Components/Inputs/JSONInputLoader'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { ArrowDownIcon, CheckIcon, CopyIcon, Cross2Icon } from '@radix-ui/react-icons'
 import FormCreator, { SchemaFormCreator } from '@/Form/Creator/FormCreator'
-import { Button } from '@axdspub/axiom-ui-utilities'
+import { Button, Table } from '@axdspub/axiom-ui-utilities'
 import { FormContext } from '@/Form/Creator/FormContextProvider'
 import { copyAndRemovePathFromFields } from '@/utils/manipulators'
 
@@ -27,16 +27,30 @@ const FormFooter = (): ReactElement => {
   const { form } = useContext(FormContext)
   return (
     <>
-            <CopyButton
-                string={JSON.stringify(form !== undefined
-                  ? copyAndRemovePathFromFields(form)
-                  : {}, null, 2)}
-                OnCopiedElement={<><CheckIcon className=' inline' /> Copied to clipboard</>}
-                ToCopyElement={<><CopyIcon className=' inline' /> Copy form config</>}
+      <CopyButton
+          string={JSON.stringify(form !== undefined
+            ? copyAndRemovePathFromFields(form)
+            : {}, null, 2)}
+          OnCopiedElement={<><CheckIcon className=' inline' /> Copied to clipboard</>}
+          ToCopyElement={<><CopyIcon className=' inline' /> Copy form config</>}
 
-              />
+        />
     </>
 
+  )
+}
+
+const SchemaPathList = ({ schema }: { schema: JSONSchema6 }): ReactElement => {
+  const schemaPathDescriptors = getSchemaPathDescriptors(schema)
+  return (
+    <Table
+        data={schemaPathDescriptors}
+        columns={[
+          { id: 'path', label: 'Path', accessor: (row) => <strong>{row.path}</strong>, cellClassName: 'text-xs p-2' },
+          { id: 'type', label: 'Type', cellClassName: 'text-xs p-2' },
+          { id: 'required', label: 'Required', accessor: (row) => row.required ? 'true' : 'false', cellClassName: 'text-xs p-2' }
+        ]}
+      />
   )
 }
 
@@ -68,18 +82,15 @@ const inputOverrides = {
   'custom:field-overrides': ({ field, value, onChange }: IFieldInputProps): ReactElement => {
     const [formValues] = useAtom(formValuesAtom)
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
-    const schemaPaths = getSchemaPaths(schemaInput)
+
     return (
             <div>
                 <FieldLabel {...field} />
                 <div className='flex flex-row gap-10'>
-                  <div className='w-[300px] h-[600px] flex-none overflow-y-scroll bg-slate-200 p-4 whitespace-pre text-xs'>
-                    {
-                      schemaPaths.map(path => {
-                        return <p key={path}>{path}</p>
-                      })
-                    }
+                  <div className='w-[350px] h-[600px] overflow-y-auto flex-none  bg-slate-200 text-xs'>
+                    <SchemaPathList schema={schemaInput} />
                   </div>
+
                   <div className='flex-grow'>
                     <JSONInputLoader
                       field={{ ...field, label: null, description: null }}
@@ -97,17 +108,12 @@ const inputOverrides = {
   'custom:form-overrides': ({ field, value, onChange }: IFieldInputProps): ReactElement => {
     const [formValues] = useAtom(formValuesAtom)
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
-    const schemaPaths = getSchemaPaths(schemaInput)
     return (
             <div>
                 <FieldLabel {...field} />
                 <div className='flex flex-row gap-10'>
-                  <div className='w-[300px] h-[600px] flex-none overflow-y-scroll bg-slate-200 p-4 whitespace-pre text-xs'>
-                    {
-                      schemaPaths.map(path => {
-                        return <p key={path}>{path}</p>
-                      })
-                    }
+                  <div className='w-[350px] h-[600px] flex-none overflow-y-auto bg-slate-200 text-xs'>
+                    <SchemaPathList schema={schemaInput} />
                   </div>
                   <div className='flex-grow'>
                     <JSONInputLoader
