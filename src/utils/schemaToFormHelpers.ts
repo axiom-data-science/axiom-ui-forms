@@ -1,4 +1,4 @@
-import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep, type IValueType, type INumberField } from '@/Form/Creator/FormCreatorTypes'
 import Ajv, { type ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 
@@ -227,14 +227,29 @@ const schemaToFormField = ({
     property
   ])
   const schemaRequired = schema.required ?? []
-  const ob: Pick<IFormField, 'id' | 'label' | 'description' | 'multiple' | 'required'> = {
+  const ob: Pick<IFormField, 'id' | 'label' | 'description' | 'multiple' | 'required' | 'defaultValue'> = {
     id,
     label,
     description: schemaField.description,
     multiple,
+    defaultValue: schemaField.default !== undefined ? schemaField.default as IValueType : undefined,
     required: schemaRequired.includes(property) ?? false
   }
   if (type === 'text' || type === 'number' || type === 'long_text' || type === 'boolean' || type === 'datetime' || type === 'date' || type === 'time') {
+    if (type === 'number' && (schemaField.minimum !== undefined || schemaField.maximum !== undefined)) {
+      const numberOb = ob as INumberField
+      numberOb.constraints = numberOb.constraints ?? {}
+      if (schemaField.minimum !== undefined) {
+        numberOb.constraints.min = schemaField.minimum
+      }
+      if (schemaField.maximum !== undefined) {
+        numberOb.constraints.max = schemaField.maximum
+      }
+      return {
+        ...numberOb,
+        type
+      }
+    }
     return {
       ...ob,
       type
@@ -480,19 +495,20 @@ export const overridesAndSchemaToFormObject = ({
 }
 
 export const schemaToFormObject = (schema: JSONSchema6): IForm => {
+  const resolvedSchema = resolveRefs(schema)
   const formFields: IFormField[] = []
-  for (const key in schema.properties) {
-    if (schema.properties[key] !== undefined && typeof schema.properties[key] !== 'boolean') {
+  for (const key in resolvedSchema.properties) {
+    if (resolvedSchema.properties[key] !== undefined && typeof resolvedSchema.properties[key] !== 'boolean') {
       formFields.push(schemaToFormField({
-        schema,
+        schema: resolvedSchema,
         property: key,
-        schemaField: schema.properties[key],
+        schemaField: resolvedSchema.properties[key],
         path: []
       }))
     }
   }
   return {
-    id: makeFormFieldId([schema.$id, schema.title?.toLowerCase().replace(' ', '-')]),
+    id: makeFormFieldId([resolvedSchema.$id, resolvedSchema.title?.toLowerCase().replace(' ', '-')]),
     label: schema.title ?? 'Untitled',
     fields: formFields
   }
@@ -526,4 +542,36 @@ export const getSchemaPaths = (schema: any, prefix = ''): string[] => {
   }
 
   return paths
+}
+
+export const getSchemaPathDescriptors = (schema: any, prefix = ''): Array<{ path: string, type: string, required: boolean }> => {
+  let pathDescriptors: Array<{ path: string, type: string, required: boolean }> = []
+
+  if (schema.type === 'object' && schema.properties) {
+    for (const key of Object.keys(schema.properties)) {
+      const newPrefix = prefix ? `${prefix}.${key}` : key
+      pathDescriptors.push({
+        path: newPrefix,
+        type: schema.properties[key].type ?? 'object',
+        required: schema.required ? schema.required.includes(key) : false
+      })
+      pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(schema.properties[key], newPrefix))
+    }
+  } else if (schema.type === 'array' && schema.items) {
+    const arrayPrefix = `${prefix}[]`
+    pathDescriptors.push({
+      path: arrayPrefix,
+      type: schema.type,
+      required: schema.required ? schema.required.includes(prefix) : false
+    })
+    pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(schema.items, arrayPrefix))
+  } else if (schema.oneOf || schema.anyOf || schema.allOf) {
+    for (const subSchema of schema.oneOf || schema.anyOf || schema.allOf) {
+      if (subSchema.properties) {
+        pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(subSchema, prefix))
+      }
+    }
+  }
+
+  return pathDescriptors
 }
