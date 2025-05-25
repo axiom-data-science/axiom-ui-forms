@@ -134,7 +134,7 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'field12',
         type: 'text',
-        path: [{ id: 'parent', type: 'text' }, { id: 'child', type: 'text' }]
+        path: [{ id: 'parent', type: 'text' }, { id: 'child', type: 'text' }, { id: 'field12', type: 'text' }]
       }
       const result = getPathFromField(field)
       expect(result).toBe('parent.child.field12')
@@ -155,6 +155,10 @@ describe('getters.ts', () => {
             type: 'object',
             skip_path: true,
             fields: []
+          },
+          {
+            id: 'field1',
+            type: 'text'
           }
         ]
       }
