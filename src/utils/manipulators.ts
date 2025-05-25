@@ -93,7 +93,7 @@ function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], fo
     } else if (typeof formValuesCopy[key] === ***REMOVED***object***REMOVED*** && (
       field?.type === ***REMOVED***object***REMOVED*** || field === undefined
     )) {
-      formValuesCopy[key] = cleanFormValuesLevel(formValuesCopy[key] as IFormValues, fields, path)
+      formValuesCopy[key] = cleanFormValuesLevel((formValuesCopy[key] ?? {}) as IFormValues, fields, path)
     } else if (field === undefined) {
       formValuesCopy[key] = undefined
     }
