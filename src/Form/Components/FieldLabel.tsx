@@ -7,7 +7,7 @@ import React, { type ReactElement } from 'react'
 export const FieldDescriptionTooltip = (field: IFormField): ReactElement => {
   return (
     field.description !== undefined
-      ? <Tooltip content={field.description}><InfoCircledIcon /></Tooltip>
+      ? <Tooltip content={field.description} contentClassName='max-w-[300px] leading-6'><InfoCircledIcon /></Tooltip>
       : <></>
   )
 }
