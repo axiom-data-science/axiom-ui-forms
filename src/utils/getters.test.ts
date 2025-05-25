@@ -134,7 +134,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field12***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [{ id: ***REMOVED***parent***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***field12***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
       }
       const result = getPathFromField(field)
       expect(result).toBe(***REMOVED***parent.child.field12***REMOVED***)
@@ -155,6 +155,10 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
             type: ***REMOVED***object***REMOVED***,
             skip_path: true,
             fields: []
+          },
+          {
+            id: ***REMOVED***field1***REMOVED***,
+            type: ***REMOVED***text***REMOVED***
           }
         ]
       }
