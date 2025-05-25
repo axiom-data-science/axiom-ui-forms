@@ -64,7 +64,10 @@ interface INumberValueInput extends IFormFieldRoot {
   }
   settings?: {
     step?: number
+    canBeNull?: boolean
+    nonNullDefaultValue?: number
   }
+
 }
 
 export interface INumberField extends INumberValueInput {

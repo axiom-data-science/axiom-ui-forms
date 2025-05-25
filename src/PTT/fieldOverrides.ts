@@ -102,6 +102,13 @@ const fieldOverrides: IFormFieldOverride[] = [
       min: 0,
       max: 1000
     }
+  },
+  {
+    prop: 'horizontal_diffusivity',
+    settings: {
+      canBeNull: true,
+      nonNullDefaultValue: 10000
+    }
   }
 ]
 
