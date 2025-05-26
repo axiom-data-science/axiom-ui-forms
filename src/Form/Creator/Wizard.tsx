@@ -10,6 +10,12 @@ import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 
+const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
+  const aOrder = a.order ?? Infinity
+  const bOrder = b.order ?? Infinity
+  return aOrder - bOrder
+}
+
 export const WizardNav = ({
   sections,
   sectionStatus,
@@ -19,7 +25,7 @@ export const WizardNav = ({
   sectionStatus: IFormSectionStatus
   level: number
 }): ReactElement => {
-  const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
+  const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
 
@@ -66,7 +72,7 @@ export const WizardNavSmall = ({
 }): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
-  const steps = ((sections ?? []) as IWizardStep[]).sort((a, b) => a.order - b.order)
+  const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
   const stepsMap = Object.fromEntries(steps.map(p => [p.id, p]))
   const currentStep = stepsMap[activeId ?? ***REMOVED******REMOVED***] ?? steps[0]
   const currentIndex = steps.indexOf(currentStep)
