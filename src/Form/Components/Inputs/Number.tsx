@@ -1,6 +1,6 @@
-import FieldLabel from '@/Form/Components/FieldLabel'
+import FieldLabel, { FieldDescriptionTooltip, FieldLabelText } from '@/Form/Components/FieldLabel'
 import { type INumberField, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
-import { Input, Slider } from '@axdspub/axiom-ui-utilities'
+import { Checkbox, Input, Slider } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, Cross2Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import React, { useState, type ReactElement } from 'react'
 
@@ -112,24 +112,59 @@ const TextInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
 const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ''
   const numberField = field as INumberField
+  const isNull = initialValue === undefined || initialValue === null || initialValue === ''
+  const [userSelectedNotNull, setUserSelectedNotNull] = useState<boolean>(!isNull)
+  const canBeNull = numberField.settings?.canBeNull === true
 
   const max = numberField?.constraints?.max
-  return (
+  const fieldForInput = canBeNull
+    ? {
+        ...field,
+        label: undefined,
+        description: undefined
+      }
+    : field
+  const el = (
     <div>{
     max !== undefined
       ? <SliderInput
-        field={field}
+        field={fieldForInput}
         value={initialValue}
         onChange={onChange}
         min={numberField?.constraints?.min}
         max={max}
         step={numberField?.settings?.step} />
       : <TextInput
-        field={field}
+        field={fieldForInput}
         value={initialValue}
-        onChange={onChange} />
+        onChange={onChange}
+        className='max-w-[400px]'/>
       }</div>
   )
+
+  if (canBeNull) {
+    return (
+      <div className='flex flex-col gap-2'>
+        <Checkbox
+          id={`${field.id}-null`}
+          testId={`${field.id}-null`}
+          label={<><FieldLabelText {...field}
+          /> <FieldDescriptionTooltip {...field} /></>}
+          value={userSelectedNotNull}
+          onChange={(e) => {
+            setUserSelectedNotNull(!userSelectedNotNull)
+            if (!e) {
+              onChange(undefined)
+            } else {
+              onChange(numberField?.settings?.nonNullDefaultValue ?? value ?? 0)
+            }
+          }} />
+        {userSelectedNotNull ? el : <></>}
+      </div>
+    )
+  } else {
+    return el
+  }
 }
 
 export default NumberInput

@@ -33,6 +33,8 @@ interface IFieldConditions {
   value: string | number | boolean
 }
 
+type IFieldConstraints = Record<string, unknown>
+
 interface IFormFieldRoot {
   id: string
   type: string
@@ -47,6 +49,7 @@ interface IFormFieldRoot {
   index?: number
   defaultValue?: IValueType | IValueType[]
   conditions?: IFieldConditions
+  constraints?: IFieldConstraints
   settings?: Record<string, unknown>
 }
 
@@ -61,7 +64,10 @@ interface INumberValueInput extends IFormFieldRoot {
   }
   settings?: {
     step?: number
+    canBeNull?: boolean
+    nonNullDefaultValue?: number
   }
+
 }
 
 export interface INumberField extends INumberValueInput {
@@ -80,8 +86,12 @@ interface ILongTextField extends IStringValueInput {
   type: 'long_text'
 }
 
-interface IJSONField extends IFormFieldRoot {
+export interface IJSONField extends IFormFieldRoot {
   type: 'json'
+  settings?: {
+    exportAsString?: boolean
+    allowEmpty?: boolean
+  }
 }
 
 interface ICustomField extends IFormFieldRoot {
@@ -130,7 +140,7 @@ export interface IBooleanField extends IFormFieldRoot {
   type: 'boolean'
 }
 
-interface IDateFieldConstraints {
+interface IDateFieldConstraints extends IFieldConstraints {
   minDate?: string
   maxDate?: string
 }
@@ -140,7 +150,7 @@ interface IDateField extends IFormFieldRoot {
   constraints?: IDateFieldConstraints
 }
 
-interface ITimeFieldConstraints {
+interface ITimeFieldConstraints extends IFieldConstraints {
   minTime?: string
   maxTime?: string
 }
@@ -150,7 +160,7 @@ interface ITimeField extends IFormFieldRoot {
   constraints?: ITimeFieldConstraints
 }
 
-interface IDateTimeConstraints {
+interface IDateTimeConstraints extends IFieldConstraints {
   minDateTime?: string
   maxDateTime?: string
 }
@@ -219,21 +229,24 @@ export interface IFormSection {
   id: string
   label?: string
   description?: string
+  order?: number
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
 }
 
-export interface IPage extends Omit<IForm, 'pages'> {
-  id: string
-  label: string
-  description?: string
-  fields: IFormField[]
+export interface IPage extends Omit<IFormSection, 'pages'> {
 
 }
 
-export interface IWizardStep extends Omit<IForm, 'wizard_steps'> {
-  order: number
+export interface IWizardStep extends Omit<IFormSection, 'wizard_steps'> {
+
+}
+
+export interface IFormSettings {
+  url_navigable?: boolean
+  class_name?: string
+  show_progress?: boolean
 }
 
 export interface IForm {
@@ -244,22 +257,18 @@ export interface IForm {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  settings?: {
-    url_navigable?: boolean
-    class_name?: string
-    show_progress?: boolean
-  }
+  settings?: IFormSettings
 }
 
 export type IFormFieldOverride = Partial<IFormField> & { prop: string }
 
-export interface IFormSectionOverride extends IFormOverride {}
+export interface IFormSectionOverride extends Omit<IFormOverride, 'settings'> {}
 
-interface IPageOverride extends Omit<IFormOverride, 'pages'> {
+interface IPageOverride extends Omit<IFormSectionOverride, 'pages'> {
 
 }
 
-interface IWizardStepOverride extends Omit<IFormOverride, 'wizard_steps'> {
+interface IWizardStepOverride extends Omit<IFormSectionOverride, 'wizard_steps'> {
 
 }
 
@@ -270,6 +279,7 @@ export interface IFormOverride {
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
   fields?: IFormFieldOverride[]
+  settings?: IFormSettings
 }
 
 export interface IFormWithPages {

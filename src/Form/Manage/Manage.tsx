@@ -1,13 +1,10 @@
 import { Button, MultiAccordion, Tabs } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactNode, useState, type ReactElement } from 'react'
-import FormOutput from '@/Form/Manage/FormMappedOutput'
 import FormConfigInput from '@/Form/Manage/FormConfigInput'
-import FormMappingInput from '@/Form/Manage/FormMappingInput'
 import Form from '@/Form/Creator/FormCreator'
 import { useAtom } from 'jotai'
 import formAtom from '@/state/formAtom'
 import { RawFormOutput } from '@/Form/Manage/RawFormOutput'
-import formMappingAtom from '@/state/formMappingAtom'
 import { getQueryParam, updateUrlParam } from '@/helpers'
 import formValuesAtom from '@/state/formValuesAtom'
 import { CheckIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
@@ -65,7 +62,6 @@ const FormManager = ({
   if (Object.values(form).length === 0) {
     setForm(structuredClone(testForm as IForm))
   }
-  const [mapping, setMapping] = mappingState ?? useAtom(formMappingAtom)
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   const sections = [
     {
@@ -74,23 +70,6 @@ const FormManager = ({
       content: <FormConfigInput
           formState={[form, setForm]}
         />
-    },
-    {
-      id: 'mapping',
-      label: 'Form mapping',
-      content: <FormMappingInput
-          form={form}
-          mappingState={[mapping, setMapping]}
-        />
-    },
-    {
-      id: 'output',
-      label: 'Mapped Output',
-      content: <FormOutput
-        form={form}
-        formMapping={mapping}
-        formValueState={[formValues, setFormValues]}
-      />
     },
     {
       id: 'raw_output',

@@ -16,10 +16,13 @@ import ExternalMetadataExample from '@/Form/ExternalMetadataExample'
 import FormWithDefaults from '@/Form/FormWithDefaults'
 
 import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
-import SchemaToFormWizard from '@/Form/SchemaToFormWizard'
+import SchemaToFormWizard from '@/Form/Creator/SchemaToFormWizard'
 import CodeEditor from '@/Form/CodeEditor'
 import SchemaWithOverridesTest from '@/Form/SchemaWithOverridesTest'
 import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
+import { ErrorBoundary } from 'react-error-boundary'
+import SchemaToFormPTT from '@/Form/SchemaToFormPTT'
+import OilForm from '@/PTT/Oil/OilForm'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -104,9 +107,20 @@ const PTTOilFormWrap = (): ReactElement => {
   )
 }
 
+function fallbackRender ({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }): ReactElement {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  return (
+    <div role="alert" className='p-20'>
+      <p>Something went wrong:</p>
+      <pre style={{ color: 'red' }}>{error.message}</pre>
+    </div>
+  )
+}
+
 const App = (): ReactElement => {
   return (
-
+    <ErrorBoundary fallbackRender={fallbackRender}>
     <div className='h-screen flex flex-col gap-4'>
       <BrowserRouter>
           <Routes>
@@ -137,9 +151,14 @@ const App = (): ReactElement => {
               <Route path="*" element={<SchemaWithOverridesTest />} />
             </Route>
             <Route path="/json-editor" element={<CodeEditor />} />
+            <Route path="/schema-to-form-ptt" element={<SchemaToFormPTT />} />
+            <Route path="/ptt/oil" element={<OilForm />}>
+              <Route path="*" element={<OilForm />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>
+    </ErrorBoundary>
 
   )
 }

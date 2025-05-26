@@ -32,9 +32,9 @@ const viteonfig = defineViteConfig({
 
 const vitestConfig = defineVitestConfig({
   test: {
-    globals: true,
+    globals: true, // Enable global access to Vitest utilities
     environment: 'jsdom',
-    setupFiles: "./src/tests/setup.ts"
+    setupFiles: "./src/tests/setup.ts",
 }});
 
 export default mergeConfig(viteonfig, vitestConfig)

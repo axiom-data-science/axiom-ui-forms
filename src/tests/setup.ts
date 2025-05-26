@@ -1,1 +1,9 @@
-console.log('Setup is empty')
+import '@testing-library/jest-dom'
+
+class ResizeObserver {
+  observe (): void {}
+  unobserve (): void {}
+  disconnect (): void {}
+}
+
+global.ResizeObserver = ResizeObserver

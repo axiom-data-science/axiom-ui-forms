@@ -1,0 +1,209 @@
+import { describe, it, expect } from 'vitest'
+import type { JSONSchema6 } from 'json-schema'
+import {
+  validateSchema,
+  validateAgainstSchema,
+  getValueFromSchema,
+  getLabelFromSchema,
+  schemaToFormObject,
+  overridesAndSchemaToFormObject,
+  getSchemaPaths,
+  getSchemaPathDescriptors,
+  mergeObjects
+} from './schemaToFormHelpers'
+
+describe('schemaToFormHelpers', () => {
+  describe('validateSchema', () => {
+    it('returns schema for valid schema', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          name: { type: 'string' }
+        }
+      }
+      const result = validateSchema(schema)
+      expect(result.schema).toBeDefined()
+      expect(result.error).toBeUndefined()
+    })
+
+    it('returns error for invalid schema', () => {
+      const schema = { type: 'invalid-type' }
+      const result = validateSchema(schema)
+      expect(result.error).toBeDefined()
+    })
+  })
+
+  describe('validateAgainstSchema', () => {
+    const schema: JSONSchema6 = {
+      type: 'object',
+      properties: {
+        age: { type: 'number', minimum: 0 }
+      },
+      required: ['age']
+    }
+
+    it('returns undefined for valid data', () => {
+      const errors = validateAgainstSchema(schema, { age: 10 })
+      expect(errors).toBeUndefined()
+    })
+
+    it('returns errors for invalid data', () => {
+      const errors = validateAgainstSchema(schema, { age: -5 })
+      expect(errors).toBeDefined()
+      expect(errors?.[0]).toContain('must be >= 0')
+    })
+    it('returns errors for missing required field', () => {
+      const errors = validateAgainstSchema(schema, {})
+      expect(errors).toBeDefined()
+      expect(errors?.[0]).toContain('required')
+    })
+    it('returns errors for invalid schema', () => {
+      // Invalid: "properties" must be an object, not an array
+      const invalidSchema: JSONSchema6 = {
+        type: 'object',
+        properties: [] as any
+      }
+      const errors = validateAgainstSchema(invalidSchema, { age: 10 })
+      console.log(errors)
+      expect(errors).toBeDefined()
+      expect(errors?.[0]).toContain('properties must be object')
+    })
+  })
+
+  describe('getValueFromSchema', () => {
+    it('returns value for string', () => {
+      expect(getValueFromSchema('foo')).toBe('foo')
+    })
+    it('returns value for number', () => {
+      expect(getValueFromSchema(42)).toBe(42)
+    })
+    it('returns value for boolean', () => {
+      expect(getValueFromSchema(true)).toBe(true)
+    })
+    it('returns value from array', () => {
+      expect(getValueFromSchema(['bar'])).toBe('bar')
+    })
+    it('returns const value', () => {
+      expect(getValueFromSchema({ const: 'baz' })).toBe('baz')
+    })
+    it('returns undefined for undefined', () => {
+      expect(getValueFromSchema(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('getLabelFromSchema', () => {
+    it('returns string for string', () => {
+      expect(getLabelFromSchema('foo')).toBe('foo')
+    })
+    it('returns string for number', () => {
+      expect(getLabelFromSchema(123)).toBe('123')
+    })
+    it('returns "true" for boolean true', () => {
+      expect(getLabelFromSchema(true)).toBe('true')
+    })
+    it('returns label from title', () => {
+      expect(getLabelFromSchema({ title: 'My Title' })).toBe('My Title')
+    })
+    it('returns value from const', () => {
+      expect(getLabelFromSchema({ const: 'abc' })).toBe('abc')
+    })
+    it('returns undefined for undefined', () => {
+      expect(getLabelFromSchema(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('schemaToFormObject', () => {
+    it('creates form object from schema', () => {
+      const schema: JSONSchema6 = {
+        title: 'Test Form',
+        type: 'object',
+        properties: {
+          firstName: { type: 'string', title: 'First Name' },
+          age: { type: 'number' }
+        }
+      }
+      const form = schemaToFormObject(schema)
+      expect(form.label).toBe('Test Form')
+      expect(form?.fields?.length).toBe(2)
+      expect(form?.fields?.[0].label).toBe('First Name')
+    })
+  })
+
+  describe('overridesAndSchemaToFormObject', () => {
+    it('applies overrides to form', () => {
+      const schema: JSONSchema6 = {
+        title: 'Base',
+        type: 'object',
+        properties: {
+          foo: { type: 'string' }
+        }
+      }
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [{ label: 'Overridden', fields: [{ prop: 'foo' }] }],
+        formFieldOverrides: [[{ prop: 'foo', label: 'Bar' }]]
+      })
+      expect(form.label).toBe('Overridden')
+      expect(form?.fields?.[0]?.label).toBe('Bar')
+    })
+  })
+
+  describe('getSchemaPaths', () => {
+    it('returns paths for nested schema', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: {
+            type: 'object',
+            properties: {
+              c: { type: 'number' }
+            }
+          }
+        }
+      }
+      const paths = getSchemaPaths(schema)
+      expect(paths).toContain('a')
+      expect(paths).toContain('b')
+      expect(paths).toContain('b.c')
+    })
+
+    it('handles arrays', () => {
+      const schema: JSONSchema6 = {
+        type: 'array',
+        items: { type: 'string' }
+      }
+      const paths = getSchemaPaths(schema)
+      expect(paths).toContain('[]')
+    })
+  })
+
+  describe('getSchemaPathDescriptors', () => {
+    it('returns descriptors for nested schema', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          x: { type: 'string' },
+          y: {
+            type: 'object',
+            properties: {
+              z: { type: 'boolean' }
+            }
+          }
+        },
+        required: ['x']
+      }
+      const desc = getSchemaPathDescriptors(schema)
+      expect(desc.find(d => d.path === 'x')?.required).toBe(true)
+      expect(desc.find(d => d.path === 'y.z')?.type).toBe('boolean')
+    })
+  })
+
+  describe('mergeObjects', () => {
+    it('merges array of objects', () => {
+      const arr = [{ a: 1 }, { b: 2 }, { a: 3 }]
+      const merged = mergeObjects(arr)
+      expect(merged).toEqual({ a: 3, b: 2 })
+    })
+  })
+})
