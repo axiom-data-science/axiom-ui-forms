@@ -48,6 +48,43 @@ describe('resolveRefs', () => {
     })
   })
 
+  it('should resolve $ref embedded in anyOf without erroring', () => {
+    const schema: JSONSchema6 & { '$defs': Record<string, JSONSchema6> } = {
+      $defs: {
+        OceanModelEnum: {
+          enum: [
+            'CIOFSOP',
+            'CIOFSFRESH',
+            'NWGOA',
+            'CIOFS',
+            'ONTHEFLY',
+            'TXLA'
+          ],
+          title: 'OceanModelEnum',
+          type: 'string'
+        }
+      },
+      additionalProperties: false,
+      properties: {
+        ocean_model: {
+          anyOf: [
+            {
+              $ref: '#/$defs/OceanModelEnum'
+            },
+            {
+              type: 'null'
+            }
+          ],
+          default: 'CIOFSOP',
+          description: 'Name of ocean model to use for driving drifter simulation.'
+        }
+      },
+      title: 'OpenOilModelConfig',
+      type: 'object'
+    }
+    expect(() => resolveRefs(schema)).not.toThrow()
+  })
+
   it('should resolve $ref inside properties', () => {
     const schema: JSONSchema6 = {
       definitions: {
