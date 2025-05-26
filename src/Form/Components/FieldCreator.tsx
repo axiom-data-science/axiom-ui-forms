@@ -2,7 +2,7 @@ import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
-import { cleanUnusedDependenciesFromFormValues, updateFormValuesWithFieldValue } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { cleanUnusedDependenciesFromFormValues, createOneOfMultipleField, updateFormValuesWithFieldValue } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -137,13 +137,7 @@ const MultipleFieldCreator = ({
         return <OneOfMultiple
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
-          field={{
-            ...field,
-            index,
-            required: false,
-            label: index > 0 ? null : field.label,
-            id: `${field.id}-${index}`
-          }}
+          field={createOneOfMultipleField(field, index)}
           value={value}
           index={index}
           onChange={onChange ?? defaultOnChange}

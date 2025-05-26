@@ -1,7 +1,5 @@
 import JSONInputLoader from ***REMOVED***@/Form/Components/Inputs/JSONInputLoader***REMOVED***
 import { type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
-import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
 
 const validateForm = (form: IForm): string | undefined => {
@@ -25,8 +23,8 @@ const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => vo
         if (newError === undefined) {
           setForm(ob)
         }
-      } catch {
-        setError(***REMOVED***Invalid JSON***REMOVED***)
+      } catch (err: any) {
+        setError(`Invalid JSON: ${err?.message}`)
       }
     }
   }, [str])
@@ -50,7 +48,7 @@ const FormConfigInput = ({ formState }: { formState: [IForm, (form: IForm) => vo
                       value={JSON.stringify(form)}
                       className=***REMOVED***h-full***REMOVED***
                       onChange={(e) => {
-                        setStr(String(e))
+                        setStr(JSON.stringify(e, null, 2))
                       }}
                       />
                  </div>

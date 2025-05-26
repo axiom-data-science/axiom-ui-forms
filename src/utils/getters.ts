@@ -9,10 +9,11 @@ import get from ***REMOVED***lodash/get***REMOVED***
  * @returns The JSON path for the given field
  */
 export const makeJsonPath = (field: IFormField, index?: number): string => {
+  const fieldExtra = `${field.multiple && (field.index !== undefined || index !== undefined) ? `[${index ?? field.index}]` : ***REMOVED******REMOVED***}`
   if (field.destPath !== undefined) {
-    return `${field.destPath}${field.multiple && (field.index !== undefined || index !== undefined) ? `[${index ?? field.index}]` : ***REMOVED******REMOVED***}`
+    return `${field.destPath}${fieldExtra}`
   } else if (field.path === undefined) {
-    return field.id
+    return `${field.id}${fieldExtra}`
   } else {
     const path = field.path
     const pathLen = path.length
@@ -90,7 +91,9 @@ export function getPathFromField (field: IFormField): string {
   if (field.destPath) {
     return field.destPath
   }
-  return field.path !== undefined ? field.path.filter(f => !(f.type === ***REMOVED***object***REMOVED*** && f.skip_path === true)).map(f => f.id).join(***REMOVED***.***REMOVED***) : field.id
+  return field.path !== undefined
+    ? field.path.filter(f => !(f.type === ***REMOVED***object***REMOVED*** && f.skip_path === true)).map(f => f.id).join(***REMOVED***.***REMOVED***)
+    : field.id
   // return makeJsonPath(field)
 }
 

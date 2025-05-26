@@ -1,6 +1,6 @@
-import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
+import FieldLabel, { FieldDescriptionTooltip, FieldLabelText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type INumberField, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { Input, Slider } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { Checkbox, Input, Slider } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, Cross2Icon, Pencil1Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -112,24 +112,59 @@ const TextInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
 const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
   const numberField = field as INumberField
+  const isNull = initialValue === undefined || initialValue === null || initialValue === ***REMOVED******REMOVED***
+  const [userSelectedNotNull, setUserSelectedNotNull] = useState<boolean>(!isNull)
+  const canBeNull = numberField.settings?.canBeNull === true
 
   const max = numberField?.constraints?.max
-  return (
+  const fieldForInput = canBeNull
+    ? {
+        ...field,
+        label: undefined,
+        description: undefined
+      }
+    : field
+  const el = (
     <div>{
     max !== undefined
       ? <SliderInput
-        field={field}
+        field={fieldForInput}
         value={initialValue}
         onChange={onChange}
         min={numberField?.constraints?.min}
         max={max}
         step={numberField?.settings?.step} />
       : <TextInput
-        field={field}
+        field={fieldForInput}
         value={initialValue}
-        onChange={onChange} />
+        onChange={onChange}
+        className=***REMOVED***max-w-[400px]***REMOVED***/>
       }</div>
   )
+
+  if (canBeNull) {
+    return (
+      <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
+        <Checkbox
+          id={`${field.id}-null`}
+          testId={`${field.id}-null`}
+          label={<><FieldLabelText {...field}
+          /> <FieldDescriptionTooltip {...field} /></>}
+          value={userSelectedNotNull}
+          onChange={(e) => {
+            setUserSelectedNotNull(!userSelectedNotNull)
+            if (!e) {
+              onChange(undefined)
+            } else {
+              onChange(numberField?.settings?.nonNullDefaultValue ?? value ?? 0)
+            }
+          }} />
+        {userSelectedNotNull ? el : <></>}
+      </div>
+    )
+  } else {
+    return el
+  }
 }
 
 export default NumberInput

@@ -8,12 +8,12 @@ import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import React, { useContext, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactNode, useContext, type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
   schema?: JSONSchema6
-  formValueState: [IFormValues, (v: IFormValues) => void]
+  formValueState?: [IFormValues, (v: IFormValues) => void]
   note?: string
   error?: string
   onChange?: IValueChangeFn
@@ -21,6 +21,8 @@ export interface IFormCreatorProps {
   defaultClassName?: string
   urlNavigable?: boolean
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  header?: ReactNode
+  footer?: ReactNode
 }
 
 const FormStatus = (): ReactElement => {
@@ -49,23 +51,19 @@ export const SchemaFormCreator = ({
   formOverrides?: IFormOverride[]
   formFieldOverrides?: IFormFieldOverride[][]
 }): ReactElement => {
-  const [form, setForm] = useState<IForm | undefined>(undefined)
-  useEffect(() => {
-    const newForm = formOverrides === undefined
-      ? schemaToFormObject(schema)
-      : overridesAndSchemaToFormObject({
-        formOverrides,
-        formFieldOverrides,
-        schema
-      }) // Convert the JSON schema to a form object
-    if (id !== undefined) {
-      newForm.id = id
-    }
-    if (label !== undefined) {
-      newForm.label = label
-    }
-    setForm(newForm)
-  }, [schema, formOverrides, formFieldOverrides, id, label])
+  const form = formOverrides === undefined && formFieldOverrides === undefined
+    ? schemaToFormObject(schema)
+    : overridesAndSchemaToFormObject({
+      formOverrides,
+      formFieldOverrides,
+      schema
+    }) // Convert the JSON schema to a form object
+  if (id !== undefined) {
+    form.id = id
+  }
+  if (label !== undefined) {
+    form.label = label
+  }
 
   return (
     <>{
@@ -75,6 +73,16 @@ export const SchemaFormCreator = ({
     }</>
 
   )
+}
+
+const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
+  const formValues: IFormValues = {}
+  getFieldsFromFormSection(form).forEach(field => {
+    if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
+      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValues)
+    }
+  })
+  return formValues
 }
 
 const FormCreator = ({
@@ -87,22 +95,23 @@ const FormCreator = ({
   defaultClassName = ***REMOVED***flex flex-col gap-2 flex-grow***REMOVED***,
   urlNavigable = true,
   inputOverrides,
-  schema
+  schema,
+  footer,
+  header
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
-  const activeFormValues = structuredClone(formValueState[0])
+  const activeFormValues = structuredClone(formValueState?.[0] ?? {})
   getFieldsFromFormSection(activeForm).forEach(field => {
     if (field.defaultValue !== undefined && getFieldValue(field, activeFormValues) === undefined) {
       updateFormValuesWithFieldValueInPlace(field, field.defaultValue, activeFormValues)
     }
   })
+  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>(seedFormValuesWithDefaults(activeForm))
 
   activeForm.settings = {
     url_navigable: urlNavigable,
     ...activeForm.settings
   }
-
-  const [formValues, setFormValues] = formValueState
 
   return (
     <FormContext.Provider value={{
@@ -113,23 +122,25 @@ const FormCreator = ({
       schema,
       urlNavigable: activeForm.settings.url_navigable
     }}>
-            <div className={utils.makeClassName({
-              className: activeForm?.settings?.class_name,
-              defaultClassName,
-              extras: [className]
-            })}>
-                <FormHeader form={activeForm} note={note} error={error} />
-                {
-                  activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
-                    ? <FormStatus />
-                    : ***REMOVED******REMOVED***
-                }
-                <FormSection
-                  formSection={activeForm}
-                  onChange={onChange}
-                  />
-            </div>
-          </FormContext.Provider>
+      {header ?? ***REMOVED******REMOVED***}
+      <div className={utils.makeClassName({
+        className: activeForm?.settings?.class_name,
+        defaultClassName,
+        extras: [className]
+      })}>
+          <FormHeader form={activeForm} note={note} error={error} />
+          {
+            activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
+              ? <FormStatus />
+              : ***REMOVED******REMOVED***
+          }
+          <FormSection
+            formSection={activeForm}
+            onChange={onChange}
+            />
+      </div>
+      {footer ?? ***REMOVED******REMOVED***}
+    </FormContext.Provider>
   )
 }
 

@@ -28,10 +28,30 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field3***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***field3***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
       }
       const result = makeJsonPath(field)
-      expect(result).toBe(***REMOVED***parent[0].child***REMOVED***)
+      expect(result).toBe(***REMOVED***parent[0].child.field3***REMOVED***)
+    })
+    it(***REMOVED***should construct the path correctly for a field with a path array and index***REMOVED***, () => {
+      const field: IFormField = {
+        id: ***REMOVED***fieldWithIndex***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED***, index: 2 }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+      }
+      const result = makeJsonPath(field)
+      expect(result).toBe(***REMOVED***parent[2].child.fieldWithIndex***REMOVED***)
+    })
+    it(***REMOVED***should construct the path correctly for a field with a path array and index in the field***REMOVED***, () => {
+      const field: IFormField = {
+        id: ***REMOVED***fieldWithIndex***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        multiple: true,
+        index: 2,
+        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED***, multiple: true, index: 2 }]
+      }
+      const result = makeJsonPath(field)
+      expect(result).toBe(***REMOVED***parent[0].child.fieldWithIndex[2]***REMOVED***)
     })
   })
 
@@ -114,16 +134,36 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field12***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [{ id: ***REMOVED***parent***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***field12***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
       }
       const result = getPathFromField(field)
-      expect(result).toBe(***REMOVED***parent.child***REMOVED***)
+      expect(result).toBe(***REMOVED***parent.child.field12***REMOVED***)
     })
 
     it(***REMOVED***should return the field id if both destPath and path are undefined***REMOVED***, () => {
       const field: IFormField = { id: ***REMOVED***field13***REMOVED***, type: ***REMOVED***text***REMOVED*** }
       const result = getPathFromField(field)
       expect(result).toBe(***REMOVED***field13***REMOVED***)
+    })
+    it(***REMOVED***should ignore an object id in the path that is set to skip_path when constructing id***REMOVED***, () => {
+      const field: IFormField = {
+        id: ***REMOVED***field1***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        path: [
+          {
+            id: ***REMOVED***parent***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            skip_path: true,
+            fields: []
+          },
+          {
+            id: ***REMOVED***field1***REMOVED***,
+            type: ***REMOVED***text***REMOVED***
+          }
+        ]
+      }
+      const result = getPathFromField(field)
+      expect(result).toBe(***REMOVED***field1***REMOVED***)
     })
   })
 

@@ -1,4 +1,4 @@
-import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import set from ***REMOVED***lodash/set***REMOVED***
@@ -39,8 +39,44 @@ function addPathsToFormSections (section: IFormSection): IFormSection {
   return section
 }
 
-export function copyAndAddPathToFields (formOrContainer: IForm): IForm {
+export function copyAndAddPathToFields (formOrContainer: IFormSection | IForm): IForm {
   const form = addPathsToFormSections(structuredClone(formOrContainer)) as IForm
+  return form
+}
+
+function removeFieldPath (field: IFormField): IFormField {
+  field.path = undefined
+  field.level = undefined
+  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
+    field.fields = field.fields.map(childField => {
+      return removeFieldPath(childField)
+    })
+  }
+
+  return field
+}
+
+function removePathsFromFormSections (section: IFormSection): IFormSection {
+  if (section.pages !== undefined) {
+    section.pages = section.pages.map(page => {
+      return removePathsFromFormSections(page)
+    }) as IPage[]
+  }
+  if (section.wizard_steps !== undefined) {
+    section.wizard_steps = section.wizard_steps.map(wizardStep => {
+      return removePathsFromFormSections(wizardStep)
+    }) as IWizardStep[]
+  }
+  if (section.fields !== undefined) {
+    section.fields = section.fields.map(field => {
+      return removeFieldPath(field)
+    })
+  }
+  return section
+}
+
+export function copyAndRemovePathFromFields (formOrContainer: IFormSection | IForm): IForm {
+  const form = removePathsFromFormSections(structuredClone(formOrContainer)) as IForm
   return form
 }
 
@@ -57,7 +93,7 @@ function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], fo
     } else if (typeof formValuesCopy[key] === ***REMOVED***object***REMOVED*** && (
       field?.type === ***REMOVED***object***REMOVED*** || field === undefined
     )) {
-      formValuesCopy[key] = cleanFormValuesLevel(formValuesCopy[key] as IFormValues, fields, path)
+      formValuesCopy[key] = cleanFormValuesLevel((formValuesCopy[key] ?? {}) as IFormValues, fields, path)
     } else if (field === undefined) {
       formValuesCopy[key] = undefined
     }
@@ -93,4 +129,52 @@ export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormVa
     }
   })
   return formValuesCopy
+}
+
+const assignIndexToField = (field: IFormField, index: number): IFormField => {
+  return {
+    ...field,
+    index
+  }
+}
+
+const assignIndexToFields = (parentField: IObjectField, index: number): IFormField[] => {
+  return parentField.fields.map(f => {
+    if (f.path !== undefined && parentField.level !== undefined && f.path[parentField.level - 1] !== undefined) {
+      const newPath = f.path.slice()
+      newPath[parentField.level - 1] = {
+        ...parentField,
+        index
+      }
+      f.path = newPath
+    }
+    return {
+      ...f
+    }
+  })
+}
+
+export const createOneOfMultipleField = (field: IFormField, index: number): IFormField => {
+  const path = field.path ? field.path.slice() : undefined
+  if (path !== undefined) {
+    const last = assignIndexToField(path[path.length - 1], index)
+    path[path.length - 1] = last
+    if (last.type === ***REMOVED***object***REMOVED*** && last.fields !== undefined) {
+      last.fields = assignIndexToFields(last, index)
+    }
+  }
+
+  const out = {
+    ...field,
+    path,
+    index,
+    required: false,
+    label: index > 0 ? null : field.label,
+    id: `${field.id}-${index}`
+  }
+
+  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined && out.type === ***REMOVED***object***REMOVED***) {
+    out.fields = assignIndexToFields(field, index)
+  }
+  return out
 }

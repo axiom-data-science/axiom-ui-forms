@@ -9,14 +9,15 @@ import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { ExclamationTriangleIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { getSchemaPaths, schemaToFormObject, validateAgainstSchema, validateSchema } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import toJsonSchema from ***REMOVED***to-json-schema***REMOVED***
+import { JSONInput } from ***REMOVED***@/Form/Components/Inputs***REMOVED***
 
 const objectToSchema = (ob: unknown): JSONSchema6 => {
   return toJsonSchema(ob) as JSONSchema6
 }
 
-const isValidJson = (ob: unknown): boolean => {
+const isValidJson = (ob: string): boolean => {
   try {
-    JSON.stringify(ob)
+    JSON.parse(ob)
     return true
   } catch {
     return false
@@ -32,20 +33,19 @@ const SchemaToForm = (): ReactElement => {
   let form: IForm | undefined
   let schema: JSONSchema6 | undefined
 
-  if (str !== ***REMOVED******REMOVED*** && str !== undefined) {
-    try {
-      const ob = JSON.parse(str)
-      const validationResponse = validateSchema(ob)
+  try {
+    const ob = JSON.parse(str === undefined || str === ***REMOVED******REMOVED*** ? ***REMOVED***{}***REMOVED*** : str)
+    const validationResponse = validateSchema(ob)
 
-      if (validationResponse.schema !== undefined) {
-        schema = validationResponse.schema
-        form = schemaToFormObject(validationResponse.schema)
-      }
-    } catch (e) {
-      console.error(e)
-      setError(***REMOVED***Invalid JSON***REMOVED***)
+    if (validationResponse.schema !== undefined) {
+      schema = validationResponse.schema
+      form = schemaToFormObject(validationResponse.schema)
     }
+  } catch (e) {
+    console.error(e)
+    setError(***REMOVED***Invalid JSON***REMOVED***)
   }
+
   const formOutputErrors = useMemo(() => {
     return validateAgainstSchema(schema ?? {}, formValues)
   }, [schema, formValues])
@@ -103,7 +103,7 @@ const SchemaToForm = (): ReactElement => {
                     {
                       label: ***REMOVED***Schema***REMOVED***,
                       id: ***REMOVED***schema***REMOVED***,
-                      content: <>
+                      content: <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
                       <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
 
                           <p className={`${error !== undefined ? ***REMOVED***text-rose-800***REMOVED*** : ***REMOVED***text-green-800***REMOVED***}`}>
@@ -111,54 +111,53 @@ const SchemaToForm = (): ReactElement => {
                           </p>
 
                         <div className=***REMOVED***relative***REMOVED***>
-                            <CopyButton string={JSON.stringify(schema, null, 2)} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** />
-                            <TextArea
-                                id=***REMOVED***schemaInput***REMOVED***
-                                testId=***REMOVED***schemaInput***REMOVED***
-                                value={JSON.stringify(schema, null, 2)}
-                                className={`h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x ${error !== undefined ? ***REMOVED***bg-rose-100***REMOVED*** : ***REMOVED***bg-green-100***REMOVED***}`}
-                                onChange={(e) => {
-                                  setStr(e)
-                                }}
-                            />
+                            {/* <CopyButton string={JSON.stringify(schema, null, 2)} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** /> */}
+                            <JSONInput
+                              value={str}
+                              onChange={(e) => {
+                                setStr(e !== undefined ? String(e) : undefined)
+                              } }
+                              field={{
+                                id: ***REMOVED***schemaInput***REMOVED***,
+                                label: ***REMOVED***Schema Input***REMOVED***,
+                                type: ***REMOVED***json***REMOVED***
+                              }}
+                              />
+
                         </div>
                       </div>
                       <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
 
-                                <p>UI Config</p>
-                                <div className=***REMOVED***relative***REMOVED***>
+                                  <p className=***REMOVED***font-bold***REMOVED***>Converted Form</p>
                                   {
                                     form !== undefined
-                                      ? <>
-                                      <CopyButton string={JSON.stringify(form ?? ***REMOVED******REMOVED***, null, 2)} className=***REMOVED***absolute right-10 top-10 pointer-events-auto***REMOVED*** />
-                                      <TextArea
-                                        id=***REMOVED***formInput***REMOVED***
-                                        testId=***REMOVED***formInput***REMOVED***
-                                        value={JSON.stringify(form, null, 2)}
-                                        className=***REMOVED***h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-blue-900 text-white***REMOVED***
-                                        onChange={(e) => {
-                                          // setForm(e !== undefined ? JSON.parse(e) : undefined)
-                                          setStr(e)
-                                        }}
+                                      ? <div className=***REMOVED***relative***REMOVED***>
+                                      <CopyButton string={JSON.stringify(form ?? ***REMOVED******REMOVED***, null, 2)}
+                                        wrapperClassName=***REMOVED***absolute right-5 bottom-5 pointer-events-auto***REMOVED***
                                         />
+                                      <pre className=***REMOVED***p-5 text-blue-200 text-xs max-h-[400px] shadow-inner-x bg-blue-900 font-mono whitespace-pre-wrap overflow-auto***REMOVED***>
+                                        {JSON.stringify(form, null, 2)}
+                                      </pre>
+                                      </div>
 
-                                      </>
                                       : ***REMOVED***Waiting on valid schema***REMOVED***
                                   }
 
-                                </div>
-
                       </div>
                       <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
-                        <p>Paste JSON to convert to schema</p>
-                        <TextArea
-                          id=***REMOVED***jsonInput***REMOVED***
-                          testId=***REMOVED***jsonInput***REMOVED***
+                        <JSONInput
                           value={objectInput}
                           onChange={(e) => {
-                            setObjectInput(e)
+                            setObjectInput(e !== undefined ? String(e) : undefined)
+                          } }
+                          field={{
+                            id: ***REMOVED***objectInput***REMOVED***,
+                            label: ***REMOVED***Paste JSON to convert to schema***REMOVED***,
+                            type: ***REMOVED***json***REMOVED***
                           }}
+                          className=***REMOVED***h-full mt-0 w-full flex-grow max-h-[400px] shadow-inner-x bg-blue-900 text-white***REMOVED***
                           />
+
                           {
                             schemaObjectError !== undefined
                               ? <p className=***REMOVED***text-rose-800***REMOVED***>{schemaObjectError}</p>
@@ -182,7 +181,7 @@ const SchemaToForm = (): ReactElement => {
 
                                 </div>
                       </div>
-                      </>
+                      </div>
                     },
                     {
                       label: ***REMOVED***Form config overrides***REMOVED***,

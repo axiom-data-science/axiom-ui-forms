@@ -1,0 +1,741 @@
+{
+    "$defs": {
+    "CoastlineActionEnum": {
+    "enum": [
+    "none",
+    "stranding",
+    "previous"
+    ],
+    "title": "CoastlineActionEnum",
+    "type": "string"
+    },
+    "DiffusivityModelEnum": {
+    "enum": [
+    "environment",
+    "stepfunction",
+    "windspeed_Sundby1983",
+    "windspeed_Large1994",
+    "gls_tke",
+    "constant"
+    ],
+    "title": "DiffusivityModelEnum",
+    "type": "string"
+    },
+    "DriftModelEnum": {
+    "enum": [
+    "OceanDrift",
+    "LarvalFish",
+    "OpenOil",
+    "Leeway"
+    ],
+    "title": "DriftModelEnum",
+    "type": "string"
+    },
+    "DropletSizeDistributionEnum": {
+    "enum": [
+    "uniform",
+    "normal",
+    "lognormal"
+    ],
+    "title": "DropletSizeDistributionEnum",
+    "type": "string"
+    },
+    "LogLevelEnum": {
+    "description": "Log verbosity.",
+    "enum": [
+    "DEBUG",
+    "INFO",
+    "WARNING",
+    "ERROR",
+    "CRITICAL"
+    ],
+    "title": "LogLevelEnum",
+    "type": "string"
+    },
+    "ModelEnum": {
+    "description": "Lagrangian model software to use for simulation.",
+    "enum": [
+    "opendrift"
+    ],
+    "title": "ModelEnum",
+    "type": "string"
+    },
+    "OceanModelEnum": {
+    "enum": [
+    "CIOFSOP",
+    "CIOFSFRESH",
+    "NWGOA",
+    "CIOFS",
+    "ONTHEFLY",
+    "TXLA"
+    ],
+    "title": "OceanModelEnum",
+    "type": "string"
+    },
+    "OilTypeEnum": {
+    "enum": [
+    "ABU SAFAH, ARAMCO",
+    "ALASKA NORTH SLOPE",
+    "GENERIC BUNKER C"
+    ],
+    "title": "OilTypeEnum",
+    "type": "string"
+    },
+    "OutputFormatEnum": {
+    "description": "Output file format.",
+    "enum": [
+    "netcdf",
+    "parquet"
+    ],
+    "title": "OutputFormatEnum",
+    "type": "string"
+    },
+    "RadiusTypeEnum": {
+    "enum": [
+    "gaussian",
+    "uniform"
+    ],
+    "title": "RadiusTypeEnum",
+    "type": "string"
+    },
+    "SeafloorActionEnum": {
+    "enum": [
+    "none",
+    "lift_to_seafloor",
+    "deactivate",
+    "previous"
+    ],
+    "title": "SeafloorActionEnum",
+    "type": "string"
+    },
+    "SeedFlagEnum": {
+    "description": "Method for seeding drifters.",
+    "enum": [
+    "elements",
+    "geojson"
+    ],
+    "title": "SeedFlagEnum",
+    "type": "string"
+    }
+    },
+    "additionalProperties": false,
+    "description": "OpenOil model configuration for OpenDrift.",
+    "properties": {
+    "model": {
+    "$ref": "#/$defs/ModelEnum",
+    "default": "opendrift",
+    "ptm_level": 1
+    },
+    "lon": {
+    "anyOf": [
+    {
+    "maximum": 180,
+    "minimum": -180,
+    "type": "number"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": -151,
+    "description": "Central longitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+    "ptm_level": 1,
+    "title": "Lon",
+    "units": "degrees_east"
+    },
+    "lat": {
+    "anyOf": [
+    {
+    "maximum": 90,
+    "minimum": -90,
+    "type": "number"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": 58,
+    "description": "Central latitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+    "ptm_level": 1,
+    "title": "Lat",
+    "units": "degrees_north"
+    },
+    "geojson": {
+    "anyOf": [
+    {
+    "type": "object"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "GeoJSON describing a polygon within which to seed drifters. To use this parameter, also have `seed_flag==\"geojson\"`.",
+    "ptm_level": 1,
+    "title": "Geojson"
+    },
+    "seed_flag": {
+    "$ref": "#/$defs/SeedFlagEnum",
+    "default": "elements",
+    "description": "Method for seeding drifters. Options are \"elements\" or \"geojson\". If \"elements\", seed drifters at or around a single point defined by lon and lat. If \"geojson\", seed drifters within a polygon described by a GeoJSON object.",
+    "ptm_level": 1
+    },
+    "start_time": {
+    "anyOf": [
+    {
+    "format": "date-time",
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": "2022-01-01T00:00:00",
+    "description": "Start time for drifter simulation.",
+    "ptm_level": 1,
+    "title": "Start Time"
+    },
+    "start_time_end": {
+    "anyOf": [
+    {
+    "format": "date-time",
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "If used, this creates a range of start times for drifters, starting with `start_time` and ending with `start_time_end`. Drifters will be initialized linearly between the two start times.",
+    "ptm_level": 2,
+    "title": "Start Time End"
+    },
+    "run_forward": {
+    "default": true,
+    "description": "Run forward in time.",
+    "ptm_level": 2,
+    "title": "Run Forward",
+    "type": "boolean"
+    },
+    "time_step": {
+    "default": 5,
+    "description": "Interval between particles updates, in minutes.",
+    "maximum": 1440,
+    "minimum": 0.01,
+    "od_mapping": "general:time_step_minutes",
+    "ptm_level": 3,
+    "title": "Time Step",
+    "type": "number",
+    "units": "minutes"
+    },
+    "time_step_output": {
+    "default": 60,
+    "description": "Time step at which element properties are stored and eventually written to file. This must be larger than the calculation time step, and be an integer multiple of this.",
+    "maximum": 1440,
+    "minimum": 1,
+    "od_mapping": "general:time_step_output_minutes",
+    "ptm_level": 3,
+    "title": "Time Step Output",
+    "type": "number",
+    "units": "minutes"
+    },
+    "steps": {
+    "anyOf": [
+    {
+    "maximum": 10000,
+    "minimum": 1,
+    "type": "integer"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "Maximum number of steps. End of simulation will be start_time + steps * time_step.",
+    "ptm_level": 1,
+    "title": "Steps"
+    },
+    "duration": {
+    "anyOf": [
+    {
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "Duration should be input as a string of ISO 8601. The length of the simulation. steps, end_time, or duration must be input by user.",
+    "ptm_level": 1,
+    "title": "Duration"
+    },
+    "end_time": {
+    "anyOf": [
+    {
+    "format": "date-time",
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "The end of the simulation. steps, end_time, or duration must be input by user.",
+    "ptm_level": 1,
+    "title": "End Time"
+    },
+    "ocean_model": {
+    "$ref": "#/$defs/OceanModelEnum",
+    "default": "CIOFSOP",
+    "description": "Name of ocean model to use for driving drifter simulation.",
+    "ptm_level": 1
+    },
+    "ocean_model_local": {
+    "default": true,
+    "description": "Set to True to use local version of known `ocean_model` instead of remote version.",
+    "ptm_level": 3,
+    "title": "Ocean Model Local",
+    "type": "boolean"
+    },
+    "do3D": {
+    "default": false,
+    "description": "Set to True to run drifters in 3D, by default False for most drift models.",
+    "ptm_level": 1,
+    "title": "Do3D",
+    "type": "boolean"
+    },
+    "use_static_masks": {
+    "default": true,
+    "description": "Set to True to use static masks for known models instead of wetdry masks.",
+    "ptm_level": 3,
+    "title": "Use Static Masks",
+    "type": "boolean"
+    },
+    "output_file": {
+    "anyOf": [
+    {
+    "format": "path",
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "Name of file to write output to. If None, default name is used.",
+    "ptm_level": 3,
+    "title": "Output File"
+    },
+    "output_format": {
+    "$ref": "#/$defs/OutputFormatEnum",
+    "default": "netcdf",
+    "description": "Output file format. Options are \"netcdf\" or \"parquet\".",
+    "ptm_level": 2
+    },
+    "use_cache": {
+    "default": true,
+    "description": "Set to True to use cache for storing interpolators.",
+    "ptm_level": 3,
+    "title": "Use Cache",
+    "type": "boolean"
+    },
+    "log_level": {
+    "$ref": "#/$defs/LogLevelEnum",
+    "default": "INFO",
+    "description": "Log verbosity",
+    "ptm_level": 3
+    },
+    "horizontal_diffusivity": {
+    "anyOf": [
+    {
+    "maximum": 100000,
+    "minimum": 0,
+    "type": "number"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "Add horizontal diffusivity (random walk)",
+    "od_mapping": "drift:horizontal_diffusivity",
+    "ptm_level": 2,
+    "title": "Horizontal Diffusivity",
+    "units": "m2/s"
+    },
+    "stokes_drift": {
+    "default": true,
+    "description": "Advection elements with Stokes drift (wave orbital motion).",
+    "od_mapping": "drift:stokes_drift",
+    "ptm_level": 2,
+    "title": "Stokes Drift",
+    "type": "boolean"
+    },
+    "z": {
+    "anyOf": [
+    {
+    "maximum": 0,
+    "minimum": -10000,
+    "type": "number"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": 0,
+    "description": "Depth below sea level where elements are released. This depth is neglected if seafloor seeding is set selected.",
+    "od_mapping": "seed:z",
+    "ptm_level": 1,
+    "title": "Z",
+    "units": "m"
+    },
+    "number": {
+    "default": 1,
+    "description": "The number of elements for the simulation.",
+    "minimum": 1,
+    "od_mapping": "seed:number",
+    "ptm_level": 1,
+    "title": "Number",
+    "type": "integer",
+    "units": 1
+    },
+    "drift_model": {
+    "$ref": "#/$defs/DriftModelEnum",
+    "default": "OpenOil"
+    },
+    "save_interpolator": {
+    "default": false,
+    "description": "Whether to save the interpolator.",
+    "title": "Save Interpolator",
+    "type": "boolean"
+    },
+    "interpolator_filename": {
+    "anyOf": [
+    {
+    "format": "path",
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "Filename to save interpolator to or read interpolator from. Exclude suffix (which should be .pickle).",
+    "ptm_level": 3,
+    "title": "Interpolator Filename"
+    },
+    "export_variables": {
+    "anyOf": [
+    {
+    "items": {
+    "type": "string"
+    },
+    "type": "array"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "List of variables to export. Options available with `m.all_export_variables` for a given `drift_model`. [***REMOVED***lon***REMOVED***, ***REMOVED***lat***REMOVED***, ***REMOVED***ID***REMOVED***, ***REMOVED***status***REMOVED***, ***REMOVED***z***REMOVED***] will always be exported. Default of None means all possible variables are exported.",
+    "ptm_level": 3,
+    "title": "Export Variables"
+    },
+    "plots": {
+    "anyOf": [
+    {
+    "additionalProperties": {
+    "type": "object"
+    },
+    "type": "object"
+    },
+    {
+    "type": "string"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": null,
+    "description": "Dictionary of plots to generate using OpenDrift.",
+    "ptm_level": 1,
+    "title": "Plots"
+    },
+    "radius": {
+    "default": 1000,
+    "description": "Radius around each lon-lat pair, within which particles will be randomly seeded.",
+    "maximum": 1000000,
+    "minimum": 0,
+    "ptm_level": 2,
+    "title": "Radius",
+    "type": "number",
+    "units": "m"
+    },
+    "radius_type": {
+    "$ref": "#/$defs/RadiusTypeEnum",
+    "default": "gaussian",
+    "description": "Radius type. Options: ***REMOVED***gaussian***REMOVED*** or ***REMOVED***uniform***REMOVED***.",
+    "ptm_level": 3
+    },
+    "max_speed": {
+    "default": 5,
+    "description": "Typical maximum speed of elements, used to estimate reader buffer size",
+    "exclusiveMinimum": 0,
+    "od_mapping": "drift:max_speed",
+    "ptm_level": 1,
+    "title": "Maximum speed",
+    "type": "number",
+    "units": "m/s"
+    },
+    "use_auto_landmask": {
+    "default": true,
+    "description": "A built-in GSHHG global landmask is used if True, otherwise landmask is taken from reader or fallback value.",
+    "od_mapping": "general:use_auto_landmask",
+    "ptm_level": 3,
+    "title": "Use Auto Landmask",
+    "type": "boolean"
+    },
+    "coastline_action": {
+    "$ref": "#/$defs/CoastlineActionEnum",
+    "default": "stranding",
+    "description": "None means that objects may also move over land. stranding means that objects are deactivated if they hit land. previous means that objects will move back to the previous location if they hit land",
+    "od_mapping": "general:coastline_action",
+    "ptm_level": 2,
+    "title": "Coastline Action"
+    },
+    "current_uncertainty": {
+    "default": 0.05,
+    "description": "Add gaussian perturbation with this standard deviation to current components at each time step",
+    "maximum": 5,
+    "minimum": 0,
+    "od_mapping": "drift:current_uncertainty",
+    "ptm_level": 2,
+    "title": "Current Uncertainty",
+    "type": "number",
+    "units": "m/s"
+    },
+    "wind_uncertainty": {
+    "default": 0.5,
+    "description": "Add gaussian perturbation with this standard deviation to wind components at each time step.",
+    "maximum": 5,
+    "minimum": 0,
+    "od_mapping": "drift:wind_uncertainty",
+    "ptm_level": 2,
+    "title": "Wind Uncertainty",
+    "type": "number",
+    "units": "m/s"
+    },
+    "seed_seafloor": {
+    "default": false,
+    "description": "Elements are seeded at seafloor, and seeding depth (z) is neglected.",
+    "od_mapping": "seed:seafloor",
+    "ptm_level": 2,
+    "title": "Seed Seafloor",
+    "type": "boolean"
+    },
+    "diffusivitymodel": {
+    "$ref": "#/$defs/DiffusivityModelEnum",
+    "default": "environment",
+    "description": "Algorithm/source used for profile of vertical diffusivity. Environment means that diffusivity is acquired from readers or environment constants/fallback.",
+    "od_mapping": "vertical_mixing:diffusivitymodel",
+    "ptm_level": 3,
+    "title": "Diffusivity model",
+    "units": "seconds"
+    },
+    "mixed_layer_depth": {
+    "default": 50,
+    "description": "Fallback value for ocean_mixed_layer_thickness if not available from any reader",
+    "minimum": 0,
+    "od_mapping": "environment:mixed_layer_depth",
+    "ptm_level": 3,
+    "title": "Mixed Layer Depth",
+    "type": "number",
+    "units": "m"
+    },
+    "seafloor_action": {
+    "$ref": "#/$defs/SeafloorActionEnum",
+    "default": "lift_to_seafloor",
+    "description": "deactivate: elements are deactivated; lift_to_seafloor: elements are lifted to seafloor level; previous: elements are moved back to previous position; none; seafloor is ignored.",
+    "od_mapping": "general:seafloor_action",
+    "ptm_level": 2,
+    "title": "Seafloor Action"
+    },
+    "wind_drift_depth": {
+    "anyOf": [
+    {
+    "maximum": 10,
+    "minimum": 0,
+    "type": "number"
+    },
+    {
+    "type": "null"
+    }
+    ],
+    "default": 0.1,
+    "description": "The direct wind drift (windage) is linearly decreasing from the surface value (wind_drift_factor) until 0 at this depth.",
+    "od_mapping": "drift:wind_drift_depth",
+    "ptm_level": 3,
+    "title": "Wind Drift Depth",
+    "units": "meters"
+    },
+    "vertical_mixing_timestep": {
+    "default": 60,
+    "description": "Time step used for inner loop of vertical mixing.",
+    "maximum": 3600,
+    "minimum": 0.1,
+    "od_mapping": "vertical_mixing:timestep",
+    "ptm_level": 3,
+    "title": "Vertical Mixing Timestep",
+    "type": "number",
+    "units": "seconds"
+    },
+    "wind_drift_factor": {
+    "default": 0.03,
+    "description": "Elements at surface are moved with this fraction of the wind vector, in addition to currents and Stokes drift",
+    "minimum": 0,
+    "od_mapping": "seed:wind_drift_factor",
+    "ptm_level": 2,
+    "title": "Wind Drift Factor",
+    "type": "number",
+    "units": "1"
+    },
+    "vertical_mixing": {
+    "default": false,
+    "description": "Activate vertical mixing scheme with inner loop",
+    "od_mapping": "vertical_mixing:vertical_mixing",
+    "ptm_level": 2,
+    "title": "Vertical Mixing",
+    "type": "boolean"
+    },
+    "oil_type": {
+    "type": "string",
+    "oneOf": [
+    {
+    "const": "AD00010",
+    "title": "ABU SAFAH, ARAMCO"
+    },
+    {
+    "const": "AD01986",
+    "title": "ALASKA NORTH SLOPE"
+    },
+    {
+    "const": "AD04012",
+    "title": "GENERIC BUNKER C"
+    }
+    ]
+    },
+    "m3_per_hour": {
+    "default": 1,
+    "description": "The amount (volume) of oil released per hour (or total amount if release is instantaneous)",
+    "exclusiveMinimum": 0,
+    "od_mapping": "seed:m3_per_hour",
+    "ptm_level": 1,
+    "title": "M3 Per Hour",
+    "type": "number",
+    "units": "m3 per hour"
+    },
+    "oil_film_thickness": {
+    "default": 0.001,
+    "description": "Seeding value of oil_film_thickness",
+    "od_mapping": "seed:oil_film_thickness",
+    "ptm_level": 3,
+    "title": "Oil Film Thickness",
+    "type": "number",
+    "units": "m"
+    },
+    "droplet_size_distribution": {
+    "$ref": "#/$defs/DropletSizeDistributionEnum",
+    "default": "uniform",
+    "description": "Droplet size distribution used for subsea release.",
+    "od_mapping": "seed:droplet_size_distribution",
+    "ptm_level": 3,
+    "title": "Droplet Size Distribution"
+    },
+    "droplet_diameter_mu": {
+    "default": 0.001,
+    "description": "The mean diameter of oil droplet for a subsea release, used in normal/lognormal distributions.",
+    "maximum": 1,
+    "minimum": 1e-8,
+    "od_mapping": "seed:droplet_diameter_mu",
+    "ptm_level": 3,
+    "title": "Droplet Diameter Mu",
+    "type": "number",
+    "units": "meters"
+    },
+    "droplet_diameter_sigma": {
+    "default": 0.0005,
+    "description": "The standard deviation in diameter of oil droplet for a subsea release, used in normal/lognormal distributions.",
+    "maximum": 1,
+    "minimum": 1e-8,
+    "od_mapping": "seed:droplet_diameter_sigma",
+    "ptm_level": 3,
+    "title": "Droplet Diameter Sigma",
+    "type": "number",
+    "units": "meters"
+    },
+    "droplet_diameter_min_subsea": {
+    "default": 0.0005,
+    "description": "The minimum diameter of oil droplet for a subsea release, used in uniform distribution.",
+    "maximum": 1,
+    "minimum": 1e-8,
+    "od_mapping": "seed:droplet_diameter_min_subsea",
+    "ptm_level": 3,
+    "title": "Droplet Diameter Min Subsea",
+    "type": "number",
+    "units": "meters"
+    },
+    "droplet_diameter_max_subsea": {
+    "default": 0.005,
+    "description": "The maximum diameter of oil droplet for a subsea release, used in uniform distribution.",
+    "maximum": 1,
+    "minimum": 1e-8,
+    "od_mapping": "seed:droplet_diameter_max_subsea",
+    "ptm_level": 3,
+    "title": "Droplet Diameter Max Subsea",
+    "type": "number",
+    "units": "meters"
+    },
+    "emulsification": {
+    "default": true,
+    "description": "Surface oil is emulsified, i.e. water droplets are mixed into oil due to wave mixing, with resulting increase of viscosity.",
+    "od_mapping": "processes:emulsification",
+    "ptm_level": 2,
+    "title": "Emulsification",
+    "type": "boolean"
+    },
+    "dispersion": {
+    "default": true,
+    "description": "Oil is removed from simulation (dispersed), if entrained as very small droplets.",
+    "od_mapping": "processes:dispersion",
+    "ptm_level": 2,
+    "title": "Dispersion",
+    "type": "boolean"
+    },
+    "evaporation": {
+    "default": true,
+    "description": "Surface oil is evaporated.",
+    "od_mapping": "processes:evaporation",
+    "ptm_level": 2,
+    "title": "Evaporation",
+    "type": "boolean"
+    },
+    "update_oilfilm_thickness": {
+    "default": false,
+    "description": "Oil film thickness is calculated at each time step. The alternative is that oil film thickness is kept constant with value provided at seeding.",
+    "od_mapping": "processes:update_oilfilm_thickness",
+    "ptm_level": 2,
+    "title": "Update Oilfilm Thickness",
+    "type": "boolean"
+    },
+    "biodegradation": {
+    "default": false,
+    "description": "Oil mass is biodegraded (eaten by bacteria).",
+    "od_mapping": "processes:biodegradation",
+    "ptm_level": 2,
+    "title": "Biodegradation",
+    "type": "boolean"
+    }
+    },
+    "title": "OpenOilModelConfig",
+    "type": "object"
+    }

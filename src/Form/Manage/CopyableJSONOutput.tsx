@@ -1,6 +1,6 @@
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement, type ReactNode, useState } from ***REMOVED***react***REMOVED***
 
 export const CopyButton = ({
   string,
@@ -8,7 +8,10 @@ export const CopyButton = ({
   defaultClassName = ***REMOVED***text-lg text-slate-400 pointer-events-none***REMOVED***,
   className,
   defaultWrapperClassName,
-  wrapperClassName
+  wrapperClassName,
+  ToCopyElement,
+  OnCopiedElement
+
 }: {
   string: string
   defaultClassName?: string
@@ -16,6 +19,8 @@ export const CopyButton = ({
   defaultWrapperClassName?: string
   wrapperClassName?: string
   size?: ***REMOVED***sm***REMOVED*** | ***REMOVED***med***REMOVED*** | ***REMOVED***lg***REMOVED*** | ***REMOVED***xlg***REMOVED***
+  ToCopyElement?: ReactNode
+  OnCopiedElement?: ReactNode
 }): ReactElement => {
   const [copied, setCopied] = useState(false)
   return (
@@ -35,14 +40,14 @@ export const CopyButton = ({
         })
     }}>
       {copied
-        ? <span className={utils.makeClassName({
+        ? OnCopiedElement ?? <span className={utils.makeClassName({
           className,
           defaultClassName
         })}><CheckIcon className={utils.makeClassName({
           className: ***REMOVED***bg-slate-600 text-white rounded-full***REMOVED***,
           extras: [utils.getIconClassForSize(size)]
         })} /></span>
-        : <CopyIcon className={utils.makeClassName({
+        : ToCopyElement ?? <CopyIcon className={utils.makeClassName({
           className,
           defaultClassName,
           extras: [utils.getIconClassForSize(size)]
