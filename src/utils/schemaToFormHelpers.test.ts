@@ -52,6 +52,22 @@ describe('schemaToFormHelpers', () => {
       expect(errors).toBeDefined()
       expect(errors?.[0]).toContain('must be >= 0')
     })
+    it('returns errors for missing required field', () => {
+      const errors = validateAgainstSchema(schema, {})
+      expect(errors).toBeDefined()
+      expect(errors?.[0]).toContain('required')
+    })
+    it('returns errors for invalid schema', () => {
+      // Invalid: "properties" must be an object, not an array
+      const invalidSchema: JSONSchema6 = {
+        type: 'object',
+        properties: [] as any
+      }
+      const errors = validateAgainstSchema(invalidSchema, { age: 10 })
+      console.log(errors)
+      expect(errors).toBeDefined()
+      expect(errors?.[0]).toContain('properties must be object')
+    })
   })
 
   describe('getValueFromSchema', () => {

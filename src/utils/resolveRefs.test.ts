@@ -104,6 +104,22 @@ describe('resolveRefs', () => {
     })
   })
 
+  it('should resolve a schema with a top level $ref', () => {
+    const schema: JSONSchema6 = {
+      definitions: {
+        foo: { type: 'number', minimum: 0 }
+      },
+      $ref: '#/definitions/foo'
+    }
+    expect(resolveRefs(schema)).toEqual({
+      type: 'number',
+      minimum: 0,
+      definitions: {
+        foo: { type: 'number', minimum: 0 }
+      }
+    })
+  })
+
   it('should handle array of schemas', () => {
     const schema: JSONSchema6[] = [
       { type: 'string' },
