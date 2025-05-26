@@ -104,6 +104,22 @@ describe(***REMOVED***resolveRefs***REMOVED***, () => {
     })
   })
 
+  it(***REMOVED***should resolve a schema with a top level $ref***REMOVED***, () => {
+    const schema: JSONSchema6 = {
+      definitions: {
+        foo: { type: ***REMOVED***number***REMOVED***, minimum: 0 }
+      },
+      $ref: ***REMOVED***#/definitions/foo***REMOVED***
+    }
+    expect(resolveRefs(schema)).toEqual({
+      type: ***REMOVED***number***REMOVED***,
+      minimum: 0,
+      definitions: {
+        foo: { type: ***REMOVED***number***REMOVED***, minimum: 0 }
+      }
+    })
+  })
+
   it(***REMOVED***should handle array of schemas***REMOVED***, () => {
     const schema: JSONSchema6[] = [
       { type: ***REMOVED***string***REMOVED*** },
