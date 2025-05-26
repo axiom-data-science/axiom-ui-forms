@@ -9,7 +9,7 @@ import metaSchemaDraftV6 from 'ajv/lib/refs/json-schema-draft-06.json'
 import metaSchemaV5 from 'ajv/lib/refs/json-schema-2020-12/schema.json'
 import metaSchemaV4 from 'ajv/lib/refs/json-schema-2019-09/schema.json'
 
-import { resolveRefs } from '@/Form/resolveRefs'
+import { resolveRefs } from '@/utils/resolveRefs'
 import { omit } from 'lodash'
 import { type ISelectOptionProps } from '@axdspub/axiom-ui-utilities'
 import { getFieldsFromFormSection, getPathFromField, makeJsonPath } from '@/utils/getters'
