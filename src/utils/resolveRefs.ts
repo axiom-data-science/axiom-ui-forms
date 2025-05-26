@@ -11,8 +11,9 @@ export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6
   if (typeof schema !== ***REMOVED***object***REMOVED*** || schema === null) return schema
 
   if (Array.isArray(schema)) {
-    // not passing root - schema can only have refs to itself
-    return schema.map((item) => resolveRefs(item)) as unknown as T
+    // if top level root is array, don***REMOVED***t pass it
+    // but hold on to root if we***REMOVED***re looking at an embedded array (anyOf: [], allOf: [], oneOf: [])
+    return schema.map((item) => resolveRefs(item, Array.isArray(root) ? undefined : root)) as unknown as T
   }
 
   if (schema.$ref) {
@@ -33,6 +34,9 @@ export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6
     // console.log(mergedSchema)
 
     // Recursively resolve all properties of the merged schema
+    console.log(***REMOVED***Merged schema ref:***REMOVED***, mergedSchema.$ref)
+    console.log(***REMOVED***Root***REMOVED***, root)
+    console.log(***REMOVED***----***REMOVED***)
     return resolveRefs(mergedSchema, root) as T
   }
 

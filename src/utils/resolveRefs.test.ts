@@ -48,6 +48,43 @@ describe(***REMOVED***resolveRefs***REMOVED***, () => {
     })
   })
 
+  it(***REMOVED***should resolve $ref embedded in anyOf without erroring***REMOVED***, () => {
+    const schema: JSONSchema6 & { ***REMOVED***$defs***REMOVED***: Record<string, JSONSchema6> } = {
+      $defs: {
+        OceanModelEnum: {
+          enum: [
+            ***REMOVED***CIOFSOP***REMOVED***,
+            ***REMOVED***CIOFSFRESH***REMOVED***,
+            ***REMOVED***NWGOA***REMOVED***,
+            ***REMOVED***CIOFS***REMOVED***,
+            ***REMOVED***ONTHEFLY***REMOVED***,
+            ***REMOVED***TXLA***REMOVED***
+          ],
+          title: ***REMOVED***OceanModelEnum***REMOVED***,
+          type: ***REMOVED***string***REMOVED***
+        }
+      },
+      additionalProperties: false,
+      properties: {
+        ocean_model: {
+          anyOf: [
+            {
+              $ref: ***REMOVED***#/$defs/OceanModelEnum***REMOVED***
+            },
+            {
+              type: ***REMOVED***null***REMOVED***
+            }
+          ],
+          default: ***REMOVED***CIOFSOP***REMOVED***,
+          description: ***REMOVED***Name of ocean model to use for driving drifter simulation.***REMOVED***
+        }
+      },
+      title: ***REMOVED***OpenOilModelConfig***REMOVED***,
+      type: ***REMOVED***object***REMOVED***
+    }
+    expect(() => resolveRefs(schema)).not.toThrow()
+  })
+
   it(***REMOVED***should resolve $ref inside properties***REMOVED***, () => {
     const schema: JSONSchema6 = {
       definitions: {
