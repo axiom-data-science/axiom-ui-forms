@@ -81,7 +81,7 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
   </div>)
 }
 
-const TextInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const TextInput = ({ field, onChange, value, className }: IFieldInputProps): ReactElement => {
   const [error, setError] = useState<string | undefined>(undefined)
 
   return (
@@ -90,6 +90,7 @@ const TextInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
         id={field.id}
         testId={field.id}
         error={error}
+        className={className}
         value={value !== undefined && value !== null ? String(value) : ***REMOVED******REMOVED***}
         label={<FieldLabel {...field} />} onChange={(e) => {
           if (e !== undefined && !isNaN(+e) && e !== ***REMOVED******REMOVED***) {
@@ -125,7 +126,7 @@ const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
       }
     : field
   const el = (
-    <div>{
+    <>{
     max !== undefined
       ? <SliderInput
         field={fieldForInput}
@@ -138,8 +139,10 @@ const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
         field={fieldForInput}
         value={initialValue}
         onChange={onChange}
-        className=***REMOVED***max-w-[400px]***REMOVED***/>
-      }</div>
+        className=***REMOVED***max-w-[300px]***REMOVED***
+
+        />
+      }</>
   )
 
   if (canBeNull) {

@@ -294,7 +294,9 @@ export interface IFormFieldProps {
   onChange?: IValueChangeFn
 }
 
-export type IFormValues = Record<string, IValueType | IValueType[]>
+export interface IFormValues {
+  [key: string]: IValueType | IValueType[] | undefined | IFormValues
+}
 export type IFormValueState = [IFormValues, (v: IFormValues) => void]
 
 export type IFormInputComponent = React.FC<IFormFieldProps>

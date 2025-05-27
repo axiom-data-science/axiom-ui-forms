@@ -31,12 +31,7 @@ export function resolveRefs<T extends JSONSchema6> (schema: T, root: JSONSchema6
     // allow a $ref to be followed multiple steps
     mergedSchema.$ref = refValue.$ref ?? undefined
 
-    // console.log(mergedSchema)
-
     // Recursively resolve all properties of the merged schema
-    console.log(***REMOVED***Merged schema ref:***REMOVED***, mergedSchema.$ref)
-    console.log(***REMOVED***Root***REMOVED***, root)
-    console.log(***REMOVED***----***REMOVED***)
     return resolveRefs(mergedSchema, root) as T
   }
 

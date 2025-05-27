@@ -86,7 +86,7 @@ const makeLabel = (options: Array<string | number | undefined | null>): string |
     return undefined
   }
   return String(validOptions[0])
-    .replace(/_/g, ***REMOVED*** ***REMOVED***)
+    .replace(/_|-/g, ***REMOVED*** ***REMOVED***)
     .split(***REMOVED*** ***REMOVED***)
     .map((s, i) => {
       return i === 0 ? `${s.charAt(0).toUpperCase()}${s.slice(1)}` : s
@@ -139,6 +139,15 @@ export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
   }
   if (schema.const !== undefined) {
     return String(schema.const)
+  }
+  if (schema.title !== undefined && schema.title !== null) {
+    return getValueFromSchema(schema.title)
+  }
+  if (schema.$id !== undefined && schema.$id !== null) {
+    if (typeof schema.$id === ***REMOVED***string***REMOVED*** || typeof schema.$id === ***REMOVED***number***REMOVED***) {
+      return makeLabel([String(schema.$id)])
+    }
+    return getValueFromSchema(schema.$id)
   }
   return undefined
 }

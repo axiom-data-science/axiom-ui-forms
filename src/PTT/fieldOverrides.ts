@@ -40,9 +40,73 @@ const fieldOverrides: IFormFieldOverride[] = [
     defaultValue: 1000
   },
   {
-    prop: ***REMOVED***geojson***REMOVED***,
-    label: ***REMOVED***Select a point***REMOVED***,
-    type: ***REMOVED***geojson***REMOVED***
+    prop: ***REMOVED***shape_type***REMOVED***,
+    label: ***REMOVED***Shape type***REMOVED***,
+    type: ***REMOVED***select***REMOVED***,
+    defaultValue: ***REMOVED***point***REMOVED***,
+    options: [
+      { label: ***REMOVED***Point***REMOVED***, value: ***REMOVED***point***REMOVED*** },
+      { label: ***REMOVED***Polygon***REMOVED***, value: ***REMOVED***polygon***REMOVED*** },
+      { label: ***REMOVED***Line***REMOVED***, value: ***REMOVED***linestring***REMOVED*** },
+      { label: ***REMOVED***Shapefile***REMOVED***, value: ***REMOVED***shapefile***REMOVED*** }
+    ],
+    settings: {
+      allowNull: false
+    }
+  },
+  {
+    prop: ***REMOVED***point***REMOVED***,
+    destPath: ***REMOVED***geojson***REMOVED***,
+    type: ***REMOVED***geometry***REMOVED***,
+    label: null,
+    description: ***REMOVED***Select a point on the map.***REMOVED***,
+    settings: {
+      drawPointEnabled: true,
+      showCoordinateInput: false
+    },
+    conditions: {
+      dependsOn: ***REMOVED***shape_type***REMOVED***,
+      value: ***REMOVED***point***REMOVED***
+    }
+  },
+  {
+    prop: ***REMOVED***polygon***REMOVED***,
+    destPath: ***REMOVED***geojson***REMOVED***,
+    type: ***REMOVED***geometry***REMOVED***,
+    label: null,
+    description: ***REMOVED***Draw a polygon on the map.***REMOVED***,
+    settings: {
+      drawPolygonEnabled: true,
+      showCoordinateInput: false
+    },
+    conditions: {
+      dependsOn: ***REMOVED***shape_type***REMOVED***,
+      value: ***REMOVED***polygon***REMOVED***
+    }
+  },
+  {
+    prop: ***REMOVED***linestring***REMOVED***,
+    destPath: ***REMOVED***geojson***REMOVED***,
+    type: ***REMOVED***geometry***REMOVED***,
+    label: null,
+    description: ***REMOVED***Draw a line on the map.***REMOVED***,
+    settings: {
+      drawPathEnabled: true,
+      showCoordinateInput: false
+    },
+    conditions: {
+      dependsOn: ***REMOVED***shape_type***REMOVED***,
+      value: ***REMOVED***linestring***REMOVED***
+    }
+  },
+  {
+    prop: ***REMOVED***shapefile***REMOVED***,
+    label: null,
+    description: ***REMOVED***Upload a shapefile to use as the shape***REMOVED***,
+    conditions: {
+      dependsOn: ***REMOVED***shape_type***REMOVED***,
+      value: ***REMOVED***shapefile***REMOVED***
+    }
   },
   {
     prop: ***REMOVED***do3D***REMOVED***,

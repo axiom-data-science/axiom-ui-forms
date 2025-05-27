@@ -65,7 +65,19 @@ const oilFormOverride: IFormOverride = {
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***geojson***REMOVED***
+              prop: ***REMOVED***shape_type***REMOVED***
+            },
+            {
+              prop: ***REMOVED***point***REMOVED***
+            },
+            {
+              prop: ***REMOVED***polygon***REMOVED***
+            },
+            {
+              prop: ***REMOVED***linestring***REMOVED***
+            },
+            {
+              prop: ***REMOVED***shapefile***REMOVED***
             },
             {
               prop: ***REMOVED***do3D***REMOVED***

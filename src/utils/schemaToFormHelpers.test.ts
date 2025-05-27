@@ -80,14 +80,20 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
     it(***REMOVED***returns value for boolean***REMOVED***, () => {
       expect(getValueFromSchema(true)).toBe(true)
     })
-    it(***REMOVED***returns value from array***REMOVED***, () => {
-      expect(getValueFromSchema([***REMOVED***bar***REMOVED***])).toBe(***REMOVED***bar***REMOVED***)
+    it(***REMOVED***returns first value from array***REMOVED***, () => {
+      expect(getValueFromSchema([***REMOVED***bar***REMOVED***, ***REMOVED***baz***REMOVED***])).toBe(***REMOVED***bar***REMOVED***)
     })
     it(***REMOVED***returns const value***REMOVED***, () => {
       expect(getValueFromSchema({ const: ***REMOVED***baz***REMOVED*** })).toBe(***REMOVED***baz***REMOVED***)
     })
     it(***REMOVED***returns undefined for undefined***REMOVED***, () => {
       expect(getValueFromSchema(undefined)).toBeUndefined()
+    })
+    it(***REMOVED***returns value from object with title***REMOVED***, () => {
+      expect(getValueFromSchema({ title: ***REMOVED***Test***REMOVED*** })).toBe(***REMOVED***Test***REMOVED***)
+    })
+    it(***REMOVED***returns undefined when no value is provided***REMOVED***, () => {
+      expect(getValueFromSchema({ id: ***REMOVED***test***REMOVED*** })).toBeUndefined()
     })
   })
 
@@ -106,6 +112,10 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
     })
     it(***REMOVED***returns value from const***REMOVED***, () => {
       expect(getLabelFromSchema({ const: ***REMOVED***abc***REMOVED*** })).toBe(***REMOVED***abc***REMOVED***)
+    })
+    it(***REMOVED***returns id when no title or const***REMOVED***, () => {
+      console.log(getLabelFromSchema({ $id: ***REMOVED***test-id***REMOVED*** }))
+      expect(getLabelFromSchema({ $id: ***REMOVED***test-id***REMOVED*** })).toBe(***REMOVED***Test id***REMOVED***)
     })
     it(***REMOVED***returns undefined for undefined***REMOVED***, () => {
       expect(getLabelFromSchema(undefined)).toBeUndefined()

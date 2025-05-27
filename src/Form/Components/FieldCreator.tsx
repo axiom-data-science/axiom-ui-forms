@@ -2,7 +2,7 @@ import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
-import { cleanUnusedDependenciesFromFormValues, createOneOfMultipleField, updateFormValuesWithFieldValue } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField, updateFormValuesWithFieldValue } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -166,8 +166,13 @@ const FieldCreator = ({
   }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
-    const formValuesCopy = updateFormValuesWithFieldValue(field, v as IValueType, formValues)
-    setFormValues(cleanUnusedDependenciesFromFormValues(form, formValuesCopy))
+    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
+      form,
+      field,
+      value: v,
+      formValues
+    })
+    setFormValues(formValuesCopyClean)
   }
   const onChangeFn = onChange ?? defaultOnChange
 

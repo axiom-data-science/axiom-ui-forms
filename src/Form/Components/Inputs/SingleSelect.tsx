@@ -12,7 +12,7 @@ const SingleSelectInput = ({ field, onChange, value }: IFieldInputProps): ReactE
         label={<FieldLabel {...field} />}
         testId={field.id}
         options={field.options}
-        includePrompt = {!field?.settings?.allowNull}
+        includePrompt = {field?.settings?.allowNull !== false}
         value={initialValue !== undefined && initialValue !== null ? String(initialValue) : ***REMOVED******REMOVED***}
         onChange={(e) => {
           onChange(e?.value)
