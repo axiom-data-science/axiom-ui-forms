@@ -56,19 +56,34 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
         field1: ***REMOVED***value1***REMOVED***,
         field2: ***REMOVED***value2***REMOVED***
       }
-      const field: IFormField = {
+      const field1: IFormField = {
         id: ***REMOVED***field1***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
         multiple: false
       }
+      const field2: IFormField = {
+        id: ***REMOVED***field2***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        multiple: false
+      }
+      const form: IForm = {
+        id: ***REMOVED***testForm***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          field1,
+          field2
+        ]
+      }
       const value = ***REMOVED***newValue***REMOVED***
 
       const updatedValues = cleanAndUpdateFormValuesWithFieldValue({
-        form: { id: ***REMOVED***testForm***REMOVED***, label: ***REMOVED***Test Form***REMOVED*** },
-        field,
+        form,
+        field: field1,
         value,
         formValues
       })
+
+      console.log(updatedValues)
 
       expect(updatedValues.field1).toBe(***REMOVED***newValue***REMOVED***)
       expect(updatedValues.field2).toBe(***REMOVED***value2***REMOVED***)
