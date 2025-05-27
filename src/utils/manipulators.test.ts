@@ -56,19 +56,34 @@ describe('manipulators.ts', () => {
         field1: 'value1',
         field2: 'value2'
       }
-      const field: IFormField = {
+      const field1: IFormField = {
         id: 'field1',
         type: 'text',
         multiple: false
       }
+      const field2: IFormField = {
+        id: 'field2',
+        type: 'text',
+        multiple: false
+      }
+      const form: IForm = {
+        id: 'testForm',
+        label: 'Test Form',
+        fields: [
+          field1,
+          field2
+        ]
+      }
       const value = 'newValue'
 
       const updatedValues = cleanAndUpdateFormValuesWithFieldValue({
-        form: { id: 'testForm', label: 'Test Form' },
-        field,
+        form,
+        field: field1,
         value,
         formValues
       })
+
+      console.log(updatedValues)
 
       expect(updatedValues.field1).toBe('newValue')
       expect(updatedValues.field2).toBe('value2')
