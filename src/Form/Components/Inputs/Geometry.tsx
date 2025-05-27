@@ -272,7 +272,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
   return (
         <div>
             <FieldLabel {...field} />
-            <div className="relative">
+            <div className="relative z-0">
                 {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
                     <div className="absolute z-20 top-4 right-4 flex flex-col gap-2">
                         {/* Point Button - Render only if allowed */}

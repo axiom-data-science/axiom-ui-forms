@@ -65,7 +65,19 @@ const oilFormOverride: IFormOverride = {
           label: 'Basic options',
           fields: [
             {
-              prop: 'geojson'
+              prop: 'shape_type'
+            },
+            {
+              prop: 'point'
+            },
+            {
+              prop: 'polygon'
+            },
+            {
+              prop: 'linestring'
+            },
+            {
+              prop: 'shapefile'
             },
             {
               prop: 'do3D'

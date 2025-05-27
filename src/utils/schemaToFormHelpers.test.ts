@@ -80,14 +80,20 @@ describe('schemaToFormHelpers', () => {
     it('returns value for boolean', () => {
       expect(getValueFromSchema(true)).toBe(true)
     })
-    it('returns value from array', () => {
-      expect(getValueFromSchema(['bar'])).toBe('bar')
+    it('returns first value from array', () => {
+      expect(getValueFromSchema(['bar', 'baz'])).toBe('bar')
     })
     it('returns const value', () => {
       expect(getValueFromSchema({ const: 'baz' })).toBe('baz')
     })
     it('returns undefined for undefined', () => {
       expect(getValueFromSchema(undefined)).toBeUndefined()
+    })
+    it('returns value from object with title', () => {
+      expect(getValueFromSchema({ title: 'Test' })).toBe('Test')
+    })
+    it('returns undefined when no value is provided', () => {
+      expect(getValueFromSchema({ id: 'test' })).toBeUndefined()
     })
   })
 
@@ -106,6 +112,10 @@ describe('schemaToFormHelpers', () => {
     })
     it('returns value from const', () => {
       expect(getLabelFromSchema({ const: 'abc' })).toBe('abc')
+    })
+    it('returns id when no title or const', () => {
+      console.log(getLabelFromSchema({ $id: 'test-id' }))
+      expect(getLabelFromSchema({ $id: 'test-id' })).toBe('Test id')
     })
     it('returns undefined for undefined', () => {
       expect(getLabelFromSchema(undefined)).toBeUndefined()

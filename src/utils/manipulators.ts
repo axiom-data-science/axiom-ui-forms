@@ -120,6 +120,33 @@ export function updateFormValuesWithFieldValue (field: IFormField, newValue: IVa
   return formValuesCopy
 }
 
+export function cleanAndUpdateFormValuesWithFieldValue ({
+  field,
+  form,
+  value,
+  formValues
+}: {
+  field: IFormField
+  form: IForm
+  value: IValueType | IValueType[]
+  formValues: IFormValues
+}): IFormValues {
+  const updatedFormValuesCopyPreClean = updateFormValuesWithFieldValue(
+    field,
+    value,
+    formValues
+  )
+  const cleanedFormValues = cleanUnusedDependenciesFromFormValues(form, updatedFormValuesCopyPreClean)
+  // re-assigning the form values lets it be cleaned above, and re-assigned below if the value is uses the same path as a removed value
+  // initial use case: multiple geometry fields with each shape type as pre-set draw type and a second field that determines the draw type
+  const formValuesCopyClean = updateFormValuesWithFieldValue(
+    field,
+    value,
+    cleanedFormValues
+  )
+  return formValuesCopyClean
+}
+
 export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormValues): IFormValues => {
   const formValuesCopy = structuredClone(formValues)
   const formWithPaths = copyAndAddPathToFields(form)

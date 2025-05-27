@@ -40,9 +40,73 @@ const fieldOverrides: IFormFieldOverride[] = [
     defaultValue: 1000
   },
   {
-    prop: 'geojson',
-    label: 'Select a point',
-    type: 'geojson'
+    prop: 'shape_type',
+    label: 'Shape type',
+    type: 'select',
+    defaultValue: 'point',
+    options: [
+      { label: 'Point', value: 'point' },
+      { label: 'Polygon', value: 'polygon' },
+      { label: 'Line', value: 'linestring' },
+      { label: 'Shapefile', value: 'shapefile' }
+    ],
+    settings: {
+      allowNull: false
+    }
+  },
+  {
+    prop: 'point',
+    destPath: 'geojson',
+    type: 'geometry',
+    label: null,
+    description: 'Select a point on the map.',
+    settings: {
+      drawPointEnabled: true,
+      showCoordinateInput: false
+    },
+    conditions: {
+      dependsOn: 'shape_type',
+      value: 'point'
+    }
+  },
+  {
+    prop: 'polygon',
+    destPath: 'geojson',
+    type: 'geometry',
+    label: null,
+    description: 'Draw a polygon on the map.',
+    settings: {
+      drawPolygonEnabled: true,
+      showCoordinateInput: false
+    },
+    conditions: {
+      dependsOn: 'shape_type',
+      value: 'polygon'
+    }
+  },
+  {
+    prop: 'linestring',
+    destPath: 'geojson',
+    type: 'geometry',
+    label: null,
+    description: 'Draw a line on the map.',
+    settings: {
+      drawPathEnabled: true,
+      showCoordinateInput: false
+    },
+    conditions: {
+      dependsOn: 'shape_type',
+      value: 'linestring'
+    }
+  },
+  {
+    prop: 'shapefile',
+    label: null,
+    description: 'Upload a shapefile to use as the shape',
+    conditions: {
+      dependsOn: 'shape_type',
+      value: 'shapefile'
+    }
   },
   {
     prop: 'do3D',
