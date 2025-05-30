@@ -169,22 +169,29 @@ interface IDateTimeField extends IFormFieldRoot {
   type: ***REMOVED***datetime***REMOVED***
   constraints?: IDateTimeConstraints
 }
-
 interface IContainerField extends IFormFieldRoot {
   skip_path?: boolean
   fields: IFormField[]
   layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
+  multiple?: boolean
 }
 
-export interface IObjectField extends IContainerField {
+// Add a type guard to enforce the condition
+type EnforceContainerFieldConstraints<T extends IContainerField> = T extends { skip_path: true }
+  ? T & { multiple: false }
+  : T
+
+export type IValidContainerField = EnforceContainerFieldConstraints<IContainerField>
+
+export interface IObjectField extends IValidContainerField {
   type: ***REMOVED***object***REMOVED***
 }
 
-export interface IObjectListField extends IContainerField {
+export interface IObjectListField extends IValidContainerField {
   type: ***REMOVED***objectList***REMOVED***
 }
 
-export interface IOneOfField extends IContainerField {
+export interface IOneOfField extends IValidContainerField {
   type: ***REMOVED***oneOf***REMOVED***
   discriminator?: {
     mapping?: Record<string, string>
@@ -192,7 +199,7 @@ export interface IOneOfField extends IContainerField {
   }
 }
 
-export interface IFormFieldSection extends IContainerField {
+export interface IFormFieldSection extends IValidContainerField {
   type: ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
 }
 

@@ -1,3 +1,4 @@
+import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
@@ -125,6 +126,13 @@ const MultipleFieldCreator = ({
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
   const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
+
+  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true && field.multiple === true) {
+    return <div className=***REMOVED***p-4 bg-slate-100***REMOVED***>
+      <FieldLabel {...field} />
+      <p className=***REMOVED***text-rose-700***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline w-4 h-4 mr-2***REMOVED*** /> Error with field <span className=***REMOVED***font-sans p-2 text-xs bg-slate-200***REMOVED***>{field.id}</span> Object fields with multiple true and skip_path true are not supported.</p>
+    </div>
+  }
 
   const InputComponent = {
     ...inputMap,
