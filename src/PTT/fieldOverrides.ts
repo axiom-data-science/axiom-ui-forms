@@ -37,7 +37,11 @@ const fieldOverrides: IFormFieldOverride[] = [
       min: 0,
       max: 1000000
     },
-    defaultValue: 1000
+    defaultValue: 1000,
+    conditions: {
+      dependsOn: 'shape_type',
+      value: 'point'
+    }
   },
   {
     prop: 'shape_type',
@@ -173,6 +177,30 @@ const fieldOverrides: IFormFieldOverride[] = [
       canBeNull: true,
       nonNullDefaultValue: 10000
     }
+  },
+  {
+    prop: 'depth_options',
+    skip_path: true,
+    type: 'object',
+    fields: [
+      {
+        prop: 'do3D'
+      },
+      {
+        prop: 'seed_seafloor'
+      },
+      {
+        prop: 'z_options',
+        label: '',
+        type: 'object',
+        skip_path: true,
+        fields: [
+          {
+            prop: 'z'
+          }
+        ]
+      }
+    ]
   }
 ]
 

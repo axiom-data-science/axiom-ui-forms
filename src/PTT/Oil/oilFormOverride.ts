@@ -80,26 +80,13 @@ const oilFormOverride: IFormOverride = {
               prop: 'shapefile'
             },
             {
-              prop: 'depth_options',
-              skip_path: true,
-              type: 'object',
-              fields: [
-                {
-                  prop: 'do3D'
-                },
-                {
-                  prop: 'seed_seafloor'
-                },
-                {
-                  prop: 'z'
-                },
-                {
-                  prop: 'radius'
-                }
-              ]
+              prop: 'radius'
             },
             {
               prop: 'number'
+            },
+            {
+              prop: 'depth_options'
             }
           ]
         },
