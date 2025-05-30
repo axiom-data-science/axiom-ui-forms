@@ -169,22 +169,29 @@ interface IDateTimeField extends IFormFieldRoot {
   type: 'datetime'
   constraints?: IDateTimeConstraints
 }
-
 interface IContainerField extends IFormFieldRoot {
   skip_path?: boolean
   fields: IFormField[]
   layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
+  multiple?: boolean
 }
 
-export interface IObjectField extends IContainerField {
+// Add a type guard to enforce the condition
+type EnforceContainerFieldConstraints<T extends IContainerField> = T extends { skip_path: true }
+  ? T & { multiple: false }
+  : T
+
+export type IValidContainerField = EnforceContainerFieldConstraints<IContainerField>
+
+export interface IObjectField extends IValidContainerField {
   type: 'object'
 }
 
-export interface IObjectListField extends IContainerField {
+export interface IObjectListField extends IValidContainerField {
   type: 'objectList'
 }
 
-export interface IOneOfField extends IContainerField {
+export interface IOneOfField extends IValidContainerField {
   type: 'oneOf'
   discriminator?: {
     mapping?: Record<string, string>
@@ -192,7 +199,7 @@ export interface IOneOfField extends IContainerField {
   }
 }
 
-export interface IFormFieldSection extends IContainerField {
+export interface IFormFieldSection extends IValidContainerField {
   type: 'section' | 'page'
 }
 
