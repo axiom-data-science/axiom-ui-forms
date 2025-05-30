@@ -231,7 +231,6 @@ export interface IFormSection {
   description?: string
   order?: number
   fields?: IFormField[]
-  sections?: IFormSection[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
 }
@@ -256,14 +255,13 @@ export interface IForm {
   navigationType?: ***REMOVED***tabs***REMOVED*** | ***REMOVED***wizard***REMOVED*** | ***REMOVED***pages***REMOVED***
   description?: string
   fields?: IFormField[]
-  sections?: IFormSection[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
   settings?: IFormSettings
 }
 
-export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, ***REMOVED***fields***REMOVED***> & { fields?: IFormFieldOverride[] }
-export type IFormFieldOverride = Partial<IFormField | IObjectFormFieldOverride> & { prop: string }
+export type IFormFieldOverride = Partial<IFormField> & { prop: string } | IObjectFormFieldOverride
+export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, ***REMOVED***fields***REMOVED***> & { fields?: IFormFieldOverride[], prop: string }
 
 export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {}
 
@@ -281,7 +279,6 @@ export interface IFormOverride {
   description?: string
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
-  sections?: IFormSectionOverride[]
   fields?: IFormFieldOverride[]
   settings?: IFormSettings
 }

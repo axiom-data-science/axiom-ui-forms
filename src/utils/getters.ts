@@ -1,4 +1,4 @@
-import { type IFormSection, type IFormValues, type IValueType, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormSection, type IFormValues, type IValueType, type IFormField, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import get from ***REMOVED***lodash/get***REMOVED***
 
 /**
@@ -8,7 +8,10 @@ import get from ***REMOVED***lodash/get***REMOVED***
  * @param index - The index of the field in the array (optional)
  * @returns The JSON path for the given field
  */
-export const makeJsonPath = (field: IFormField, index?: number): string => {
+export const makeJsonPath = (field: IFormField, index?: number): string | undefined => {
+  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
+    return undefined
+  }
   const fieldExtra = `${field.multiple && (field.index !== undefined || index !== undefined) ? `[${index ?? field.index}]` : ***REMOVED******REMOVED***}`
   if (field.destPath !== undefined) {
     return `${field.destPath}${fieldExtra}`
@@ -65,6 +68,19 @@ export function getValueFromPath (path: string, formValues: IFormValues): IValue
   return get(formValues, path)
 }
 
+function getObjectFieldValue (field: IObjectField, formValues: IFormValues, index?: number): IValueType | IValueType[] | undefined {
+  const vals = field.fields.map(f => {
+    const p = makeJsonPath(f, index)
+    const val = getFieldValue(f, formValues, index)
+    return p !== undefined
+      ? { key: p, val }
+      : typeof val === ***REMOVED***object***REMOVED*** && val !== null
+        ? Object.entries(val).map(([k, v]) => ({ key: k, val: v }))
+        : undefined
+  }).flat(Infinity).filter(d => d !== undefined) as Array<{ key: string, val: IValueType | IValueType[] | undefined }>
+  return Object.fromEntries(vals.map(v => [v.key, v.val]))
+}
+
 /**
  * Returns the value of a given field from the form values
  *
@@ -76,6 +92,11 @@ export function getValueFromPath (path: string, formValues: IFormValues): IValue
 
 export function getFieldValue (field: IFormField, formValues: IFormValues, index?: number): IValueType | IValueType[] | undefined {
   const path = makeJsonPath(field, index)
+  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined && path === undefined) {
+    return getObjectFieldValue(field, formValues, index)
+  } else if (path === undefined) {
+    return undefined
+  }
   const val = getValueFromPath(path, formValues) // formValues[field.id]
   return val
 }
@@ -86,8 +107,11 @@ export function getFieldValue (field: IFormField, formValues: IFormValues, index
  * @param field - The field to get the path from
  * @returns The path of the given field or the id of the field if no path is defined
  */
-export function getPathFromField (field: IFormField): string {
+export function getPathFromField (field: IFormField): string | undefined {
   // console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
+  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
+    return undefined
+  }
   if (field.destPath) {
     return field.destPath
   }

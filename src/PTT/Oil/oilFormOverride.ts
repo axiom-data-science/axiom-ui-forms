@@ -80,26 +80,13 @@ const oilFormOverride: IFormOverride = {
               prop: ***REMOVED***shapefile***REMOVED***
             },
             {
-              prop: ***REMOVED***depth_options***REMOVED***,
-              skip_path: true,
-              type: ***REMOVED***object***REMOVED***,
-              fields: [
-                {
-                  prop: ***REMOVED***do3D***REMOVED***
-                },
-                {
-                  prop: ***REMOVED***seed_seafloor***REMOVED***
-                },
-                {
-                  prop: ***REMOVED***z***REMOVED***
-                },
-                {
-                  prop: ***REMOVED***radius***REMOVED***
-                }
-              ]
+              prop: ***REMOVED***radius***REMOVED***
             },
             {
               prop: ***REMOVED***number***REMOVED***
+            },
+            {
+              prop: ***REMOVED***depth_options***REMOVED***
             }
           ]
         },

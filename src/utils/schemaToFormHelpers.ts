@@ -387,25 +387,74 @@ export function mergeObjects<T extends Record<string, any>> (objects: T[]): T {
 const mergeFormField = ({
   field,
   fieldOverride,
-  formFieldsOverrideMap
+  formFieldsOverrideMap,
+  schemaFieldMap
 }: {
   field: IFormField
   fieldOverride?: IFormFieldOverride
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
+  schemaFieldMap: Record<string, IFormField>
 }): IFormField => {
   const path = fieldOverride?.prop ?? makeJsonPath(field)
+  const formFieldOverrides = mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[path ?? ***REMOVED******REMOVED***]).filter(d => d !== undefined))
   const mergedField = {
     ...mergeObjects<IFormFieldOverride | IFormField>([
       {
         ...field,
         destPath: path
       },
-      mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[path]).filter(d => d !== undefined)),
+      formFieldOverrides,
       (fieldOverride ?? {}) as IFormFieldOverride
     ])
   }
-  const labelProp = mergedField.id ?? path.split(***REMOVED***.***REMOVED***).pop()
+  const labelProp = mergedField.id ?? (
+    path !== undefined
+      ? path.split(***REMOVED***.***REMOVED***).pop()
+      : fieldOverride?.prop ?? field.id
+  )
   const id = mergedField.id ?? makeFormFieldId([mergedField.id])
+  if (mergedField.type === ***REMOVED***object***REMOVED***) {
+    // attached to the schema field. defaults not overrides
+    const fieldFields = field?.type === ***REMOVED***object***REMOVED*** ? field.fields : []
+    const fieldFieldsMap = Object.fromEntries(fieldFields.map(f => [getPathFromField(f), f]))
+
+    // attached to the field override. overrides
+    const overrideFields = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? (fieldOverride.fields ?? []) : []
+    const overrideFieldsMap = Object.fromEntries(
+      overrideFields
+        .filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f)
+        .map(f => [f.prop, f])
+    )
+
+    // attached to the form override. overrides
+    const formOverrideFields = formFieldOverrides.type === ***REMOVED***object***REMOVED*** ? formFieldOverrides.fields ?? [] : []
+    const formOverrideFieldsMap = Object.fromEntries(
+      formOverrideFields
+        .filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f)
+        .map(f => [f.prop, f])
+    )
+
+    const allKeys = Object.keys({
+      ...fieldFieldsMap,
+      ...overrideFieldsMap,
+      ...formOverrideFieldsMap
+    })
+
+    mergedField.fields = allKeys.map(key => {
+      // const fieldOverride = overrideFieldsMap[key] ?? { prop: key }
+      const fieldOverride = mergeObjects<IFormFieldOverride>([
+        overrideFieldsMap[key],
+        formOverrideFieldsMap[key],
+        mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[key]).filter(d => d !== undefined))
+      ])
+      return mergeFormField({
+        field: fieldFieldsMap[key] ?? schemaFieldMap[key],
+        fieldOverride,
+        formFieldsOverrideMap,
+        schemaFieldMap
+      })
+    })
+  }
   return {
     type: mergedField.type ?? ***REMOVED***text***REMOVED***,
     id,
@@ -430,7 +479,8 @@ const mergeFormFields = ({
     return mergeFormField({
       field: schemaField,
       fieldOverride,
-      formFieldsOverrideMap
+      formFieldsOverrideMap,
+      schemaFieldMap
     })
   })
 }
@@ -495,7 +545,8 @@ export const overridesAndSchemaToFormObject = ({
     const fields = Object.values(schemaFieldMap).map(field => {
       return mergeFormField({
         field,
-        formFieldsOverrideMap: formFieldOverridesByProp
+        formFieldsOverrideMap: formFieldOverridesByProp,
+        schemaFieldMap
       })
     })
     return {

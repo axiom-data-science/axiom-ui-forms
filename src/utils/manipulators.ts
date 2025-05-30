@@ -1,6 +1,7 @@
 import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
+import { merge } from ***REMOVED***lodash***REMOVED***
 import set from ***REMOVED***lodash/set***REMOVED***
 
 export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
@@ -111,7 +112,11 @@ export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: 
 
 export function updateFormValuesWithFieldValueInPlace (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): void {
   const fieldPath = getPathFromField(field)
-  set(formValues, fieldPath, newValue)
+  if (fieldPath === undefined) {
+    merge(formValues, newValue)
+  } else {
+    set(formValues, fieldPath ?? ***REMOVED******REMOVED***, newValue)
+  }
 }
 
 export function updateFormValuesWithFieldValue (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): IFormValues {

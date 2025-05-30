@@ -11,9 +11,9 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): bool
       const fieldValue = getValueFromPath(d, formValues)
       return val !== undefined
         ? val === false
-          ? fieldValue === null || fieldValue === undefined || fieldValue === false || fieldValue === ***REMOVED******REMOVED***
+          ? (fieldValue === null || fieldValue === undefined || fieldValue === false || fieldValue === ***REMOVED******REMOVED***)
           : fieldValue === val
-        : fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ***REMOVED******REMOVED***
+        : (fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ***REMOVED******REMOVED***)
     })
     return check
   }
