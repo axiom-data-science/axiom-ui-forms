@@ -149,6 +149,9 @@ export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
     }
     return getValueFromSchema(schema.$id)
   }
+  if (Array.isArray(schema) && schema.length === 2) {
+    return typeof schema[0] === ***REMOVED***object***REMOVED*** && schema[0] !== null ? getValueFromSchema(schema[0]) : schema[0]
+  }
   return undefined
 }
 
@@ -170,6 +173,9 @@ export const getLabelFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
   }
   if (schema.title !== undefined && schema.title !== null) {
     return getLabelFromSchema(schema.title)
+  }
+  if (Array.isArray(schema) && schema.length === 2) {
+    return typeof schema[1] === ***REMOVED***object***REMOVED*** && schema[1] !== null ? getLabelFromSchema(schema[1]) : schema[1]
   }
   return String(getValueFromSchema(schema))
 }
