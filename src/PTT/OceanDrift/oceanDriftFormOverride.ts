@@ -1,9 +1,9 @@
 import { type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 
-const oilFormOverride: IFormOverride = {
-  id: 'oil',
-  label: 'Oil and Gas',
-  description: 'Oil and Gas Form',
+const oceanDriftFormOverride: IFormOverride = {
+  id: 'oceanDrift',
+  label: 'Ccean Drift Form',
+  description: 'Ocean Drift Form',
   wizard_steps: [
     {
       id: 'title',
@@ -106,46 +106,6 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
-      id: 'oil-options',
-      label: 'Oil options',
-      pages: [
-        {
-          id: 'basic',
-          label: 'Basic options',
-          fields: [
-            {
-              prop: 'oil_type'
-            },
-            {
-              prop: 'm3_per_hour'
-            },
-            {
-              prop: 'emulsification'
-            },
-            {
-              prop: 'evaporation'
-            },
-            {
-              prop: 'biodegradation'
-            }
-
-          ]
-        },
-        {
-          id: 'advanced',
-          label: 'Advanced options',
-          fields: [
-            {
-              prop: 'oil_film_thickness'
-            },
-            {
-              prop: 'update_oilfilm_thickness'
-            }
-          ]
-        }
-      ]
-    },
-    {
       id: 'physical-processes',
       label: 'Physical processes',
       pages: [
@@ -173,21 +133,6 @@ const oilFormOverride: IFormOverride = {
           fields: [
             {
               prop: 'wind_uncertainty'
-            },
-            {
-              prop: 'wind_drift_depth'
-            },
-            {
-              prop: 'vertical_mixing_timestep'
-            },
-            {
-              prop: 'mixed_layer_depth'
-            },
-            {
-              prop: 'seafloor_action'
-            },
-            {
-              prop: 'diffusivitymodel'
             },
             {
               prop: 'current_uncertainty'
@@ -231,4 +176,4 @@ const oilFormOverride: IFormOverride = {
   ]
 }
 
-export default oilFormOverride
+export default oceanDriftFormOverride

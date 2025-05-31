@@ -1,9 +1,9 @@
 import { type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 
-const oilFormOverride: IFormOverride = {
-  id: 'oil',
-  label: 'Oil and Gas',
-  description: 'Oil and Gas Form',
+const larvalFormOverride: IFormOverride = {
+  id: 'larval',
+  label: 'Larval Form',
+  description: 'Larval Form',
   wizard_steps: [
     {
       id: 'title',
@@ -106,27 +106,24 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
-      id: 'oil-options',
-      label: 'Oil options',
+      id: 'larval-options',
+      label: 'Larval options',
       pages: [
         {
           id: 'basic',
           label: 'Basic options',
           fields: [
             {
-              prop: 'oil_type'
+              prop: 'hatched'
             },
             {
-              prop: 'm3_per_hour'
+              prop: 'length'
             },
             {
-              prop: 'emulsification'
+              prop: 'weight'
             },
             {
-              prop: 'evaporation'
-            },
-            {
-              prop: 'biodegradation'
+              prop: 'stage_fraction'
             }
 
           ]
@@ -135,12 +132,7 @@ const oilFormOverride: IFormOverride = {
           id: 'advanced',
           label: 'Advanced options',
           fields: [
-            {
-              prop: 'oil_film_thickness'
-            },
-            {
-              prop: 'update_oilfilm_thickness'
-            }
+
           ]
         }
       ]
@@ -173,21 +165,6 @@ const oilFormOverride: IFormOverride = {
           fields: [
             {
               prop: 'wind_uncertainty'
-            },
-            {
-              prop: 'wind_drift_depth'
-            },
-            {
-              prop: 'vertical_mixing_timestep'
-            },
-            {
-              prop: 'mixed_layer_depth'
-            },
-            {
-              prop: 'seafloor_action'
-            },
-            {
-              prop: 'diffusivitymodel'
             },
             {
               prop: 'current_uncertainty'
@@ -231,4 +208,4 @@ const oilFormOverride: IFormOverride = {
   ]
 }
 
-export default oilFormOverride
+export default larvalFormOverride

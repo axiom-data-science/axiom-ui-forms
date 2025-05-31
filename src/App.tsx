@@ -23,6 +23,11 @@ import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
 import { ErrorBoundary } from 'react-error-boundary'
 import SchemaToFormPTT from '@/Form/SchemaToFormPTT'
 import OilForm from '@/PTT/Oil/OilForm'
+import LeewayForm from '@/PTT/Leeway/LeewayForm'
+import LarvalForm from '@/PTT/Larval/LarvalForm'
+import OceanDriftForm from '@/PTT/OceanDrift/OceanDriftForm'
+import AllPTT from '@/PTT/All'
+import ResizableSidebar from '@/TestResize'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -155,6 +160,20 @@ const App = (): ReactElement => {
             <Route path="/ptt/oil" element={<OilForm />}>
               <Route path="*" element={<OilForm />} />
             </Route>
+            <Route path="/ptt/leeway" element={<LeewayForm />}>
+              <Route path="*" element={<LeewayForm />} />
+            </Route>
+            <Route path="/ptt/larval" element={<LarvalForm />}>
+              <Route path="*" element={<LarvalForm />} />
+            </Route>
+            <Route path="/ptt/ocean-drift" element={<OceanDriftForm />}>
+              <Route path="*" element={<OceanDriftForm />} />
+            </Route>
+            <Route path="/all-ptt" element={<AllPTT />} />
+            <Route path="/all-ptt/:scenario" element={<AllPTT />}>
+              <Route path="*" element={<AllPTT />} />
+            </Route>
+            <Route path='/resizer' element={<ResizableSidebar />} />
           </Routes>
         </BrowserRouter>
     </div>

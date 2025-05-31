@@ -140,7 +140,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   const btnClass = 'border-0 rounded-none'
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col h-full relative'>
       <FieldLabel {...field} />
       <div className='flex flex-row'>
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'json' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('json') }}>JSON</Button>
@@ -149,8 +149,9 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         <Button size='xs' className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className='inline w-3 h-3 -mt-1 ml-1' /></Button>
         </div>
       </div>
-      <div className=' relative flex-grow'>
-        <span className='absolute right-6 bottom-4 pointer-events-auto z-40'>
+
+      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
+      <span className='absolute right-6 bottom-4 pointer-events-auto z-40'>
         <CopyButton string={
           error === null && workingValue !== ''
             ? format === 'json'
@@ -159,16 +160,16 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
             : workingValue
         } className='white z-40' />
         </span>
-      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
+      <div className='h-full flex-grow overflow-auto'>
       <CodeMirror
         value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
-        className='h-full'
-        height='550px'
         extensions={[
           format === 'json' ? json() : yaml(),
           autocompletion(),
           EditorView.lineWrapping
         ]}
+        height='100%'
+        className='h-full'
         onChange={handleChange}
         theme="dark"
         onFocus={() => {
@@ -181,8 +182,8 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         }}
       />
       </div>
+      </div>
 
-    </div>
   )
 }
 
