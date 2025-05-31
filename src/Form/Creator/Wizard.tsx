@@ -25,13 +25,14 @@ export const WizardNav = ({
   sectionStatus: IFormSectionStatus
   level: number
 }): ReactElement => {
+  const { form } = useFormContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
 
   return (
       <div className=***REMOVED***relative***REMOVED***>
-        <div className=***REMOVED***h-[2px] top-5 bg-slate-300 absolute left-0 right-0 z-0***REMOVED*** />
+        <div className=***REMOVED***h-[2px] top-3 bg-slate-300 absolute left-0 right-0 z-0***REMOVED*** />
         <div className=***REMOVED***flex flex-row gap-1***REMOVED***>
         {
         steps.map((p, i) => {
@@ -51,8 +52,15 @@ export const WizardNav = ({
                   ? <span className=***REMOVED***hidden absolute right-0 top-2 w-4 h-full bg-white***REMOVED***><CaretRightIcon className=***REMOVED***w-4 h-6 fill-slate-300 stroke-slate-300***REMOVED*** /></span>
                   : ***REMOVED******REMOVED***
               }
-              <p className=***REMOVED***text-xs mt-4***REMOVED***>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
-              <p className=***REMOVED***text-xs mt-2***REMOVED***>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
+              {
+                form?.settings?.show_progress
+                  ? <>
+                    <p className=***REMOVED***text-xs mt-4***REMOVED***>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
+                    <p className=***REMOVED***text-xs mt-2***REMOVED***>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
+                  </>
+                  : ***REMOVED******REMOVED***
+              }
+
             </div>
           )
         })

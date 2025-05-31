@@ -1,9 +1,9 @@
 import { type IFormOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
-const oilFormOverride: IFormOverride = {
-  id: ***REMOVED***oil***REMOVED***,
-  label: ***REMOVED***Oil and Gas***REMOVED***,
-  description: ***REMOVED***Oil and Gas Form***REMOVED***,
+const leewayFormOverride: IFormOverride = {
+  id: ***REMOVED***leeway***REMOVED***,
+  label: ***REMOVED***Leeway Form***REMOVED***,
+  description: ***REMOVED***Leeway Form***REMOVED***,
   wizard_steps: [
     {
       id: ***REMOVED***title***REMOVED***,
@@ -89,7 +89,7 @@ const oilFormOverride: IFormOverride = {
               prop: ***REMOVED***do3D***REMOVED***
             },
             {
-              prop: ***REMOVED***depth_options***REMOVED***
+              prop: ***REMOVED***z***REMOVED***
             }
           ]
         },
@@ -106,27 +106,15 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
-      id: ***REMOVED***oil-options***REMOVED***,
-      label: ***REMOVED***Oil options***REMOVED***,
+      id: ***REMOVED***leeway-options***REMOVED***,
+      label: ***REMOVED***Leeway options***REMOVED***,
       pages: [
         {
           id: ***REMOVED***basic***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***oil_type***REMOVED***
-            },
-            {
-              prop: ***REMOVED***m3_per_hour***REMOVED***
-            },
-            {
-              prop: ***REMOVED***emulsification***REMOVED***
-            },
-            {
-              prop: ***REMOVED***evaporation***REMOVED***
-            },
-            {
-              prop: ***REMOVED***biodegradation***REMOVED***
+              prop: ***REMOVED***object_type***REMOVED***
             }
 
           ]
@@ -135,12 +123,7 @@ const oilFormOverride: IFormOverride = {
           id: ***REMOVED***advanced***REMOVED***,
           label: ***REMOVED***Advanced options***REMOVED***,
           fields: [
-            {
-              prop: ***REMOVED***oil_film_thickness***REMOVED***
-            },
-            {
-              prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
-            }
+
           ]
         }
       ]
@@ -173,21 +156,6 @@ const oilFormOverride: IFormOverride = {
           fields: [
             {
               prop: ***REMOVED***wind_uncertainty***REMOVED***
-            },
-            {
-              prop: ***REMOVED***wind_drift_depth***REMOVED***
-            },
-            {
-              prop: ***REMOVED***vertical_mixing_timestep***REMOVED***
-            },
-            {
-              prop: ***REMOVED***mixed_layer_depth***REMOVED***
-            },
-            {
-              prop: ***REMOVED***seafloor_action***REMOVED***
-            },
-            {
-              prop: ***REMOVED***diffusivitymodel***REMOVED***
             },
             {
               prop: ***REMOVED***current_uncertainty***REMOVED***
@@ -231,4 +199,4 @@ const oilFormOverride: IFormOverride = {
   ]
 }
 
-export default oilFormOverride
+export default leewayFormOverride

@@ -1,0 +1,584 @@
+{
+  "$defs": {
+    "CoastlineActionEnum": {
+      "enum": [
+        "none",
+        "stranding",
+        "previous"
+      ],
+      "title": "CoastlineActionEnum",
+      "type": "string"
+    },
+    "DriftModelEnum": {
+      "enum": [
+        "OceanDrift",
+        "LarvalFish",
+        "OpenOil",
+        "Leeway"
+      ],
+      "title": "DriftModelEnum",
+      "type": "string"
+    },
+    "LogLevelEnum": {
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ],
+      "title": "LogLevelEnum",
+      "type": "string"
+    },
+    "ModelEnum": {
+      "enum": [
+        "opendrift"
+      ],
+      "title": "ModelEnum",
+      "type": "string"
+    },
+    "ObjectTypeEnum": {
+      "enum": [
+        "Person-in-water (PIW), unknown state (mean values)",
+        ">PIW, vertical PFD type III conscious",
+        ">PIW, sitting, PFD type I or II",
+        ">PIW, survival suit (face up)",
+        ">PIW, scuba suit (face up)",
+        ">PIW, deceased (face down)",
+        "Life raft, deep ballast (DB) system, general, unknown capacity and loading (mean values)",
+        ">4-14 person capacity, deep ballast system, canopy (average)",
+        ">>4-14 person capacity, deep ballast system, no drogue",
+        ">>>4-14 person capacity, deep ballast system, canopy, no drogue, light loading",
+        ">>>4-14 person capacity, deep ballast system, no drogue, heavy loading",
+        ">>4-14 person capacity, deep ballast system, canopy, with drogue (average)",
+        ">>>4-14 person capacity, deep ballast system, canopy, with drogue, light loading",
+        ">>>4-14 person capacity, deep ballast system, canopy, with drogue, heavy loading",
+        ">15-50 person capacity, deep ballast system, canopy, general (mean values)",
+        ">>15-50 person capacity, deep ballast system, canopy, no drogue, light loading",
+        ">>15-50 person capacity, deep ballast system, canopy, with drogue, heavy loading",
+        "Deep ballast system, general (mean values), capsized",
+        "Deep ballast system, general (mean values), swamped",
+        "Life-raft, shallow ballast (SB) system AND canopy, general (mean values)",
+        ">Life-raft, shallow ballast system, canopy, no drogue",
+        ">Life-raft, shallow ballast system AND canopy, with drogue",
+        "Life-raft, shallow ballast system AND canopy, capsized",
+        "Life Raft - Shallow ballast, canopy, Navy Sub Escape (SEIE) 1-man raft, NO drogue",
+        "Life Raft - Shallow ballast, canopy, Navy Sub Escape (SEIE) 1-man raft, with drogue",
+        "Life-raft, no ballast (NB) system, general (mean values)",
+        ">Life-raft, no ballast system, no canopy, no drogue",
+        ">Life-raft, no ballast system, no canopy, with drogue",
+        ">Life-raft, no ballast system, with canopy, no drogue",
+        ">Life-raft, no ballast system, with canopy, with drogue",
+        "Survival Craft - USCG Sea Rescue Kit - 3 ballasted life rafts and 300 meter of line",
+        "Life-raft, 4-6 person capacity, no ballast, with canopy, no drogue",
+        "Evacuation slide with life-raft, 46 person capacity",
+        "Survival Craft - SOLAS Hard Shell Life Capsule, 22 man",
+        "Survival Craft - Ovatek Hard Shell Life Raft, 4 and 7-man, fully loaded, drogued (average)",
+        ">Survival Craft - Ovatek Hard Shell Life Raft, 4 man, lightly loaded, no drogue",
+        ">Survival Craft - Ovatek Hard Shell Life Raft, 7 man, lightly loaded, no drogue",
+        ">Survival Craft - Ovatek Hard Shell Life Raft, 4 man, fully loaded, drogued",
+        ">Survival Craft - Ovatek Hard Shell Life Raft, 7 man, fully loaded, drogued",
+        "Sea Kayak with person on aft deck",
+        "Surf board with person",
+        "Windsurfer with mast and sail in water",
+        "Skiff - modified-v, cathedral-hull, runabout outboard powerboat",
+        "Skiff, V-hull",
+        "Skiffs, swamped and capsized",
+        "Sport boat, no canvas (*1), modified V-hull",
+        "Sport fisher, center console (*2), open cockpit",
+        "Fishing vessel, general (mean values)",
+        "Fishing vessel, Hawaiian Sampan (*3)",
+        ">Fishing vessel, Japanese side-stern trawler",
+        ">Fishing vessel, Japanese Longliner (*3)",
+        ">Fishing vessel, Korean fishing vessel (*4)",
+        ">Fishing vessel, Gill-netter with rear reel (*3)",
+        "Coastal freighter. (*5)",
+        "Sailboat Mono-hull (Average)",
+        ">Sailboat Mono-hull (Dismasted, Average)",
+        ">>Sailboat Mono-hull (Dismasted - rudder amidships)",
+        ">>Sailboat Mono-hull (Dismasted - rudder missing)",
+        ">Sailboat Mono-hull (Bare-masted,  Average)",
+        ">>Sailboat Mono-hull (Bare-masted, rudder amidships)",
+        ">>Sailboat Mono-hull (Bare-masted, rudder hove-to)",
+        "Sailboat Mono-hull, fin keel, shallow draft (was SAILBOAT-2)",
+        "Sunfish sailing dingy  -  Bare-masted, rudder missing",
+        "Fishing vessel debris",
+        "Self-locating datum marker buoy - no windage",
+        "Navy Submarine EPIRB (SEPIRB)",
+        "Bait/wharf box, holds a cubic metre of ice, mean values (*6)",
+        ">Bait/wharf box, holds a cubic metre of ice, full loaded",
+        "55-gallon (220 l) Oil Drum",
+        "Scaled down (1:3) 40-ft Container (70% submerged)",
+        "20-ft Container (80% submerged)",
+        "WWII L-MK2 mine",
+        "Immigration vessel, Cuban refugee-raft, no sail (*7)",
+        "Immigration vessel, Cuban refugee-raft, with sail (*7)",
+        "Sewage floatables, tampon applicator",
+        "Medical waste (mean values)",
+        ">Medical waste, vials",
+        ">>Medical waste, vials, large",
+        ">>Medical waste, vials, small",
+        ">Medical waste, syringes",
+        ">>Medical waste, syringes, large",
+        ">>Medical waste, syringes, small"
+      ],
+      "title": "ObjectTypeEnum",
+      "type": "string"
+    },
+    "OceanModelEnum": {
+      "enum": [
+        "CIOFSOP",
+        "CIOFSFRESH",
+        "NWGOA",
+        "CIOFS",
+        "ONTHEFLY",
+        "TXLA"
+      ],
+      "title": "OceanModelEnum",
+      "type": "string"
+    },
+    "OutputFormatEnum": {
+      "enum": [
+        "netcdf",
+        "parquet"
+      ],
+      "title": "OutputFormatEnum",
+      "type": "string"
+    },
+    "RadiusTypeEnum": {
+      "enum": [
+        "gaussian",
+        "uniform"
+      ],
+      "title": "RadiusTypeEnum",
+      "type": "string"
+    },
+    "SeedFlagEnum": {
+      "enum": [
+        "elements",
+        "geojson"
+      ],
+      "title": "SeedFlagEnum",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "model": {
+      "$ref": "#/$defs/ModelEnum",
+      "default": "opendrift",
+      "description": "Lagrangian model software to use for simulation.",
+      "ptm_level": 1
+    },
+    "lon": {
+      "anyOf": [
+        {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": -151.0,
+      "description": "Central longitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+      "ptm_level": 1,
+      "title": "Lon",
+      "units": "degrees_east"
+    },
+    "lat": {
+      "anyOf": [
+        {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": 58.0,
+      "description": "Central latitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+      "ptm_level": 1,
+      "title": "Lat",
+      "units": "degrees_north"
+    },
+    "geojson": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "GeoJSON describing a polygon within which to seed drifters. To use this parameter, also have `seed_flag==\"geojson\"`.",
+      "ptm_level": 1,
+      "title": "Geojson"
+    },
+    "seed_flag": {
+      "$ref": "#/$defs/SeedFlagEnum",
+      "default": "elements",
+      "description": "Method for seeding drifters. Options are \"elements\" or \"geojson\". If \"elements\", seed drifters at or around a single point defined by lon and lat. If \"geojson\", seed drifters within a polygon described by a GeoJSON object.",
+      "ptm_level": 1
+    },
+    "start_time": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "2022-01-01T00:00:00",
+      "description": "Start time for drifter simulation.",
+      "ptm_level": 1,
+      "title": "Start Time"
+    },
+    "start_time_end": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "If used, this creates a range of start times for drifters, starting with `start_time` and ending with `start_time_end`. Drifters will be initialized linearly between the two start times.",
+      "ptm_level": 2,
+      "title": "Start Time End"
+    },
+    "run_forward": {
+      "default": true,
+      "description": "Run forward in time.",
+      "ptm_level": 2,
+      "title": "Run Forward",
+      "type": "boolean"
+    },
+    "time_step": {
+      "default": 5,
+      "description": "Interval between particles updates, in minutes.",
+      "maximum": 1440.0,
+      "minimum": 0.01,
+      "od_mapping": "general:time_step_minutes",
+      "ptm_level": 3,
+      "title": "Time Step",
+      "type": "number",
+      "units": "minutes"
+    },
+    "time_step_output": {
+      "default": 60,
+      "description": "Time step at which element properties are stored and eventually written to file. This must be larger than the calculation time step, and be an integer multiple of this.",
+      "maximum": 1440.0,
+      "minimum": 1.0,
+      "od_mapping": "general:time_step_output_minutes",
+      "ptm_level": 3,
+      "title": "Time Step Output",
+      "type": "number",
+      "units": "minutes"
+    },
+    "steps": {
+      "anyOf": [
+        {
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Maximum number of steps. End of simulation will be start_time + steps * time_step.",
+      "ptm_level": 1,
+      "title": "Steps"
+    },
+    "duration": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Duration should be input as a string of ISO 8601. The length of the simulation. steps, end_time, or duration must be input by user.",
+      "ptm_level": 1,
+      "title": "Duration"
+    },
+    "end_time": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The end of the simulation. steps, end_time, or duration must be input by user.",
+      "ptm_level": 1,
+      "title": "End Time"
+    },
+    "ocean_model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OceanModelEnum"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "CIOFSOP",
+      "description": "Name of ocean model to use for driving drifter simulation.",
+      "ptm_level": 1
+    },
+    "ocean_model_local": {
+      "default": true,
+      "description": "Set to True to use local version of known `ocean_model` instead of remote version.",
+      "ptm_level": 3,
+      "title": "Ocean Model Local",
+      "type": "boolean"
+    },
+    "do3D": {
+      "default": false,
+      "description": "Set to True to run drifters in 3D, by default False for most drift models.",
+      "ptm_level": 1,
+      "title": "Do3D",
+      "type": "boolean"
+    },
+    "use_static_masks": {
+      "default": true,
+      "description": "Set to True to use static masks for known models instead of wetdry masks.",
+      "ptm_level": 3,
+      "title": "Use Static Masks",
+      "type": "boolean"
+    },
+    "output_file": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Name of file to write output to. If None, default name is used.",
+      "ptm_level": 3,
+      "title": "Output File"
+    },
+    "output_format": {
+      "$ref": "#/$defs/OutputFormatEnum",
+      "default": "netcdf",
+      "description": "Output file format. Options are \"netcdf\" or \"parquet\".",
+      "ptm_level": 2
+    },
+    "use_cache": {
+      "default": true,
+      "description": "Set to True to use cache for storing interpolators.",
+      "ptm_level": 3,
+      "title": "Use Cache",
+      "type": "boolean"
+    },
+    "horizontal_diffusivity": {
+      "anyOf": [
+        {
+          "maximum": 100000.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Add horizontal diffusivity (random walk)",
+      "od_mapping": "drift:horizontal_diffusivity",
+      "title": "Horizontal Diffusivity",
+      "units": "m2/s"
+    },
+    "log_level": {
+      "$ref": "#/$defs/LogLevelEnum",
+      "default": "INFO",
+      "description": "Log verbosity",
+      "ptm_level": 3
+    },
+    "stokes_drift": {
+      "default": false,
+      "description": "Advection elements with Stokes drift (wave orbital motion).",
+      "od_mapping": "drift:stokes_drift",
+      "ptm_level": 2,
+      "title": "Stokes Drift",
+      "type": "boolean"
+    },
+    "z": {
+      "anyOf": [
+        {
+          "maximum": 0.0,
+          "minimum": -10000.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": 0,
+      "description": "Depth below sea level where elements are released. This depth is neglected if seafloor seeding is set selected.",
+      "od_mapping": "seed:z",
+      "ptm_level": 1,
+      "title": "Z",
+      "units": "m"
+    },
+    "number": {
+      "default": 1,
+      "description": "The number of elements for the simulation.",
+      "minimum": 1,
+      "od_mapping": "seed:number",
+      "ptm_level": 1,
+      "title": "Number",
+      "type": "integer",
+      "units": 1
+    },
+    "drift_model": {
+      "$ref": "#/$defs/DriftModelEnum",
+      "default": "Leeway"
+    },
+    "save_interpolator": {
+      "default": false,
+      "description": "Whether to save the interpolator.",
+      "title": "Save Interpolator",
+      "type": "boolean"
+    },
+    "interpolator_filename": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Filename to save interpolator to or read interpolator from. Exclude suffix (which should be .pickle).",
+      "ptm_level": 3,
+      "title": "Interpolator Filename"
+    },
+    "export_variables": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of variables to export. Options available with `m.all_export_variables` for a given `drift_model`. [***REMOVED***lon***REMOVED***, ***REMOVED***lat***REMOVED***, ***REMOVED***ID***REMOVED***, ***REMOVED***status***REMOVED***, ***REMOVED***z***REMOVED***] will always be exported. Default of None means all possible variables are exported.",
+      "ptm_level": 3,
+      "title": "Export Variables"
+    },
+    "plots": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Dictionary of plots to generate using OpenDrift.",
+      "ptm_level": 1,
+      "title": "Plots"
+    },
+    "radius": {
+      "default": 1000.0,
+      "description": "Radius around each lon-lat pair, within which particles will be randomly seeded.",
+      "maximum": 1000000.0,
+      "minimum": 0.0,
+      "ptm_level": 2,
+      "title": "Radius",
+      "type": "number",
+      "units": "m"
+    },
+    "radius_type": {
+      "$ref": "#/$defs/RadiusTypeEnum",
+      "default": "gaussian",
+      "description": "Radius type. Options: ***REMOVED***gaussian***REMOVED*** or ***REMOVED***uniform***REMOVED***.",
+      "ptm_level": 3
+    },
+    "max_speed": {
+      "default": 5.0,
+      "description": "Typical maximum speed of elements, used to estimate reader buffer size",
+      "exclusiveMinimum": 0.0,
+      "od_mapping": "drift:max_speed",
+      "ptm_level": 1,
+      "title": "Maximum speed",
+      "type": "number",
+      "units": "m/s"
+    },
+    "use_auto_landmask": {
+      "default": true,
+      "description": "A built-in GSHHG global landmask is used if True, otherwise landmask is taken from reader or fallback value.",
+      "od_mapping": "general:use_auto_landmask",
+      "ptm_level": 3,
+      "title": "Use Auto Landmask",
+      "type": "boolean"
+    },
+    "coastline_action": {
+      "$ref": "#/$defs/CoastlineActionEnum",
+      "default": "stranding",
+      "description": "None means that objects may also move over land. stranding means that objects are deactivated if they hit land. previous means that objects will move back to the previous location if they hit land",
+      "od_mapping": "general:coastline_action",
+      "ptm_level": 2,
+      "title": "Coastline Action"
+    },
+    "current_uncertainty": {
+      "default": 0,
+      "description": "Add gaussian perturbation with this standard deviation to current components at each time step",
+      "maximum": 5.0,
+      "minimum": 0.0,
+      "od_mapping": "drift:current_uncertainty",
+      "ptm_level": 2,
+      "title": "Current Uncertainty",
+      "type": "number",
+      "units": "m/s"
+    },
+    "wind_uncertainty": {
+      "default": 0,
+      "description": "Add gaussian perturbation with this standard deviation to wind components at each time step.",
+      "maximum": 5.0,
+      "minimum": 0.0,
+      "od_mapping": "drift:wind_uncertainty",
+      "ptm_level": 2,
+      "title": "Wind Uncertainty",
+      "type": "number",
+      "units": "m/s"
+    },
+    "object_type": {
+      "$ref": "#/$defs/ObjectTypeEnum",
+      "default": "Person-in-water (PIW), unknown state (mean values)",
+      "description": "Leeway object category for this simulation",
+      "od_mapping": "seed:object_type",
+      "ptm_level": 1,
+      "title": "Object Type"
+    }
+  },
+  "title": "LeewayModelConfig",
+  "type": "object"
+}

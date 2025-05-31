@@ -159,7 +159,7 @@ const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
             if (!e) {
               onChange(undefined)
             } else {
-              onChange(numberField?.settings?.nonNullDefaultValue ?? value ?? 0)
+              onChange(numberField?.settings?.nonNullDefaultValue ?? numberField?.defaultValue ?? value ?? 0)
             }
           }} />
         {userSelectedNotNull ? el : <></>}

@@ -23,6 +23,11 @@ import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulator
 import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 import SchemaToFormPTT from ***REMOVED***@/Form/SchemaToFormPTT***REMOVED***
 import OilForm from ***REMOVED***@/PTT/Oil/OilForm***REMOVED***
+import LeewayForm from ***REMOVED***@/PTT/Leeway/LeewayForm***REMOVED***
+import LarvalForm from ***REMOVED***@/PTT/Larval/LarvalForm***REMOVED***
+import OceanDriftForm from ***REMOVED***@/PTT/OceanDrift/OceanDriftForm***REMOVED***
+import AllPTT from ***REMOVED***@/PTT/All***REMOVED***
+import ResizableSidebar from ***REMOVED***@/TestResize***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -155,6 +160,20 @@ const App = (): ReactElement => {
             <Route path="/ptt/oil" element={<OilForm />}>
               <Route path="*" element={<OilForm />} />
             </Route>
+            <Route path="/ptt/leeway" element={<LeewayForm />}>
+              <Route path="*" element={<LeewayForm />} />
+            </Route>
+            <Route path="/ptt/larval" element={<LarvalForm />}>
+              <Route path="*" element={<LarvalForm />} />
+            </Route>
+            <Route path="/ptt/ocean-drift" element={<OceanDriftForm />}>
+              <Route path="*" element={<OceanDriftForm />} />
+            </Route>
+            <Route path="/all-ptt" element={<AllPTT />} />
+            <Route path="/all-ptt/:scenario" element={<AllPTT />}>
+              <Route path="*" element={<AllPTT />} />
+            </Route>
+            <Route path=***REMOVED***/resizer***REMOVED*** element={<ResizableSidebar />} />
           </Routes>
         </BrowserRouter>
     </div>

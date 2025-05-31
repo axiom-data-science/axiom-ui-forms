@@ -140,7 +140,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
   const btnClass = ***REMOVED***border-0 rounded-none***REMOVED***
 
   return (
-    <div className=***REMOVED***flex flex-col***REMOVED***>
+    <div className=***REMOVED***flex flex-col h-full relative***REMOVED***>
       <FieldLabel {...field} />
       <div className=***REMOVED***flex flex-row***REMOVED***>
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***json***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***json***REMOVED***) }}>JSON</Button>
@@ -149,8 +149,9 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         <Button size=***REMOVED***xs***REMOVED*** className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className=***REMOVED***inline w-3 h-3 -mt-1 ml-1***REMOVED*** /></Button>
         </div>
       </div>
-      <div className=***REMOVED*** relative flex-grow***REMOVED***>
-        <span className=***REMOVED***absolute right-6 bottom-4 pointer-events-auto z-40***REMOVED***>
+
+      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-1***REMOVED*** /> {error}</p>}
+      <span className=***REMOVED***absolute right-6 bottom-4 pointer-events-auto z-40***REMOVED***>
         <CopyButton string={
           error === null && workingValue !== ***REMOVED******REMOVED***
             ? format === ***REMOVED***json***REMOVED***
@@ -159,16 +160,16 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
             : workingValue
         } className=***REMOVED***white z-40***REMOVED*** />
         </span>
-      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-1***REMOVED*** /> {error}</p>}
+      <div className=***REMOVED***h-full flex-grow overflow-auto***REMOVED***>
       <CodeMirror
         value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
-        className=***REMOVED***h-full***REMOVED***
-        height=***REMOVED***550px***REMOVED***
         extensions={[
           format === ***REMOVED***json***REMOVED*** ? json() : yaml(),
           autocompletion(),
           EditorView.lineWrapping
         ]}
+        height=***REMOVED***100%***REMOVED***
+        className=***REMOVED***h-full***REMOVED***
         onChange={handleChange}
         theme="dark"
         onFocus={() => {
@@ -181,8 +182,8 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         }}
       />
       </div>
+      </div>
 
-    </div>
   )
 }
 
