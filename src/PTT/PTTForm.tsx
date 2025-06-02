@@ -9,6 +9,7 @@ import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { JSONInput } from '@/Form/Components/Inputs'
 import { useAtom } from 'jotai'
 import rootFieldAtom from '@/PTT/rootFieldAtom'
+import layoutAtom from '@/utils/responsive/layoutState'
 
 const Footer = (): ReactElement => {
   const { formValues } = useContext(FormContext)
@@ -40,10 +41,11 @@ const PTTForm = ({
   const [fieldOverridesInput, setFieldOverridesInput] = useState(fieldOverrides)
   const [rootFieldOverridesInput, setRootFieldOverridesInput] = useAtom(rootFieldAtom)
   const [formOverrideInput, setFormOverrideInput] = useState<IFormOverride | undefined>(formOverride)
-  const [sidebarWidth, setSidebarWidth] = useState<number>(400)
+  const [sidebarWidth, setSidebarWidth] = useState<number>(600)
+  const [layout] = useAtom(layoutAtom)
 
   return (
-    <div className='m-10 mt-4 relative'>
+    <div className={`${layout.size === 'sm' || layout.size === 'md' ? 'm-4' : 'm-10 mt-4'} relative`}>
       {
             schemaInput !== undefined
               ? <SchemaFormCreator
@@ -76,13 +78,13 @@ const PTTForm = ({
               !editing
                 ? ''
                 : <div
-                    className='fixed bottom-0 right-0 w-[60%] min-w-[400px] h-full bg-white shadow-2xl z-50  flex flex-row'
+                    className='fixed bottom-0 right-0 h-full bg-white shadow-2xl z-50  flex flex-row'
                     style={{ width: `${sidebarWidth}px` }}
                   >
                   <Cross2Icon className='cursor-pointer w-6 h-6 absolute top-4 left-4' onClick={() => {
                     setEditing(false)
                   }} />
-                  <div className='w-[10px] cursor-col-resize h-full bg-red-500'
+                  <div className='w-[10px] cursor-ew-resize h-full bg-red-500'
                                       onMouseDown={(e) => {
                                         const startX = e.clientX
                                         const startWidth = sidebarWidth
@@ -90,19 +92,26 @@ const PTTForm = ({
                                         const onMouseMove = (event: MouseEvent): void => {
                                           const newWidth = Math.max(200, startWidth - (event.clientX - startX))
                                           setSidebarWidth(newWidth)
+                                          document.body.classList.add('cursor-ew-resize')
+                                          document.body.classList.add('select-none')
+                                          event.preventDefault() // Prevent text selection
+                                          event.stopPropagation()
                                         }
 
                                         const onMouseUp = (): void => {
                                           document.removeEventListener('mousemove', onMouseMove)
                                           document.removeEventListener('mouseup', onMouseUp)
+                                          document.body.classList.remove('cursor-ew-resize')
+                                          document.body.classList.remove('select-none')
                                         }
 
                                         document.addEventListener('mousemove', onMouseMove)
                                         document.addEventListener('mouseup', onMouseUp)
                                       }}
-                                      ></div>
+                                      >
+                  </div>
               <Tabs
-                className='flex flex-col h-full p-8'
+                className='flex flex-col h-full p-8 flex-grow'
                 defaultContentClassName='h-full overflow-auto p-4'
                 tabs={[
                   {

@@ -4,11 +4,14 @@ import { type IFormSection, type IValueChangeFn, type IFieldInputProps } from '@
 import FormSection from '@/Form/Creator/FormSection'
 import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/utils/validators'
-import { InfoCircledIcon } from '@radix-ui/react-icons'
-import React, { type ReactElement } from 'react'
+import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from '@radix-ui/react-icons'
+import React, { useEffect, useState, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
 import InlineMarkdown from '@/Form/Components/InlineMarkdown'
+import { useAtom } from 'jotai'
+import layoutAtom from '@/utils/responsive/layoutState'
+import { Button } from '@axdspub/axiom-ui-utilities'
 
 const PageNav = ({
   sections,
@@ -17,10 +20,13 @@ const PageNav = ({
   sections?: IFormSection[]
   level: number
 }): ReactElement => {
+  const [layout] = useAtom(layoutAtom)
   const { urlNavigable } = useFormContext()
   const { activeId, setActiveId, path } = useFormSectionContext()
   return (
-      <div className='flex flex-col  w-[200px]  border-slate-200'>{
+    layout.size === 'sm' || layout.size === 'md'
+      ? <PageNavMobile sections={sections} level={level} />
+      : <div className='flex flex-col w-[200px]  border-slate-200'>{
         sections?.map(p => {
           return (
             <NavElement
@@ -34,7 +40,73 @@ const PageNav = ({
           )
         })
       }</div>
+
   )
+}
+
+const PageNavMobile = ({
+  sections,
+  level
+}: {
+  sections?: IFormSection[]
+  level: number
+}): ReactElement => {
+  const [active, setActive] = useState(false)
+  const { activeId, setActiveId, path } = useFormSectionContext()
+  const { urlNavigable } = useFormContext()
+
+  useEffect(() => {
+    setActive(false)
+  }, [activeId])
+
+  return <div className='relative'><Button
+  type='default'
+  size='sm'
+  className='bg-slate-600 text-white border-none p-2'
+  onClick={() => {
+    setActive(!active)
+  }}
+  >
+    {
+      active
+        ? <Cross2Icon className='inline' />
+        : <DropdownMenuIcon className='inline w-6 h-6' />
+    }
+  </Button>
+
+        {
+          active
+            ? <><div className='bg-white bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40' onClick={() => { setActive(false) }}></div>
+              <div className='fixed top-0 left-0 right-0 bottom-0 flex flex-col bg-white z-50 gap-2 p-4 m-8 shadow-lg'>
+                <div>
+                <Cross2Icon className='cursor-pointer w-6 h-6' onClick={() => { setActive(false) }} />
+                  </div>
+
+              {
+                sections?.map(p => {
+                  return (
+                    <NavElement
+                      key={p.id}
+                      path={path}
+                      id={p.id}
+                      navigable={urlNavigable ?? true}
+                      onClick={() => { setActiveId(p.id) }}
+                      className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? 'bg-slate-700 text-white' : 'hover:bg-slate-200'}`}
+                    >{p.label}</NavElement>
+                  )
+                })
+              }
+              </div>
+              </>
+            : <></>
+        }
+      </div>
+}
+
+export interface INavProps {
+  sections: IFormSection[]
+  sectionStatus: IFormSectionStatus
+  level: number
 }
 
 export interface IPageLayoutProps {
@@ -47,11 +119,7 @@ export interface IPageLayoutProps {
     onChange?: IValueChangeFn
     sectionStatus: IFormSectionStatus
   }>
-  NavComponent?: React.FC<{
-    sections?: IFormSection[]
-    sectionStatus: IFormSectionStatus
-    level: number
-  }>
+  NavComponent?: React.FC<INavProps>
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }

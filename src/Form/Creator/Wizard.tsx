@@ -1,14 +1,16 @@
 import { calculateSectionStatus } from '@/utils/validators'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import { type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
-import { type IPageLayoutProps, ActivePage } from '@/Form/Creator/Page'
-import { utils } from '@axdspub/axiom-ui-utilities'
+import { type IPageLayoutProps, ActivePage, type INavProps } from '@/Form/Creator/Page'
+import { SelectInput, utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
 import React, { type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
+import { useAtomValue } from 'jotai'
+import layoutAtom from '@/utils/responsive/layoutState'
 
 const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
   const aOrder = a.order ?? Infinity
@@ -16,15 +18,85 @@ const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
   return aOrder - bOrder
 }
 
-export const WizardNav = ({
+export const WizardNavMobile = ({
   sections,
   sectionStatus,
   level
-}: {
-  sections?: IFormSection[]
-  sectionStatus: IFormSectionStatus
-  level: number
-}): ReactElement => {
+}: INavProps): ReactElement => {
+  const { activeId, setActiveId, path } = useFormSectionContext()
+  const { urlNavigable } = useFormContext()
+  const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
+  const stepsMap = Object.fromEntries(steps.map(p => [p.id, p]))
+  const currentStep = stepsMap[activeId ?? ''] ?? steps[0]
+  const currentIndex = steps.indexOf(currentStep)
+  const nextIndex = currentIndex + 1
+  const prevIndex = currentIndex - 1
+  // const params = (useParams()['*'] ?? '').split('/')
+  // const path = params.slice(0, level).join('/')
+  return (
+      <div className='flex flex-row gap-4 justify-center items-center bg-slate-200 p-4 px-8'>{
+        prevIndex >= 0
+          ? <NavElement
+              className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
+              path={path}
+              id={steps[prevIndex].id}
+              navigable={urlNavigable ?? true}
+              onClick={() => { setActiveId(steps[prevIndex].id) }}
+              >
+                <CaretLeftIcon className='inline' />
+            </NavElement>
+          : <span className={utils.createButtonClass({
+            className: 'px-4 bg-slate-400 border-none text-sm text-white'
+          })}><CaretLeftIcon className='inline' /></span>
+        }
+        <div className='flex-grow'>
+        <SelectInput
+          includePrompt={false}
+          id='wizard-step-select'
+          testId='wizard-step-select'
+          className='shadow-lg'
+          value={activeId ?? ''}
+          onChange={(e) => {
+            setActiveId(e?.value)
+          }}
+          options={steps.map(p => ({
+            value: p.id,
+            label: p.label ?? p.id
+          }))}
+          />
+        </div>
+
+        {
+          nextIndex < steps.length
+            ? <NavElement
+                path={path}
+                id={steps[nextIndex].id}
+                navigable={urlNavigable ?? true}
+                className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
+                onClick={() => { setActiveId(steps[nextIndex].id) }}
+                >
+                  <CaretRightIcon className='inline' />
+              </NavElement>
+            : <span className={utils.createButtonClass({
+              className: 'px-4 bg-slate-400 border-none text-sm text-white'
+            })}><CaretRightIcon className='inline' /></span>
+        }
+      </div>
+  )
+}
+
+export const WizardNav = (props: INavProps): ReactElement => {
+  const layout = useAtomValue(layoutAtom)
+  return layout.size === 'sm'
+    ? <WizardNavMobile {...props} />
+    : <WizardNavLargeScreen {...props} />
+}
+
+export const WizardNavLargeScreen = ({
+  sections,
+  sectionStatus,
+  level
+}: INavProps): ReactElement => {
   const { form } = useFormContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
   const { activeId, setActiveId, path } = useFormSectionContext()
@@ -32,17 +104,18 @@ export const WizardNav = ({
 
   return (
       <div className='relative'>
-        <div className='h-[2px] top-3 bg-slate-300 absolute left-0 right-0 z-0' />
-        <div className='flex flex-row gap-1'>
+        <div className='h-[2px] top-8 bg-slate-300 absolute left-0 right-0 z-0' />
+        <div className='flex flex-row gap-4 py-4  max-w-full overflow-x-auto overflow-y-visible'>
         {
         steps.map((p, i) => {
           return (
             <div key={p.id} className='flex-grow first:flex-shrink last:flex-shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative'>
               <NavElement
+
                 path={path}
                 id={p.id}
                 navigable={urlNavigable ?? true}
-                className={`px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? 'bg-slate-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`whitespace-nowrap px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? 'bg-slate-600 text-white' : 'hover:bg-slate-100'}`}
                 onClick={() => { setActiveId(p.id) }}
               >
                 {p.label}
@@ -156,7 +229,7 @@ const WizardLayoutContent = ({
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
-  className = 'flex flex-col gap-16 pt-8',
+  className = 'flex flex-col gap-4 pt-8',
   level
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
