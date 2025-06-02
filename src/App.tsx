@@ -28,6 +28,9 @@ import LarvalForm from ***REMOVED***@/PTT/Larval/LarvalForm***REMOVED***
 import OceanDriftForm from ***REMOVED***@/PTT/OceanDrift/OceanDriftForm***REMOVED***
 import AllPTT from ***REMOVED***@/PTT/All***REMOVED***
 import ResizableSidebar from ***REMOVED***@/TestResize***REMOVED***
+import layoutAtom, { getWindowSize } from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
+import { useAtom } from ***REMOVED***jotai***REMOVED***
+import { debounce } from ***REMOVED***lodash***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -124,6 +127,19 @@ function fallbackRender ({ error, resetErrorBoundary }: { error: Error, resetErr
 }
 
 const App = (): ReactElement => {
+  const [layout, setLayout] = useAtom(layoutAtom)
+  const updateLayoutValue = (): void => {
+    const newSize = getWindowSize()
+    if (layout.size !== newSize) {
+      console.log(`${layout.size} !== ${newSize}, updating layout`)
+      setLayout({ size: newSize })
+    }
+  }
+  const debounceUpdateLayout = debounce(function updateSize (): void {
+    updateLayoutValue()
+  }, 200)
+
+  window.addEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
   return (
     <ErrorBoundary fallbackRender={fallbackRender}>
     <div className=***REMOVED***h-screen flex flex-col gap-4***REMOVED***>

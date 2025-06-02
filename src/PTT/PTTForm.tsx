@@ -9,6 +9,7 @@ import { Tabs, Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED
 import { JSONInput } from ***REMOVED***@/Form/Components/Inputs***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import rootFieldAtom from ***REMOVED***@/PTT/rootFieldAtom***REMOVED***
+import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 
 const Footer = (): ReactElement => {
   const { formValues } = useContext(FormContext)
@@ -40,10 +41,11 @@ const PTTForm = ({
   const [fieldOverridesInput, setFieldOverridesInput] = useState(fieldOverrides)
   const [rootFieldOverridesInput, setRootFieldOverridesInput] = useAtom(rootFieldAtom)
   const [formOverrideInput, setFormOverrideInput] = useState<IFormOverride | undefined>(formOverride)
-  const [sidebarWidth, setSidebarWidth] = useState<number>(400)
+  const [sidebarWidth, setSidebarWidth] = useState<number>(600)
+  const [layout] = useAtom(layoutAtom)
 
   return (
-    <div className=***REMOVED***m-10 mt-4 relative***REMOVED***>
+    <div className={`${layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED*** ? ***REMOVED***m-4***REMOVED*** : ***REMOVED***m-10 mt-4***REMOVED***} relative`}>
       {
             schemaInput !== undefined
               ? <SchemaFormCreator
@@ -76,13 +78,13 @@ const PTTForm = ({
               !editing
                 ? ***REMOVED******REMOVED***
                 : <div
-                    className=***REMOVED***fixed bottom-0 right-0 w-[60%] min-w-[400px] h-full bg-white shadow-2xl z-50  flex flex-row***REMOVED***
+                    className=***REMOVED***fixed bottom-0 right-0 h-full bg-white shadow-2xl z-50  flex flex-row***REMOVED***
                     style={{ width: `${sidebarWidth}px` }}
                   >
                   <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 absolute top-4 left-4***REMOVED*** onClick={() => {
                     setEditing(false)
                   }} />
-                  <div className=***REMOVED***w-[10px] cursor-col-resize h-full bg-red-500***REMOVED***
+                  <div className=***REMOVED***w-[10px] cursor-ew-resize h-full bg-red-500***REMOVED***
                                       onMouseDown={(e) => {
                                         const startX = e.clientX
                                         const startWidth = sidebarWidth
@@ -90,19 +92,26 @@ const PTTForm = ({
                                         const onMouseMove = (event: MouseEvent): void => {
                                           const newWidth = Math.max(200, startWidth - (event.clientX - startX))
                                           setSidebarWidth(newWidth)
+                                          document.body.classList.add(***REMOVED***cursor-ew-resize***REMOVED***)
+                                          document.body.classList.add(***REMOVED***select-none***REMOVED***)
+                                          event.preventDefault() // Prevent text selection
+                                          event.stopPropagation()
                                         }
 
                                         const onMouseUp = (): void => {
                                           document.removeEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
                                           document.removeEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
+                                          document.body.classList.remove(***REMOVED***cursor-ew-resize***REMOVED***)
+                                          document.body.classList.remove(***REMOVED***select-none***REMOVED***)
                                         }
 
                                         document.addEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
                                         document.addEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
                                       }}
-                                      ></div>
+                                      >
+                  </div>
               <Tabs
-                className=***REMOVED***flex flex-col h-full p-8***REMOVED***
+                className=***REMOVED***flex flex-col h-full p-8 flex-grow***REMOVED***
                 defaultContentClassName=***REMOVED***h-full overflow-auto p-4***REMOVED***
                 tabs={[
                   {

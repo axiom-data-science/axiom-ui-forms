@@ -16,7 +16,7 @@ const ResizableSidebar = (): ReactElement => {
         open
           ? <div className=***REMOVED***bg-blue-500 h-full fixed top-0 right-0 z-50 p-4 shadow-lg***REMOVED*** style={{ width: `${sidebarWidth}px` }}>
             <div
-                className=***REMOVED***absolute top-0 left-0 h-full cursor-ew-resize***REMOVED***
+                className=***REMOVED***absolute top-0 left-0 h-full bg-blue-600 cursor-ew-resize***REMOVED***
                 style={{ width: ***REMOVED***5px***REMOVED*** }}
                 onMouseDown={(e) => {
                   const startX = e.clientX
@@ -25,11 +25,13 @@ const ResizableSidebar = (): ReactElement => {
                   const onMouseMove = (event: MouseEvent): void => {
                     const newWidth = Math.max(200, startWidth - (event.clientX - startX))
                     setSidebarWidth(newWidth)
+                    document.body.classList.add(***REMOVED***cursor-ew-resize***REMOVED***)
                   }
 
                   const onMouseUp = (): void => {
                     document.removeEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
                     document.removeEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
+                    document.body.classList.remove(***REMOVED***cursor-ew-resize***REMOVED***)
                   }
 
                   document.addEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)

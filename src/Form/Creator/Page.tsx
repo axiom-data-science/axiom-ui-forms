@@ -4,11 +4,14 @@ import { type IFormSection, type IValueChangeFn, type IFieldInputProps } from **
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
-import { InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
+import { useAtom } from ***REMOVED***jotai***REMOVED***
+import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
+import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 
 const PageNav = ({
   sections,
@@ -17,10 +20,13 @@ const PageNav = ({
   sections?: IFormSection[]
   level: number
 }): ReactElement => {
+  const [layout] = useAtom(layoutAtom)
   const { urlNavigable } = useFormContext()
   const { activeId, setActiveId, path } = useFormSectionContext()
   return (
-      <div className=***REMOVED***flex flex-col  w-[200px]  border-slate-200***REMOVED***>{
+    layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED***
+      ? <PageNavMobile sections={sections} level={level} />
+      : <div className=***REMOVED***flex flex-col w-[200px]  border-slate-200***REMOVED***>{
         sections?.map(p => {
           return (
             <NavElement
@@ -34,7 +40,73 @@ const PageNav = ({
           )
         })
       }</div>
+
   )
+}
+
+const PageNavMobile = ({
+  sections,
+  level
+}: {
+  sections?: IFormSection[]
+  level: number
+}): ReactElement => {
+  const [active, setActive] = useState(false)
+  const { activeId, setActiveId, path } = useFormSectionContext()
+  const { urlNavigable } = useFormContext()
+
+  useEffect(() => {
+    setActive(false)
+  }, [activeId])
+
+  return <div className=***REMOVED***relative***REMOVED***><Button
+  type=***REMOVED***default***REMOVED***
+  size=***REMOVED***sm***REMOVED***
+  className=***REMOVED***bg-slate-600 text-white border-none p-2***REMOVED***
+  onClick={() => {
+    setActive(!active)
+  }}
+  >
+    {
+      active
+        ? <Cross2Icon className=***REMOVED***inline***REMOVED*** />
+        : <DropdownMenuIcon className=***REMOVED***inline w-6 h-6***REMOVED*** />
+    }
+  </Button>
+
+        {
+          active
+            ? <><div className=***REMOVED***bg-white bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40***REMOVED*** onClick={() => { setActive(false) }}></div>
+              <div className=***REMOVED***fixed top-0 left-0 right-0 bottom-0 flex flex-col bg-white z-50 gap-2 p-4 m-8 shadow-lg***REMOVED***>
+                <div>
+                <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6***REMOVED*** onClick={() => { setActive(false) }} />
+                  </div>
+
+              {
+                sections?.map(p => {
+                  return (
+                    <NavElement
+                      key={p.id}
+                      path={path}
+                      id={p.id}
+                      navigable={urlNavigable ?? true}
+                      onClick={() => { setActiveId(p.id) }}
+                      className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? ***REMOVED***bg-slate-700 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
+                    >{p.label}</NavElement>
+                  )
+                })
+              }
+              </div>
+              </>
+            : <></>
+        }
+      </div>
+}
+
+export interface INavProps {
+  sections: IFormSection[]
+  sectionStatus: IFormSectionStatus
+  level: number
 }
 
 export interface IPageLayoutProps {
@@ -47,11 +119,7 @@ export interface IPageLayoutProps {
     onChange?: IValueChangeFn
     sectionStatus: IFormSectionStatus
   }>
-  NavComponent?: React.FC<{
-    sections?: IFormSection[]
-    sectionStatus: IFormSectionStatus
-    level: number
-  }>
+  NavComponent?: React.FC<INavProps>
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }
