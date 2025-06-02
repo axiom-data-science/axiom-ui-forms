@@ -32,7 +32,6 @@ body *::-webkit-scrollbar-thumb {
 
 #root {
   height: calc(100vh);
-  width: calc(100vw);
 }
 
 @tailwind components;

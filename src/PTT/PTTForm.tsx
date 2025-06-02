@@ -3,7 +3,7 @@ import { SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { FormContext } from '@/Form/Creator/FormContextProvider'
-import { CheckIcon, CopyIcon, Cross2Icon, Pencil2Icon } from '@radix-ui/react-icons'
+import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from '@radix-ui/react-icons'
 import { type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { JSONInput } from '@/Form/Components/Inputs'
@@ -84,32 +84,35 @@ const PTTForm = ({
                   <Cross2Icon className='cursor-pointer w-6 h-6 absolute top-4 left-4' onClick={() => {
                     setEditing(false)
                   }} />
-                  <div className='w-[10px] cursor-ew-resize h-full bg-red-500'
-                                      onMouseDown={(e) => {
-                                        const startX = e.clientX
-                                        const startWidth = sidebarWidth
+                    <div className='w-[10px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center'
+                              onMouseDown={(e) => {
+                                const startX = e.clientX
+                                const startWidth = sidebarWidth
 
-                                        const onMouseMove = (event: MouseEvent): void => {
-                                          const newWidth = Math.max(200, startWidth - (event.clientX - startX))
-                                          setSidebarWidth(newWidth)
-                                          document.body.classList.add('cursor-ew-resize')
-                                          document.body.classList.add('select-none')
-                                          event.preventDefault() // Prevent text selection
-                                          event.stopPropagation()
-                                        }
+                                const onMouseMove = (event: MouseEvent): void => {
+                                  const newWidth = Math.max(200, startWidth - (event.clientX - startX))
+                                  setSidebarWidth(newWidth)
+                                  document.body.classList.add('cursor-ew-resize')
+                                  document.body.classList.add('select-none')
+                                  event.preventDefault() // Prevent text selection
+                                  event.stopPropagation()
+                                }
 
-                                        const onMouseUp = (): void => {
-                                          document.removeEventListener('mousemove', onMouseMove)
-                                          document.removeEventListener('mouseup', onMouseUp)
-                                          document.body.classList.remove('cursor-ew-resize')
-                                          document.body.classList.remove('select-none')
-                                        }
+                                const onMouseUp = (): void => {
+                                  document.removeEventListener('mousemove', onMouseMove)
+                                  document.removeEventListener('mouseup', onMouseUp)
+                                  document.body.classList.remove('cursor-ew-resize')
+                                  document.body.classList.remove('select-none')
+                                }
 
-                                        document.addEventListener('mousemove', onMouseMove)
-                                        document.addEventListener('mouseup', onMouseUp)
-                                      }}
-                                      >
-                  </div>
+                                document.addEventListener('mousemove', onMouseMove)
+                                document.addEventListener('mouseup', onMouseUp)
+                              }}
+                              >
+                              <DragHandleDots2Icon />
+                              <DragHandleDots2Icon className='-mt-1' />
+                              <DragHandleDots2Icon className='-mt-1' />
+                    </div>
               <Tabs
                 className='flex flex-col h-full p-8 flex-grow'
                 defaultContentClassName='h-full overflow-auto p-4'
