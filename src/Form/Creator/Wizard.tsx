@@ -34,20 +34,20 @@ export const WizardNavMobile = ({
   // const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
   // const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
   return (
-      <div className=***REMOVED***flex flex-row gap-4 justify-center items-center bg-slate-200 p-4 px-8***REMOVED***>{
+      <div className=***REMOVED***flex flex-row gap-4 justify-center items-center***REMOVED***>{
         prevIndex >= 0
           ? <NavElement
-              className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700***REMOVED***
+              className=***REMOVED***p-2 bg-none  border-none text-sm hover:bg-slate-none***REMOVED***
               path={path}
               id={steps[prevIndex].id}
               navigable={urlNavigable ?? true}
               onClick={() => { setActiveId(steps[prevIndex].id) }}
               >
-                <CaretLeftIcon className=***REMOVED***inline***REMOVED*** />
+                <CaretLeftIcon className=***REMOVED***inline w-8 h-8***REMOVED*** />
             </NavElement>
           : <span className={utils.createButtonClass({
-            className: ***REMOVED***px-4 bg-slate-400 border-none text-sm text-white***REMOVED***
-          })}><CaretLeftIcon className=***REMOVED***inline***REMOVED*** /></span>
+            className: ***REMOVED***p-2 bg-none border-none text-sm text-slate-400 ***REMOVED***
+          })}><CaretLeftIcon className=***REMOVED***inline w-8 h-8***REMOVED*** /></span>
         }
         <div className=***REMOVED***flex-grow***REMOVED***>
         <SelectInput
@@ -72,14 +72,14 @@ export const WizardNavMobile = ({
                 path={path}
                 id={steps[nextIndex].id}
                 navigable={urlNavigable ?? true}
-                className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700***REMOVED***
+                className=***REMOVED***p-2 bg-none  border-none text-sm hover:bg-none***REMOVED***
                 onClick={() => { setActiveId(steps[nextIndex].id) }}
                 >
-                  <CaretRightIcon className=***REMOVED***inline***REMOVED*** />
+                  <CaretRightIcon className=***REMOVED***inline w-8 h-8***REMOVED*** />
               </NavElement>
             : <span className={utils.createButtonClass({
-              className: ***REMOVED***px-4 bg-slate-400 border-none text-sm text-white***REMOVED***
-            })}><CaretRightIcon className=***REMOVED***inline***REMOVED*** /></span>
+              className: ***REMOVED***p-2 bg-none border-none text-sm text-slate-400***REMOVED***
+            })}><CaretRightIcon className=***REMOVED***inline w-8 h-8***REMOVED*** /></span>
         }
       </div>
   )

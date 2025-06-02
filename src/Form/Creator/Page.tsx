@@ -62,7 +62,7 @@ const PageNavMobile = ({
   return <div className=***REMOVED***relative***REMOVED***><Button
   type=***REMOVED***default***REMOVED***
   size=***REMOVED***sm***REMOVED***
-  className=***REMOVED***bg-slate-600 text-white border-none p-2***REMOVED***
+  className=***REMOVED***bg-none  border-none p-2***REMOVED***
   onClick={() => {
     setActive(!active)
   }}
@@ -70,7 +70,7 @@ const PageNavMobile = ({
     {
       active
         ? <Cross2Icon className=***REMOVED***inline***REMOVED*** />
-        : <DropdownMenuIcon className=***REMOVED***inline w-6 h-6***REMOVED*** />
+        : <DropdownMenuIcon className=***REMOVED***inline w-8 h-8***REMOVED*** />
     }
   </Button>
 

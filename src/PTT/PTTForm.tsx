@@ -3,7 +3,7 @@ import { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMO
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { CheckIcon, CopyIcon, Cross2Icon, Pencil2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { Tabs, Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { JSONInput } from ***REMOVED***@/Form/Components/Inputs***REMOVED***
@@ -84,32 +84,35 @@ const PTTForm = ({
                   <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 absolute top-4 left-4***REMOVED*** onClick={() => {
                     setEditing(false)
                   }} />
-                  <div className=***REMOVED***w-[10px] cursor-ew-resize h-full bg-red-500***REMOVED***
-                                      onMouseDown={(e) => {
-                                        const startX = e.clientX
-                                        const startWidth = sidebarWidth
+                    <div className=***REMOVED***w-[10px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center***REMOVED***
+                              onMouseDown={(e) => {
+                                const startX = e.clientX
+                                const startWidth = sidebarWidth
 
-                                        const onMouseMove = (event: MouseEvent): void => {
-                                          const newWidth = Math.max(200, startWidth - (event.clientX - startX))
-                                          setSidebarWidth(newWidth)
-                                          document.body.classList.add(***REMOVED***cursor-ew-resize***REMOVED***)
-                                          document.body.classList.add(***REMOVED***select-none***REMOVED***)
-                                          event.preventDefault() // Prevent text selection
-                                          event.stopPropagation()
-                                        }
+                                const onMouseMove = (event: MouseEvent): void => {
+                                  const newWidth = Math.max(200, startWidth - (event.clientX - startX))
+                                  setSidebarWidth(newWidth)
+                                  document.body.classList.add(***REMOVED***cursor-ew-resize***REMOVED***)
+                                  document.body.classList.add(***REMOVED***select-none***REMOVED***)
+                                  event.preventDefault() // Prevent text selection
+                                  event.stopPropagation()
+                                }
 
-                                        const onMouseUp = (): void => {
-                                          document.removeEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
-                                          document.removeEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
-                                          document.body.classList.remove(***REMOVED***cursor-ew-resize***REMOVED***)
-                                          document.body.classList.remove(***REMOVED***select-none***REMOVED***)
-                                        }
+                                const onMouseUp = (): void => {
+                                  document.removeEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
+                                  document.removeEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
+                                  document.body.classList.remove(***REMOVED***cursor-ew-resize***REMOVED***)
+                                  document.body.classList.remove(***REMOVED***select-none***REMOVED***)
+                                }
 
-                                        document.addEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
-                                        document.addEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
-                                      }}
-                                      >
-                  </div>
+                                document.addEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
+                                document.addEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
+                              }}
+                              >
+                              <DragHandleDots2Icon />
+                              <DragHandleDots2Icon className=***REMOVED***-mt-1***REMOVED*** />
+                              <DragHandleDots2Icon className=***REMOVED***-mt-1***REMOVED*** />
+                    </div>
               <Tabs
                 className=***REMOVED***flex flex-col h-full p-8 flex-grow***REMOVED***
                 defaultContentClassName=***REMOVED***h-full overflow-auto p-4***REMOVED***
