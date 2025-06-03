@@ -67,19 +67,21 @@ const PageNavMobile = ({
     setActive(!active)
   }}
   >
-    {
+    <div className='-mr-4 -ml-2'>{
       active
         ? <Cross2Icon className='inline' />
         : <DropdownMenuIcon className='inline w-8 h-8' />
     }
+    </div>
   </Button>
 
         {
           active
-            ? <><div className='bg-white bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40' onClick={() => { setActive(false) }}></div>
-              <div className='fixed top-0 left-0 right-0 bottom-0 flex flex-col bg-white z-50 gap-2 p-4 m-8 shadow-lg'>
+            ? <><div className='bg-slate-400 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40' onClick={() => { setActive(false) }}></div>
+              <div className='fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[70%] gap-2 p-4 shadow-lg animate-slide-in'>
                 <div>
-                <Cross2Icon className='cursor-pointer w-6 h-6' onClick={() => { setActive(false) }} />
+                  <DropdownMenuIcon className='float-left cursor-pointer w-8 h-8' onClick={() => { setActive(false) }} />
+                <Cross2Icon className='cursor-pointer w-6 h-6 float-right' onClick={() => { setActive(false) }} />
                   </div>
 
               {
