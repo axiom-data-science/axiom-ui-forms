@@ -48,12 +48,12 @@ const fieldOverrides: IFormFieldOverride[] = [
   },
   {
     prop: ***REMOVED***shape_type***REMOVED***,
-    label: ***REMOVED***Shape POP***REMOVED***,
+    label: ***REMOVED***Shape***REMOVED***,
     type: ***REMOVED***select***REMOVED***,
     defaultValue: ***REMOVED***point***REMOVED***,
     options: [
       {
-        label: ***REMOVED***TEST***REMOVED***,
+        label: ***REMOVED***Point***REMOVED***,
         value: ***REMOVED***point***REMOVED***
       },
       {
