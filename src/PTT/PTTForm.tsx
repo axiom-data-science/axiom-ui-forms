@@ -81,10 +81,10 @@ const PTTForm = ({
                     className=***REMOVED***fixed bottom-0 right-0 h-full bg-white shadow-2xl z-50  flex flex-row***REMOVED***
                     style={{ width: `${sidebarWidth}px` }}
                   >
-                  <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 absolute top-4 left-4***REMOVED*** onClick={() => {
+                  <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 absolute top-4 left-8***REMOVED*** onClick={() => {
                     setEditing(false)
                   }} />
-                    <div className=***REMOVED***w-[10px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center***REMOVED***
+                    <div className=***REMOVED***w-[16px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center***REMOVED***
                               onMouseDown={(e) => {
                                 const startX = e.clientX
                                 const startWidth = sidebarWidth
