@@ -88,12 +88,15 @@ export const mergeField = ({
   }
   if (mergedField.type === ***REMOVED***object***REMOVED*** && mergedField.fields !== undefined) {
     mergedField.fields = mergedField.fields.map(f => {
-      return mergeField({
-        field: f,
-        key: getPathFromField(f),
-        fieldOverrides
-      })
-    })
+      const key = getPathFromField(f)
+      return key !== undefined
+        ? mergeField({
+          field: f,
+          key,
+          fieldOverrides
+        })
+        : null
+    }).filter(f => f !== null)
   }
   return mergedField
 }
@@ -135,12 +138,14 @@ export const mergeFields = ({
   const formCopy = copyAndAddPathToFields(form)
   return formCopy.fields?.map(field => {
     const fieldPath = getPathFromField(field)
-    return mergeField({
-      field,
-      key: fieldPath,
-      fieldOverrides
-    })
-  }) ?? []
+    return fieldPath !== undefined
+      ? mergeField({
+        field,
+        key: fieldPath,
+        fieldOverrides
+      })
+      : null
+  }).filter(d => d !== null) ?? []
 }
 
 export function mergeObjects<T extends Record<string, any>> (objects: T[]): T {
@@ -247,11 +252,13 @@ export const mergeFormSections = ({
   form.fields = remainingFields.map(key => {
     const field = fieldsMap[key]
     const fieldPath = getPathFromField(field)
-    const mergedField = mergeField({
-      field,
-      key: fieldPath,
-      fieldOverrides
-    })
+    const mergedField = fieldPath !== undefined
+      ? mergeField({
+        field,
+        key: fieldPath,
+        fieldOverrides
+      })
+      : null
     return mergedField
   }).filter(f => f !== undefined && f !== null)
 
@@ -311,11 +318,13 @@ export const applyOverridesToSchemaFields = ({
 }): IFormField[] => {
   return schemaFields.map(field => {
     const destPath = getPathFromField(field)
-    return applyOverridesToSchemaField({
-      schemaField: field,
-      candidateOverrides,
-      destPath
-    })
+    return destPath !== undefined
+      ? applyOverridesToSchemaField({
+        schemaField: field,
+        candidateOverrides,
+        destPath
+      })
+      : null
   }).filter(f => f !== undefined && f !== null)
 }
 
