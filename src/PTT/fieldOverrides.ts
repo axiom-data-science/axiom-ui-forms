@@ -48,12 +48,12 @@ const fieldOverrides: IFormFieldOverride[] = [
   },
   {
     prop: 'shape_type',
-    label: 'Shape POP',
+    label: 'Shape',
     type: 'select',
     defaultValue: 'point',
     options: [
       {
-        label: 'TEST',
+        label: 'Point',
         value: 'point'
       },
       {
