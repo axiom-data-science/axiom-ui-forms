@@ -1,0 +1,1404 @@
+{
+    "aierp_keywords": {
+      "aierp_keywords_select": true
+    },
+    "arbitrary_keywords": {
+      "keyword": true,
+      "keyword_type": true
+    },
+    "associated_resources": {
+      "aggregate_data_set": {
+        "citation_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "citation_date": {
+          "date_type": true,
+          "instance": {
+            "day": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "citation_identifier": {
+          "authority": {
+            "citation_contact": {
+              "address": {
+                "address1": true,
+                "address2": true,
+                "city": true,
+                "country": true,
+                "email": true,
+                "phone": true,
+                "postal_code": true,
+                "state": true
+              },
+              "person": {
+                "first_name": true,
+                "last_name": true,
+                "workspace_person_id": true,
+                "workspace_user_id": true
+              },
+              "personal_identifier": {
+                "identifier": true,
+                "identifier_type": {
+                  "prefix": true,
+                  "value": true
+                }
+              },
+              "position": {
+                "organization": true,
+                "position": true
+              },
+              "role": true
+            },
+            "citation_date": {
+              "date_type": true,
+              "instance": {
+                "day": true,
+                "month": true,
+                "timezone": true,
+                "year": true
+              }
+            },
+            "citation_links": {
+              "description": true,
+              "empty_contact_fields": true,
+              "link_information": {
+                "link_title": true,
+                "protocol": true
+              },
+              "online_link": true
+            },
+            "other_citation_details": true,
+            "title": true
+          },
+          "code": true,
+          "codespace": true,
+          "version": true
+        },
+        "citation_links": {
+          "description": true,
+          "empty_contact_fields": true,
+          "link_information": {
+            "link_title": true,
+            "protocol": true
+          },
+          "online_link": true
+        },
+        "format": true,
+        "other_citation_details": true,
+        "title": true
+      },
+      "aggregate_dataset_identifier": {
+        "authority": {
+          "citation_contact": {
+            "address": {
+              "address1": true,
+              "address2": true,
+              "city": true,
+              "country": true,
+              "email": true,
+              "phone": true,
+              "postal_code": true,
+              "state": true
+            },
+            "person": {
+              "first_name": true,
+              "last_name": true,
+              "workspace_person_id": true,
+              "workspace_user_id": true
+            },
+            "personal_identifier": {
+              "identifier": true,
+              "identifier_type": {
+                "prefix": true,
+                "value": true
+              }
+            },
+            "position": {
+              "organization": true,
+              "position": true
+            },
+            "role": true
+          },
+          "citation_date": {
+            "date_type": true,
+            "instance": {
+              "day": true,
+              "month": true,
+              "timezone": true,
+              "year": true
+            }
+          },
+          "citation_links": {
+            "description": true,
+            "empty_contact_fields": true,
+            "link_information": {
+              "link_title": true,
+              "protocol": true
+            },
+            "online_link": true
+          },
+          "other_citation_details": true,
+          "title": true
+        },
+        "code": true,
+        "codespace": true,
+        "version": true
+      },
+      "association_type": true,
+      "initiative_type": true
+    },
+    "category_and_form": {
+      "format": true,
+      "topic_category": true
+    },
+    "constraints": {
+      "legal_constraints": {
+        "access_code": true,
+        "other_constraints": true,
+        "use_code": true,
+        "use_limitations": true
+      },
+      "security_constraints": {
+        "classification_system": true,
+        "handling_description": true,
+        "security_classification": true,
+        "use_limitations": true,
+        "user_note": true
+      },
+      "use_limitations": true
+    },
+    "contacts": {
+      "citation_contacts": {
+        "address": {
+          "address1": true,
+          "address2": true,
+          "city": true,
+          "country": true,
+          "email": true,
+          "phone": true,
+          "postal_code": true,
+          "state": true
+        },
+        "person": {
+          "first_name": true,
+          "last_name": true,
+          "workspace_person_id": true,
+          "workspace_user_id": true
+        },
+        "personal_identifier": {
+          "identifier": true,
+          "identifier_type": {
+            "prefix": true,
+            "value": true
+          }
+        },
+        "position": {
+          "organization": true,
+          "position": true
+        },
+        "role": true
+      },
+      "credits": true,
+      "points_of_contact": {
+        "address": {
+          "address1": true,
+          "address2": true,
+          "city": true,
+          "country": true,
+          "email": true,
+          "phone": true,
+          "postal_code": true,
+          "state": true
+        },
+        "person": {
+          "first_name": true,
+          "last_name": true,
+          "workspace_person_id": true,
+          "workspace_user_id": true
+        },
+        "personal_identifier": {
+          "identifier": true,
+          "identifier_type": {
+            "prefix": true,
+            "value": true
+          }
+        },
+        "position": {
+          "organization": true,
+          "position": true
+        },
+        "role": true
+      }
+    },
+    "created_data_dictionary": {
+      "character_set": true,
+      "data_dictionary_citation": {
+        "dictionary_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "dictionary_date": {
+          "date_type": true,
+          "instance": {
+            "day": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "dictionary_link": {
+          "link_information": {
+            "description": true,
+            "link_title": true,
+            "protocol": true
+          },
+          "online_link": true,
+          "role_stub": true
+        }
+      },
+      "data_dictionary_scope": true,
+      "dictionary_title": true,
+      "dictionary_version": true,
+      "entity_overview": true,
+      "included_with_dataset": true,
+      "language": true
+    },
+    "description": {
+      "abstract": true,
+      "purpose": true,
+      "title": true
+    },
+    "distribution": {
+      "offline_distribution": {
+        "distributed_item": {
+          "format": {
+            "format_name": true,
+            "format_version": true
+          },
+          "order_process": {
+            "date_available": {
+              "day": true,
+              "hours": true,
+              "minutes": true,
+              "month": true,
+              "timezone": true,
+              "year": true
+            },
+            "fees": true,
+            "instructions": true,
+            "turnaround": true
+          },
+          "transfer_options": {
+            "offline": {
+              "medium_format": true,
+              "medium_name": true,
+              "medium_note": true
+            },
+            "online": {
+              "link_information": {
+                "description": true,
+                "link_title": true,
+                "protocol": true
+              },
+              "online_link": true
+            }
+          }
+        },
+        "distributor": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        }
+      },
+      "online_distribution": {
+        "distributor": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "format": {
+          "format_name": true,
+          "format_version": true
+        },
+        "transfer_options": {
+          "offline": {
+            "medium_format": true,
+            "medium_name": true,
+            "medium_note": true
+          },
+          "online": {
+            "link_information": {
+              "description": true,
+              "link_title": true,
+              "protocol": true
+            },
+            "online_link": true
+          }
+        }
+      }
+    },
+    "entity": {
+      "data_table": {
+        "attributes": {
+          "attribute_basics": {
+            "attribute_name": true,
+            "cardinality": true,
+            "code_name": true,
+            "datatype": true,
+            "definition": true,
+            "possible_values": {
+              "value_code": true,
+              "value_definition": true,
+              "value_name": true
+            },
+            "units": {
+              "unit": true,
+              "unit_system": true,
+              "unit_type": true
+            }
+          }
+        },
+        "entity": {
+          "table_description": {
+            "code_name": true,
+            "definition": true,
+            "feature_catalogue": true,
+            "includedWithDataset": true,
+            "is_abstract": true,
+            "table_name": true
+          }
+        }
+      }
+    },
+    "external_data_dictionary": {
+      "character_set": true,
+      "compliance_code": true,
+      "data_dictionary_citation": {
+        "citation_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "citation_date": {
+          "date_type": true,
+          "instance": {
+            "day": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "citation_identifier": {
+          "authority": {
+            "citation_contact": {
+              "address": {
+                "address1": true,
+                "address2": true,
+                "city": true,
+                "country": true,
+                "email": true,
+                "phone": true,
+                "postal_code": true,
+                "state": true
+              },
+              "person": {
+                "first_name": true,
+                "last_name": true,
+                "workspace_person_id": true,
+                "workspace_user_id": true
+              },
+              "personal_identifier": {
+                "identifier": true,
+                "identifier_type": {
+                  "prefix": true,
+                  "value": true
+                }
+              },
+              "position": {
+                "organization": true,
+                "position": true
+              },
+              "role": true
+            },
+            "citation_date": {
+              "date_type": true,
+              "instance": {
+                "day": true,
+                "month": true,
+                "timezone": true,
+                "year": true
+              }
+            },
+            "citation_links": {
+              "description": true,
+              "empty_contact_fields": true,
+              "link_information": {
+                "link_title": true,
+                "protocol": true
+              },
+              "online_link": true
+            },
+            "other_citation_details": true,
+            "title": true
+          },
+          "code": true,
+          "codespace": true,
+          "version": true
+        },
+        "citation_links": {
+          "description": true,
+          "empty_contact_fields": true,
+          "link_information": {
+            "description": true,
+            "link_title": true,
+            "protocol": true
+          },
+          "online_link": true
+        },
+        "format": true,
+        "other_citation_details": true,
+        "title": true
+      },
+      "data_dictionary_scope": true,
+      "dictionary_title": true,
+      "dictionary_version": true,
+      "entity_overview": true,
+      "included_with_dataset": true,
+      "language": true
+    },
+    "graphic_summary": {
+      "file_description": true,
+      "file_name": true,
+      "is_url": true
+    },
+    "identifiers": {
+      "authority": {
+        "citation_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "citation_date": {
+          "date_type": true,
+          "instance": {
+            "day": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "citation_links": {
+          "description": true,
+          "empty_contact_fields": true,
+          "link_information": {
+            "link_title": true,
+            "protocol": true
+          },
+          "online_link": true
+        },
+        "other_citation_details": true,
+        "title": true
+      },
+      "code": true,
+      "codespace": true,
+      "version": true
+    },
+    "lineage": {
+      "environment_description": true,
+      "lineage": true,
+      "scope_level": true
+    },
+    "location_keywords": {
+      "keyword": {
+        "id": true,
+        "label": true
+      },
+      "keyword_type": true,
+      "library": {
+        "label": true,
+        "value": true
+      },
+      "library_version": true
+    },
+    "metadata_info": {
+      "character_set": true,
+      "hierarchy_level": true,
+      "language": true,
+      "metadata_contact": {
+        "address": {
+          "address1": true,
+          "address2": true,
+          "city": true,
+          "country": true,
+          "email": true,
+          "phone": true,
+          "postal_code": true,
+          "state": true
+        },
+        "person": {
+          "first_name": true,
+          "last_name": true,
+          "workspace_person_id": true,
+          "workspace_user_id": true
+        },
+        "personal_identifier": {
+          "identifier": true,
+          "identifier_type": {
+            "prefix": true,
+            "value": true
+          }
+        },
+        "position": {
+          "organization": true,
+          "position": true
+        },
+        "role": true
+      },
+      "metadata_date_stamp": true,
+      "metadata_identifier": true,
+      "metadata_link": true,
+      "metadata_maintenance": {
+        "maintenance_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "maintenance_note": true,
+        "update_frequency": true
+      },
+      "metadata_standard_name": true
+    },
+    "online_resource": {
+      "description": true,
+      "empty_contact_fields": true,
+      "link_information": {
+        "link_title": true,
+        "protocol": true
+      },
+      "online_link": true
+    },
+    "other_dates": {
+      "other_dates": {
+        "date_type": true,
+        "instance": {
+          "day": true,
+          "month": true,
+          "timezone": true,
+          "year": true
+        }
+      },
+      "pub_date": {
+        "date_type": true,
+        "instance": {
+          "day": true,
+          "month": true,
+          "timezone": true,
+          "year": true
+        }
+      }
+    },
+    "other_keywords": {
+      "keyword": {
+        "id": true,
+        "label": true
+      },
+      "keyword_type": true,
+      "library": {
+        "label": true,
+        "value": true
+      },
+      "library_version": true
+    },
+    "process_steps": {
+      "description": true,
+      "more_processing_info": {
+        "process_date_time": {
+          "day": true,
+          "hours": true,
+          "minutes": true,
+          "month": true,
+          "timezone": true,
+          "year": true
+        },
+        "processor": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "rationale": true
+      },
+      "scope_placeholder": true
+    },
+    "quality_reports": {
+      "attribute_accuracy": {
+        "report_description": true,
+        "report_name": true,
+        "report_result": true
+      },
+      "completeness": {
+        "report_description": true,
+        "report_name": true,
+        "report_result": true
+      },
+      "consistency": {
+        "report_description": true,
+        "report_name": true,
+        "report_result": true
+      },
+      "scope_placeholder": true,
+      "usability": {
+        "report_description": true,
+        "report_name": true
+      }
+    },
+    "reference_system_identifier": {
+      "spatial_reference_system": {
+        "authority": {
+          "citation_contact": {
+            "address": {
+              "address1": true,
+              "address2": true,
+              "city": true,
+              "country": true,
+              "email": true,
+              "phone": true,
+              "postal_code": true,
+              "state": true
+            },
+            "person": {
+              "first_name": true,
+              "last_name": true,
+              "workspace_person_id": true,
+              "workspace_user_id": true
+            },
+            "personal_identifier": {
+              "identifier": true,
+              "identifier_type": {
+                "prefix": true,
+                "value": true
+              }
+            },
+            "position": {
+              "organization": true,
+              "position": true
+            },
+            "role": true
+          },
+          "citation_date": {
+            "date_type": true,
+            "instance": {
+              "day": true,
+              "month": true,
+              "timezone": true,
+              "year": true
+            }
+          },
+          "citation_links": {
+            "description": true,
+            "empty_contact_fields": true,
+            "link_information": {
+              "link_title": true,
+              "protocol": true
+            },
+            "online_link": true
+          },
+          "other_citation_details": true,
+          "title": true
+        },
+        "code": true,
+        "codespace": true,
+        "version": true
+      },
+      "temporal_reference_system": {
+        "authority": {
+          "citation_contact": {
+            "address": {
+              "address1": true,
+              "address2": true,
+              "city": true,
+              "country": true,
+              "email": true,
+              "phone": true,
+              "postal_code": true,
+              "state": true
+            },
+            "person": {
+              "first_name": true,
+              "last_name": true,
+              "workspace_person_id": true,
+              "workspace_user_id": true
+            },
+            "personal_identifier": {
+              "identifier": true,
+              "identifier_type": {
+                "prefix": true,
+                "value": true
+              }
+            },
+            "position": {
+              "organization": true,
+              "position": true
+            },
+            "role": true
+          },
+          "citation_date": {
+            "date_type": true,
+            "instance": {
+              "day": true,
+              "month": true,
+              "timezone": true,
+              "year": true
+            }
+          },
+          "citation_links": {
+            "description": true,
+            "empty_contact_fields": true,
+            "link_information": {
+              "link_title": true,
+              "protocol": true
+            },
+            "online_link": true
+          },
+          "other_citation_details": true,
+          "title": true
+        },
+        "code": true,
+        "codespace": true,
+        "version": true
+      }
+    },
+    "sources": {
+      "description": true,
+      "scope_placeholder": true,
+      "source_citation": {
+        "citation_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "citation_date": {
+          "date_type": true,
+          "instance": {
+            "day": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "citation_links": {
+          "description": true,
+          "empty_contact_fields": true,
+          "link_information": {
+            "link_title": true,
+            "protocol": true
+          },
+          "online_link": true
+        },
+        "other_citation_details": true,
+        "source_identifier": true,
+        "title": true
+      },
+      "source_step": {
+        "description": true,
+        "more_processing_info": {
+          "process_date_time": {
+            "day": true,
+            "hours": true,
+            "minutes": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          },
+          "processor": {
+            "address": {
+              "address1": true,
+              "address2": true,
+              "city": true,
+              "country": true,
+              "email": true,
+              "phone": true,
+              "postal_code": true,
+              "state": true
+            },
+            "person": {
+              "first_name": true,
+              "last_name": true,
+              "workspace_person_id": true,
+              "workspace_user_id": true
+            },
+            "personal_identifier": {
+              "identifier": true,
+              "identifier_type": {
+                "prefix": true,
+                "value": true
+              }
+            },
+            "position": {
+              "organization": true,
+              "position": true
+            },
+            "role": true
+          },
+          "rationale": true
+        },
+        "scope_placeholder": true
+      }
+    },
+    "spatial": {
+      "bounds_and_description": {
+        "bounding_box": {
+          "e": true,
+          "n": true,
+          "s": true,
+          "w": true
+        },
+        "spatial_description": true
+      },
+      "geometries": {
+        "linestrings": {
+          "coordinates": true,
+          "location_description": true,
+          "location_name": true
+        },
+        "points": {
+          "coordinates": true,
+          "location_description": true,
+          "location_name": true
+        },
+        "polygons": {
+          "coordinates": true,
+          "location_description": true,
+          "location_name": true
+        }
+      },
+      "map": {
+        "geojson": true,
+        "map": {
+          "lines": {
+            "coordinates": true
+          },
+          "points": {
+            "coordinates": true
+          },
+          "polygons": {
+            "coordinates": true
+          }
+        }
+      }
+    },
+    "spatial_scale": {
+      "spatial_representation_type": true,
+      "spatial_resolution": {
+        "ground_sample_distance": {
+          "distance": true,
+          "units": true
+        },
+        "scale": true
+      }
+    },
+    "status": {
+      "maintenance": {
+        "maintenance_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "maintenance_note": true,
+        "update_frequency": true
+      },
+      "progress": true
+    },
+    "supplemental_info": {
+      "supplemental_info": true
+    },
+    "taxa_composite": {
+      "describe_taxa": {
+        "species": {
+          "taxa_level_description": {
+            "taxon_common": true,
+            "taxon_rank_name": true,
+            "taxon_rank_value": true
+          }
+        },
+        "system": {
+          "classification_system_modifications": true,
+          "taxon_classification_system": {
+            "date": true,
+            "system_links": {
+              "description": true,
+              "empty_contact_fields": true,
+              "link_information": {
+                "link_title": true,
+                "protocol": true
+              },
+              "online_link": true
+            },
+            "system_name": true,
+            "system_provider": {
+              "organization": true,
+              "role": true
+            }
+          }
+        }
+      },
+      "taxa_search": {
+        "keyword": {
+          "description": true,
+          "id": true,
+          "label": true
+        },
+        "library": {
+          "label": true,
+          "value": true
+        }
+      }
+    },
+    "taxon_identification_resource": {
+      "authority": {
+        "citation_contact": {
+          "address": {
+            "address1": true,
+            "address2": true,
+            "city": true,
+            "country": true,
+            "email": true,
+            "phone": true,
+            "postal_code": true,
+            "state": true
+          },
+          "person": {
+            "first_name": true,
+            "last_name": true,
+            "workspace_person_id": true,
+            "workspace_user_id": true
+          },
+          "personal_identifier": {
+            "identifier": true,
+            "identifier_type": {
+              "prefix": true,
+              "value": true
+            }
+          },
+          "position": {
+            "organization": true,
+            "position": true
+          },
+          "role": true
+        },
+        "citation_date": {
+          "date_type": true,
+          "instance": {
+            "day": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "citation_links": {
+          "description": true,
+          "empty_contact_fields": true,
+          "link_information": {
+            "link_title": true,
+            "protocol": true
+          },
+          "online_link": true
+        },
+        "other_citation_details": true,
+        "title": true
+      },
+      "code": true,
+      "codespace": true,
+      "version": true
+    },
+    "taxon_observation_processes": {
+      "taxon_general_info": true,
+      "taxon_identification_processes": true,
+      "taxon_observer": {
+        "address": {
+          "address1": true,
+          "address2": true,
+          "city": true,
+          "country": true,
+          "email": true,
+          "phone": true,
+          "postal_code": true,
+          "state": true
+        },
+        "person": {
+          "first_name": true,
+          "last_name": true,
+          "workspace_person_id": true,
+          "workspace_user_id": true
+        },
+        "personal_identifier": {
+          "identifier": true,
+          "identifier_type": {
+            "prefix": true,
+            "value": true
+          }
+        },
+        "position": {
+          "organization": true,
+          "position": true
+        },
+        "role": true
+      }
+    },
+    "temporal_keywords": {
+      "keyword": true,
+      "keyword_type": true
+    },
+    "theme_keywords": {
+      "keyword": {
+        "id": true,
+        "label": true
+      },
+      "keyword_type": true,
+      "library": {
+        "label": true,
+        "value": true
+      },
+      "library_version": true
+    },
+    "time_period": {
+      "coverage": {
+        "instance": {
+          "description": true,
+          "instance": {
+            "day": true,
+            "hours": true,
+            "minutes": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "range": {
+          "description": true,
+          "end": {
+            "day": true,
+            "hours": true,
+            "minutes": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          },
+          "start": {
+            "day": true,
+            "hours": true,
+            "minutes": true,
+            "month": true,
+            "timezone": true,
+            "year": true
+          }
+        },
+        "timeframe_type": true
+      }
+    },
+    "usage": {
+      "specific_user": {
+        "address": {
+          "address1": true,
+          "address2": true,
+          "city": true,
+          "country": true,
+          "email": true,
+          "phone": true,
+          "postal_code": true,
+          "state": true
+        },
+        "person": {
+          "first_name": true,
+          "last_name": true,
+          "workspace_person_id": true,
+          "workspace_user_id": true
+        },
+        "personal_identifier": {
+          "identifier": true,
+          "identifier_type": {
+            "prefix": true,
+            "value": true
+          }
+        },
+        "position": {
+          "organization": true,
+          "position": true
+        },
+        "role": true
+      },
+      "usage_date": {
+        "day": true,
+        "hours": true,
+        "minutes": true,
+        "month": true,
+        "timezone": true,
+        "year": true
+      },
+      "user_determined_limitations": true,
+      "uses": true
+    },
+    "vertical_extent": {
+      "vertical_domain": {
+        "vertical_maximum": true,
+        "vertical_minimum": true,
+        "vertical_units": true
+      },
+      "vertical_reference_system": true
+    }
+  }
