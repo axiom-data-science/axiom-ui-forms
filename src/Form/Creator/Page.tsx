@@ -67,10 +67,10 @@ const PageNavMobile = ({
     setActive(!active)
   }}
   >
-    <div className=***REMOVED***-mr-4 -ml-2***REMOVED***>{
+    <div className=***REMOVED***-mr-6 -ml-2***REMOVED***>{
       active
         ? <Cross2Icon className=***REMOVED***inline***REMOVED*** />
-        : <DropdownMenuIcon className=***REMOVED***inline w-8 h-8***REMOVED*** />
+        : <DropdownMenuIcon className=***REMOVED***inline w-8 h-8 rotate-180***REMOVED*** />
     }
     </div>
   </Button>
@@ -78,7 +78,7 @@ const PageNavMobile = ({
         {
           active
             ? <><div className=***REMOVED***bg-slate-400 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40***REMOVED*** onClick={() => { setActive(false) }}></div>
-              <div className=***REMOVED***fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[70%] gap-2 p-4 shadow-lg animate-slide-in***REMOVED***>
+              <div className=***REMOVED***fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[60%] gap-2 p-4 shadow-lg animate-slide-in***REMOVED***>
                 <div>
                   <DropdownMenuIcon className=***REMOVED***float-left cursor-pointer w-8 h-8***REMOVED*** onClick={() => { setActive(false) }} />
                 <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 float-right***REMOVED*** onClick={() => { setActive(false) }} />
@@ -100,7 +100,23 @@ const PageNavMobile = ({
               }
               </div>
               </>
-            : <></>
+            : <div className=***REMOVED***flex flex-col gap-2 mt-4***REMOVED***>
+                {
+                  sections?.map(p => {
+                    return (
+                      <NavElement
+                      key={p.id}
+                      path={path}
+                      id={p.id}
+                      navigable={urlNavigable ?? true}
+                      onClick={() => { setActiveId(p.id) }}
+                      className={***REMOVED***p-2 text-center border-none***REMOVED***}
+                    ><span className={`block w-4 h-4 rounded-full ${activeId === p.id ? ***REMOVED***bg-black***REMOVED*** : ***REMOVED***bg-white border-2 border-slate-400***REMOVED***}`}>&nbsp;</span></NavElement>
+                    )
+                  })
+                }
+
+              </div>
         }
       </div>
 }

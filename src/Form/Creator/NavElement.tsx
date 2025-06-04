@@ -11,6 +11,7 @@ const NavElement = ({
   onClick
 }: {
   className?: string
+  overrideClassName?: string
   navigable?: boolean
   children: ReactNode
   path: string
