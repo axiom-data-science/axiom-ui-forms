@@ -67,10 +67,10 @@ const PageNavMobile = ({
     setActive(!active)
   }}
   >
-    <div className='-mr-4 -ml-2'>{
+    <div className='-mr-6 -ml-2'>{
       active
         ? <Cross2Icon className='inline' />
-        : <DropdownMenuIcon className='inline w-8 h-8' />
+        : <DropdownMenuIcon className='inline w-8 h-8 rotate-180' />
     }
     </div>
   </Button>
@@ -78,7 +78,7 @@ const PageNavMobile = ({
         {
           active
             ? <><div className='bg-slate-400 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40' onClick={() => { setActive(false) }}></div>
-              <div className='fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[70%] gap-2 p-4 shadow-lg animate-slide-in'>
+              <div className='fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[60%] gap-2 p-4 shadow-lg animate-slide-in'>
                 <div>
                   <DropdownMenuIcon className='float-left cursor-pointer w-8 h-8' onClick={() => { setActive(false) }} />
                 <Cross2Icon className='cursor-pointer w-6 h-6 float-right' onClick={() => { setActive(false) }} />
@@ -100,7 +100,23 @@ const PageNavMobile = ({
               }
               </div>
               </>
-            : <></>
+            : <div className='flex flex-col gap-2 mt-4'>
+                {
+                  sections?.map(p => {
+                    return (
+                      <NavElement
+                      key={p.id}
+                      path={path}
+                      id={p.id}
+                      navigable={urlNavigable ?? true}
+                      onClick={() => { setActiveId(p.id) }}
+                      className={'p-2 text-center border-none'}
+                    ><span className={`block w-4 h-4 rounded-full ${activeId === p.id ? 'bg-black' : 'bg-white border-2 border-slate-400'}`}>&nbsp;</span></NavElement>
+                    )
+                  })
+                }
+
+              </div>
         }
       </div>
 }
