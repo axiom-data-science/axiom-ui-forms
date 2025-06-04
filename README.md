@@ -222,7 +222,7 @@ Coming soon...
 ```ts
 import React, {type ReactElement} from 'react'
 import { FormCreator, type IForm, type IFormValues } from '@axdspub/axiom-ui-forms'
-import { type JSONSchema7 } from 'json-schema'
+import { type JSONSchema6 } from 'json-schema'
 
 export default ExampleForm = ({schema}:{schema: JSONSchema7 }): ReactElement => {
     const formValueState = React.useState<IFormValues>({})
@@ -251,7 +251,31 @@ export default ExampleForm = ({schema}:{schema: JSONSchema7 }): ReactElement => 
 
 # Create a form using a schema, and modify it with a form config
 
-Coming soon
+```ts
+import { SchemaFormCreator } from '@axdspub/axiom-ui-forms'
+import { type JSONSchema6 } from 'json-schema'
+
+
+const schema: JSONSchema6 = {
+  properties: {
+    text_field: {
+
+    },
+    numeric_field: {
+
+    }
+
+  }
+}
+
+const fieldOverrides: IFieldOverride[] = [
+  {
+    prop: 'text_field',
+    label: 'This is my text field'
+  }
+]
+
+```
 
 
 
