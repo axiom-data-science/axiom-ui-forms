@@ -84,10 +84,10 @@ const inputOverrides = {
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
 
     return (
-            <div>
+            <div className='flex flex-col flex-grow h-full'>
                 <FieldLabel {...field} />
-                <div className='flex flex-row gap-10'>
-                  <div className='w-[350px] h-[600px] overflow-y-auto flex-none  bg-slate-200 text-xs'>
+                <div className='flex flex-row gap-10 flex-grow h-full'>
+                  <div className='w-[350px] overflow-y-auto flex-none h-full bg-slate-200 text-xs'>
                     <SchemaPathList schema={schemaInput} />
                   </div>
 
@@ -109,10 +109,10 @@ const inputOverrides = {
     const [formValues] = useAtom(formValuesAtom)
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
     return (
-            <div>
+            <div className='flex flex-col flex-grow h-full'>
                 <FieldLabel {...field} />
-                <div className='flex flex-row gap-10'>
-                  <div className='w-[350px] h-[600px] flex-none overflow-y-auto bg-slate-200 text-xs'>
+                <div className='flex flex-row gap-10 flex-grow h-full'>
+                  <div className='w-[350px] flex-none overflow-y-auto bg-slate-200 text-xs'>
                     <SchemaPathList schema={schemaInput} />
                   </div>
                   <div className='flex-grow'>
@@ -146,7 +146,7 @@ const ObjectToSchemaWizard = ({ setShow }: { setShow: (t: boolean) => void }): R
   const [schema, setSchema] = useState<JSONSchema6 | undefined>(undefined)
   const [,setFormValues] = useAtom(formValuesAtom)
   return (
-    <div className='flex flex-row'>
+    <div className='flex flex-row flex-grow'>
         <div className='w-[50%] h-full  p-5'>
         <JSONInputLoader
             field={{
@@ -306,8 +306,8 @@ const SchemaToFormWizard = (): ReactElement => {
           >Create schema from object</Button>
           {
             showObjectToSchema
-              ? <div className='fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 z-50 pointer-events-none'>
-                  <div className='absolute top-10 left-10 right-10 bottom-10 bg-white border-2 border-slate-400 rounded-lg shadow-lg pointer-events-auto'>
+              ? <div className='fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 z-50 pointer-events-none flex flex-col'>
+                  <div className='absolute top-10 left-10 right-10 bottom-10 bg-white border-2 border-slate-400 rounded-lg shadow-lg pointer-events-auto flex flex-col'>
                   <Cross2Icon className='absolute top-4 right-4 cursor-pointer' onClick={() => { setShowObjectToSchema(false) }} />
                   <h2 className='p-4 text-xl '>Create schema from object</h2>
                   <ObjectToSchemaWizard setShow={setShowObjectToSchema} />
@@ -316,7 +316,7 @@ const SchemaToFormWizard = (): ReactElement => {
               : <></>
           }
         <FormCreator
-            className='p-20'
+            className='p-20 h-full flex flex-col'
             form={formConfig}
             formValueState={[formValues, setFormValues]}
             inputOverrides={inputOverrides}

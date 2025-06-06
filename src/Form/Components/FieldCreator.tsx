@@ -161,7 +161,7 @@ const FieldCreator = ({
   value,
   onChange,
   className,
-  defaultClassName = 'py-2 flex flex-col gap-8'
+  defaultClassName = 'py-2 flex flex-col gap-8 flex-grow h-full'
 }: IFieldCreator): ReactElement | null => {
   const { form, inputOverrides, setFormValues, formValues } = useFormContext()
   const InputComponent = {
