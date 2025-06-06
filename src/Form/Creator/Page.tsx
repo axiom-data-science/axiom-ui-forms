@@ -145,7 +145,7 @@ export interface IPageLayoutProps {
 export const ActivePage = ({
   formSection,
   onChange,
-  className = ***REMOVED***flex flex-col gap-2 flex-grow***REMOVED***,
+  className = ***REMOVED***flex flex-col gap-2 flex-grow h-full***REMOVED***,
   level
 }: {
   formSection?: IFormSection
@@ -190,7 +190,7 @@ const PageLayoutContent = ({
   inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
-  className = ***REMOVED***flex flex-row gap-8***REMOVED***,
+  className = ***REMOVED***flex flex-row gap-8 flex-grow***REMOVED***,
   level
 }: IPageLayoutProps): ReactElement => {
   if (sections === undefined) {

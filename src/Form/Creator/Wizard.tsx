@@ -229,7 +229,7 @@ const WizardLayoutContent = ({
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
-  className = ***REMOVED***flex flex-col gap-4 pt-8***REMOVED***,
+  className = ***REMOVED***flex flex-col gap-4 pt-8 flex-grow h-full***REMOVED***,
   level
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
