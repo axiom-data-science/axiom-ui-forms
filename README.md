@@ -182,7 +182,7 @@ Test schema to form [here](https://axiom-ui-forms.srv.axds.co/schema-to-form)
 
 ```
 
-Coming soon...
+
 ```json
 {
   "$id": "/test/schema",
@@ -202,16 +202,6 @@ Coming soon...
     },
     "agree": {
       "type": "boolean"
-    }
-  },
-  "dependentSchemas": {
-    "agree": {
-      "properties": {
-        "signature": {
-          "type": "string",
-          "maxLength": 100
-        }
-      }
     }
   }
 }
@@ -239,7 +229,7 @@ export default ExampleForm = ({schema}:{schema: JSONSchema7 }): ReactElement => 
         <>{
             errors !== null
                 ? <p>Schema errors: {{errors}}</p>
-                : <FormCreator form={formConfig} formValueState={} >
+                : <SchemaFormCreator form={formConfig} formValueState={formValueState} >
         }</>
         
     )
@@ -275,6 +265,160 @@ const fieldOverrides: IFieldOverride[] = [
   }
 ]
 
+```
+
+
+# Field definitions
+## These can be used to create a form config, or as partials to override a schema
+
+### root (all fields share these properties)
+
+```json
+{
+    "id": "fieldId",
+    "label": "Field label",
+    "description": "Field description",
+    "multiple": false,
+    "required": true,
+    "conditions": {
+        "dependsOn": "other_field_id",
+        "value": "val"
+    },
+    "defaultValue": "initial value",
+    "settings": {}
+    
+}
+```
+
+## string fields
+
+### `type:text`
+single line text field
+
+```json
+{
+    "placeHolder": "Example of field response"
+}    
+```
+
+## Enum select fields
+
+### `type:select` and `type:radio`
+
+```json
+{
+    "options": [
+        {
+            "label": "Option 1",
+            "value": "option_1"
+        },
+        {
+            "label": "Option 2",
+            "value": "option_2"
+        }
+    ]
+}
+```
+
+
+## boolean
+
+### `type:checkbox` and `type:boolean`
+checkbox field
+
+
+## number fields
+
+### `type:number`
+
+## date and time
+
+### `type:date`
+```json
+{
+    "constraints": {
+        "minDate": "2023-02-01",
+        "maxDate": "2024-06-01"
+    }
+}
+```
+
+### `type:time`
+```json
+{
+    "constraints": {
+        "minTime": "02:00:00",
+        "maxTime": "18:30:00"
+    }
+}
+```
+
+### `type:datetime`
+```json
+{
+    "constraints": {
+        "minDateTime": "2023-02-01T00:00:00Z",
+        "maxDateTime": "2024-06-01T00:00:00Z"
+    }
+}
+```
+
+
+### `type:object`
+- `skip_path`: if `true`, `id` is not used to create path to child fields in output. Can not be `true` if `multiple` is `true`
+- `fields`: array of child fields
+- `layout`: type of layout for child form elements. Not fully supported yet.
+```json
+{
+    "skip_path": true,
+    "layout": "horizontal",
+    "fields": [
+        
+    ]
+}
+```
+
+# Field overrides
+Field overrides must contain a `prop` property. This can reference an existing property from a schema. If it doesn***REMOVED***t reference an existing property, a new property will be added to the form and the form output
+
+# Form overrides
+Form overrides can have the following elements:
+
+## wizard_steps
+These create a wizard interface
+```json
+"wizard_steps": [
+    {
+        "id":"first_step",
+        "order": 1,
+        "label": "First step",
+        "fields": [],
+        "pages": []
+    },
+    {
+        "id":"second_step",
+        "order": 2,
+        "label": "Second step",
+        "fields": [],
+        "pages": []
+    }
+]
+```
+
+## pages
+```json
+"pages": 
+
+```
+
+
+
+
+# Tests
+Uses vitest. Install vitest vscode plugin for extras
+
+```node
+npm run test
 ```
 
 
