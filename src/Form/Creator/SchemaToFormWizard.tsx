@@ -4,19 +4,15 @@ import { atom, useAtom } from ***REMOVED***jotai***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import React, { useContext, useEffect } from ***REMOVED***react***REMOVED***
 import { useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import toJsonSchema from ***REMOVED***to-json-schema***REMOVED***
 import { getSchemaPathDescriptors } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import JSONInputLoader from ***REMOVED***@/Form/Components/Inputs/JSONInputLoader***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
-import { ArrowDownIcon, CheckIcon, CopyIcon, Cross2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { CheckIcon, CopyIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import FormCreator, { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { Button, Table } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { Table } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { copyAndRemovePathFromFields } from ***REMOVED***@/utils/manipulators***REMOVED***
-
-const objectToSchema = (ob: unknown): JSONSchema6 => {
-  return toJsonSchema(ob) as JSONSchema6
-}
+import { objectToSchema, ObjectToSchemaButton } from ***REMOVED***@/Form/Creator/ObjectToSchema***REMOVED***
 
 const formValuesAtom = atom<IFormValues>({
   // object_input: oikosLayer,
@@ -142,69 +138,7 @@ const inputOverrides = {
   }
 }
 
-const ObjectToSchemaWizard = ({ setShow }: { setShow: (t: boolean) => void }): ReactElement => {
-  const [schema, setSchema] = useState<JSONSchema6 | undefined>(undefined)
-  const [,setFormValues] = useAtom(formValuesAtom)
-  return (
-    <div className=***REMOVED***flex flex-row flex-grow***REMOVED***>
-        <div className=***REMOVED***w-[50%] h-full  p-5***REMOVED***>
-        <JSONInputLoader
-            field={{
-              id: ***REMOVED***object_input***REMOVED***,
-              type: ***REMOVED***json***REMOVED***,
-              settings: { allowEmpty: true },
-              description: ***REMOVED***Paste JSON or YAML here that you want to convert to a schema.***REMOVED***
-            }}
-            value={undefined}
-            onChange={(v) => {
-              setSchema(objectToSchema(v))
-            }}
-            />
-        </div>
-        <div className=***REMOVED***flex-grow p-5 relative***REMOVED***>
-          <div className=***REMOVED***bg-slate-200 h-full p-4 overflow-auto max-h-[600px]***REMOVED***>
-            {
-              <pre className=***REMOVED***whitespace-pre text-xs***REMOVED***>
-                {schema !== undefined
-                  ? JSON.stringify(schema, null, 2)
-                  : ***REMOVED***Waiting on object input***REMOVED***}
-              </pre>
-            }
-          </div>
-                      {
-              schema !== undefined
-                ? <>
-                  <span className=***REMOVED***absolute top-10 right-10***REMOVED***>
-                    <CopyButton
-                      string={JSON.stringify(schema, null, 2)}
-                      OnCopiedElement={<>Copied <CheckIcon className=***REMOVED*** inline w-16 h-8***REMOVED*** /></>}
-                      ToCopyElement={<>Copy <CopyIcon className=***REMOVED*** inline w-16 h-8***REMOVED*** /></>}
-                    />
-                  </span>
-                  <span className=***REMOVED***absolute top-20 right-10 cursor-pointer***REMOVED*** onClick={() => {
-                    setFormValues((prev) => {
-                      const newValues = {
-                        ...prev,
-                        schema_input: schema as IValueType
-                      }
-                      return newValues
-                    })
-                    setShow(false)
-                  }}>
-                    Copy into form and close modal
-                      <CopyIcon className=***REMOVED***ml-4 -mr-4 inline w-8 h-8***REMOVED*** />
-                      <ArrowDownIcon className=***REMOVED***inline w-14 h-4***REMOVED*** />
-                  </span>
-                  </>
-                : <></>
-            }
-        </div>
-      </div>
-  )
-}
-
 const SchemaToFormWizard = (): ReactElement => {
-  const [showObjectToSchema, setShowObjectToSchema] = useState(false)
   const formConfig: IForm =
         {
           id: ***REMOVED***schema-to-form-wizard***REMOVED***,
@@ -297,24 +231,9 @@ const SchemaToFormWizard = (): ReactElement => {
 
   return (
       <>
-        <Button
-          type=***REMOVED***create***REMOVED***
-          className=***REMOVED***inline-block absolute top-4 right-4***REMOVED***
-          onClick={() => {
-            setShowObjectToSchema(!showObjectToSchema)
-          }}
-          >Create schema from object</Button>
-          {
-            showObjectToSchema
-              ? <div className=***REMOVED***fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 z-50 pointer-events-none flex flex-col***REMOVED***>
-                  <div className=***REMOVED***absolute top-10 left-10 right-10 bottom-10 bg-white border-2 border-slate-400 rounded-lg shadow-lg pointer-events-auto flex flex-col***REMOVED***>
-                  <Cross2Icon className=***REMOVED***absolute top-4 right-4 cursor-pointer***REMOVED*** onClick={() => { setShowObjectToSchema(false) }} />
-                  <h2 className=***REMOVED***p-4 text-xl ***REMOVED***>Create schema from object</h2>
-                  <ObjectToSchemaWizard setShow={setShowObjectToSchema} />
-                  </div>
-                </div>
-              : <></>
-          }
+        <ObjectToSchemaButton onUpdate={(newSchema) => {
+          setFormValues((prev) => ({ ...prev, schema_input: newSchema as IValueType }))
+        }} />
         <FormCreator
             className=***REMOVED***p-20 h-full flex flex-col***REMOVED***
             form={formConfig}
