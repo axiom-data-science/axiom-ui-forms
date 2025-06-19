@@ -1,8 +1,7 @@
 import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
-import { merge } from ***REMOVED***lodash***REMOVED***
-import set from ***REMOVED***lodash/set***REMOVED***
+import { merge, set } from ***REMOVED***lodash-es***REMOVED***
 
 export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
   if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {

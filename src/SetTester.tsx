@@ -1,5 +1,5 @@
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { set, isArray, isObject, get } from ***REMOVED***lodash***REMOVED***
+import { set, isArray, isObject, get } from ***REMOVED***lodash-es***REMOVED***
 import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
 function flattenObjectToPaths (obj: any, prefix: string = ***REMOVED******REMOVED***): Record<string, any> {

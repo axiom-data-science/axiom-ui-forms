@@ -1,4 +1,4 @@
-import set from ***REMOVED***lodash/set***REMOVED***
+import { set } from ***REMOVED***lodash-es***REMOVED***
 import React, { type ReactElement, useEffect, useState } from ***REMOVED***react***REMOVED***
 
 import { CheckIcon, CopyIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***

@@ -1,5 +1,5 @@
 import { type IFormSection, type IFormValues, type IValueType, type IFormField, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import get from ***REMOVED***lodash/get***REMOVED***
+import { get } from ***REMOVED***lodash-es***REMOVED***
 
 /**
  * Returns the JSON path for a given field

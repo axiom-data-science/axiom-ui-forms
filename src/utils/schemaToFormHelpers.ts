@@ -10,7 +10,7 @@ import metaSchemaV5 from ***REMOVED***ajv/lib/refs/json-schema-2020-12/schema.js
 import metaSchemaV4 from ***REMOVED***ajv/lib/refs/json-schema-2019-09/schema.json***REMOVED***
 
 import { resolveRefs } from ***REMOVED***@/utils/resolveRefs***REMOVED***
-import { omit } from ***REMOVED***lodash***REMOVED***
+import { omit } from ***REMOVED***lodash-es***REMOVED***
 import { type ISelectOptionProps } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { getFieldsFromFormSection, getPathFromField, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import { copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
@@ -545,7 +545,11 @@ export const overridesAndSchemaToFormObject = ({
   schema: JSONSchema6
 }): IForm => {
   const schemaForm = schemaToFormObject(schema)
-  const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(overrides.map(override => [override.prop, override]))) ?? []
+  const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(
+    overrides !== undefined && typeof overrides.map === ***REMOVED***function***REMOVED***
+      ? overrides.map(override => [override.prop, override])
+      : []
+  )) ?? []
   if (formOverrides === undefined && formFieldOverrides !== undefined) {
     const schemaFieldMap = buildFieldMapFromForm(schemaForm)
     const fields = Object.values(schemaFieldMap).map(field => {
