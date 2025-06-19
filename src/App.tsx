@@ -30,7 +30,8 @@ import AllPTT from ***REMOVED***@/PTT/All***REMOVED***
 import ResizableSidebar from ***REMOVED***@/TestResize***REMOVED***
 import layoutAtom, { getWindowSize } from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
-import { debounce } from ***REMOVED***lodash***REMOVED***
+import { debounce } from ***REMOVED***lodash-es***REMOVED***
+import MeditorForm from ***REMOVED***@/Meditor/MeditorForm***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -190,6 +191,9 @@ const App = (): ReactElement => {
               <Route path="*" element={<AllPTT />} />
             </Route>
             <Route path=***REMOVED***/resizer***REMOVED*** element={<ResizableSidebar />} />
+            <Route path=***REMOVED***/meditor***REMOVED*** element={<MeditorForm />}>
+              <Route path=***REMOVED*******REMOVED*** element={<MeditorForm />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>
