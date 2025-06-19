@@ -1,4 +1,4 @@
-import set from 'lodash/set'
+import { set } from 'lodash-es'
 import React, { type ReactElement, useEffect, useState } from 'react'
 
 import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'

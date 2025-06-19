@@ -3,7 +3,7 @@ import { CopyableJSONOutput } from '@/Form/Manage/CopyableJSONOutput'
 
 import formValuesAtom from '@/state/formValuesAtom'
 import { useAtom } from 'jotai'
-import { set } from 'lodash'
+import { set } from 'lodash-es'
 import React, { type ReactElement } from 'react'
 
 export const RawFormOutput = ({ formValueState }: { formValueState?: [IFormValues, (v: IFormValues) => void] }): ReactElement => {

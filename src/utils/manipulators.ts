@@ -1,8 +1,7 @@
 import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from '@/utils/getters'
 import { checkCondition } from '@/utils/validators'
-import { merge } from 'lodash'
-import set from 'lodash/set'
+import { merge, set } from 'lodash-es'
 
 export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
   if (field.type === 'object' && field.skip_path === true) {

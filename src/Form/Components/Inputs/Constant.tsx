@@ -1,5 +1,5 @@
 import { type IConstantField, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
-import { memoize } from 'lodash'
+import { memoize } from 'lodash-es'
 import React, { type ReactElement } from 'react'
 
 const notify = memoize((k, v, onChange) => {

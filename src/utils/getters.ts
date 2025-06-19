@@ -1,5 +1,5 @@
 import { type IFormSection, type IFormValues, type IValueType, type IFormField, type IObjectField } from '@/Form/Creator/FormCreatorTypes'
-import get from 'lodash/get'
+import { get } from 'lodash-es'
 
 /**
  * Returns the JSON path for a given field
