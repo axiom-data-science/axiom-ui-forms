@@ -1,6 +1,6 @@
 import { type IFieldInputProps, type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { type JSONSchema6 } from 'json-schema'
-import React, { createContext, type ReactElement, type PropsWithChildren } from 'react'
+import React, { createContext, type ReactElement, type PropsWithChildren, useContext } from 'react'
 
 export interface IFormContextValue {
   form: IForm
@@ -26,7 +26,7 @@ export const FormContextProvider = ({ children, ...props }: IFormContextValue & 
 }
 
 export const useFormContext = (): IFormContextValue => {
-  const ctx = React.useContext(FormContext)
+  const ctx = useContext(FormContext)
   if (!ctx) throw new Error('useFormSectionContext must be used within FormSectionContextProvider')
   return ctx
 }

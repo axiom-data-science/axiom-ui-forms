@@ -4,19 +4,15 @@ import { atom, useAtom } from 'jotai'
 import { type JSONSchema6 } from 'json-schema'
 import React, { useContext, useEffect } from 'react'
 import { useState, type ReactElement } from 'react'
-import toJsonSchema from 'to-json-schema'
 import { getSchemaPathDescriptors } from '@/utils/schemaToFormHelpers'
 import JSONInputLoader from '@/Form/Components/Inputs/JSONInputLoader'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
-import { ArrowDownIcon, CheckIcon, CopyIcon, Cross2Icon } from '@radix-ui/react-icons'
+import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'
 import FormCreator, { SchemaFormCreator } from '@/Form/Creator/FormCreator'
-import { Button, Table } from '@axdspub/axiom-ui-utilities'
+import { Table } from '@axdspub/axiom-ui-utilities'
 import { FormContext } from '@/Form/Creator/FormContextProvider'
 import { copyAndRemovePathFromFields } from '@/utils/manipulators'
-
-const objectToSchema = (ob: unknown): JSONSchema6 => {
-  return toJsonSchema(ob) as JSONSchema6
-}
+import { objectToSchema, ObjectToSchemaButton } from '@/Form/Creator/ObjectToSchema'
 
 const formValuesAtom = atom<IFormValues>({
   // object_input: oikosLayer,
@@ -142,69 +138,7 @@ const inputOverrides = {
   }
 }
 
-const ObjectToSchemaWizard = ({ setShow }: { setShow: (t: boolean) => void }): ReactElement => {
-  const [schema, setSchema] = useState<JSONSchema6 | undefined>(undefined)
-  const [,setFormValues] = useAtom(formValuesAtom)
-  return (
-    <div className='flex flex-row flex-grow'>
-        <div className='w-[50%] h-full  p-5'>
-        <JSONInputLoader
-            field={{
-              id: 'object_input',
-              type: 'json',
-              settings: { allowEmpty: true },
-              description: 'Paste JSON or YAML here that you want to convert to a schema.'
-            }}
-            value={undefined}
-            onChange={(v) => {
-              setSchema(objectToSchema(v))
-            }}
-            />
-        </div>
-        <div className='flex-grow p-5 relative'>
-          <div className='bg-slate-200 h-full p-4 overflow-auto max-h-[600px]'>
-            {
-              <pre className='whitespace-pre text-xs'>
-                {schema !== undefined
-                  ? JSON.stringify(schema, null, 2)
-                  : 'Waiting on object input'}
-              </pre>
-            }
-          </div>
-                      {
-              schema !== undefined
-                ? <>
-                  <span className='absolute top-10 right-10'>
-                    <CopyButton
-                      string={JSON.stringify(schema, null, 2)}
-                      OnCopiedElement={<>Copied <CheckIcon className=' inline w-16 h-8' /></>}
-                      ToCopyElement={<>Copy <CopyIcon className=' inline w-16 h-8' /></>}
-                    />
-                  </span>
-                  <span className='absolute top-20 right-10 cursor-pointer' onClick={() => {
-                    setFormValues((prev) => {
-                      const newValues = {
-                        ...prev,
-                        schema_input: schema as IValueType
-                      }
-                      return newValues
-                    })
-                    setShow(false)
-                  }}>
-                    Copy into form and close modal
-                      <CopyIcon className='ml-4 -mr-4 inline w-8 h-8' />
-                      <ArrowDownIcon className='inline w-14 h-4' />
-                  </span>
-                  </>
-                : <></>
-            }
-        </div>
-      </div>
-  )
-}
-
 const SchemaToFormWizard = (): ReactElement => {
-  const [showObjectToSchema, setShowObjectToSchema] = useState(false)
   const formConfig: IForm =
         {
           id: 'schema-to-form-wizard',
@@ -297,24 +231,9 @@ const SchemaToFormWizard = (): ReactElement => {
 
   return (
       <>
-        <Button
-          type='create'
-          className='inline-block absolute top-4 right-4'
-          onClick={() => {
-            setShowObjectToSchema(!showObjectToSchema)
-          }}
-          >Create schema from object</Button>
-          {
-            showObjectToSchema
-              ? <div className='fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 z-50 pointer-events-none flex flex-col'>
-                  <div className='absolute top-10 left-10 right-10 bottom-10 bg-white border-2 border-slate-400 rounded-lg shadow-lg pointer-events-auto flex flex-col'>
-                  <Cross2Icon className='absolute top-4 right-4 cursor-pointer' onClick={() => { setShowObjectToSchema(false) }} />
-                  <h2 className='p-4 text-xl '>Create schema from object</h2>
-                  <ObjectToSchemaWizard setShow={setShowObjectToSchema} />
-                  </div>
-                </div>
-              : <></>
-          }
+        <ObjectToSchemaButton onUpdate={(newSchema) => {
+          setFormValues((prev) => ({ ...prev, schema_input: newSchema as IValueType }))
+        }} />
         <FormCreator
             className='p-20 h-full flex flex-col'
             form={formConfig}
