@@ -160,7 +160,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
             : workingValue
         } className='white z-40' />
         </span>
-      <div className='h-full flex-grow overflow-auto'>
+      <div className='h-full flex-grow overflow-auto min-h-[300px]'>
       <CodeMirror
         value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
         extensions={[
