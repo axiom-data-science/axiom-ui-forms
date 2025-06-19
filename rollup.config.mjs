@@ -11,7 +11,8 @@ const globals = {
   ***REMOVED***react/jsx-runtime***REMOVED***: ***REMOVED***JSXRuntime***REMOVED***,
   react: ***REMOVED***React***REMOVED***,
   ***REMOVED***react-dom***REMOVED***: ***REMOVED***ReactDOM***REMOVED***,
-  lodash: ***REMOVED***lodash***REMOVED***
+  ***REMOVED***react-router-dom***REMOVED***: ***REMOVED***reactRouterDom***REMOVED***,
+  ***REMOVED***@tanstack/react-query***REMOVED***: ***REMOVED***reactQuery***REMOVED***
 }
 
 const external = [
@@ -19,7 +20,8 @@ const external = [
   ***REMOVED***react-dom***REMOVED***,
   ***REMOVED***react-scripts***REMOVED***,
   ***REMOVED***react/jsx-runtime***REMOVED***,
-  ***REMOVED***lodash***REMOVED***
+  ***REMOVED***react-router-dom***REMOVED***,
+  ***REMOVED***@tanstack/react-query***REMOVED***
 ]
 
 const config = [
