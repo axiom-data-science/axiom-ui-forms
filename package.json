@@ -1,23 +1,28 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "private": false,
   "type": "module",
   "description": "Axiom UI Forms",
   "main": "./library/umd/library.js",
   "module": "./library/esm/src/library.js",
   "types": "./library/axiom-ui-forms.d.ts",
+  "exports": {
+    ".": {
+      "import": "./library/esm/src/library.js",
+      "require": "./library/umd/library.js"
+    }
+  },
   "files": [
     "library/**"
   ],
   "peerDependencies": {
-    "lodash": "^4.17.21",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-hook-form": "^7.0.0"
+    "react-router-dom": "^7.0.0"
   },
   "dependencies": {
-    "@axdspub/axiom-maps": "^0.4.9-alpha.28",
+    "@axdspub/axiom-maps": "^0.4.9",
     "@axdspub/axiom-ui-utilities": "^0.1.7",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-yaml": "^6.1.2",
@@ -43,6 +48,7 @@
     "jotai": "^2.7.0",
     "jotai-tanstack-query": "^0.8.5",
     "js-yaml": "^4.1.0",
+    "lodash-es": "^4.17.21",
     "lodash.set": "^4.3.2",
     "postcss": "^8.5.3",
     "react": "^18.0.0",
@@ -104,7 +110,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/lodash": "^4.17.12",
+    "@types/lodash-es": "^4.17.12",
     "@types/rison": "^0.1.0",
     "@types/to-json-schema": "^0.2.4",
     "@typescript-eslint/eslint-plugin": "^6.8.0",

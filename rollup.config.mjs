@@ -11,7 +11,8 @@ const globals = {
   'react/jsx-runtime': 'JSXRuntime',
   react: 'React',
   'react-dom': 'ReactDOM',
-  lodash: 'lodash'
+  'react-router-dom': 'reactRouterDom',
+  '@tanstack/react-query': 'reactQuery'
 }
 
 const external = [
@@ -19,7 +20,8 @@ const external = [
   'react-dom',
   'react-scripts',
   'react/jsx-runtime',
-  'lodash'
+  'react-router-dom',
+  '@tanstack/react-query'
 ]
 
 const config = [
