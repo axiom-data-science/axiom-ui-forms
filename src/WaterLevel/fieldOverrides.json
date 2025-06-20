@@ -22,5 +22,13 @@
     {
         "prop": "water_level_sensor_information.date_removed",
         "type": "date"
+    },
+    {
+        "prop": "station_information.identifiers.co_ops_id",
+        "label" : "CO-OPS ID"
+    },
+    {
+        "prop": "station_information.identifiers.other_id",
+        "label" : "Other ID"
     }
 ]

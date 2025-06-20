@@ -103,7 +103,7 @@ export const WizardNavLargeScreen = ({
   const { urlNavigable } = useFormContext()
 
   return (
-      <div className='relative'>
+      <div className='relative z-0'>
         <div className='h-[2px] top-8 bg-slate-300 absolute left-0 right-0 z-0' />
         <div className='flex flex-row gap-4 py-4  max-w-full overflow-x-auto overflow-y-visible'>
         {

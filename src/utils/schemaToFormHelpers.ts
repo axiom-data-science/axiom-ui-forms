@@ -100,7 +100,7 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
       return 'select'
     } else if (schema.anyOf !== undefined) {
       return 'checkbox'
-    } else if (schemaType === 'string' && (schema.maxLength !== undefined && schema.maxLength <= 100)) {
+    } else if (schemaType === 'string' && (schema.maxLength !== undefined && schema.maxLength > 150)) {
       return 'text'
     } else if (schemaType === 'number' || schemaType === 'integer') {
       return 'number'
@@ -111,7 +111,7 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
     } else if (schema.format === 'time') {
       return 'time'
     }
-    return 'long_text'
+    return 'text'
   } else if (schemaType === 'boolean') {
     return 'boolean'
   } else if (schemaType === 'object' || (schemaType === undefined && (schema.oneOf !== undefined || schema.anyOf !== undefined || schema.allOf !== undefined))) {

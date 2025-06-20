@@ -7,7 +7,7 @@ import React, { type ReactElement } from 'react'
 const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
   if (field.type === 'object' && field.fields !== undefined) {
-    const cl = `${field.layout === 'horizontal' ? `flex flex-row gap-4  ${field.label !== undefined ? 'px-0' : ''}` : 'flex flex-col gap-4'}`
+    const cl = `${field.layout === 'horizontal' ? 'flex flex-row gap-4' : 'flex flex-col gap-4'}`
     const fc = field.layout === 'horizontal' ? 'flex-1' : ''
     return (
         <div>

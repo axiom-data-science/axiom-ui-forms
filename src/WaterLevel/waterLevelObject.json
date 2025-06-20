@@ -1,4 +1,20 @@
 {
+	"station_information": {
+	"site_name": "Dillingham",
+	"state": "AK",
+	"identifiers": {
+		"co_ops_id": "",
+		"other_id": ""
+	},
+	"water_body_setting": "Bay",
+	"approximate_position": {
+		"latitude": 59.03750556,
+		"longitude": -158.46511389,
+		"projection": ""
+	},
+	"date_established": "2021-10-30T00:00Z",
+	"additional_information": "(multiple lines)"
+	},
 	"water_level_sensor_information": {
 		"category": "Vented Pressure",
 		"manufacturer_model": "Campbell Scientific LevelVUE B10",
