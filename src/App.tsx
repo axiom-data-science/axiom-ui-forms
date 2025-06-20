@@ -32,6 +32,7 @@ import layoutAtom, { getWindowSize } from ***REMOVED***@/utils/responsive/layout
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { debounce } from ***REMOVED***lodash-es***REMOVED***
 import MeditorForm from ***REMOVED***@/Meditor/MeditorForm***REMOVED***
+import WaterLevelForm from ***REMOVED***@/WaterLevel/WaterLevelForm***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -194,6 +195,9 @@ const App = (): ReactElement => {
             <Route path=***REMOVED***/meditor***REMOVED*** element={<MeditorForm />}>
               <Route path=***REMOVED*******REMOVED*** element={<MeditorForm />} />
             </Route>
+            <Route path="/water-level" element={<WaterLevelForm />}>
+              <Route path="*" element={<WaterLevelForm />} />
+              </Route>
           </Routes>
         </BrowserRouter>
     </div>

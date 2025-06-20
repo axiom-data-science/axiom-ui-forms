@@ -1,0 +1,26 @@
+[
+    {
+        "prop": "water_level_sensor_information.category",
+        "type": "text"
+    },
+    {
+        "prop": "water_level_sensor_information.manufacturer_model",
+        "type": "text"
+    },
+    {
+        "prop": "water_level_sensor_information.serial_number",
+        "type": "text"
+    },
+    {
+        "prop": "water_level_sensor_information.mounting_structure",
+        "type": "text"
+    },
+    {
+        "prop": "water_level_sensor_information.date_installed",
+        "type": "date"
+    },
+    {
+        "prop": "water_level_sensor_information.date_removed",
+        "type": "date"
+    }
+]

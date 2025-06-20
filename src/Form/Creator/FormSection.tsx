@@ -49,7 +49,11 @@ const FormSection = ({
 
               : hasPages
                 ? <PageLayout sections={pages} onChange={onChange} level={level} />
-                : <FormFields fields={fields} onChange={onChange} />
+                : <FormFields
+                  fields={fields} onChange={onChange}
+                  className={level === 0 ? ***REMOVED***flex flex-col gap-2***REMOVED*** : undefined}
+
+                  />
           }
         </>
   )
