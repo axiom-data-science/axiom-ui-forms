@@ -100,7 +100,7 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
       return ***REMOVED***select***REMOVED***
     } else if (schema.anyOf !== undefined) {
       return ***REMOVED***checkbox***REMOVED***
-    } else if (schemaType === ***REMOVED***string***REMOVED*** && (schema.maxLength !== undefined && schema.maxLength <= 100)) {
+    } else if (schemaType === ***REMOVED***string***REMOVED*** && (schema.maxLength !== undefined && schema.maxLength > 150)) {
       return ***REMOVED***text***REMOVED***
     } else if (schemaType === ***REMOVED***number***REMOVED*** || schemaType === ***REMOVED***integer***REMOVED***) {
       return ***REMOVED***number***REMOVED***
@@ -111,7 +111,7 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
     } else if (schema.format === ***REMOVED***time***REMOVED***) {
       return ***REMOVED***time***REMOVED***
     }
-    return ***REMOVED***long_text***REMOVED***
+    return ***REMOVED***text***REMOVED***
   } else if (schemaType === ***REMOVED***boolean***REMOVED***) {
     return ***REMOVED***boolean***REMOVED***
   } else if (schemaType === ***REMOVED***object***REMOVED*** || (schemaType === undefined && (schema.oneOf !== undefined || schema.anyOf !== undefined || schema.allOf !== undefined))) {

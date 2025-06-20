@@ -3,6 +3,55 @@
     "id": "water_level_station_definition",
     "wizard_steps": [
         {
+            "id": "station_information",
+            "label": "Station Information",
+            "pages": [
+                {
+                    "id": "general_information",
+                    "label": "General Information",
+                    "fields": [
+                        {"prop": "station_information.site_name"},
+                        {"prop": "station_information.state"},
+                        {
+                            "prop": "station_identifiers",
+                            "label": "Identifiers",
+                            "skip_path": true,
+                            "type": "object",
+                            "layout": "horizontal",
+                            "fields": [
+                                {"prop": "station_information.identifiers.co_ops_id"},
+                                {"prop": "station_information.identifiers.other_id"}
+                            ]
+
+                        }
+                        
+                    ]
+                },
+                {
+                    "id": "location",
+                    "label": "Location",
+                    "fields": [
+                        {
+                            "prop": "station_information.water_body_setting",
+                            "description": "Example: Bay, River, Lake, Ocean, etc."
+                        },
+                        {
+                            "prop": "station_information.geometry",
+                            "type": "geometry",
+                            "label" : "Approximate Position",
+                            "description": "Select a point on the map.",
+                            "settings": {
+                                "drawPointEnabled": true,
+                                "showCoordinateInput": true
+                            }
+                    }
+                    ]
+                }
+                
+            ]
+
+        },
+        {
             "label" : "Sensor information",
             "id" : "water_level_sensor_information",
             "pages": [
@@ -39,10 +88,15 @@
                         {
                             "prop" : "zero_elev_wrap",
                             "label": "Zero Elevation on Station Datum",
+                            "description": "Add one or more",
                             "skip_path": true,
                             "type": "object",
                             "fields": [
-                                {"prop" :"water_level_sensor_information.zero_elevation_on_station_datum", "layout": "horizontal"}
+                                {
+                                    "prop" :"water_level_sensor_information.zero_elevation_on_station_datum", 
+                                    "layout": "horizontal",
+                                    "label": ""
+                                }
                             ]
                         }
                     ]

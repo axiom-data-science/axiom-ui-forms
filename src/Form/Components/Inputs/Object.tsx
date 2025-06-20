@@ -7,7 +7,7 @@ import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
   if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
-    const cl = `${field.layout === ***REMOVED***horizontal***REMOVED*** ? `flex flex-row gap-4  ${field.label !== undefined ? ***REMOVED***px-0***REMOVED*** : ***REMOVED******REMOVED***}` : ***REMOVED***flex flex-col gap-4***REMOVED***}`
+    const cl = `${field.layout === ***REMOVED***horizontal***REMOVED*** ? ***REMOVED***flex flex-row gap-4***REMOVED*** : ***REMOVED***flex flex-col gap-4***REMOVED***}`
     const fc = field.layout === ***REMOVED***horizontal***REMOVED*** ? ***REMOVED***flex-1***REMOVED*** : ***REMOVED******REMOVED***
     return (
         <div>

@@ -1,6 +1,52 @@
 {
   "type": "object",
   "properties": {
+    "station_information": {
+      "type": "object",
+      "properties": {
+        "site_name": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "identifiers": {
+          "type": "object",
+          "properties": {
+            "co_ops_id": {
+              "type": "string"
+            },
+            "other_id": {
+              "type": "string"
+            }
+          }
+        },
+        "water_body_setting": {
+          "type": "string"
+        },
+        "approximate_position": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "projection": {
+              "type": "string"
+            }
+          }
+        },
+        "date_established": {
+          "type": "string",
+          "format": "style"
+        },
+        "additional_information": {
+          "type": "string"
+        }
+      }
+    },
     "water_level_sensor_information": {
       "type": "object",
       "properties": {
