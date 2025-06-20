@@ -170,11 +170,19 @@ const PageLayout = (props: IPageLayoutProps): ReactElement => {
     return <></>
   }
   const { urlNavigable } = useFormContext()
+
+  const url = new URL(window.location.href)
+  const parts = url.pathname.split('/')
+  const formParts = parts.slice(parts.length - props.level, parts.length)
+
   const params = (useParams()['*'] ?? '').split('/')
   const path = params.slice(0, props.level).join('/')
   const id = urlNavigable
     ? (params[props.level] && params[props.level] !== '') ? params[props.level] : (props.sections[0]?.id ?? null)
     : props.sections[0]?.id ?? null
+
+  console.log(props)
+  console.log('Form parts:', formParts, 'Level:', props.level, 'Params:', params.join(','))
 
   return (
     <FormSectionContextProvider path={path} id={id}>

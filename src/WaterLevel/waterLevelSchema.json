@@ -1,0 +1,351 @@
+{
+  "type": "object",
+  "properties": {
+    "water_level_sensor_information": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "manufacturer_model": {
+          "type": "string"
+        },
+        "serial_number": {
+          "type": "string",
+          "format": "utc-millisec"
+        },
+        "sample_interval_min": {
+          "type": "integer"
+        },
+        "sample_avg_window_sec": {
+          "type": "integer"
+        },
+        "mounting_structure": {
+          "type": "string"
+        },
+        "date_installed": {
+          "type": "string",
+          "format": "style"
+        },
+        "date_removed": {
+          "type": "string"
+        },
+        "additional_information": {
+          "type": "string"
+        },
+        "zero_elevation_on_station_datum": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "elevation": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "sensor_vertical_control": {
+      "type": "object",
+      "properties": {
+        "station_datum": {
+          "type": "string"
+        },
+        "markers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stamping": {
+                "type": "string"
+              },
+              "ngs_pid": {
+                "type": "string"
+              },
+              "coops_vm": {
+                "type": "string"
+              },
+              "other_identifier": {
+                "type": "string"
+              },
+              "measurement_method": {
+                "type": "string"
+              },
+              "measurement_date": {
+                "type": "string"
+              },
+              "measurement_by": {
+                "type": "string"
+              },
+              "ortho_height_navd88_m": {
+                "type": "string"
+              },
+              "station_datum_height_m": {
+                "type": "number"
+              },
+              "additional_information": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "local_tidal_datum_establishment": {
+      "type": "object",
+      "properties": {
+        "record_start_date": {
+          "type": "string",
+          "format": "style"
+        },
+        "record_end_date": {
+          "type": "string"
+        },
+        "computation_tool": {
+          "type": "string"
+        },
+        "computation_method": {
+          "type": "string"
+        },
+        "control_station_stamping": {
+          "type": "string"
+        },
+        "control_station_ngs_pid": {
+          "type": "string"
+        },
+        "control_station_epoch": {
+          "type": "string"
+        },
+        "datum_type": {
+          "type": "string"
+        },
+        "computation_date": {
+          "type": "string",
+          "format": "style"
+        },
+        "computed_by": {
+          "type": "string"
+        },
+        "tidal_datums_relative_to_station_datum": {
+          "type": "object",
+          "properties": {
+            "MHHW_m": {
+              "type": "number"
+            },
+            "MHW_m": {
+              "type": "number"
+            },
+            "DTL_m": {
+              "type": "number"
+            },
+            "MTL_m": {
+              "type": "number"
+            },
+            "MSL_m": {
+              "type": "number"
+            },
+            "MLW_m": {
+              "type": "number"
+            },
+            "MLLW_m": {
+              "type": "number"
+            },
+            "GT_m": {
+              "type": "number"
+            },
+            "MN_m": {
+              "type": "number"
+            },
+            "DHQ_m": {
+              "type": "number"
+            },
+            "DLQ_m": {
+              "type": "number"
+            },
+            "HWI_hr": {
+              "type": "integer"
+            },
+            "LWI_hr": {
+              "type": "number"
+            }
+          }
+        },
+        "additional_information": {
+          "type": "string"
+        }
+      }
+    },
+    "station_error_analysis": {
+      "type": "object",
+      "properties": {
+        "total_water_level_error_cm": {
+          "type": "string"
+        },
+        "sensor_error_cm": {
+          "type": "string"
+        },
+        "leveling_error_cm": {
+          "type": "string"
+        },
+        "data_processing_error_cm": {
+          "type": "string"
+        },
+        "datum_error_cm": {
+          "type": "string"
+        }
+      }
+    },
+    "telecommunication_equipment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "telemetry_method": {
+            "type": "string"
+          },
+          "manufacturer_model": {
+            "type": "string"
+          },
+          "serial_number": {
+            "type": "string",
+            "format": "utc-millisec"
+          },
+          "date_installed": {
+            "type": "string",
+            "format": "style"
+          },
+          "date_removed": {
+            "type": "string"
+          },
+          "additional_information": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "collocation_information": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "instrumentation_type": {
+            "type": "string"
+          },
+          "manufacturer_model": {
+            "type": "string"
+          },
+          "serial_number": {
+            "type": "string"
+          },
+          "date_installed": {
+            "type": "string"
+          },
+          "date_removed": {
+            "type": "string"
+          },
+          "additional_information": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "station_point_of_contact": {
+      "type": "object",
+      "properties": {
+        "operating_entity": {
+          "type": "string"
+        },
+        "primary_contact": {
+          "type": "object",
+          "properties": {
+            "contact_name": {
+              "type": "string"
+            },
+            "affiliation": {
+              "type": "string"
+            },
+            "telephone_primary": {
+              "type": "string"
+            },
+            "telephone_secondary": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        },
+        "on_site_contact": {
+          "type": "object",
+          "properties": {
+            "contact_name": {
+              "type": "string"
+            },
+            "affiliation": {
+              "type": "string"
+            },
+            "telephone_primary": {
+              "type": "string"
+            },
+            "telephone_secondary": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        },
+        "additional_information": {
+          "type": "string"
+        }
+      }
+    },
+    "data_management_information": {
+      "type": "object",
+      "properties": {
+        "entity": {
+          "type": "string"
+        },
+        "primary_contact": {
+          "type": "object",
+          "properties": {
+            "contact_name": {
+              "type": "string"
+            },
+            "affiliation": {
+              "type": "string"
+            },
+            "telephone_primary": {
+              "type": "string"
+            },
+            "telephone_secondary": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        },
+        "primary_data_access": {
+          "type": "string"
+        },
+        "secondary_data_center": {
+          "type": "string"
+        },
+        "additional_metadata": {
+          "type": "string"
+        },
+        "additional_information": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

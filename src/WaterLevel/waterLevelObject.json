@@ -1,0 +1,179 @@
+{
+	"water_level_sensor_information": {
+		"category": "Vented Pressure",
+		"manufacturer_model": "Campbell Scientific LevelVUE B10",
+		"serial_number": "1037",
+		"sample_interval_min": 6,
+		"sample_avg_window_sec": 181,
+		"mounting_structure": "Sheet Pile Seawall",
+		"date_installed": "2021-10-30T00:00Z",
+		"date_removed": "2021-10-30T00:00Z",
+		"additional_information": "Gauge 1",
+		"zero_elevation_on_station_datum": [
+			{"date": "2024-06-18", "elevation": 13.060},
+			{"date": "2023-05-24", "elevation": 13.062},
+			{"date": "2022-06-25", "elevation": 13.071},
+			{"date": "2021-10-29", "elevation": 13.078}
+		]
+	},
+	"sensor_vertical_control": {
+		"station_datum": "Station datum is defined as bench mark 946 5374 B = 20 m.  Water level data is provided relative to Station Datum",
+		"markers": [
+			{
+				"stamping": "5374 A",
+				"ngs_pid": "",
+				"coops_vm": "",
+				"other_identifier": "",
+				"measurement_method": "3rd Order Optical Leveling",
+				"measurement_date": "10-30-2021",
+				"measurement_by": "JOA Surveys",
+				"ortho_height_navd88_m": "",
+				"station_datum_height_m": 20.2330,
+				"additional_information": ""
+			},
+			{
+				"stamping": "5374 B",
+				"ngs_pid": "",
+				"coops_vm": "",
+				"other_identifier": "",
+				"measurement_method": "3rd Order Optical Leveling",
+				"measurement_date": "10-30-2021",
+				"measurement_by": "JOA Surveys",
+				"ortho_height_navd88_m": "",
+				"station_datum_height_m": 20,
+				"additional_information": "Primary Bench Mark. This benchmark defines station datum."
+			},
+			{
+				"stamping": "5374 C",
+				"ngs_pid": "",
+				"coops_vm": "",
+				"other_identifier": "",
+				"measurement_method": "3rd Order Optical Leveling",
+				"measurement_date": "10-30-2021",
+				"measurement_by": "JOA Surveys",
+				"ortho_height_navd88_m": "",
+				"station_datum_height_m": 28.4735,
+				"additional_information": ""
+			},
+			{
+				"stamping": "5374 D",
+				"ngs_pid": "",
+				"coops_vm": "",
+				"other_identifier": "",
+				"measurement_method": "3rd Order Optical Leveling",
+				"measurement_date": "10-30-2021",
+				"measurement_by": "JOA Surveys",
+				"ortho_height_navd88_m": "",
+				"station_datum_height_m": 30.8447,
+				"additional_information": ""
+			},
+			{
+				"stamping": "DLG TIDE 1",
+				"ngs_pid": "",
+				"coops_vm": "",
+				"other_identifier": "",
+				"measurement_method": "3rd Order Optical Leveling",
+				"measurement_date": "10-30-2021",
+				"measurement_by": "JOA Surveys",
+				"ortho_height_navd88_m": "",
+				"station_datum_height_m": 21.2703,
+				"additional_information": ""
+			}
+		]
+	},
+	"local_tidal_datum_establishment": {
+		"record_start_date": "2021-10-31T00:00Z",
+		"record_end_date": "",
+		"computation_tool": "",
+		"computation_method": "",
+		"control_station_stamping": "",
+		"control_station_ngs_pid": "",
+		"control_station_epoch": "",
+		"datum_type": "",
+		"computation_date": "(CCYY-MM-DDThh:mmZ)",
+		"computed_by": "(full name)",
+		"tidal_datums_relative_to_station_datum": {
+			"MHHW_m": 18.710,
+			"MHW_m": 18.176,
+			"DTL_m": 15.565,
+			"MTL_m": 15.651,
+			"MSL_m": 15.722,
+			"MLW_m": 13.124,
+			"MLLW_m": 12.419,
+			"GT_m": 6.290,
+			"MN_m": 5.053,
+			"DHQ_m": 0.533,
+			"DLQ_m": 0.704,
+			"HWI_hr": 0.000,
+			"LWI_hr": 7.160
+		},
+		"additional_information": "Water Level Height on Datum = Water Level Height on STND - Datum Offset from STND"
+	},
+	"station_error_analysis": {
+		"total_water_level_error_cm": "",
+		"sensor_error_cm": "",
+		"leveling_error_cm": "",
+		"data_processing_error_cm": "",
+		"datum_error_cm": ""
+	},
+	"telecommunication_equipment": [
+		{
+			"telemetry_method": "GOES",
+			"manufacturer_model": "Sutron GEO-ANT-GPS",
+			"serial_number": "2104194",
+			"date_installed": "2021-10-29(T00:00Z)",
+			"date_removed": "",
+			"additional_information": ""
+		},
+		{
+			"telemetry_method": "GOES",
+			"manufacturer_model": "Sutron GEO-ANT-GPS",
+			"serial_number": "2104195",
+			"date_installed": "2021-10-29(T00:00Z)",
+			"date_removed": "",
+			"additional_information": ""
+		}
+	],
+	"collocation_information": [
+		{
+			"instrumentation_type": "",
+			"manufacturer_model": "",
+			"serial_number": "",
+			"date_installed": "",
+			"date_removed": "",
+			"additional_information": ""
+		}
+	],
+	"station_point_of_contact": {
+		"operating_entity": "JOA Surveys, LLC",
+		"primary_contact": {
+			"contact_name": "Nathan Wardwell",
+			"affiliation": "Managing Partner",
+			"telephone_primary": "907-561-0136",
+			"telephone_secondary": "",
+			"email": "nathan@joasurveys.com"
+		},
+		"on_site_contact": {
+			"contact_name": "",
+			"affiliation": "",
+			"telephone_primary": "",
+			"telephone_secondary": "",
+			"email": ""
+		},
+		"additional_information": ""
+	},
+	"data_management_information": {
+		"entity": "JOA Surveys, LLC",
+		"primary_contact": {
+			"contact_name": "Nathan Wardwell",
+			"affiliation": "Managing Partner",
+			"telephone_primary": "907-561-0136",
+			"telephone_secondary": "",
+			"email": "nathan@joasurveys.com"
+		},
+		"primary_data_access": "",
+		"secondary_data_center": "",
+		"additional_metadata": "",
+		"additional_information": ""
+	}
+}

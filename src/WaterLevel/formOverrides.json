@@ -1,0 +1,82 @@
+{
+    "label": "Water Level Station Definition",
+    "id": "water_level_station_definition",
+    "wizard_steps": [
+        {
+            "label" : "Sensor information",
+            "id" : "water_level_sensor_information",
+            "pages": [
+                {
+                    "id": "general_information",
+                    "label": "General Information",
+                    "fields": [
+                        {"prop" :"water_level_sensor_information.category"},
+                        {"prop" :"water_level_sensor_information.manufacturer_model"},
+                        {"prop" :"water_level_sensor_information.serial_number"}
+                    ]
+                },
+                {
+                    "id": "sampling_information",
+                    "label": "Sampling Information",
+                    "fields": [
+                        {"prop" :"water_level_sensor_information.sample_interval_min"},
+                        {"prop" :"water_level_sensor_information.sample_avg_window_sec"}
+                    ]
+                },
+                {
+                    "id": "installation",
+                    "label": "Installation",
+                    "fields": [
+                        {"prop" :"water_level_sensor_information.mounting_structure"},
+                        {"prop" :"water_level_sensor_information.date_installed"},
+                        {"prop" :"water_level_sensor_information.date_removed"}
+                    ]
+                },
+                {
+                    "id" : "zero_elevation_on_station_datum",
+                    "label": "Zero Elevation on Station Datum",
+                    "fields": [
+                        {
+                            "prop" : "zero_elev_wrap",
+                            "label": "Zero Elevation on Station Datum",
+                            "skip_path": true,
+                            "type": "object",
+                            "fields": [
+                                {"prop" :"water_level_sensor_information.zero_elevation_on_station_datum", "layout": "horizontal"}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "additional_information",
+                    "label": "Notes",
+                    "fields": [
+                        {"prop" :"water_level_sensor_information.additional_information"}
+                    ]
+                }
+
+            ]
+        },
+        {
+            "id": "vertical_control_information",
+            "label": "Vertical Control",
+            "pages": [
+                {
+                    "id": "station_datum",
+                    "label": "Station Datum",
+                    "fields": [
+                        {"prop" :"sensor_vertical_control.station_datum"}
+                    ]   
+                },
+                {
+                    "id": "markers",
+                    "label": "Markers",
+                    "fields": [
+                        {"prop" :"sensor_vertical_control.markers"}
+                    ]
+                }
+
+            ]
+        }
+    ]
+}
