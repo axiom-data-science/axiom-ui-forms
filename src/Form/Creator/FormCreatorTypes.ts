@@ -78,7 +78,7 @@ interface IStringValueInput extends IFormFieldRoot {
   placeholder?: string
 }
 
-interface ITextField extends IStringValueInput {
+export interface ITextField extends IStringValueInput {
   type: ***REMOVED***text***REMOVED***
 }
 
