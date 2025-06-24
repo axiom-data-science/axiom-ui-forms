@@ -93,7 +93,7 @@ const OneOfMultiple = ({
                 onChange(newValues)
               }} />
               )}
-              <div className='ml-auto flex gap-2'>
+              <div className='flex gap-2'>
                 <Button
                 size='xs'
                 className={toolButtonClass}
