@@ -90,6 +90,9 @@
               },
               "elevation": {
                 "type": "number"
+              },
+              "unit": {
+                "type": "string"
               }
             }
           }
