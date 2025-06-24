@@ -30,5 +30,124 @@
     {
         "prop": "station_information.identifiers.other_id",
         "label" : "Other ID"
+    },
+    {
+        "prop" : "water_level_sensor_information.additional_information",
+        "type": "long_text"
+    },
+    {
+        "prop": "local_tidal_datum_establishment.record_start_date",
+        "type":"date"
+    },
+    {
+        "prop": "local_tidal_datum_establishment.record_end_date",
+        "type":"date"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.control_station_ngs_pid",
+        "label": "Control Station NGS PID"
+    },
+    {
+        "prop": "local_tidal_datum_establishment.computation_date",
+        "type": "date"
+    },
+    {
+        "prop": "local_tidal_datum_establishment.computed_by",
+        "placeholder": "Full name"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MHHW_m",
+        "label": "MHHW (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MHW_m",
+        "label": "MHW (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MTL_m",
+        "label": "DTL (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MTL_m",
+        "label": "MTL (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MSL_m",
+        "label": "MSL (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MLW_m",
+        "label": "MLW (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MLLW_m",
+        "label": "MLLW (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.GT_m",
+        "label": "GT (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MN_m",
+        "label": "MN (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.DHQ_m",
+        "label": "DHQ (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.DLQ_m",
+        "label": "DLQ (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.HWI_hr",
+        "label": "HWI (m)"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.LWI_hr",
+        "label": "LWI (m)"
+    },
+    {
+        "prop" : "sensor_vertical_control.markers_wrap",
+        "destPath": "sensor_vertical_control.markers",
+        "type": "object",
+        "multiple": true,
+        "fields": [
+            {
+                "prop": "sensor_vertical_control.markers_grid",
+                "type": "object",
+                "skip_path": true,
+                "label": "",
+                "layout" : "grid2",
+                "fields": [
+                    {
+                        "prop": "sensor_vertical_control.markers.ngs_pid",
+                        "label": "NGS PID"
+                    },
+                    {
+                        "prop": "sensor_vertical_control.markers.coops_vm",
+                        "label": "COOPS VM"
+                    },
+                    {
+                        "prop": "sensor_vertical_control.markers.measurement_date",
+                        "type": "date"
+                    },
+                    {
+                        "prop": "sensor_vertical_control.markers.ortho_height_navd88_m",
+                        "label": "Ortho Height NAVD88 (m)"
+                    },
+                    {
+                        "prop": "sensor_vertical_control.markers.station_datum_height_m",
+                        "label": "Station Datum Height (m)"
+                    }
+                ]
+            },
+            {
+                "prop": "sensor_vertical_control.markers.additional_information",
+                "type": "long_text",
+                "label": "Additional Information"
+            }
+        ]
+        
     }
 ]

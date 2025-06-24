@@ -1,19 +1,19 @@
 {
 	"station_information": {
-	"site_name": "Dillingham",
-	"state": "AK",
-	"identifiers": {
-		"co_ops_id": "",
-		"other_id": ""
-	},
-	"water_body_setting": "Bay",
-	"approximate_position": {
-		"latitude": 59.03750556,
-		"longitude": -158.46511389,
-		"projection": ""
-	},
-	"date_established": "2021-10-30T00:00Z",
-	"additional_information": "(multiple lines)"
+		"site_name": "Dillingham",
+		"state": "AK",
+		"identifiers": {
+			"co_ops_id": "",
+			"other_id": ""
+		},
+		"water_body_setting": "Bay",
+		"approximate_position": {
+			"latitude": 59.03750556,
+			"longitude": -158.46511389,
+			"projection": ""
+		},
+		"date_established": "2021-10-30T00:00Z",
+		"additional_information": "(multiple lines)"
 	},
 	"water_level_sensor_information": {
 		"category": "Vented Pressure",
@@ -26,10 +26,12 @@
 		"date_removed": "2021-10-30T00:00Z",
 		"additional_information": "Gauge 1",
 		"zero_elevation_on_station_datum": [
-			{"date": "2024-06-18", "elevation": 13.060},
-			{"date": "2023-05-24", "elevation": 13.062},
-			{"date": "2022-06-25", "elevation": 13.071},
-			{"date": "2021-10-29", "elevation": 13.078}
+			{"date": "2024-06-18", "elevation": 13.060, "unit": "m"},
+			{"date": "2023-10-30", "elevation": 13.061, "unit": "m"},
+			{"date": "2023-07-25", "elevation": 13.062, "unit": "m"},
+			{"date": "2023-05-24", "elevation": 13.062, "unit": "m"},
+			{"date": "2022-06-25", "elevation": 13.071, "unit": "m"},
+			{"date": "2021-10-29", "elevation": 13.078, "unit": "m"}
 		]
 	},
 	"sensor_vertical_control": {

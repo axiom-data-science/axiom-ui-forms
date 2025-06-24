@@ -5,13 +5,38 @@
         {
             "id": "station_information",
             "label": "Station Information",
-            "pages": [
+            "fields": [
                 {
-                    "id": "general_information",
-                    "label": "General Information",
+                    "prop": "station_entry_method",
+                    "type": "select",
+                    "label": "Station Entry Method",
+                    "skip_path": true,
+                    "options": [
+                        {"value": "new", "label": "Enter new station"},
+                        {"value": "search", "label": "Search for existing station"}
+                    ]
+                },
+                {
+                    "prop": "station_search",
+                    "placeholder": "Search for existing station",
+                    "conditions": {
+                        "dependsOn": "station_entry_method",
+                        "value": "search"
+                    }
+                },
+                {
+                    "prop" : "station_information_wrap",
+                    "type": "object",
+                    "skip_path": true,
+                    "label": "",
+                    "conditions": {
+                        "dependsOn": "station_entry_method",
+                        "value": "new"
+                    },
                     "fields": [
-                        {"prop": "station_information.site_name"},
-                        {"prop": "station_information.state"},
+                        {
+                            "prop": "station_information.site_name"
+                        },
                         {
                             "prop": "station_identifiers",
                             "label": "Identifiers",
@@ -23,38 +48,34 @@
                                 {"prop": "station_information.identifiers.other_id"}
                             ]
 
-                        }
-                        
-                    ]
-                },
-                {
-                    "id": "location",
-                    "label": "Location",
-                    "fields": [
+                        },
                         {
                             "prop": "station_information.water_body_setting",
                             "description": "Example: Bay, River, Lake, Ocean, etc."
                         },
                         {
+                            "prop": "station_information.state"
+                        },
+                        {
                             "prop": "station_information.geometry",
                             "type": "geometry",
                             "label" : "Approximate Position",
-                            "description": "Select a point on the map.",
+                            "description": "Select a point on the map or enter coordindates below",
                             "settings": {
                                 "drawPointEnabled": true,
                                 "showCoordinateInput": true
                             }
-                    }
+                        }
+
                     ]
                 }
-                
             ]
-
         },
         {
             "label" : "Sensor information",
             "id" : "water_level_sensor_information",
             "pages": [
+                
                 {
                     "id": "general_information",
                     "label": "General Information",
@@ -125,11 +146,93 @@
                 {
                     "id": "markers",
                     "label": "Markers",
+                    "description": "Add one or more markers.",
                     "fields": [
-                        {"prop" :"sensor_vertical_control.markers"}
+                        {
+                            "prop" :"sensor_vertical_control.markers_wrap"
+                        }
                     ]
                 }
 
+            ]
+        },
+        {
+            "id": "local_tidal_datum_establishment_page",
+            "label": "Local Tidal Datum Establishment",
+            "pages": [
+                {
+                    "id": "local_tidal_datum_establishment",
+                    "label": "Local Tidal Datum Establishment",
+                    "fields": [
+                        {
+                            "prop": "local_tidal_datum_establishment_wrap",
+                            "type": "object",
+                            "skip_path": true,
+                            "label": "",
+                            "fields": [
+                                {
+                            "prop": "local_tidal_datum_establishment.dates",
+                            "label": "",
+                            "skip_path": true,
+                            "type": "object",
+                            "layout": "horizontal",
+                            "fields": [
+                                {"prop": "local_tidal_datum_establishment.record_start_date"},
+                                {"prop": "local_tidal_datum_establishment.record_end_date"}
+                            ]
+                        },
+                        {
+                            "prop": "local_tidal_datum_establishment.computation",
+                            "label": "",
+                            "skip_path": true,
+                            "type": "object",
+                            "layout": "horizontal",
+                            "fields": [
+                                {"prop": "local_tidal_datum_establishment.computation_tool"},
+                                {"prop": "local_tidal_datum_establishment.computation_method"},
+                                {"prop": "local_tidal_datum_establishment.computed_by"}
+                            ]
+                        },
+                        {
+                            "prop": "local_tidal_datum_establishment.control_station",
+                            "label": "",
+                            "skip_path": true,
+                            "type": "object",
+                            "layout": "horizontal",
+                            "fields": [
+                                {"prop": "local_tidal_datum_establishment.control_station_stamping"},
+                                {"prop": "local_tidal_datum_establishment.control_station_ngs_pid"},
+                                {"prop": "local_tidal_datum_establishment.control_station_epoch"}
+                            ]
+                        },
+                        {
+                            "prop": "local_tidal_datum_establishment.datum_computation",
+                            "label": "",
+                            "skip_path": true,
+                            "type": "object",
+                            "layout": "horizontal",
+                            "fields": [
+                                {"prop": "local_tidal_datum_establishment.datum_type"},
+                                {"prop": "local_tidal_datum_establishment.computation_date"}
+                            ]
+                        }
+
+                            ]
+                        }
+
+                    ]
+                },
+                {
+                    "id": "datums",
+                    "label": "Datums",
+                    "fields": [
+                        {
+                            "prop": "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum",
+                            "label": "Tidal datum offsets relative to station datum",
+                            "layout": "grid3"
+                        }
+                    ]
+                }
             ]
         }
     ]
