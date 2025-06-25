@@ -102,55 +102,69 @@
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MHHW_m",
-        "label": "MHHW (m)"
+        "label": "MHHW (m)",
+        "description": "Mean Higher High Water"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MHW_m",
-        "label": "MHW (m)"
+        "label": "MHW (m)",
+        "description": "Mean Hiigh Water"
+    },
+    {
+        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.DTL_m",
+        "label": "DTL (m)",
+        "description": "Diurnal Tide Level"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MTL_m",
-        "label": "DTL (m)"
-    },
-    {
-        "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MTL_m",
-        "label": "MTL (m)"
+        "label": "MTL (m)",
+        "description": "Mean Tide Level"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MSL_m",
-        "label": "MSL (m)"
+        "label": "MSL (m)",
+        "description": "Mean Sea Level"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MLW_m",
+        "description": "Mean Low Water",
         "label": "MLW (m)"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MLLW_m",
-        "label": "MLLW (m)"
+        "label": "MLLW (m)",
+        "description": "Mean Lower Low Water"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.GT_m",
-        "label": "GT (m)"
+        "label": "GT (m)",
+        "description": "Great Diurnal Range"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.MN_m",
-        "label": "MN (m)"
+        "label": "MN (m)",
+        "description": "Mean Range of Tide"
+
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.DHQ_m",
-        "label": "DHQ (m)"
+        "label": "DHQ (m)",
+        "description": "Mean Diurnal High Water Inequality"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.DLQ_m",
-        "label": "DLQ (m)"
+        "label": "DLQ (m)",
+        "description": "Mean Diurnal Low Water Inequality"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.HWI_hr",
-        "label": "HWI (m)"
+        "label": "HWI (m)",
+        "description": "Greenwich High Water Interval"
     },
     {
         "prop" : "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum.LWI_hr",
-        "label": "LWI (m)"
+        "label": "LWI (m)",
+        "description": "Greenwich Low Water Interval"
     },
     {
         "prop" : "sensor_vertical_control.markers_wrap",
