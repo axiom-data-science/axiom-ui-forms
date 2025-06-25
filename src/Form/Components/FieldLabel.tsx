@@ -22,7 +22,7 @@ export const FieldDescriptionText = (field: IFormField): ReactElement => {
   return (
     <>{
       field.description !== undefined
-        ? <p className=***REMOVED***text-xs py-2***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown></p>
+        ? <p className=***REMOVED***text-xs pb-2***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown></p>
         : ***REMOVED******REMOVED***
     }</>
   )
@@ -30,7 +30,7 @@ export const FieldDescriptionText = (field: IFormField): ReactElement => {
 
 const FieldLabel = (field: IFormField): ReactElement => {
   return <>
-    <p><FieldLabelText {...field} /></p>
+    <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText {...field} /></p>
     <FieldDescriptionText {...field} />
 
   </>

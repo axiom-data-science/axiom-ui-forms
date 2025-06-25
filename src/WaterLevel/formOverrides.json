@@ -7,17 +7,11 @@
             "label": "Station Information",
             "fields": [
                 {
-                    "prop": "station_entry_method",
-                    "type": "select",
-                    "label": "Station Entry Method",
-                    "skip_path": true,
-                    "options": [
-                        {"value": "new", "label": "Enter new station"},
-                        {"value": "search", "label": "Search for existing station"}
-                    ]
+                    "prop": "station_entry_method"
                 },
                 {
                     "prop": "station_search",
+                    "type": "custom:station_search",
                     "placeholder": "Search for existing station",
                     "conditions": {
                         "dependsOn": "station_entry_method",
@@ -50,21 +44,13 @@
 
                         },
                         {
-                            "prop": "station_information.water_body_setting",
-                            "description": "Example: Bay, River, Lake, Ocean, etc."
+                            "prop": "station_information.water_body_setting"
                         },
                         {
                             "prop": "station_information.state"
                         },
                         {
-                            "prop": "station_information.geometry",
-                            "type": "geometry",
-                            "label" : "Approximate Position",
-                            "description": "Select a point on the map or enter coordindates below",
-                            "settings": {
-                                "drawPointEnabled": true,
-                                "showCoordinateInput": true
-                            }
+                            "prop": "station_information.geometry"
                         }
 
                     ]
@@ -146,7 +132,7 @@
                 {
                     "id": "markers",
                     "label": "Markers",
-                    "description": "Add one or more markers.",
+                    "description": "Add one or more vertical control markers.",
                     "fields": [
                         {
                             "prop" :"sensor_vertical_control.markers_wrap"

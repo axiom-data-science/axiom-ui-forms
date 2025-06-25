@@ -4,7 +4,7 @@ import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import { type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { Tabs, Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { JSONInput } from ***REMOVED***@/Form/Components/Inputs***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
@@ -38,13 +38,15 @@ const FormWithEditorOverlay = ({
   schemaState,
   formOverrideState,
   rootFieldOverrideState,
-  fieldOverrideState
+  fieldOverrideState,
+  inputOverrides
 }: {
   label: string
   schemaState?: [JSONSchema6 | undefined, (schema: JSONSchema6 | undefined) => void]
   formOverrideState?: [IFormOverride | undefined, (override: IFormOverride | undefined) => void]
   fieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
   rootFieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }): ReactElement => {
   const [editing, setEditing] = useState<boolean>(false)
   const [schemaInput, setSchemaInput] = schemaState ?? useState<JSONSchema6 | undefined>(undefined)
@@ -62,6 +64,7 @@ const FormWithEditorOverlay = ({
               ? <SchemaFormCreator
               id=***REMOVED***ptt-form***REMOVED***
               label={label}
+              inputOverrides={inputOverrides}
               schema={schemaInput}
               formOverrides={formOverrideInput !== undefined ? [formOverrideInput] : undefined}
               formFieldOverrides={[rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)}
