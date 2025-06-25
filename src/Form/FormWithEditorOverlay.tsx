@@ -4,7 +4,7 @@ import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { FormContext } from '@/Form/Creator/FormContextProvider'
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from '@radix-ui/react-icons'
-import { type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { JSONInput } from '@/Form/Components/Inputs'
 import { useAtom } from 'jotai'
@@ -38,13 +38,15 @@ const FormWithEditorOverlay = ({
   schemaState,
   formOverrideState,
   rootFieldOverrideState,
-  fieldOverrideState
+  fieldOverrideState,
+  inputOverrides
 }: {
   label: string
   schemaState?: [JSONSchema6 | undefined, (schema: JSONSchema6 | undefined) => void]
   formOverrideState?: [IFormOverride | undefined, (override: IFormOverride | undefined) => void]
   fieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
   rootFieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }): ReactElement => {
   const [editing, setEditing] = useState<boolean>(false)
   const [schemaInput, setSchemaInput] = schemaState ?? useState<JSONSchema6 | undefined>(undefined)
@@ -62,6 +64,7 @@ const FormWithEditorOverlay = ({
               ? <SchemaFormCreator
               id='ptt-form'
               label={label}
+              inputOverrides={inputOverrides}
               schema={schemaInput}
               formOverrides={formOverrideInput !== undefined ? [formOverrideInput] : undefined}
               formFieldOverrides={[rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)}

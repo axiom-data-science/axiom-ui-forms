@@ -1,7 +1,52 @@
 [
     {
+        "prop": "station_entry_method",
+        "type": "select",
+        "label": "Station Entry Method",
+        "skip_path": true,
+        "required": true,
+        "options": [
+            {"value": "new", "label": "Enter new station"},
+            {"value": "search", "label": "Search for existing station"}
+        ]
+    },
+    {
+        "prop": "station_information.site_name",
+        "required": true
+    },
+    {
+        "prop": "station_information.geometry",
+        "type": "geometry",
+        "label" : "Approximate Position",
+        "required": true,
+        "description": "Select a point on the map or enter coordindates below",
+        "settings": {
+            "drawPointEnabled": true,
+            "showCoordinateInput": true
+        }
+    },
+     {
+        "prop": "station_information.water_body_setting",
+        "type": "select",
+        "options": [
+            {"value": "ocean", "label": "Ocean"},
+            {"value": "estuary", "label": "Estuary"},
+            {"value": "river", "label": "River"},
+            {"value": "lake", "label": "Lake"},
+            {"value": "other", "label": "Other"}
+        ]
+    },
+    
+    {
         "prop": "water_level_sensor_information.category",
-        "type": "text"
+        "type": "select",
+        "required": true,
+        "options": [
+            {"value": "radar", "label": "Radar"},
+            {"value": "acoustic", "label": "Acoustic"},
+            {"value": "pressure", "label": "Pressure"},
+            {"value": "other", "label": "Other"}
+        ]
     },
     {
         "prop": "water_level_sensor_information.manufacturer_model",
@@ -111,15 +156,20 @@
         "prop" : "sensor_vertical_control.markers_wrap",
         "destPath": "sensor_vertical_control.markers",
         "type": "object",
+        "label": "",
         "multiple": true,
         "fields": [
             {
-                "prop": "sensor_vertical_control.markers_grid",
+                        "prop": "sensor_vertical_control.markers.stamping"
+                    },
+            {
+                "prop": "sensor_vertical_control.markers_id",
                 "type": "object",
                 "skip_path": true,
-                "label": "",
-                "layout" : "grid2",
+                "label": "Identifiers",
+                "layout" : "grid3",
                 "fields": [
+                
                     {
                         "prop": "sensor_vertical_control.markers.ngs_pid",
                         "label": "NGS PID"
@@ -129,15 +179,49 @@
                         "label": "COOPS VM"
                     },
                     {
+                        "prop": "sensor_vertical_control.markers.other_identifier"
+                    }
+                ]
+            },
+            {
+                "prop": "sensor_vertical_control.markers_measurement",
+                "type": "object",
+                "skip_path": true,
+                "label": "Measurement",
+                "layout" : "grid2",
+                "fields": [
+
+                    {
                         "prop": "sensor_vertical_control.markers.measurement_date",
-                        "type": "date"
+                        "type": "date",
+                        "label": "Date"
                     },
                     {
+                        "prop": "sensor_vertical_control.markers.measurement_method",
+                        "label": "Method"
+                    },
+                    {
+                        "prop": "sensor_vertical_control.markers.measurement_by",
+                        "placeholder": "Full name",
+                        "label": "Measurement by"
+                    }
+                ]
+            },
+            {
+                "prop": "sensor_vertical_control.markers_heights",
+                "type": "object",
+                "skip_path": true,
+                "label": "Heights",
+                "layout" : "grid2",
+                "fields": [
+                    {
                         "prop": "sensor_vertical_control.markers.ortho_height_navd88_m",
+                        "type": "number",
                         "label": "Ortho Height NAVD88 (m)"
                     },
                     {
                         "prop": "sensor_vertical_control.markers.station_datum_height_m",
+                        "type": "number",
                         "label": "Station Datum Height (m)"
                     }
                 ]
