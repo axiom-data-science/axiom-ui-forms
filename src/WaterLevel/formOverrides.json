@@ -215,6 +215,7 @@
                         {
                             "prop": "local_tidal_datum_establishment.tidal_datums_relative_to_station_datum",
                             "label": "Tidal datum offsets relative to station datum",
+                            "description": "More information on datums is available on the **[COOPS website](https://tidesandcurrents.noaa.gov/datum_options.html)**.",
                             "layout": "grid3"
                         }
                     ]
