@@ -20,6 +20,58 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
+      id: ***REMOVED***oil-options***REMOVED***,
+      label: ***REMOVED***Oil options***REMOVED***,
+      pages: [
+        {
+          // description: ***REMOVED***Oil options for the simulation***REMOVED***,
+          id: ***REMOVED***basic***REMOVED***,
+          label: ***REMOVED***Basic options***REMOVED***,
+          fields: [
+            {
+              prop: ***REMOVED***oil_type***REMOVED***
+            },
+            // {
+            //   prop: ***REMOVED***subsea_or_not***REMOVED***
+            // },
+            // {
+            //   prop: ***REMOVED***oil_spill_scenarios***REMOVED***
+            // },
+            {
+              prop: ***REMOVED***m3_per_hour***REMOVED***
+            },
+            {
+              prop: ***REMOVED***oil_weathering_options***REMOVED***
+            }
+          ]
+        },
+        {
+          id: ***REMOVED***advanced***REMOVED***,
+          label: ***REMOVED***Advanced options***REMOVED***,
+          fields: [
+            {
+              prop: ***REMOVED***subsea_options_distribution***REMOVED***
+            },
+            {
+              prop: ***REMOVED***subsea_options_uniform_distribution_parameters***REMOVED***
+            },
+            {
+              prop: ***REMOVED***subsea_options_lognormal_distribution_parameters***REMOVED***
+            },
+            {
+              prop: ***REMOVED***subsea_options_normal_distribution_parameters***REMOVED***
+            },
+            {
+              prop: ***REMOVED***oil_film_thickness***REMOVED***
+            },
+            {
+              prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
+            }
+          ]
+        }
+      ]
+    },
+    {
       id: ***REMOVED***ocean-model***REMOVED***,
       label: ***REMOVED***Ocean Model and time***REMOVED***,
       pages: [
@@ -58,11 +110,20 @@ const oilFormOverride: IFormOverride = {
     {
       id: ***REMOVED***map***REMOVED***,
       label: ***REMOVED***Map***REMOVED***,
-      description: ***REMOVED***Should able to select a point, polygon or upload a shapefile***REMOVED***,
+      // description: ***REMOVED***Should able to select a point, polygon or upload a shapefile***REMOVED***,
       pages: [
         {
           id: ***REMOVED***selection***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
+          description: `Suggestions:
+          
+          To model an oil slick, select a point with a non-zero radius, click out a polygon, or input a shapefile. 
+          Use a starting depth of 0 for the sea surface, and run in 2D to save time.
+          
+          To model a ship track spill, select a line, use a starting depth of 0 for the sea surface, and run in 2D.
+
+          To model a subsea blowout, select a point and start particles at the seafloor or some other non-zero depth.
+          `,
           fields: [
             {
               prop: ***REMOVED***shape_type***REMOVED***
@@ -80,10 +141,10 @@ const oilFormOverride: IFormOverride = {
               prop: ***REMOVED***shapefile***REMOVED***
             },
             {
-              prop: ***REMOVED***radius***REMOVED***
+              prop: ***REMOVED***number***REMOVED***
             },
             {
-              prop: ***REMOVED***number***REMOVED***
+              prop: ***REMOVED***radius***REMOVED***
             },
             {
               prop: ***REMOVED***do3D***REMOVED***
@@ -106,46 +167,6 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
-      id: ***REMOVED***oil-options***REMOVED***,
-      label: ***REMOVED***Oil options***REMOVED***,
-      pages: [
-        {
-          id: ***REMOVED***basic***REMOVED***,
-          label: ***REMOVED***Basic options***REMOVED***,
-          fields: [
-            {
-              prop: ***REMOVED***oil_type***REMOVED***
-            },
-            {
-              prop: ***REMOVED***m3_per_hour***REMOVED***
-            },
-            {
-              prop: ***REMOVED***emulsification***REMOVED***
-            },
-            {
-              prop: ***REMOVED***evaporation***REMOVED***
-            },
-            {
-              prop: ***REMOVED***biodegradation***REMOVED***
-            }
-
-          ]
-        },
-        {
-          id: ***REMOVED***advanced***REMOVED***,
-          label: ***REMOVED***Advanced options***REMOVED***,
-          fields: [
-            {
-              prop: ***REMOVED***oil_film_thickness***REMOVED***
-            },
-            {
-              prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
-            }
-          ]
-        }
-      ]
-    },
-    {
       id: ***REMOVED***physical-processes***REMOVED***,
       label: ***REMOVED***Physical processes***REMOVED***,
       pages: [
@@ -154,7 +175,10 @@ const oilFormOverride: IFormOverride = {
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***wind_drift_factor***REMOVED***
+              prop: ***REMOVED***wind_drift***REMOVED***
+            },
+            {
+              prop: ***REMOVED***wind_drift_options***REMOVED***
             },
             {
               prop: ***REMOVED***vertical_mixing***REMOVED***
@@ -172,25 +196,16 @@ const oilFormOverride: IFormOverride = {
           label: ***REMOVED***Advanced options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***wind_uncertainty***REMOVED***
-            },
-            {
-              prop: ***REMOVED***wind_drift_depth***REMOVED***
-            },
-            {
-              prop: ***REMOVED***vertical_mixing_timestep***REMOVED***
-            },
-            {
-              prop: ***REMOVED***mixed_layer_depth***REMOVED***
-            },
-            {
-              prop: ***REMOVED***seafloor_action***REMOVED***
+              prop: ***REMOVED***vertical_mixing_options***REMOVED***
             },
             {
               prop: ***REMOVED***diffusivitymodel***REMOVED***
             },
             {
               prop: ***REMOVED***current_uncertainty***REMOVED***
+            },
+            {
+              prop: ***REMOVED***wind_uncertainty***REMOVED***
             }
           ]
         }
@@ -210,6 +225,9 @@ const oilFormOverride: IFormOverride = {
             },
             {
               prop: ***REMOVED***coastline_action***REMOVED***
+            },
+            {
+              prop: ***REMOVED***seafloor_action***REMOVED***
             }
           ]
         },

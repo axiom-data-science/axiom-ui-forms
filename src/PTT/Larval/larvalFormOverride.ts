@@ -80,10 +80,10 @@ const larvalFormOverride: IFormOverride = {
               prop: ***REMOVED***shapefile***REMOVED***
             },
             {
-              prop: ***REMOVED***radius***REMOVED***
+              prop: ***REMOVED***number***REMOVED***
             },
             {
-              prop: ***REMOVED***number***REMOVED***
+              prop: ***REMOVED***radius***REMOVED***
             },
             {
               prop: ***REMOVED***do3D***REMOVED***
@@ -146,7 +146,10 @@ const larvalFormOverride: IFormOverride = {
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***wind_drift_factor***REMOVED***
+              prop: ***REMOVED***wind_drift***REMOVED***
+            },
+            {
+              prop: ***REMOVED***wind_drift_options***REMOVED***
             },
             {
               prop: ***REMOVED***vertical_mixing***REMOVED***
@@ -164,10 +167,16 @@ const larvalFormOverride: IFormOverride = {
           label: ***REMOVED***Advanced options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***wind_uncertainty***REMOVED***
+              prop: ***REMOVED***vertical_mixing_options***REMOVED***
+            },
+            {
+              prop: ***REMOVED***diffusivitymodel***REMOVED***
             },
             {
               prop: ***REMOVED***current_uncertainty***REMOVED***
+            },
+            {
+              prop: ***REMOVED***wind_uncertainty***REMOVED***
             }
           ]
         }

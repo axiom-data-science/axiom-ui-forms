@@ -7,6 +7,10 @@ const leewayFieldOverrides: IFormFieldOverride[] = [
       dependsOn: ***REMOVED***do3D***REMOVED***,
       value: true
     }
+  },
+  {
+    prop: ***REMOVED***object_type***REMOVED***,
+    description: ***REMOVED***Leeway object type for this simulation. For more information, see [this page](https://opendrift.github.io/autoapi/opendrift/models/leeway/index.html).***REMOVED***
   }
 ]
 
