@@ -28,9 +28,17 @@ export type IFormField = ITextField | IConstantField | INumberField | ILongTextF
 export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***objectList***REMOVED*** | ***REMOVED***oneOf***REMOVED*** | ***REMOVED***geojson***REMOVED*** | ***REMOVED***geometry***REMOVED*** | `custom:${string}`
 export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
 
-interface IFieldConditions {
+export type IFieldConditionResult = ***REMOVED***remove***REMOVED*** | ***REMOVED***add***REMOVED*** | ***REMOVED***disable***REMOVED*** | {
+  newDefaultValue?: IValueType | IValueType[]
+}
+export interface IFieldConditionsSet {
+  logic?: ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***
+  conditions: IFieldCondition[]
+}
+export interface IFieldCondition {
   dependsOn: string | string[]
   value: string | number | boolean
+  operator?: ***REMOVED***=***REMOVED*** | ***REMOVED***>***REMOVED*** | ***REMOVED***>=***REMOVED*** | ***REMOVED***<=***REMOVED*** | ***REMOVED***!=***REMOVED*** | ***REMOVED***contains***REMOVED*** | ***REMOVED***!contains***REMOVED***
 }
 
 type IFieldConstraints = Record<string, unknown>
@@ -48,7 +56,8 @@ interface IFormFieldRoot {
   level?: number
   index?: number
   defaultValue?: IValueType | IValueType[]
-  conditions?: IFieldConditions
+  conditions?: IFieldCondition
+  conditionsSet?: IFieldConditionsSet
   constraints?: IFieldConstraints
   settings?: Record<string, unknown>
 }

@@ -1,0 +1,42 @@
+{
+  "label": "Form with object",
+  "description": "Field 3 field is conditionally displayed when field1 is ***REMOVED***option1***REMOVED*** OR field2 is ***REMOVED***sesame***REMOVED***.",
+  "id": "objectForm",
+  "fields": [
+    {
+      "id": "firstField",
+      "label": "First Field",
+      "type": "select",
+      "options": [
+        { "label": "Open sesame", "value": "openSesame" },
+        { "label": "Option 2", "value": "option2" }
+      ]
+    },
+    {
+      "id": "secondField",
+      "label": "Second Field",
+      "type": "text",
+      "placeholder": "Enter text here"
+    },
+    {
+      "id": "thirdField",
+      "label": "Third field",
+      "type": "text",
+      "conditionsSet": {
+        "logic": "or",
+        "conditions" : [
+          {
+            "dependsOn": "firstField",
+            "operator": "=",
+            "value": "openSesame"
+          },
+          {
+            "dependsOn": "secondField",
+            "operator": "=",
+            "value": "open sesame"
+          }
+        ]
+      }
+    }
+  ]
+}

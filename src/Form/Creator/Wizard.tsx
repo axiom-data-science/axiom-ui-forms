@@ -235,10 +235,10 @@ const WizardLayoutContent = ({
   if (sections === undefined) {
     return <></>
   }
-  const { formValues, setFormValues } = useFormContext()
+  const { formValues } = useFormContext()
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
-  const sectionStatus = calculateSectionStatus(sections, [formValues, setFormValues])
+  const sectionStatus = calculateSectionStatus(sections, formValues)
 
   return (
 

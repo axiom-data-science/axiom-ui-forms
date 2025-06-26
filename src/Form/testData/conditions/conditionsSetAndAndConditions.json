@@ -1,0 +1,53 @@
+{
+  "label": "Form with object",
+  "id": "objectForm",
+  "description": "Field 4 only shows up when when field1 is ***REMOVED***please***REMOVED*** AND field2 is ***REMOVED***open***REMOVED*** AND field3 is ***REMOVED***sesame***REMOVED***.",
+  "fields": [
+    {
+      "id": "firstField",
+      "label": "First Field",
+      "type": "select",
+      "options": [
+        { "label": "Please", "value": "please" },
+        { "label": "Option 2", "value": "option2" }
+      ]
+    },
+    {
+      "id": "secondField",
+      "label": "Second Field",
+      "type": "text",
+      "placeholder": "Enter text here"
+    },
+    {
+      "id": "thirdField",
+      "label": "Third field",
+      "type": "text"
+    },
+    {
+      "id": "fourthField",
+      "label": "Fourth field",
+      "type": "text",
+      "conditionsSet": {
+        "logic": "and",
+        "conditions" : [
+          {
+            "dependsOn": "firstField",
+            "operator": "=",
+            "value": "option1"
+          },
+          {
+            "dependsOn": "secondField",
+            "operator": "=",
+            "value": "open"
+          }
+        ]
+      },
+      "conditions": {
+        "dependsOn": "thirdField",
+        "operator": "=",
+        "value": "sesame"
+      }
+    
+    }
+  ]
+}
