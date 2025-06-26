@@ -1,17 +1,66 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getValueFromPath } from '@/utils/getters'
 
+const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
+  if (val === undefined || val === null) {
+    return false
+  }
+  if (operator === '=' || operator === 'eq') {
+    // eslint-disable-next-line eqeqeq
+    return val == compareTo
+  }
+  if (operator === '>' || operator === 'gt') {
+    return +val > +compareTo
+  }
+  if (operator === '>=' || operator === 'gte') {
+    return +val >= +compareTo
+  }
+  if (operator === '<' || operator === 'lt') {
+    return +val < +compareTo
+  }
+  if (operator === '<=' || operator === 'lte') {
+    return +val <= +compareTo
+  }
+  if (operator === '!=' || operator === '!eq') {
+    // eslint-disable-next-line eqeqeq
+    return val != compareTo
+  }
+  console.warn(`Unknown operator: ${String(operator)}`)
+  return false
+}
+
+const runCheck = (
+  fieldValue: IValueType | IValueType[],
+  operator: IFieldConditionOperator | undefined = '=',
+  val: string | number | boolean | undefined
+): boolean => {
+  if (val === undefined) {
+    // ignore operator if val isn't set
+    return fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ''
+  }
+  return val !== undefined
+    ? val === false
+      ? (fieldValue === null || fieldValue === undefined || fieldValue === false || fieldValue === '')
+      : compare(fieldValue, operator || '=', val)
+    : (fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== '')
+}
+
 const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues): boolean => {
-  const dependsOn = Array.isArray(condition.dependsOn) ? condition.dependsOn : [condition.dependsOn]
+  const fieldToEval = condition.field ?? condition.dependsOn
+  if (fieldToEval === undefined) {
+    console.warn('Field condition is missing field or dependsOn property')
+    return true
+  }
+  const dependsOn = Array.isArray(fieldToEval) ? fieldToEval : [fieldToEval]
   const val = condition.value
   const pass = dependsOn.every(d => {
     const fieldValue = getValueFromPath(d, formValues)
-    return val !== undefined
-      ? val === false
-        ? (fieldValue === null || fieldValue === undefined || fieldValue === false || fieldValue === '')
-        : fieldValue === val
-      : (fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== '')
+    return runCheck(
+      fieldValue,
+      condition.operator ?? '=',
+      val
+    )
   })
   return pass
 }

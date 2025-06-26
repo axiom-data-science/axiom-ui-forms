@@ -33,12 +33,15 @@ export type IFieldConditionResult = 'remove' | 'add' | 'disable' | {
 }
 export interface IFieldConditionsSet {
   logic?: 'and' | 'or'
-  conditions: IFieldCondition[]
+  conditions: Array<Omit<IFieldCondition, 'result'>>
 }
+
+export type IFieldConditionOperator = '=' | 'eq' | '>' | 'gt' | '>=' | 'gte' | '<' | 'lt' | '<=' | 'lte' | '!=' | '!eq'
 export interface IFieldCondition {
-  dependsOn: string | string[]
+  dependsOn?: string | string[]
+  field?: string | string[]
   value: string | number | boolean
-  operator?: '=' | '>' | '>=' | '<=' | '!=' | 'contains' | '!contains'
+  operator?: IFieldConditionOperator
 }
 
 type IFieldConstraints = Record<string, unknown>
