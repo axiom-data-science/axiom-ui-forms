@@ -1,0 +1,43 @@
+{
+  "label": "Form with object",
+  "description": "* Second field is dependent on field 1 not equaling 0  \n\n * Fourth field is dependent on field 3 not equaling ***REMOVED***close it***REMOVED***",
+  "id": "objectForm",
+  "fields": [
+    {
+      "id": "firstField",
+      "label": "First Field",
+      "type": "number",
+      "constraints": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    {
+      "id": "secondField",
+      "label": "Second Field",
+      "type": "text",
+      "placeholder": "Enter text here",
+      "conditions":{
+            "field": "firstField",
+            "operator": "!=",
+            "value": 0
+          }
+        },
+        {
+      "id": "thirdField",
+      "label": "Third Field",
+      "type": "text"
+    },
+    {
+      "id": "Fourth Field",
+      "label": "Fourth Field",
+      "type": "text",
+      "placeholder": "Enter text here",
+      "conditions": {
+        "field": "thirdField",
+        "operator": "!=",
+        "value":"close it"
+      }
+    }
+  ]
+}

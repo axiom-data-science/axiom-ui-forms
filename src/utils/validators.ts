@@ -4,7 +4,7 @@ import { getFieldsFromFormSection, getFieldValue, getValueFromPath } from ***REM
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
   if (val === undefined || val === null) {
-    return false
+    return operator === ***REMOVED***!=***REMOVED***
   }
   if (operator === ***REMOVED***=***REMOVED*** || operator === ***REMOVED***eq***REMOVED***) {
     // eslint-disable-next-line eqeqeq
