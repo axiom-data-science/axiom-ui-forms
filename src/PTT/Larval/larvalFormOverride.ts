@@ -80,10 +80,10 @@ const larvalFormOverride: IFormOverride = {
               prop: 'shapefile'
             },
             {
-              prop: 'radius'
+              prop: 'number'
             },
             {
-              prop: 'number'
+              prop: 'radius'
             },
             {
               prop: 'do3D'
@@ -146,7 +146,10 @@ const larvalFormOverride: IFormOverride = {
           label: 'Basic options',
           fields: [
             {
-              prop: 'wind_drift_factor'
+              prop: 'wind_drift'
+            },
+            {
+              prop: 'wind_drift_options'
             },
             {
               prop: 'vertical_mixing'
@@ -164,10 +167,16 @@ const larvalFormOverride: IFormOverride = {
           label: 'Advanced options',
           fields: [
             {
-              prop: 'wind_uncertainty'
+              prop: 'vertical_mixing_options'
+            },
+            {
+              prop: 'diffusivitymodel'
             },
             {
               prop: 'current_uncertainty'
+            },
+            {
+              prop: 'wind_uncertainty'
             }
           ]
         }
