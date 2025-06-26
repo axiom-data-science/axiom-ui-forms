@@ -33,12 +33,15 @@ export type IFieldConditionResult = ***REMOVED***remove***REMOVED*** | ***REMOVE
 }
 export interface IFieldConditionsSet {
   logic?: ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***
-  conditions: IFieldCondition[]
+  conditions: Array<Omit<IFieldCondition, ***REMOVED***result***REMOVED***>>
 }
+
+export type IFieldConditionOperator = ***REMOVED***=***REMOVED*** | ***REMOVED***eq***REMOVED*** | ***REMOVED***>***REMOVED*** | ***REMOVED***gt***REMOVED*** | ***REMOVED***>=***REMOVED*** | ***REMOVED***gte***REMOVED*** | ***REMOVED***<***REMOVED*** | ***REMOVED***lt***REMOVED*** | ***REMOVED***<=***REMOVED*** | ***REMOVED***lte***REMOVED*** | ***REMOVED***!=***REMOVED*** | ***REMOVED***!eq***REMOVED***
 export interface IFieldCondition {
-  dependsOn: string | string[]
+  dependsOn?: string | string[]
+  field?: string | string[]
   value: string | number | boolean
-  operator?: ***REMOVED***=***REMOVED*** | ***REMOVED***>***REMOVED*** | ***REMOVED***>=***REMOVED*** | ***REMOVED***<=***REMOVED*** | ***REMOVED***!=***REMOVED*** | ***REMOVED***contains***REMOVED*** | ***REMOVED***!contains***REMOVED***
+  operator?: IFieldConditionOperator
 }
 
 type IFieldConstraints = Record<string, unknown>
