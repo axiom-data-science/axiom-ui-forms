@@ -41,6 +41,7 @@ const StationSearch = ({ field, onChange, value }: IFieldInputProps): ReactEleme
               </div>
     </div>
       : <>
+      <div className=***REMOVED***relative***REMOVED***>
       <Input
         id={field.id}
         testId={field.id}
@@ -51,6 +52,12 @@ const StationSearch = ({ field, onChange, value }: IFieldInputProps): ReactEleme
           setSearchValue(e)
         }}
     />
+    <Cross2Icon className=***REMOVED***absolute right-2 bottom-3 w-6 h-6 cursor-pointer opacity-40 hover:opacity-100***REMOVED***
+        onClick={() => {
+          setSearchValue(undefined)
+          setSelectedRecord(undefined)
+        }} />
+    </div>
     {
         (isLoading || data !== undefined) && (
             <div className=***REMOVED***absolute left-0 right-0 top-full z-10 bg-white border border-gray-300 shadow-lg h-60 overflow-y-auto***REMOVED***>
