@@ -4,7 +4,7 @@ import { getFieldsFromFormSection, getFieldValue, getValueFromPath } from '@/uti
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
   if (val === undefined || val === null) {
-    return false
+    return operator === '!='
   }
   if (operator === '=' || operator === 'eq') {
     // eslint-disable-next-line eqeqeq
