@@ -28,9 +28,17 @@ export type IFormField = ITextField | IConstantField | INumberField | ILongTextF
 export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'objectList' | 'oneOf' | 'geojson' | 'geometry' | `custom:${string}`
 export type ISectionFormFieldType = 'section' | 'page'
 
-interface IFieldConditions {
+export type IFieldConditionResult = 'remove' | 'add' | 'disable' | {
+  newDefaultValue?: IValueType | IValueType[]
+}
+export interface IFieldConditionsSet {
+  logic?: 'and' | 'or'
+  conditions: IFieldCondition[]
+}
+export interface IFieldCondition {
   dependsOn: string | string[]
   value: string | number | boolean
+  operator?: '=' | '>' | '>=' | '<=' | '!=' | 'contains' | '!contains'
 }
 
 type IFieldConstraints = Record<string, unknown>
@@ -48,7 +56,8 @@ interface IFormFieldRoot {
   level?: number
   index?: number
   defaultValue?: IValueType | IValueType[]
-  conditions?: IFieldConditions
+  conditions?: IFieldCondition
+  conditionsSet?: IFieldConditionsSet
   constraints?: IFieldConstraints
   settings?: Record<string, unknown>
 }

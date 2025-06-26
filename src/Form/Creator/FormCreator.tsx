@@ -26,8 +26,8 @@ export interface IFormCreatorProps {
 }
 
 const FormStatus = (): ReactElement => {
-  const { form, formValues, setFormValues } = useContext(FormContext)
-  const status = calculateSectionStatus([form], [formValues, setFormValues])
+  const { form, formValues } = useContext(FormContext)
+  const status = calculateSectionStatus([form], formValues)
 
   return (
     <>
