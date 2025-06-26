@@ -205,8 +205,8 @@ const PageLayoutContent = ({
     return <></>
   }
 
-  const { setFormValues, formValues } = useFormContext()
-  const sectionStatus = calculateSectionStatus(sections, [formValues, setFormValues])
+  const { formValues } = useFormContext()
+  const sectionStatus = calculateSectionStatus(sections, formValues)
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
 
