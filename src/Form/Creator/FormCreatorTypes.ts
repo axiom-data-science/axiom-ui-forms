@@ -28,12 +28,11 @@ export type IFormField = ITextField | IConstantField | INumberField | ILongTextF
 export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***objectList***REMOVED*** | ***REMOVED***oneOf***REMOVED*** | ***REMOVED***geojson***REMOVED*** | ***REMOVED***geometry***REMOVED*** | `custom:${string}`
 export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
 
-export type IFieldConditionResult = ***REMOVED***remove***REMOVED*** | ***REMOVED***add***REMOVED*** | ***REMOVED***disable***REMOVED*** | {
-  newDefaultValue?: IValueType | IValueType[]
-}
+export type IFieldConditionResult = ***REMOVED***exclude***REMOVED*** | ***REMOVED***include***REMOVED*** | ***REMOVED***disable***REMOVED*** | ***REMOVED***enable***REMOVED***
 export interface IFieldConditionsSet {
   logic?: ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***
   conditions: Array<Omit<IFieldCondition, ***REMOVED***result***REMOVED***>>
+  result?: IFieldConditionResult
 }
 
 export type IFieldConditionOperator = ***REMOVED***=***REMOVED*** | ***REMOVED***eq***REMOVED*** | ***REMOVED***>***REMOVED*** | ***REMOVED***gt***REMOVED*** | ***REMOVED***>=***REMOVED*** | ***REMOVED***gte***REMOVED*** | ***REMOVED***<***REMOVED*** | ***REMOVED***lt***REMOVED*** | ***REMOVED***<=***REMOVED*** | ***REMOVED***lte***REMOVED*** | ***REMOVED***!=***REMOVED*** | ***REMOVED***!eq***REMOVED***
@@ -42,6 +41,7 @@ export interface IFieldCondition {
   field?: string | string[]
   value: string | number | boolean
   operator?: IFieldConditionOperator
+  result?: IFieldConditionResult
 }
 
 type IFieldConstraints = Record<string, unknown>
@@ -328,4 +328,5 @@ export interface IFieldInputProps {
   onChange: IValueChangeFn
   value?: IValueType
   className?: string
+  disabled?: boolean
 }

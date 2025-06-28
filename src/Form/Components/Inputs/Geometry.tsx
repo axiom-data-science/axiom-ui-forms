@@ -113,7 +113,7 @@ const getInitialDrawType = (field: IFormField): EMapShape => {
   return EMapShape.point // Defaulting to Point if none specified
 }
 
-export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+export const GeometryInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const [showGeoJSONInput] = useState<boolean>(false)
@@ -271,7 +271,7 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
   // ---- JSX Return (Reverting Button ClassNames and removing disabled) ----
   return (
         <div>
-            <FieldLabel {...field} />
+            <FieldLabel field={field} disabled={disabled} />
             <div className="relative z-0">
                 {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
                     <div className="absolute z-20 top-4 right-4 flex flex-col gap-2">
@@ -352,7 +352,11 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
                         )}
                     </div>
                 )}
-
+                  {
+                    disabled && (
+                        <div className="absolute z-50 bg-white bg-opacity-20 cursor-not-allowed top-0 right-0 left-0 bottom-0"></div>
+                    )
+                  }
                 {/* Map Component */}
                 <Map {...MAP_CONFIG} setState={setMapState} />
 
@@ -368,13 +372,13 @@ export const GeometryInput = ({ field, onChange, value }: IFieldInputProps): Rea
                                 </div>
                             )}
                         </div>
-                        <TextArea error={error} className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner font-mono text-sm***REMOVED*** id={`${field.id}-coordinates`} testId={`${field.id}-coordinates`} value={coordinates} onChange={handleCoordinatesChange} placeholder={***REMOVED***...***REMOVED***} aria-label="Coordinates Input" />
+                        <TextArea error={error} disabled={disabled} className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner font-mono text-sm***REMOVED*** id={`${field.id}-coordinates`} testId={`${field.id}-coordinates`} value={coordinates} onChange={handleCoordinatesChange} placeholder={***REMOVED***...***REMOVED***} aria-label="Coordinates Input" />
                         {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
                     </div>
                 )}
 
                  {/* Debug Output (Optional) */}
-                 {showGeoJSONInput && <TextArea error={error} className=***REMOVED***...***REMOVED*** id={field.id + ***REMOVED***-debug***REMOVED***} testId={field.id + ***REMOVED***-debug***REMOVED***} label={<FieldLabel {...field} label="Debug GeoJSON Feature State"/>} value={JSON.stringify(value, null, 2)} />}
+                 {showGeoJSONInput && <TextArea error={error} className=***REMOVED***...***REMOVED*** id={field.id + ***REMOVED***-debug***REMOVED***} testId={field.id + ***REMOVED***-debug***REMOVED***} label={<FieldLabel field={{ ...field, label: ***REMOVED***Debug GeoJSON Feature State***REMOVED*** }} disabled={disabled} />} value={JSON.stringify(value, null, 2)} />}
             </div>
         </div>
   )

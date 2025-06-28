@@ -85,7 +85,16 @@ function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], fo
   Object.keys(formValues).forEach(key => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
     const field = fields?.find(f => getPathFromField(f) === path)
-    if (field !== undefined && !checkCondition(field, formValues)) {
+    const checkedCondition = field !== undefined
+      ? checkCondition(field, formValues)
+      : { pass: true, result: ***REMOVED***remove***REMOVED*** }
+    if (field !== undefined && (
+      (
+        !checkedCondition.pass && checkedCondition.result === ***REMOVED***remove***REMOVED***
+      ) || (
+        checkedCondition.pass && checkedCondition.result === ***REMOVED***add***REMOVED***
+      )
+    )) {
       formValuesCopy[key] = undefined
       // this ensures that objects that are the result of mapping get checked
       // but fields that are not explicitly defined as objects but may contain objects

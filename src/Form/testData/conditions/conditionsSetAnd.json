@@ -1,5 +1,5 @@
 {
-  "label": "Form with object",
+  "label": "Condiions set example with AND logic",
   "id": "objectForm",
   "description": "Field 3 only shows up when when field1 is ***REMOVED***open***REMOVED*** AND field2 is ***REMOVED***sesame***REMOVED***.",
   "fields": [
@@ -8,8 +8,14 @@
       "label": "First Field",
       "type": "select",
       "options": [
-        { "label": "Open", "value": "open" },
-        { "label": "Option 2", "value": "option2" }
+        {
+          "label": "Open",
+          "value": "open"
+        },
+        {
+          "label": "Option 2",
+          "value": "option2"
+        }
       ]
     },
     {
@@ -24,11 +30,11 @@
       "type": "text",
       "conditionsSet": {
         "logic": "and",
-        "conditions" : [
+        "conditions": [
           {
             "dependsOn": "firstField",
             "operator": "=",
-            "value": "option1"
+            "value": "open"
           },
           {
             "dependsOn": "secondField",

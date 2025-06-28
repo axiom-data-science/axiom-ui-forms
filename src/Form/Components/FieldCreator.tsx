@@ -9,12 +9,15 @@ import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
+const disabledClassName = ***REMOVED******REMOVED*** // ***REMOVED***opacity-50 pointer-events-none cursor-not-allowed***REMOVED***
+
 interface IFieldCreator {
   field: IFormField
   onChange?: IValueChangeFn
   className?: string
   defaultClassName?: string
   value?: IValueType | IValueType[]
+  disabled?: boolean
 }
 
 const toolButtonClass = ***REMOVED***border-white hover:border-single hover:border-1 hover:border-slate-400***REMOVED***
@@ -57,7 +60,8 @@ const OneOfMultiple = ({
   value,
   index,
   onChange,
-  values
+  values,
+  disabled = false
 
 }: {
   InputComponent: React.FC<IFieldInputProps>
@@ -66,6 +70,7 @@ const OneOfMultiple = ({
   index: number
   onChange: (v: IValueType[] | undefined) => void
   values: IValueType[]
+  disabled?: boolean
 }): ReactElement => {
   const addValue = (v: IValueType | null): void => {
     const newValues = [...values]
@@ -74,10 +79,11 @@ const OneOfMultiple = ({
   }
 
   return (
-    <div className=***REMOVED***flex flex-col gap-2***REMOVED***>
+    <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
           <InputComponent
           field={field}
           value={value}
+          disabled={disabled}
           onChange={(v) => {
             const newValues = [...values]
             newValues[index] = v as IValueType
@@ -116,6 +122,7 @@ const OneOfMultiple = ({
 const MultipleFieldCreator = ({
   field,
   onChange,
+  disabled = false,
   value
 }: IFieldCreator): ReactElement => {
   const { formValues, setFormValues, inputOverrides } = useFormContext()
@@ -128,8 +135,8 @@ const MultipleFieldCreator = ({
   const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
 
   if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true && field.multiple === true) {
-    return <div className=***REMOVED***p-4 bg-slate-100***REMOVED***>
-      <FieldLabel {...field} />
+    return <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
+      <FieldLabel field={field} disabled={disabled} />
       <p className=***REMOVED***text-rose-700***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline w-4 h-4 mr-2***REMOVED*** /> Error with field <span className=***REMOVED***font-sans p-2 text-xs bg-slate-200***REMOVED***>{field.id}</span> Object fields with multiple true and skip_path true are not supported.</p>
     </div>
   }
@@ -150,6 +157,7 @@ const MultipleFieldCreator = ({
           index={index}
           onChange={onChange ?? defaultOnChange}
           values={initialValues}
+          disabled={disabled}
           />
       })
     }
@@ -169,8 +177,19 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  if (!checkCondition(field, formValues)) {
+  const conditionResult = checkCondition(field, formValues)
+  let disabled: boolean = false
+
+  if (
+    (conditionResult.pass && conditionResult.result === ***REMOVED***exclude***REMOVED***) ||
+    (!conditionResult.pass && conditionResult.result === ***REMOVED***include***REMOVED***)
+  ) {
     return null
+  } else if (
+    (conditionResult.result === ***REMOVED***disable***REMOVED*** && conditionResult.pass) ||
+    (conditionResult.result === ***REMOVED***enable***REMOVED*** && !conditionResult.pass)
+  ) {
+    disabled = true
   }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
@@ -189,15 +208,18 @@ const FieldCreator = ({
   return InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
-      defaultClassName
+      defaultClassName,
+      extras: disabled ? [disabledClassName] : undefined
     })}>{
       field.multiple === true
         ? <MultipleFieldCreator
             field={field}
+            disabled={disabled}
             onChange={onChange}
           />
         : <InputComponent
             field={field}
+            disabled={disabled}
             onChange={onChangeFn}
             value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
           />

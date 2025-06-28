@@ -4,7 +4,7 @@ import { Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-export const FieldDescriptionTooltip = (field: IFormField): ReactElement => {
+export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
     field.description !== undefined
       ? <Tooltip tooltipWrapperClassName=***REMOVED***!z-50***REMOVED*** content={<span className=***REMOVED***leading-6***REMOVED***>{field.description}</span>} contentClassName=***REMOVED***max-w-[400px]***REMOVED***><InfoCircledIcon /></Tooltip>
@@ -12,13 +12,13 @@ export const FieldDescriptionTooltip = (field: IFormField): ReactElement => {
   )
 }
 
-export const FieldLabelText = (field: IFormField): ReactElement => {
+export const FieldLabelText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
-    <strong><InlineMarkdown>{field.label}</InlineMarkdown> { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}</strong>
+    <strong className={disabled ? ***REMOVED***text-slate-400***REMOVED*** : ***REMOVED******REMOVED***}><InlineMarkdown>{field.label}</InlineMarkdown> { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}</strong>
   )
 }
 
-export const FieldDescriptionText = (field: IFormField): ReactElement => {
+export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
     <>{
       field.description !== undefined
@@ -28,10 +28,10 @@ export const FieldDescriptionText = (field: IFormField): ReactElement => {
   )
 }
 
-const FieldLabel = (field: IFormField): ReactElement => {
+const FieldLabel = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return <>
-    <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText {...field} /></p>
-    <FieldDescriptionText {...field} />
+    <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText field={field} disabled={disabled} /></p>
+    <FieldDescriptionText field={field} disabled={disabled} />
 
   </>
 }

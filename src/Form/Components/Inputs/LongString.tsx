@@ -14,7 +14,7 @@ const LongStringInput = ({ field, onChange, value, className }: IFieldInputProps
         className={className}
         id={field.id}
         testId={field.id}
-        label={<FieldLabel {...field} />}
+        label={<FieldLabel field={field} disabled={disabled} />}
         placeholder={textField.placeholder}
         value={getValue()}
         onChange={(e) => {

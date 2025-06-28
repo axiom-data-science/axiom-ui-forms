@@ -2,7 +2,7 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
-const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const DateTimeInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const [error, setError] = useState<string | null>(null)
 
   if (field.type !== ***REMOVED***datetime***REMOVED***) {
@@ -78,7 +78,7 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
     <div>
       <div className="flex flex-wrap items-baseline gap-2">
         <label htmlFor={field.id} className="flex-1 min-w-[200px]">
-          <FieldLabel {...field} />
+          <FieldLabel field={field} disabled={disabled} />
         </label>
         {constraintMessage && (
           <span className="text-sm text-slate-500 italic">
@@ -88,7 +88,8 @@ const DateTimeInput = ({ field, onChange, value }: IFieldInputProps): ReactEleme
       </div>
       <input
         id={field.id}
-        className={`border ${error ? ***REMOVED***border-red-500***REMOVED*** : ***REMOVED***border-slate-300***REMOVED***} p-2 w-full`}
+        disabled={disabled}
+        className={`border ${error ? ***REMOVED***border-red-500***REMOVED*** : ***REMOVED***border-slate-300***REMOVED***} p-2 w-full${disabled ? ***REMOVED*** opacity-50 cursor-not-allowed***REMOVED*** : ***REMOVED******REMOVED***}`}
         data-testid={field.id}
         type="datetime-local"
         value={formatValue(value as string)}

@@ -1,5 +1,5 @@
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getValueFromPath } from ***REMOVED***@/utils/getters***REMOVED***
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
@@ -46,11 +46,14 @@ const runCheck = (
     : (fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ***REMOVED******REMOVED***)
 }
 
-const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues): boolean => {
+const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues): ICheckConditionResult => {
   const fieldToEval = condition.field ?? condition.dependsOn
   if (fieldToEval === undefined) {
     console.warn(***REMOVED***Field condition is missing field or dependsOn property***REMOVED***)
-    return true
+    return {
+      pass: true,
+      result: condition.result ?? ***REMOVED***include***REMOVED***
+    }
   }
   const dependsOn = Array.isArray(fieldToEval) ? fieldToEval : [fieldToEval]
   const val = condition.value
@@ -62,26 +65,43 @@ const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues
       val
     )
   })
-  return pass
+  return {
+    pass,
+    result: condition.result ?? ***REMOVED***include***REMOVED***
+  }
 }
 
-export const checkCondition = (field: IFormField, formValues: IFormValues): boolean => {
-  let check = true
+interface ICheckConditionResult {
+  pass: boolean
+  result: IFieldConditionResult
+}
+
+export const checkCondition = (field: IFormField, formValues: IFormValues): ICheckConditionResult => {
+  let pass: boolean = true
+  let result: IFieldConditionResult | undefined
   if (field.conditionsSet !== undefined) {
-    check = field.conditionsSet.logic === ***REMOVED***or***REMOVED***
-      ? field.conditionsSet.conditions.some((c: IFieldCondition) => {
-        return checkFieldCondition(c, formValues)
-      })
-      : field.conditionsSet.conditions.every((c: IFieldCondition) => {
-        return checkFieldCondition(c, formValues)
-      })
+    const passingConditions = field.conditionsSet.conditions.filter(c => {
+      const result = checkFieldCondition(c, formValues)
+      return result.pass
+    })
+
+    pass = field.conditionsSet.logic === ***REMOVED***or***REMOVED***
+      ? passingConditions.length > 0
+      : passingConditions.length === field.conditionsSet.conditions.length
+
+    result = field.conditionsSet.result
   }
 
-  if (field.conditions !== undefined && check) {
-    check = checkFieldCondition(field.conditions, formValues)
+  if (field.conditions !== undefined && pass) {
+    const f = checkFieldCondition(field.conditions, formValues)
+    pass = f.pass
+    result = field.conditions.result
   }
 
-  return check
+  return {
+    pass,
+    result: result ?? ***REMOVED***include***REMOVED***
+  }
 }
 
 const testField = (field: IFormField, formValues: IFormValues): boolean => {

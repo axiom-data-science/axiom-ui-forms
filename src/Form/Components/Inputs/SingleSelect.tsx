@@ -3,13 +3,13 @@ import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTyp
 import { SelectInput } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const SingleSelectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const SingleSelectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
 
   if (field.type === ***REMOVED***select***REMOVED*** && field.options !== undefined) {
     return <SelectInput
         id={field.id}
-        label={<FieldLabel {...field} />}
+        label={<FieldLabel field={field} disabled={disabled} />}
         testId={field.id}
         options={field.options}
         includePrompt = {field?.settings?.allowNull !== false}

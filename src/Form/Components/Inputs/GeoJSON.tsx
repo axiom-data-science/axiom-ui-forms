@@ -94,7 +94,7 @@ const calculateCenterFromGeoJSON = (geo: GeoJSON | undefined): { lat: number, lo
   }
 }
 
-export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+export const GeoJSONInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   console.log(***REMOVED***INITIAL VALUE***REMOVED***, value)
   const initialGeoJSON = value as unknown as GeoJSON
   const initialMapConfig = calculateCenterFromGeoJSON(initialGeoJSON)
@@ -419,7 +419,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
   }
 
   return <div>
-  <FieldLabel {...field} />
+  <FieldLabel field={field} disabled={disabled} />
     <div className="relative">
       <div className="absolute z-20 top-12 right-4 flex flex-col gap-2">
         <div className="tooltip-container relative group">
@@ -481,7 +481,13 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
           </div>
         )}
       </div>
-      <Map {...MAP_CONFIG} setState={setMapState} />
+        {
+          disabled && (
+              <div className="absolute z-50 bg-white bg-opacity-20 cursor-not-allowed top-0 right-0 left-0 bottom-0"></div>
+          )
+        }
+        <Map {...MAP_CONFIG} setState={setMapState} />
+
       <div className="mt-4">
         <div className="flex justify-between items-center mb-2">
           <span>Draw on map or enter coordinates <pre className="inline-block text-sm">(latitude, longitude)</pre></span>
@@ -505,6 +511,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
           )}
         </div>
         <TextArea
+          disabled={disabled}
           error={error}
           className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
           id={`${field.id}-coordinates`}
@@ -519,7 +526,7 @@ export const GeoJSONInput = ({ field, onChange, value }: IFieldInputProps): Reac
         className=***REMOVED***min-h-[500px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
         id={field.id}
         testId={field.id}
-        label={<FieldLabel {...field} />}
+        label={<FieldLabel field={field} disabled={disabled} />}
         value={getValue()}
         onChange={(e) => {
           try {

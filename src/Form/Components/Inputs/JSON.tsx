@@ -29,7 +29,7 @@ const tryGetFormatted = (val: string, fmt: string): string => {
   }
 }
 
-const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const jsonField = field as IJSONField
   const exportAsString = jsonField?.settings?.exportAsString ?? false
   const allowEmpty = jsonField?.settings?.allowEmpty ?? false
@@ -141,7 +141,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
 
   return (
     <div className=***REMOVED***flex flex-col h-full relative***REMOVED***>
-      <FieldLabel {...field} />
+      <FieldLabel field={field} disabled={disabled} />
       <div className=***REMOVED***flex flex-row***REMOVED***>
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***json***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***json***REMOVED***) }}>JSON</Button>
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***yaml***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***yaml***REMOVED***) }}>YAML</Button>
@@ -162,6 +162,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         </span>
       <div className=***REMOVED***h-full flex-grow overflow-auto min-h-[300px]***REMOVED***>
       <CodeMirror
+        readOnly={disabled}
         value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
         extensions={[
           format === ***REMOVED***json***REMOVED*** ? json() : yaml(),

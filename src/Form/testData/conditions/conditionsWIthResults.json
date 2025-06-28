@@ -1,0 +1,29 @@
+{
+  "label": "Form with fields that have conditions resulting in showing/hiding/disabling fields when condition not met",
+  "id": "testForm",
+  "description": "",
+  "fields": [
+    {
+      "id": "firstField",
+      "label": "First Field",
+      "type": "select",
+      "options": [
+        { "label": "Disable second field", "value": "disableSecondField" },
+        { "label": "Option 2", "value": "option2" }
+      ]
+    },
+    {
+      "id": "secondField",
+      "label": "Second Field",
+      "type": "text",
+      "placeholder": "Enter text here",
+      "conditions": {
+        "field": "firstField",
+        "operator": "=",
+        "value": "disableSecondField",
+        "result" : "disable"
+      }
+
+    }
+  ]
+}
