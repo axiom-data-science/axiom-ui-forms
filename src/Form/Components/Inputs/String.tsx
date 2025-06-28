@@ -3,7 +3,7 @@ import { type IFieldInputProps, type ITextField } from '@/Form/Creator/FormCreat
 import { Input } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
-const StringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const StringInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = (value !== undefined && value !== null) ? String(value) : ''
   const textField = field as ITextField
   /* const [val, setVal] = useState<string | undefined>(initialValue !== undefined && initialValue !== null ? String(initialValue) : '')
@@ -15,10 +15,11 @@ const StringInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
   return <div>
       <Input
         id={field.id}
+        disabled={disabled}
         testId={field.id}
         value={initialValue}
         placeholder={textField.placeholder}
-        label={<FieldLabel {...field} />} onChange={(e) => {
+        label={<FieldLabel field={field} disabled={disabled} />} onChange={(e) => {
           onChange((e === '' || e === null) ? undefined : e)
         }} /></div>
 }

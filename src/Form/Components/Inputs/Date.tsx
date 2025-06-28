@@ -2,7 +2,7 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import React, { type ReactElement, useState } from 'react'
 
-const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const DateInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   if (field.type !== 'date') {
     return <p>Field config for {field.id} is missing &apos;options&apos;</p>
   }
@@ -81,7 +81,7 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
     <div>
       <div className="flex flex-wrap items-baseline gap-2">
         <label htmlFor={field.id} className="flex-1 min-w-[200px]">
-          <FieldLabel {...field} />
+          <FieldLabel field={field} disabled={disabled} />
         </label>
         {constraintMessage && (
           <span className="text-sm text-slate-500 italic">
@@ -91,7 +91,8 @@ const DateInput = ({ field, onChange, value }: IFieldInputProps): ReactElement =
       </div>
       <input
         id={field.id}
-        className={`border ${error ? 'border-red-500' : 'border-slate-300'} p-2 w-full`}
+        disabled={disabled}
+        className={`border ${error ? 'border-red-500' : 'border-slate-300'} p-2 w-full${disabled ? ' opacity-50 cursor-not-allowed' : ''}`}
         data-testid={field.id}
         type="date"
         value={inputValue}

@@ -6,7 +6,7 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { useQuery } from '@tanstack/react-query'
 import React, { useState, type ReactElement } from 'react'
 
-const StationSearch = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const StationSearch = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const textField = field as ITextField
   const [searchValue, setSearchValue] = useState<string | undefined>()
   const [selectedRecord, setSelectedRecord] = useState<ISensorStationRecord | undefined>(undefined)
@@ -47,7 +47,7 @@ const StationSearch = ({ field, onChange, value }: IFieldInputProps): ReactEleme
         testId={field.id}
         value={searchValue}
         placeholder={textField.placeholder ?? 'Enter search term'}
-        label={<FieldLabel {...field} />}
+        label={<FieldLabel field={field} disabled={disabled} />}
         onChange={(e) => {
           setSearchValue(e)
         }}

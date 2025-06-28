@@ -29,7 +29,7 @@ const tryGetFormatted = (val: string, fmt: string): string => {
   }
 }
 
-const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const jsonField = field as IJSONField
   const exportAsString = jsonField?.settings?.exportAsString ?? false
   const allowEmpty = jsonField?.settings?.allowEmpty ?? false
@@ -141,7 +141,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
 
   return (
     <div className='flex flex-col h-full relative'>
-      <FieldLabel {...field} />
+      <FieldLabel field={field} disabled={disabled} />
       <div className='flex flex-row'>
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'json' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('json') }}>JSON</Button>
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'yaml' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('yaml') }}>YAML</Button>
@@ -162,6 +162,7 @@ const JsonYamlEditor = ({ field, onChange, value }: IFieldInputProps): ReactElem
         </span>
       <div className='h-full flex-grow overflow-auto min-h-[300px]'>
       <CodeMirror
+        readOnly={disabled}
         value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
         extensions={[
           format === 'json' ? json() : yaml(),

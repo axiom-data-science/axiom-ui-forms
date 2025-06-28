@@ -81,7 +81,7 @@ const inputOverrides = {
 
     return (
             <div className='flex flex-col flex-grow h-full'>
-                <FieldLabel {...field} />
+                <FieldLabel field={field} disabled={disabled} />
                 <div className='flex flex-row gap-10 flex-grow h-full'>
                   <div className='w-[350px] overflow-y-auto flex-none h-full bg-slate-200 text-xs'>
                     <SchemaPathList schema={schemaInput} />
@@ -106,7 +106,7 @@ const inputOverrides = {
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
     return (
             <div className='flex flex-col flex-grow h-full'>
-                <FieldLabel {...field} />
+                <FieldLabel field={field} disabled={disabled} />
                 <div className='flex flex-row gap-10 flex-grow h-full'>
                   <div className='w-[350px] flex-none overflow-y-auto bg-slate-200 text-xs'>
                     <SchemaPathList schema={schemaInput} />

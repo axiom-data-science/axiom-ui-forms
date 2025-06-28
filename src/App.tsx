@@ -77,7 +77,7 @@ const CustomElementFormWrap = (): ReactElement => {
             const step = Number(numberField?.settings?.step ?? (max - min) / 100)
             return (<div>
               <h2 className='p-4 text-xl bg-rose-800 text-white'>{labelFromContext}</h2>
-              <FieldLabel {...field} />
+              <FieldLabel field={field} />
               <div className='flex flex-row gap-4'>
                 <p className='font-bold w-[80px]'>{tempValue}</p>
                 <Slider

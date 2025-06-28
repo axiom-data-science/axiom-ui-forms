@@ -1,30 +1,19 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import {
   checkCondition,
   calculateSectionStatus
 } from './validators'
 import { type IFormField } from '@/library'
 
-// Mocks for dependencies and types
-const getFieldValue = vi.fn()
-const getFieldsFromFormSection = vi.fn()
-const getValueFromPath = vi.fn()
-
-vi.mock('@/utils/getters', () => ({
-  getFieldValue,
-  getFieldsFromFormSection,
-  getValueFromPath
-}))
-
 describe('checkCondition', () => {
   it('returns true if no conditions are set', () => {
     const field = {}
     const formValues = {}
-    expect(checkCondition(field as any, formValues)).toBe(true)
+    const result = checkCondition(field as any, formValues)
+    expect(result.pass).toBe(true)
   })
 
-  it('returns true if single condition passes', () => {
-    getValueFromPath.mockReturnValue('foo')
+  it('returns true if single condition passes and result as default "include', () => {
     const field: IFormField = {
       id: 'testField',
       label: 'Test field',
@@ -35,11 +24,12 @@ describe('checkCondition', () => {
       }
     }
     const formValues = { bar: 'foo' }
-    expect(checkCondition(field, formValues)).toBe(true)
+    const result = checkCondition(field, formValues)
+    expect(result.pass).toBe(true)
+    expect(result.result).toBe('include')
   })
 
   it('returns false if single condition fails', () => {
-    getValueFromPath.mockReturnValue('baz')
     const field: IFormField = {
       id: 'testField',
       label: 'Test field',
@@ -50,11 +40,11 @@ describe('checkCondition', () => {
       }
     }
     const formValues = { bar: 'baz' }
-    expect(checkCondition(field, formValues)).toBe(false)
+    const result = checkCondition(field, formValues)
+    expect(result.pass).toBe(false)
   })
 
   it('returns true for OR logic if any condition passes', () => {
-    getValueFromPath.mockImplementation((path: string) => path === 'a' ? 1 : 0)
     const field: IFormField = {
       id: 'testField',
       label: 'Test field',
@@ -67,12 +57,11 @@ describe('checkCondition', () => {
         ]
       }
     }
-    expect(checkCondition(field, { a: 1, b: 0 })).toBe(true)
-    expect(checkCondition(field, { a: 0, b: 2 })).toBe(true)
+    expect(checkCondition(field, { a: 1, b: 0 }).pass).toBe(true)
+    expect(checkCondition(field, { a: 0, b: 2 }).pass).toBe(true)
   })
 
   it('returns false for AND logic if any condition fails', () => {
-    getValueFromPath.mockImplementation((path: string) => path === 'a' ? 1 : 0)
     const field: IFormField = {
       id: 'testField',
       label: 'Test field',
@@ -86,7 +75,41 @@ describe('checkCondition', () => {
       }
     }
     const formValues = { a: 1, b: 0 }
-    expect(checkCondition(field, formValues)).toBe(false)
+    expect(checkCondition(field, formValues).pass).toBe(false)
+  })
+  it('returns a result of "exclude" when result set in conditionsSet', () => {
+    const field: IFormField = {
+      id: 'testField',
+      label: 'Test field',
+      type: 'text',
+      conditionsSet: {
+        logic: 'or',
+        conditions: [
+          { dependsOn: 'a', value: 1 },
+          { dependsOn: 'b', value: 2 }
+        ],
+        result: 'exclude'
+      }
+    }
+    const result = checkCondition(field, { a: 1, b: 0 })
+    expect(result.pass).toBe(true)
+    expect(result.result).toBe('exclude')
+  })
+  it('returns a result of "disable" when result set in conditions', () => {
+    const field: IFormField = {
+      id: 'testField',
+      label: 'Test field',
+      type: 'text',
+      conditions: {
+        dependsOn: 'bar',
+        value: 'foo',
+        result: 'disable'
+      }
+    }
+    const formValues = { bar: 'foo' }
+    const result = checkCondition(field, formValues)
+    expect(result.pass).toBe(true)
+    expect(result.result).toBe('disabled')
   })
 })
 

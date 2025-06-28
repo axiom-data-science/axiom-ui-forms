@@ -1,5 +1,5 @@
 {
-  "label": "Form with object",
+  "label": "Conditions example combining conditions set and conditions",
   "id": "objectForm",
   "description": "Field 4 only shows up when when field1 is 'please' AND field2 is 'open' AND field3 is 'sesame'.",
   "fields": [
@@ -33,7 +33,7 @@
           {
             "dependsOn": "firstField",
             "operator": "=",
-            "value": "option1"
+            "value": "please"
           },
           {
             "dependsOn": "secondField",

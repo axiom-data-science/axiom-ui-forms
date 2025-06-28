@@ -4,7 +4,7 @@ import { Tooltip } from '@axdspub/axiom-ui-utilities'
 import { InfoCircledIcon } from '@radix-ui/react-icons'
 import React, { type ReactElement } from 'react'
 
-export const FieldDescriptionTooltip = (field: IFormField): ReactElement => {
+export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
     field.description !== undefined
       ? <Tooltip tooltipWrapperClassName='!z-50' content={<span className='leading-6'>{field.description}</span>} contentClassName='max-w-[400px]'><InfoCircledIcon /></Tooltip>
@@ -12,13 +12,13 @@ export const FieldDescriptionTooltip = (field: IFormField): ReactElement => {
   )
 }
 
-export const FieldLabelText = (field: IFormField): ReactElement => {
+export const FieldLabelText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
-    <strong><InlineMarkdown>{field.label}</InlineMarkdown> { field.required === true ? <span className='text-red-500'>*</span> : ''}</strong>
+    <strong className={disabled ? 'text-slate-400' : ''}><InlineMarkdown>{field.label}</InlineMarkdown> { field.required === true ? <span className='text-red-500'>*</span> : ''}</strong>
   )
 }
 
-export const FieldDescriptionText = (field: IFormField): ReactElement => {
+export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
     <>{
       field.description !== undefined
@@ -28,10 +28,10 @@ export const FieldDescriptionText = (field: IFormField): ReactElement => {
   )
 }
 
-const FieldLabel = (field: IFormField): ReactElement => {
+const FieldLabel = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return <>
-    <p className='pb-2'><FieldLabelText {...field} /></p>
-    <FieldDescriptionText {...field} />
+    <p className='pb-2'><FieldLabelText field={field} disabled={disabled} /></p>
+    <FieldDescriptionText field={field} disabled={disabled} />
 
   </>
 }

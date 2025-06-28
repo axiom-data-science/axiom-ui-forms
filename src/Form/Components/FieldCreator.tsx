@@ -9,12 +9,15 @@ import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import React, { useState, type ReactElement } from 'react'
 
+const disabledClassName = '' // 'opacity-50 pointer-events-none cursor-not-allowed'
+
 interface IFieldCreator {
   field: IFormField
   onChange?: IValueChangeFn
   className?: string
   defaultClassName?: string
   value?: IValueType | IValueType[]
+  disabled?: boolean
 }
 
 const toolButtonClass = 'border-white hover:border-single hover:border-1 hover:border-slate-400'
@@ -57,7 +60,8 @@ const OneOfMultiple = ({
   value,
   index,
   onChange,
-  values
+  values,
+  disabled = false
 
 }: {
   InputComponent: React.FC<IFieldInputProps>
@@ -66,6 +70,7 @@ const OneOfMultiple = ({
   index: number
   onChange: (v: IValueType[] | undefined) => void
   values: IValueType[]
+  disabled?: boolean
 }): ReactElement => {
   const addValue = (v: IValueType | null): void => {
     const newValues = [...values]
@@ -74,10 +79,11 @@ const OneOfMultiple = ({
   }
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ''}`}>
           <InputComponent
           field={field}
           value={value}
+          disabled={disabled}
           onChange={(v) => {
             const newValues = [...values]
             newValues[index] = v as IValueType
@@ -116,6 +122,7 @@ const OneOfMultiple = ({
 const MultipleFieldCreator = ({
   field,
   onChange,
+  disabled = false,
   value
 }: IFieldCreator): ReactElement => {
   const { formValues, setFormValues, inputOverrides } = useFormContext()
@@ -128,8 +135,8 @@ const MultipleFieldCreator = ({
   const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
 
   if (field.type === 'object' && field.skip_path === true && field.multiple === true) {
-    return <div className='p-4 bg-slate-100'>
-      <FieldLabel {...field} />
+    return <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ''}`}>
+      <FieldLabel field={field} disabled={disabled} />
       <p className='text-rose-700'><ExclamationTriangleIcon className='inline w-4 h-4 mr-2' /> Error with field <span className='font-sans p-2 text-xs bg-slate-200'>{field.id}</span> Object fields with multiple true and skip_path true are not supported.</p>
     </div>
   }
@@ -150,6 +157,7 @@ const MultipleFieldCreator = ({
           index={index}
           onChange={onChange ?? defaultOnChange}
           values={initialValues}
+          disabled={disabled}
           />
       })
     }
@@ -169,8 +177,19 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  if (!checkCondition(field, formValues)) {
+  const conditionResult = checkCondition(field, formValues)
+  let disabled: boolean = false
+
+  if (
+    (conditionResult.pass && conditionResult.result === 'exclude') ||
+    (!conditionResult.pass && conditionResult.result === 'include')
+  ) {
     return null
+  } else if (
+    (conditionResult.result === 'disable' && conditionResult.pass) ||
+    (conditionResult.result === 'enable' && !conditionResult.pass)
+  ) {
+    disabled = true
   }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
@@ -189,15 +208,18 @@ const FieldCreator = ({
   return InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
-      defaultClassName
+      defaultClassName,
+      extras: disabled ? [disabledClassName] : undefined
     })}>{
       field.multiple === true
         ? <MultipleFieldCreator
             field={field}
+            disabled={disabled}
             onChange={onChange}
           />
         : <InputComponent
             field={field}
+            disabled={disabled}
             onChange={onChangeFn}
             value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
           />

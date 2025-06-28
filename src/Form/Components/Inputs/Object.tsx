@@ -24,7 +24,7 @@ const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
         <div>
         {
           field.label !== undefined
-            ? <FieldLabel {...field} />
+            ? <FieldLabel field={field} disabled={disabled} />
             : null
         }
         <div className={`p-4 bg-slate-100  ${cl}`}>

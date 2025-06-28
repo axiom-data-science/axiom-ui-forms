@@ -1,5 +1,5 @@
 import FieldLabel, { FieldDescriptionTooltip, FieldLabelText } from '@/Form/Components/FieldLabel'
-import { type INumberField, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { type INumberField, type IFieldInputProps, type IValueType } from '@/Form/Creator/FormCreatorTypes'
 import { Checkbox, Input, Slider } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, Cross2Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import React, { useState, type ReactElement } from 'react'
@@ -12,7 +12,7 @@ const isValidNumber = (value: string): boolean => {
   return !isNaN(num) && isFinite(num)
 }
 
-const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProps & { max: number, min?: number, step?: number }): ReactElement => {
+const SliderInput = ({ field, value, onChange, min, max, step, disabled }: IFieldInputProps & { max: number, min?: number, step?: number }): ReactElement => {
   const updateTemp = (value: string | number | undefined): void => {
     if (value !== undefined && isValidNumber(String(value))) {
       setTempValue(+value)
@@ -21,16 +21,18 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
       setTempTextValue(value !== undefined ? String(value) : undefined)
     }
   }
-  const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
+  const [tempValue, setTempValue] = useState<number | undefined>(value !== undefined && value !== null ? +value : undefined)
   const [tempTextValue, setTempTextValue] = useState<string | undefined>(value !== undefined ? String(value) : undefined)
   const [mode, setMode] = useState<'slider' | 'text'>('slider')
 
   return (<div>
-    <FieldLabel {...field} />
+    <FieldLabel field={field} disabled={disabled} />
     <div className='flex flex-row gap-4'>
       <Slider
-        className='flex-grow max-w-[400px] mt-1'
+        wrapperClassName='flex-grow max-w-[400px] mt-1'
         size='sm'
+        disabled={disabled}
+        retainUndefinedOnLoad={true}
         value={tempValue}
         min={min ?? 0}
         max={max}
@@ -48,14 +50,22 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
         {
           mode === 'slider'
             ? <>
-              <strong className='w-[60px]'>{tempValue}</strong>
-                <Pencil1Icon className='inline m-1 w-5 h-5  cursor-pointer' onClick={() => {
+              <strong className={`w-[60px]${disabled ? ' text-slate-400 cursor-not-allowed' : ''}`}>{tempValue}</strong>
+                <Pencil1Icon className={`inline m-1 w-5 h-5 ${disabled ? ' opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => {
+                  if (disabled) return
                   setMode('text')
                 }} />
                 </>
             : <>
-              <Input
+            {
+              (
+                (tempTextValue !== undefined && tempTextValue !== null) ||
+                mode === 'text'
+              )
+
+                ? <><Input
               id={`slider-text-${field.id}`}
+              disabled={disabled}
               testId={`slider-text-${field.id}`}
               value={tempTextValue !== undefined && tempTextValue !== null ? String(tempTextValue) : ''}
               className='w-[50px] text-xs text-right'
@@ -64,16 +74,21 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
               onChange={(e) => {
                 updateTemp(e)
               }} />
-              <Cross2Icon className='flex-none inline w-5 h-5 m-1 cursor-pointer' color='red' onClick={() => {
-                setMode('slider')
+              <Cross2Icon className={`flex-none inline m-1 w-5 h-5 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} color='red' onClick={() => {
+                if (!disabled) {
+                  setMode('slider')
+                }
               }} />
-              <CheckIcon className={`flex-none inline w-5 h-5 m-1 ${isValidNumber(String(tempTextValue)) ? 'cursor-pointer' : 'opacity-50'}`} color='green' onClick={() => {
-                if (isValidNumber(String(tempTextValue))) {
+              <CheckIcon className={`flex-none inline m-1 w-5 h-5 ${(disabled ?? !isValidNumber(String(tempTextValue))) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} color='green' onClick={() => {
+                if (!disabled && isValidNumber(String(tempTextValue))) {
                   setMode('slider')
                   updateTemp(tempTextValue)
                   onChange(tempTextValue)
                 }
               }} />
+              </>
+                : ''
+            }
               </>
         }
         </div>
@@ -81,7 +96,7 @@ const SliderInput = ({ field, value, onChange, min, max, step }: IFieldInputProp
   </div>)
 }
 
-const TextInput = ({ field, onChange, value, className }: IFieldInputProps): ReactElement => {
+const TextInput = ({ field, onChange, value, className, disabled }: IFieldInputProps): ReactElement => {
   const [error, setError] = useState<string | undefined>(undefined)
 
   return (
@@ -92,7 +107,7 @@ const TextInput = ({ field, onChange, value, className }: IFieldInputProps): Rea
         error={error}
         className={className}
         value={value !== undefined && value !== null ? String(value) : ''}
-        label={<FieldLabel {...field} />} onChange={(e) => {
+        label={<FieldLabel field={field} disabled={disabled} />} onChange={(e) => {
           if (e !== undefined && !isNaN(+e) && e !== '') {
             onChange(+e)
             setError(undefined)
@@ -110,12 +125,16 @@ const TextInput = ({ field, onChange, value, className }: IFieldInputProps): Rea
   )
 }
 
-const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
-  const initialValue = value !== undefined ? value : ''
+const NumberInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
+  const initialValue = value !== undefined ? value : undefined
   const numberField = field as INumberField
   const isNull = initialValue === undefined || initialValue === null || initialValue === ''
   const [userSelectedNotNull, setUserSelectedNotNull] = useState<boolean>(!isNull)
   const canBeNull = numberField.settings?.canBeNull === true
+
+  const myOnChange = (v: IValueType | IValueType[] | undefined): void => {
+    onChange(v)
+  }
 
   const max = numberField?.constraints?.max
   const fieldForInput = canBeNull
@@ -129,13 +148,16 @@ const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
     <>{
     max !== undefined
       ? <SliderInput
+        disabled={disabled}
+
         field={fieldForInput}
         value={initialValue}
-        onChange={onChange}
+        onChange={myOnChange}
         min={numberField?.constraints?.min}
         max={max}
         step={numberField?.settings?.step} />
       : <TextInput
+        disabled={disabled}
         field={fieldForInput}
         value={initialValue}
         onChange={onChange}
@@ -149,17 +171,18 @@ const NumberInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
     return (
       <div className='flex flex-col gap-2'>
         <Checkbox
+          disabled={disabled}
           id={`${field.id}-null`}
           testId={`${field.id}-null`}
-          label={<><FieldLabelText {...field}
-          /> <FieldDescriptionTooltip {...field} /></>}
+          label={<><FieldLabelText field={field} disabled={disabled}
+          /> <FieldDescriptionTooltip field={field} disabled={disabled} /></>}
           value={userSelectedNotNull}
           onChange={(e) => {
             setUserSelectedNotNull(!userSelectedNotNull)
             if (!e) {
               onChange(undefined)
             } else {
-              onChange(numberField?.settings?.nonNullDefaultValue ?? numberField?.defaultValue ?? value ?? 0)
+              onChange(numberField?.settings?.nonNullDefaultValue ?? numberField?.defaultValue ?? value ?? undefined)
             }
           }} />
         {userSelectedNotNull ? el : <></>}
