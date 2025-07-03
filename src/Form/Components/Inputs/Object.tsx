@@ -8,7 +8,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
   const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
   if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
     const cl = `${field.layout === ***REMOVED***horizontal***REMOVED***
-        ? ***REMOVED***flex flex-row sm:flex-col gap-4 sm:gap-2***REMOVED***
+        ? ***REMOVED***flex md:flex-row sm:flex-col gap-4 sm:gap-2***REMOVED***
         : field.layout === ***REMOVED***grid4***REMOVED***
         ? ***REMOVED***grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4***REMOVED***
         : field.layout === ***REMOVED***grid3***REMOVED***
