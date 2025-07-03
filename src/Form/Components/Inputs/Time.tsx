@@ -2,7 +2,7 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import React, { type ReactElement, useState } from 'react'
 
-const TimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const TimeInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const [error, setError] = useState<string | null>(null)
 
   if (field.type !== 'time') {
