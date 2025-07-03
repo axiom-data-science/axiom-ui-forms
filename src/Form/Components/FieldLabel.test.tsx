@@ -17,20 +17,20 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
   }
 
   it(***REMOVED***renders the FieldLabelText with required indicator***REMOVED***, () => {
-    render(<FieldLabelText {...mockField} />)
+    render(<FieldLabelText field={mockField} />)
 
     expect(screen.getByText(***REMOVED***Test Label***REMOVED***)).toBeInTheDocument()
     expect(screen.getByText(***REMOVED*******REMOVED***)).toBeInTheDocument()
   })
 
   it(***REMOVED***renders the FieldLabelText without required indicator***REMOVED***, () => {
-    render(<FieldLabelText {...mockField} required={false} />)
+    render(<FieldLabelText field={{ ...mockField, required: false }} />)
     expect(screen.getByText(***REMOVED***Test Label***REMOVED***)).toBeInTheDocument()
     expect(screen.queryByText(***REMOVED*******REMOVED***)).not.toBeInTheDocument()
   })
 
   it(***REMOVED***renders the FieldDescriptionTooltip when description is provided***REMOVED***, async () => {
-    render(<FieldDescriptionTooltip {...mockField} />)
+    render(<FieldDescriptionTooltip field={mockField} />)
 
     const toolTipTarget = screen.getByRole(***REMOVED***tooltip***REMOVED***)
     expect(toolTipTarget).toBeInTheDocument()
@@ -44,13 +44,13 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
   })
 
   it(***REMOVED***renders the FieldDescriptionText when description is provided***REMOVED***, () => {
-    render(<FieldDescriptionText {...mockField} />)
+    render(<FieldDescriptionText field={mockField} />)
 
     expect(screen.getByText(***REMOVED***This is a test description***REMOVED***)).toBeInTheDocument()
   })
 
   it(***REMOVED***renders the FieldLabel component with label and description***REMOVED***, () => {
-    render(<FieldLabel {...mockField} />)
+    render(<FieldLabel field={mockField} />)
 
     expect(screen.getByText(***REMOVED***Test Label***REMOVED***)).toBeInTheDocument()
     expect(screen.getByText(***REMOVED*******REMOVED***)).toBeInTheDocument()
@@ -59,21 +59,21 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
 
   it(***REMOVED***does not render FieldDescriptionTooltip when description is undefined***REMOVED***, () => {
     const fieldWithoutDescription: IFormField = { ...mockField, description: undefined }
-    render(<FieldDescriptionTooltip {...fieldWithoutDescription} />)
+    render(<FieldDescriptionTooltip field={fieldWithoutDescription} />)
 
     expect(screen.queryByRole(***REMOVED***tooltip***REMOVED***)).not.toBeInTheDocument()
   })
 
   it(***REMOVED***does not render FieldDescriptionText when description is undefined***REMOVED***, () => {
     const fieldWithoutDescription: IFormField = { ...mockField, description: undefined }
-    render(<FieldDescriptionText {...fieldWithoutDescription} />)
+    render(<FieldDescriptionText field={fieldWithoutDescription} />)
 
     expect(screen.queryByText(***REMOVED***This is a test description***REMOVED***)).not.toBeInTheDocument()
   })
 
   it(***REMOVED***renders FieldLabelText without required indicator when required is false***REMOVED***, () => {
     const fieldWithoutRequired: IFormField = { ...mockField, required: false }
-    render(<FieldLabelText {...fieldWithoutRequired} />)
+    render(<FieldLabelText field={fieldWithoutRequired} />)
 
     expect(screen.getByText(String(mockField.label ?? ***REMOVED******REMOVED***))).toBeInTheDocument()
     expect(screen.queryByText(***REMOVED*******REMOVED***)).not.toBeInTheDocument()
@@ -81,7 +81,7 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
 
   it(***REMOVED***renders FieldLabelText with required indicator when required is false***REMOVED***, () => {
     const fieldWithoutRequired: IFormField = { ...mockField, required: true }
-    render(<FieldLabelText {...fieldWithoutRequired} />)
+    render(<FieldLabelText field={fieldWithoutRequired} />)
 
     expect(screen.getByText(String(mockField.label ?? ***REMOVED******REMOVED***))).toBeInTheDocument()
     expect(screen.queryByText(***REMOVED*******REMOVED***)).toBeInTheDocument()
