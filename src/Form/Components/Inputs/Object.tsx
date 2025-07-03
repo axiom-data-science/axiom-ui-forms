@@ -8,7 +8,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
   const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
   if (field.type === 'object' && field.fields !== undefined) {
     const cl = `${field.layout === 'horizontal'
-        ? 'flex flex-row sm:flex-col gap-4 sm:gap-2'
+        ? 'flex md:flex-row sm:flex-col gap-4 sm:gap-2'
         : field.layout === 'grid4'
         ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
         : field.layout === 'grid3'
