@@ -2,7 +2,7 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 
-const TimeInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const TimeInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const [error, setError] = useState<string | null>(null)
 
   if (field.type !== ***REMOVED***time***REMOVED***) {

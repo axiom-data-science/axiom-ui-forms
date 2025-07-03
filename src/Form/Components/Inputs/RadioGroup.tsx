@@ -3,7 +3,7 @@ import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTyp
 import { RadioGroup } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const RadioInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const RadioInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
 
   if (field.type === ***REMOVED***radio***REMOVED*** && field.options !== undefined) {

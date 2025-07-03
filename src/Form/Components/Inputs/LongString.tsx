@@ -3,7 +3,7 @@ import { type ITextField, type IFieldInputProps } from ***REMOVED***@/Form/Creat
 import { TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const LongStringInput = ({ field, onChange, value, className }: IFieldInputProps): ReactElement => {
+const LongStringInput = ({ field, onChange, value, className, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
   const textField = field as ITextField
   const getValue = (): string => {
