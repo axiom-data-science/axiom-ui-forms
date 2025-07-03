@@ -4,11 +4,11 @@ import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/F
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
   if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
     const cl = `${field.layout === ***REMOVED***horizontal***REMOVED***
-        ? ***REMOVED***flex flex-row gap-4***REMOVED***
+        ? ***REMOVED***flex flex-row sm:flex-col gap-4 sm:gap-2***REMOVED***
         : field.layout === ***REMOVED***grid4***REMOVED***
         ? ***REMOVED***grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4***REMOVED***
         : field.layout === ***REMOVED***grid3***REMOVED***
@@ -27,13 +27,14 @@ const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
             ? <FieldLabel field={field} disabled={disabled} />
             : null
         }
-        <div className={`p-4 bg-slate-100  ${cl}`}>
+        <div className={`p-4 bg-slate-100  ${cl}${disabled ? ***REMOVED*** opacity-70 cursor-not-allowed***REMOVED*** : ***REMOVED******REMOVED***}`}>
         {
           field.fields.map((childField) => {
             const key = (field.path ?? [field.id]).concat(childField.id).join(***REMOVED***.***REMOVED***)
 
             return (
               <FieldCreator
+                disabled={disabled}
                 onChange={(e) => {
                   if (childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true) {
                     onChange(e)
