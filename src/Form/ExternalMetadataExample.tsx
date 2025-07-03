@@ -87,7 +87,7 @@ const ExternalMetadataExample = (): ReactElement => {
                                   : undefined
 
                                 return (<div>
-                                  <FieldLabel field={field} disabled={disabled} />
+                                  <FieldLabel field={field} />
                                   <div className=***REMOVED***flex flex-row gap-4 text-sm***REMOVED***>
                                     <SelectInput
                                         id=***REMOVED***parameter***REMOVED***
