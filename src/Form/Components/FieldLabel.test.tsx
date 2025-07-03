@@ -17,20 +17,20 @@ describe('FieldLabel Component', () => {
   }
 
   it('renders the FieldLabelText with required indicator', () => {
-    render(<FieldLabelText {...mockField} />)
+    render(<FieldLabelText field={mockField} />)
 
     expect(screen.getByText('Test Label')).toBeInTheDocument()
     expect(screen.getByText('*')).toBeInTheDocument()
   })
 
   it('renders the FieldLabelText without required indicator', () => {
-    render(<FieldLabelText {...mockField} required={false} />)
+    render(<FieldLabelText field={{ ...mockField, required: false }} />)
     expect(screen.getByText('Test Label')).toBeInTheDocument()
     expect(screen.queryByText('*')).not.toBeInTheDocument()
   })
 
   it('renders the FieldDescriptionTooltip when description is provided', async () => {
-    render(<FieldDescriptionTooltip {...mockField} />)
+    render(<FieldDescriptionTooltip field={mockField} />)
 
     const toolTipTarget = screen.getByRole('tooltip')
     expect(toolTipTarget).toBeInTheDocument()
@@ -44,13 +44,13 @@ describe('FieldLabel Component', () => {
   })
 
   it('renders the FieldDescriptionText when description is provided', () => {
-    render(<FieldDescriptionText {...mockField} />)
+    render(<FieldDescriptionText field={mockField} />)
 
     expect(screen.getByText('This is a test description')).toBeInTheDocument()
   })
 
   it('renders the FieldLabel component with label and description', () => {
-    render(<FieldLabel {...mockField} />)
+    render(<FieldLabel field={mockField} />)
 
     expect(screen.getByText('Test Label')).toBeInTheDocument()
     expect(screen.getByText('*')).toBeInTheDocument()
@@ -59,21 +59,21 @@ describe('FieldLabel Component', () => {
 
   it('does not render FieldDescriptionTooltip when description is undefined', () => {
     const fieldWithoutDescription: IFormField = { ...mockField, description: undefined }
-    render(<FieldDescriptionTooltip {...fieldWithoutDescription} />)
+    render(<FieldDescriptionTooltip field={fieldWithoutDescription} />)
 
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
   })
 
   it('does not render FieldDescriptionText when description is undefined', () => {
     const fieldWithoutDescription: IFormField = { ...mockField, description: undefined }
-    render(<FieldDescriptionText {...fieldWithoutDescription} />)
+    render(<FieldDescriptionText field={fieldWithoutDescription} />)
 
     expect(screen.queryByText('This is a test description')).not.toBeInTheDocument()
   })
 
   it('renders FieldLabelText without required indicator when required is false', () => {
     const fieldWithoutRequired: IFormField = { ...mockField, required: false }
-    render(<FieldLabelText {...fieldWithoutRequired} />)
+    render(<FieldLabelText field={fieldWithoutRequired} />)
 
     expect(screen.getByText(String(mockField.label ?? ''))).toBeInTheDocument()
     expect(screen.queryByText('*')).not.toBeInTheDocument()
@@ -81,7 +81,7 @@ describe('FieldLabel Component', () => {
 
   it('renders FieldLabelText with required indicator when required is false', () => {
     const fieldWithoutRequired: IFormField = { ...mockField, required: true }
-    render(<FieldLabelText {...fieldWithoutRequired} />)
+    render(<FieldLabelText field={fieldWithoutRequired} />)
 
     expect(screen.getByText(String(mockField.label ?? ''))).toBeInTheDocument()
     expect(screen.queryByText('*')).toBeInTheDocument()
