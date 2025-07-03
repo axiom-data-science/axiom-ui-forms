@@ -4,11 +4,11 @@ import { type ICompositeValueType, type IFieldInputProps } from '@/Form/Creator/
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
-const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement => {
+const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
   if (field.type === 'object' && field.fields !== undefined) {
     const cl = `${field.layout === 'horizontal'
-        ? 'flex flex-row gap-4'
+        ? 'flex flex-row sm:flex-col gap-4 sm:gap-2'
         : field.layout === 'grid4'
         ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
         : field.layout === 'grid3'
@@ -27,13 +27,14 @@ const ObjectInput = ({ field, onChange, value }: IFieldInputProps): ReactElement
             ? <FieldLabel field={field} disabled={disabled} />
             : null
         }
-        <div className={`p-4 bg-slate-100  ${cl}`}>
+        <div className={`p-4 bg-slate-100  ${cl}${disabled ? ' opacity-70 cursor-not-allowed' : ''}`}>
         {
           field.fields.map((childField) => {
             const key = (field.path ?? [field.id]).concat(childField.id).join('.')
 
             return (
               <FieldCreator
+                disabled={disabled}
                 onChange={(e) => {
                   if (childField.type === 'object' && childField.skip_path === true) {
                     onChange(e)

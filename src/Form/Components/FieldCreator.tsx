@@ -169,6 +169,7 @@ const FieldCreator = ({
   value,
   onChange,
   className,
+  disabled,
   defaultClassName = 'py-2 flex flex-col gap-8 flex-grow h-full'
 }: IFieldCreator): ReactElement | null => {
   const { form, inputOverrides, setFormValues, formValues } = useFormContext()
@@ -178,7 +179,6 @@ const FieldCreator = ({
   }[field.type]
 
   const conditionResult = checkCondition(field, formValues)
-  let disabled: boolean = false
 
   if (
     (conditionResult.pass && conditionResult.result === 'exclude') ||
@@ -190,6 +190,8 @@ const FieldCreator = ({
     (conditionResult.result === 'enable' && !conditionResult.pass)
   ) {
     disabled = true
+  } else if (conditionResult.result === 'enable' && conditionResult.pass) {
+    disabled = false
   }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
