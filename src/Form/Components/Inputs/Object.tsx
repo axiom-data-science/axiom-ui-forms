@@ -24,7 +24,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         <div>
         {
           field.label !== undefined
-            ? <FieldLabel field={field} disabled={disabled} />
+            ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
             : null
         }
         <div className={`p-4 bg-slate-100  ${cl}${disabled ? ***REMOVED*** opacity-70 cursor-not-allowed***REMOVED*** : ***REMOVED******REMOVED***}`}>

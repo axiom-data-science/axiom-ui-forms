@@ -1,17 +1,13 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps, type ITextField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { createTextFieldDebounce } from ***REMOVED***@/utils/helpers***REMOVED***
 import { Input } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 const StringInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = (value !== undefined && value !== null) ? String(value) : ***REMOVED******REMOVED***
   const textField = field as ITextField
-  /* const [val, setVal] = useState<string | undefined>(initialValue !== undefined && initialValue !== null ? String(initialValue) : ***REMOVED******REMOVED***)
-  useDeferredValue(val)
-  const newVal = useDeferredValue(val)
-  useEffect(() => {
-    onChange(newVal === ***REMOVED******REMOVED*** ? undefined : newVal)
-  }, [newVal]) */
+  const debounced = createTextFieldDebounce(onChange, 200)
   return <div>
       <Input
         id={field.id}
@@ -19,9 +15,13 @@ const StringInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         testId={field.id}
         value={initialValue}
         placeholder={textField.placeholder}
-        label={<FieldLabel field={field} disabled={disabled} />} onChange={(e) => {
-          onChange((e === ***REMOVED******REMOVED*** || e === null) ? undefined : e)
-        }} /></div>
+        label={<FieldLabel
+            field={field}
+            disabled={disabled}
+            value={value}
+            onChange={onChange}
+          />
+        } onChange={debounced} /></div>
 }
 
 export default StringInput

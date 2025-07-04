@@ -9,7 +9,12 @@ const SingleSelectInput = ({ field, onChange, value, disabled }: IFieldInputProp
   if (field.type === ***REMOVED***select***REMOVED*** && field.options !== undefined) {
     return <SelectInput
         id={field.id}
-        label={<FieldLabel field={field} disabled={disabled} />}
+        label={<FieldLabel
+          field={field}
+          disabled={disabled}
+          value={value}
+          onChange={onChange}
+          />}
         testId={field.id}
         options={field.options}
         includePrompt = {field?.settings?.allowNull !== false}

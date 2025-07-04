@@ -9,7 +9,12 @@ const RadioInput = ({ field, onChange, value, disabled }: IFieldInputProps): Rea
   if (field.type === ***REMOVED***radio***REMOVED*** && field.options !== undefined) {
     return <RadioGroup
         id={field.id}
-        label={<FieldLabel field={field} disabled={disabled} />}
+        label={<FieldLabel
+          field={field}
+          disabled={disabled}
+          value={value}
+          onChange={onChange}
+        />}
         testId={field.id}
         options={field.options}
         value={initialValue !== undefined && initialValue !== null ? String(initialValue) : ***REMOVED******REMOVED***}

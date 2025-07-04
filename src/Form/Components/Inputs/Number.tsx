@@ -2,7 +2,7 @@ import FieldLabel, { FieldDescriptionTooltip, FieldLabelText } from ***REMOVED**
 import { type INumberField, type IFieldInputProps, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { Checkbox, Input, Slider } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, Cross2Icon, Pencil1Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const isValidNumber = (value: string): boolean => {
   if (value === undefined || value === null || value === ***REMOVED******REMOVED***) {
@@ -12,7 +12,18 @@ const isValidNumber = (value: string): boolean => {
   return !isNaN(num) && isFinite(num)
 }
 
-const SliderInput = ({ field, value, onChange, min, max, step, disabled }: IFieldInputProps & { max: number, min?: number, step?: number }): ReactElement => {
+const SliderInput = ({
+  field,
+  value,
+  onChange,
+  min,
+  max,
+  step,
+  disabled
+}: IFieldInputProps & { max: number, min?: number, step?: number }): ReactElement => {
+  const [tempValue, setTempValue] = useState<number | undefined>(value !== undefined && value !== null ? +value : undefined)
+  const [tempTextValue, setTempTextValue] = useState<string | undefined>(value !== undefined ? String(value) : undefined)
+  const [mode, setMode] = useState<***REMOVED***slider***REMOVED*** | ***REMOVED***text***REMOVED***>(***REMOVED***slider***REMOVED***)
   const updateTemp = (value: string | number | undefined): void => {
     if (value !== undefined && isValidNumber(String(value))) {
       setTempValue(+value)
@@ -21,12 +32,19 @@ const SliderInput = ({ field, value, onChange, min, max, step, disabled }: IFiel
       setTempTextValue(value !== undefined ? String(value) : undefined)
     }
   }
-  const [tempValue, setTempValue] = useState<number | undefined>(value !== undefined && value !== null ? +value : undefined)
-  const [tempTextValue, setTempTextValue] = useState<string | undefined>(value !== undefined ? String(value) : undefined)
-  const [mode, setMode] = useState<***REMOVED***slider***REMOVED*** | ***REMOVED***text***REMOVED***>(***REMOVED***slider***REMOVED***)
+  useEffect(() => {
+    if (value !== tempValue) {
+      updateTemp(value !== undefined && value !== null ? +value : undefined)
+    }
+  }, [value])
 
   return (<div>
-    <FieldLabel field={field} disabled={disabled} />
+    <FieldLabel
+      field={field}
+      disabled={disabled}
+      value={value}
+      onChange={onChange}
+      />
     <div className=***REMOVED***flex flex-row gap-4***REMOVED***>
       <Slider
         wrapperClassName=***REMOVED***flex-grow max-w-[400px] mt-1***REMOVED***
@@ -107,19 +125,24 @@ const TextInput = ({ field, onChange, value, className, disabled }: IFieldInputP
         error={error}
         className={className}
         value={value !== undefined && value !== null ? String(value) : ***REMOVED******REMOVED***}
-        label={<FieldLabel field={field} disabled={disabled} />} onChange={(e) => {
-          if (e !== undefined && !isNaN(+e) && e !== ***REMOVED******REMOVED***) {
-            onChange(+e)
-            setError(undefined)
-          } else {
-            if (String(e).length > 0) {
-              setError(***REMOVED***Please enter a valid number***REMOVED***)
-            } else {
-              setError(undefined)
-            }
-            onChange(undefined)
-          }
-        }} />
+        label={<FieldLabel
+            field={field}
+            disabled={disabled}
+            value={value}
+            onChange={onChange}
+            />} onChange={(e) => {
+              if (e !== undefined && !isNaN(+e) && e !== ***REMOVED******REMOVED***) {
+                onChange(+e)
+                setError(undefined)
+              } else {
+                if (String(e).length > 0) {
+                  setError(***REMOVED***Please enter a valid number***REMOVED***)
+                } else {
+                  setError(undefined)
+                }
+                onChange(undefined)
+              }
+            }} />
     {error !== undefined && <p className=***REMOVED***text-red-500 text-xs py-2***REMOVED***>{error}</p>}
     </>
   )
@@ -174,7 +197,10 @@ const NumberInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
           disabled={disabled}
           id={`${field.id}-null`}
           testId={`${field.id}-null`}
-          label={<><FieldLabelText field={field} disabled={disabled}
+          label={<><FieldLabelText
+              field={field}
+              disabled={disabled}
+              onChange={onChange}
           /> <FieldDescriptionTooltip field={field} disabled={disabled} /></>}
           value={userSelectedNotNull}
           onChange={(e) => {

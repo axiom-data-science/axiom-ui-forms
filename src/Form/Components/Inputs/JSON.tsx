@@ -10,6 +10,7 @@ import { ExclamationTriangleIcon, UpdateIcon } from ***REMOVED***@radix-ui/react
 import { type IJSONField, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
+import { debounce } from ***REMOVED***lodash-es***REMOVED***
 
 const getFormatted = (val: string, fmt: string): string => {
   if (fmt === ***REMOVED***json***REMOVED***) {
@@ -104,6 +105,8 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
     }
   }
 
+  const debounced = debounce(handleChange, 500)
+
   // Format JSON or YAML
   const handleFormat = (): void => {
     try {
@@ -141,7 +144,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
 
   return (
     <div className=***REMOVED***flex flex-col h-full relative***REMOVED***>
-      <FieldLabel field={field} disabled={disabled} />
+      <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
       <div className=***REMOVED***flex flex-row***REMOVED***>
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***json***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***json***REMOVED***) }}>JSON</Button>
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***yaml***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***yaml***REMOVED***) }}>YAML</Button>
@@ -171,7 +174,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
         ]}
         height=***REMOVED***100%***REMOVED***
         className=***REMOVED***h-full***REMOVED***
-        onChange={handleChange}
+        onChange={debounced}
         theme="dark"
         onFocus={() => {
           console.log(***REMOVED***FOCUS***REMOVED***)

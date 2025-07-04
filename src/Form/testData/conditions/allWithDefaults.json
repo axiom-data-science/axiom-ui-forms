@@ -1,0 +1,120 @@
+{
+  "label": "Form with all types of field and defaults set",
+  "description": "All should get a ***REMOVED***revert***REMOVED*** button when changed that reverts to `defaultValue`",
+  "id": "testForm",
+  "fields": [
+    {
+      "id": "firstField",
+      "label": "Select Field",
+      "type": "select",
+      "defaultValue": "option2",
+      "options": [
+        { "label": "Option 1", "value": "option1" },
+        { "label": "Option 2", "value": "option2" }
+      ]
+    },
+    {
+      "id": "secondField",
+      "label": "Text Field",
+      "type": "text",
+      "placeholder": "Enter text here",
+      "defaultValue": "Default text"
+    },
+    {
+    
+        "id": "thirdField",
+        "label": "Number Field",
+        "type": "number",
+        "defaultValue": 42,
+        "constraints": {
+            "min": 0,
+            "max": 100
+        }
+    },
+    {
+    
+        "id": "fourthField",
+        "label": "Long Text Field",
+        "type": "long_text",
+        "defaultValue": "Lotsa default text"
+    },
+    {
+    
+        "id": "fifthField",
+        "label": "Date Field",
+        "type": "date",
+        "defaultValue": "2023-10-01"
+    },
+    {
+    
+        "id": "sixthField",
+        "label": "Date time Field",
+        "type": "datetime",
+        "defaultValue": "2023-10-01T12:00:00Z"
+    },
+    {
+    
+        "id": "seventhField",
+        "label": "Radio Field",
+        "type": "radio",
+        "defaultValue": "option3",
+        "options": [
+            { "label": "Option 1", "value": "option1" },
+            { "label": "Option 2", "value": "option2" },
+            { "label": "Option 3", "value": "option3" }
+        ]
+    },
+    {
+        "id": "eighthField",
+        "label": "Checkbox Field",
+        "type": "boolean",
+        "defaultValue": true
+    },
+    {
+        "id": "ninthField",
+        "label": "Object field",
+        "type": "object",
+        "defaultValue": {
+          "nestedField1": "Nested value 1",
+          "nestedField2": "Nested value 2"
+        },
+        "fields": [
+          {
+            "id": "nestedField1",
+            "label": "Nested Field 1",
+            "type": "text"
+          },
+          {
+            "id": "nestedField2",
+            "label": "Nested Field 2",
+            "type": "text"
+          }
+        ]
+    },
+    {
+        "id": "tenthField",
+        "label": "JSON Field",
+        "type": "json",
+        "defaultValue": {
+          "key1": "value1",
+          "key2": "value2"
+        }
+    },
+    {
+        "id": "eleventhField",
+        "label": "Geometry",
+        "type": "geometry",
+        "defaultValue": {
+            "type": "Point",
+            "coordinates": [
+            -150.2,
+            61.1
+            ]
+        },
+        "settings": {
+            "drawPointEnabled": true,
+            "showCoordinateInput": true
+        }
+    }
+  ]
+}

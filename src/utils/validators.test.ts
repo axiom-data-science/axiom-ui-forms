@@ -109,7 +109,7 @@ describe(***REMOVED***checkCondition***REMOVED***, () => {
     const formValues = { bar: ***REMOVED***foo***REMOVED*** }
     const result = checkCondition(field, formValues)
     expect(result.pass).toBe(true)
-    expect(result.result).toBe(***REMOVED***disabled***REMOVED***)
+    expect(result.result).toBe(***REMOVED***disable***REMOVED***)
   })
 })
 

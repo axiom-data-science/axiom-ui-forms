@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from ***REMOVED***@testing-library/react***REMOVED***
+import jest from ***REMOVED***jest-mock***REMOVED***
+import userEvent from ***REMOVED***@testing-library/user-event***REMOVED***
 import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 import FieldLabel, { FieldDescriptionTooltip, FieldLabelText, FieldDescriptionText } from ***REMOVED***./FieldLabel***REMOVED***
 import { type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
@@ -85,5 +87,23 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
 
     expect(screen.getByText(String(mockField.label ?? ***REMOVED******REMOVED***))).toBeInTheDocument()
     expect(screen.queryByText(***REMOVED*******REMOVED***)).toBeInTheDocument()
+  })
+  it(***REMOVED***renders FieldLabelText with revert button visible and clicking button passes default value to onChange function***REMOVED***, async () => {
+    const onChange = jest.fn()
+    const fieldWithDefaultValue = { ...mockField, defaultValue: ***REMOVED***default value***REMOVED*** }
+    render(<FieldLabelText field={fieldWithDefaultValue} disabled={false} value={***REMOVED***something else***REMOVED***} onChange={onChange} />)
+    const el = screen.getByTestId(***REMOVED***revert-to-default***REMOVED***)
+    expect(el).toBeInTheDocument()
+    userEvent.click(el)
+    expect(onChange).toHaveBeenCalledTimes(1)
+  })
+  it(***REMOVED***renders FieldLabelText with revert button visible and clicking button does not call onChange when disabled***REMOVED***, async () => {
+    const onChange = jest.fn()
+    const fieldWithDefaultValue = { ...mockField, defaultValue: ***REMOVED***default value***REMOVED*** }
+    render(<FieldLabelText field={fieldWithDefaultValue} disabled={true} value={***REMOVED***something else***REMOVED***} onChange={onChange} />)
+    const el = screen.getByTestId(***REMOVED***revert-to-default***REMOVED***)
+    expect(el).toBeInTheDocument()
+    userEvent.click(el)
+    expect(onChange).toHaveBeenCalledTimes(0)
   })
 })
