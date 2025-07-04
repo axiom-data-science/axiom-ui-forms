@@ -109,7 +109,7 @@ describe('checkCondition', () => {
     const formValues = { bar: 'foo' }
     const result = checkCondition(field, formValues)
     expect(result.pass).toBe(true)
-    expect(result.result).toBe('disabled')
+    expect(result.result).toBe('disable')
   })
 })
 

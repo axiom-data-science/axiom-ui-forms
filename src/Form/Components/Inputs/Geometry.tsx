@@ -1,6 +1,6 @@
 import { Button, TextArea } from '@axdspub/axiom-ui-utilities'
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type IGeometryField, type IFieldInputProps, type IFormField } from '@/Form/Creator/FormCreatorTypes' // Added IFormField explicitly
+import { type IGeometryField, type IFieldInputProps, type IFormField, type IValueType } from '@/Form/Creator/FormCreatorTypes' // Added IFormField explicitly
 
 import { EMapShape, type IMap, type IMapDrawEvent, type IStyleableMapProps } from '@axdspub/axiom-maps'
 import { OpenLayersMap as Map } from '@axdspub/axiom-maps/library/openlayers'
@@ -8,6 +8,7 @@ import { OpenLayersMap as Map } from '@axdspub/axiom-maps/library/openlayers'
 import { type Feature, type GeoJSON, type Geometry } from 'geojson'
 import React, { useEffect, useState, type ReactElement, useCallback } from 'react' // Added useCallback
 import { TrashIcon, SquareIcon, BorderSolidIcon, DrawingPinFilledIcon } from '@radix-ui/react-icons'
+import isEqual from 'lodash-es/isEqual'
 
 /*
 List of coordinates for testing. Around Anchorage.
@@ -118,13 +119,22 @@ export const GeometryInput = ({ field, onChange, value, disabled }: IFieldInputP
   const [error, setError] = useState<string | undefined>(undefined)
   const [showGeoJSONInput] = useState<boolean>(false)
 
-  const [geojson, setGeojson] = useState<Feature | undefined>(() => {
-    if (value && typeof value === 'object' && 'type' in value && value.type !== 'FeatureCollection' && value.type !== 'Feature') {
-      return { type: 'Feature', properties: {}, geometry: value as Geometry }
+  const convertToGeoJSON = (geo: IValueType): Feature | undefined => {
+    if (geo && typeof geo === 'object' && 'type' in geo && geo.type !== 'FeatureCollection' && geo.type !== 'Feature') {
+      return { type: 'Feature', properties: {}, geometry: geo as Geometry }
     }
-    if (value && typeof value === 'object' && 'type' in value && value.type === 'Feature') { return value as Feature }
+    if (geo && typeof geo === 'object' && 'type' in geo && geo.type === 'Feature') { return geo as Feature }
     return undefined
-  })
+  }
+
+  const [geojson, setGeojson] = useState<Feature | undefined>(convertToGeoJSON(value))
+
+  useEffect(() => {
+    if (!isEqual(geojson, convertToGeoJSON(value))) {
+      console.log('SETTING GEOJSON')
+      setGeojson(convertToGeoJSON(value))
+    }
+  }, [value])
 
   const geomField = field as IGeometryField
 
@@ -271,7 +281,7 @@ export const GeometryInput = ({ field, onChange, value, disabled }: IFieldInputP
   // ---- JSX Return (Reverting Button ClassNames and removing disabled) ----
   return (
         <div>
-            <FieldLabel field={field} disabled={disabled} />
+            <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
             <div className="relative z-0">
                 {drawEnabled && (drawPolygonEnabled || drawPathEnabled || drawPointEnabled) && (
                     <div className="absolute z-20 top-4 right-4 flex flex-col gap-2">

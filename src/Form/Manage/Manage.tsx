@@ -1,5 +1,5 @@
 import { Button, MultiAccordion, Tabs } from '@axdspub/axiom-ui-utilities'
-import React, { type ReactNode, useState, type ReactElement } from 'react'
+import React, { type ReactNode, useState, type ReactElement, useEffect } from 'react'
 import FormConfigInput from '@/Form/Manage/FormConfigInput'
 import Form from '@/Form/Creator/FormCreator'
 import { useAtom } from 'jotai'
@@ -11,6 +11,7 @@ import { CheckIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
 import testForm from '@/Form/testData/formObject.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
+import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
 
 type IDisplayType = 'stack' | 'tab'
 
@@ -63,6 +64,9 @@ const FormManager = ({
     setForm(structuredClone(testForm as IForm))
   }
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
+  useEffect(() => {
+    setFormValues(assignDefaultValuesToFormValues(form, {}))
+  }, [form])
   const sections = [
     {
       id: 'config',

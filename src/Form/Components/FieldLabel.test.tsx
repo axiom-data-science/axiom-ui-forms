@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import jest from 'jest-mock'
+import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
 import FieldLabel, { FieldDescriptionTooltip, FieldLabelText, FieldDescriptionText } from './FieldLabel'
 import { type IFormField } from '@/Form/Creator/FormCreatorTypes'
@@ -85,5 +87,23 @@ describe('FieldLabel Component', () => {
 
     expect(screen.getByText(String(mockField.label ?? ''))).toBeInTheDocument()
     expect(screen.queryByText('*')).toBeInTheDocument()
+  })
+  it('renders FieldLabelText with revert button visible and clicking button passes default value to onChange function', async () => {
+    const onChange = jest.fn()
+    const fieldWithDefaultValue = { ...mockField, defaultValue: 'default value' }
+    render(<FieldLabelText field={fieldWithDefaultValue} disabled={false} value={'something else'} onChange={onChange} />)
+    const el = screen.getByTestId('revert-to-default')
+    expect(el).toBeInTheDocument()
+    userEvent.click(el)
+    expect(onChange).toHaveBeenCalledTimes(1)
+  })
+  it('renders FieldLabelText with revert button visible and clicking button does not call onChange when disabled', async () => {
+    const onChange = jest.fn()
+    const fieldWithDefaultValue = { ...mockField, defaultValue: 'default value' }
+    render(<FieldLabelText field={fieldWithDefaultValue} disabled={true} value={'something else'} onChange={onChange} />)
+    const el = screen.getByTestId('revert-to-default')
+    expect(el).toBeInTheDocument()
+    userEvent.click(el)
+    expect(onChange).toHaveBeenCalledTimes(0)
   })
 })

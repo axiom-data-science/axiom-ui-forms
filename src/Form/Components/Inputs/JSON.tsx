@@ -10,6 +10,7 @@ import { ExclamationTriangleIcon, UpdateIcon } from '@radix-ui/react-icons'
 import { type IJSONField, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
+import { debounce } from 'lodash-es'
 
 const getFormatted = (val: string, fmt: string): string => {
   if (fmt === 'json') {
@@ -104,6 +105,8 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
     }
   }
 
+  const debounced = debounce(handleChange, 500)
+
   // Format JSON or YAML
   const handleFormat = (): void => {
     try {
@@ -141,7 +144,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
 
   return (
     <div className='flex flex-col h-full relative'>
-      <FieldLabel field={field} disabled={disabled} />
+      <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
       <div className='flex flex-row'>
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'json' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('json') }}>JSON</Button>
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'yaml' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('yaml') }}>YAML</Button>
@@ -171,7 +174,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
         ]}
         height='100%'
         className='h-full'
-        onChange={handleChange}
+        onChange={debounced}
         theme="dark"
         onFocus={() => {
           console.log('FOCUS')
