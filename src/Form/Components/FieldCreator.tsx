@@ -1,9 +1,9 @@
 import FieldLabel from '@/Form/Components/FieldLabel'
 import inputMap from '@/Form/Components/Inputs/inputMap'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
-import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
+import { type ICheckConditionResult, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldValue } from '@/utils/getters'
-import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField, updateFormValuesWithFieldValue } from '@/utils/manipulators'
+import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField } from '@/utils/manipulators'
 import { checkCondition } from '@/utils/validators'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
@@ -18,6 +18,7 @@ interface IFieldCreator {
   defaultClassName?: string
   value?: IValueType | IValueType[]
   disabled?: boolean
+  conditionResult?: ICheckConditionResult
 }
 
 const toolButtonClass = 'border-white hover:border-single hover:border-1 hover:border-slate-400'
@@ -54,6 +55,20 @@ const DeleteMultiple = ({
   )
 }
 
+const getFieldWrapperClass = (field: IFormField): string => {
+  const cl = []
+  const level = field.level ?? 0
+  const type = field.type
+  const multiple = field.multiple ?? false
+  if ((type === 'object' && level > 2) || multiple) {
+    cl.push('p-4')
+    if (level > 0) {
+      cl.push(level % 2 ? 'bg-slate-200' : 'bg-slate-100')
+    }
+  }
+  return cl.join(' ')
+}
+
 const OneOfMultiple = ({
   InputComponent,
   field,
@@ -79,7 +94,7 @@ const OneOfMultiple = ({
   }
 
   return (
-    <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ''}`}>
+    <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ''} py-2 ${getFieldWrapperClass(field)}`} data-testid={`field-${field.id}-${index}`}>
           <InputComponent
           field={field}
           value={value}
@@ -90,7 +105,6 @@ const OneOfMultiple = ({
             onChange(newValues)
           }}
         />
-
             <div className='flex flex-row justify-between w-full p-2'>
               {index > 0 && (
               <DeleteMultiple doDelete={() => {
@@ -125,10 +139,20 @@ const MultipleFieldCreator = ({
   disabled = false,
   value
 }: IFieldCreator): ReactElement => {
-  const { formValues, setFormValues, inputOverrides } = useFormContext()
-  const defaultOnChange = (v: IValueType[] | undefined): void => {
+  const { formValues, setFormValues, inputOverrides, form } = useFormContext()
+  /* const defaultOnChange = (v: IValueType[] | undefined): void => {
     const formValuesCopy = updateFormValuesWithFieldValue(field, v, formValues)
     setFormValues(formValuesCopy)
+  } */
+
+  const defaultOnChange = (v: IValueType[] | undefined): void => {
+    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
+      form,
+      field,
+      value: v,
+      formValues
+    })
+    setFormValues(formValuesCopyClean)
   }
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
@@ -146,7 +170,7 @@ const MultipleFieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  return <div>
+  return <div className='flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed'>
     {
       initialValues?.map((value, index) => {
         return <OneOfMultiple
@@ -170,7 +194,8 @@ const FieldCreator = ({
   onChange,
   className,
   disabled,
-  defaultClassName = 'py-2 flex flex-col gap-8 flex-grow h-full'
+  defaultClassName = 'flex flex-col gap-8 flex-grow h-full',
+  conditionResult
 }: IFieldCreator): ReactElement | null => {
   const { form, inputOverrides, setFormValues, formValues } = useFormContext()
   const InputComponent = {
@@ -178,7 +203,7 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  const conditionResult = checkCondition(field, formValues)
+  conditionResult = conditionResult ?? checkCondition(field, formValues)
 
   if (
     (conditionResult.pass && conditionResult.result === 'exclude') ||
@@ -211,7 +236,10 @@ const FieldCreator = ({
     ? <div className={utils.makeClassName({
       className,
       defaultClassName,
-      extras: disabled ? [disabledClassName] : undefined
+      extras: [
+        disabled ? disabledClassName : undefined,
+        getFieldWrapperClass(field)
+      ]
     })}>{
       field.multiple === true
         ? <MultipleFieldCreator

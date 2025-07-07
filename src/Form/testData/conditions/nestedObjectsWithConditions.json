@@ -1,0 +1,99 @@
+{
+  "label": "Nested objects with conditions",
+  "id": "objectForm",
+  "fields": [
+    {
+      "id": "object1",
+      "type": "object",
+      "label": "Object 1",
+      "multiple": true,
+      "fields": [
+        {
+          "id": "object1Field1",
+          "type": "select",
+          "label": "Object 1 Field 1",
+          "options": [
+            {
+              "label": "Option 1",
+              "value": "option1"
+            },
+            {
+              "label": "Option 2",
+              "value": "option2"
+            }
+          ]
+        },
+        {
+          "id": "object1Field2",
+          "type": "text",
+          "label": "Object 1 Field 2",
+          "multiple": true,
+          "conditions": {
+            "field": ".object1Field1",
+            "value": "option1"
+          }
+        },
+        {
+            "id": "object1Field3",
+            "type": "object",
+            "label": "Object 1 Field 3",
+            "multiple": true,
+            "fields": [
+                {
+                    "id": "object1Field3FieldLabel",
+                    "type": "text",
+                    "label": "Object 1 Field 3 Field Label"
+                },
+                {
+                    "id": "object1Field3Field1",
+                    "type": "select",
+                    "label": "Object 1 Field 3 Field 1",
+                    "options": [
+                        {
+                            "label": "Option A",
+                            "value": "optionA"
+                        },
+                        {
+                            "label": "Option B",
+                            "value": "optionB"
+                        }
+                    ]
+                },
+                {
+                    "id": "object1Field3Field2",
+                    "type": "text",
+                    "label": "Object 1 Field 3 Field 2",
+                    "conditions": {
+                        "field": "object1Field3Field1",
+                        "value": "optionA",
+                        "result": "enable"
+                    }
+                },
+                {
+                  "id": "object1Field3Field3",
+                  "type": "object",
+                  "label": "Object 1 Field 3 Field 3",
+                  "description" : "Nested object with children that have relative condition up one level",
+                  "fields": [
+                    {
+                      "id": "subsub1",
+                      "type": "text",
+                      "label": "Sub Sub Field 1",
+                      "conditions": {
+                        "field": ".object1Field3Field1",
+                        "value": "optionB",
+                        "result": "enable"
+                      }
+                    }
+                  ]
+                }
+            ],
+            "conditions": {
+                "field": "object1Field1",
+                "value": "option2"
+            }
+        }
+      ]
+    }
+  ]
+}

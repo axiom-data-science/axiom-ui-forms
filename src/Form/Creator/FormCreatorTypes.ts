@@ -29,6 +29,11 @@ export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select'
 export type ISectionFormFieldType = 'section' | 'page'
 
 export type IFieldConditionResult = 'exclude' | 'include' | 'disable' | 'enable'
+
+export interface ICheckConditionResult {
+  pass: boolean
+  result: IFieldConditionResult
+}
 export interface IFieldConditionsSet {
   logic?: 'and' | 'or'
   conditions: Array<Omit<IFieldCondition, 'result'>>
@@ -39,7 +44,7 @@ export type IFieldConditionOperator = '=' | 'eq' | '>' | 'gt' | '>=' | 'gte' | '
 export interface IFieldCondition {
   dependsOn?: string | string[]
   field?: string | string[]
-  value: string | number | boolean
+  value?: string | number | boolean
   operator?: IFieldConditionOperator
   result?: IFieldConditionResult
 }
@@ -54,7 +59,6 @@ interface IFormFieldRoot {
   description?: string | null | undefined
   multiple?: boolean
   path?: IFormField[]
-  fullPath?: string[]
   destPath?: string
   level?: number
   index?: number
@@ -270,7 +274,7 @@ export interface IFormSettings {
 
 export interface IForm {
   id: string
-  label: string
+  label?: string
   navigationType?: 'tabs' | 'wizard' | 'pages'
   description?: string
   fields?: IFormField[]

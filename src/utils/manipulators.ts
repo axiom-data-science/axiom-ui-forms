@@ -80,19 +80,19 @@ export function copyAndRemovePathFromFields (formOrContainer: IFormSection | IFo
   return form
 }
 
-function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], formValuesPath: string = ''): IFormValues {
+export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], formValuesPath: string = ''): IFormValues {
   const formValuesCopy = structuredClone(formValues)
   Object.keys(formValues).forEach(key => {
     const path = formValuesPath !== '' ? `${formValuesPath}.${key}` : key
     const field = fields?.find(f => getPathFromField(f) === path)
     const checkedCondition = field !== undefined
       ? checkCondition(field, formValues)
-      : { pass: true, result: 'remove' }
+      : { pass: true, result: 'include' }
     if (field !== undefined && (
       (
-        !checkedCondition.pass && checkedCondition.result === 'remove'
+        !checkedCondition.pass && checkedCondition.result === 'include'
       ) || (
-        checkedCondition.pass && checkedCondition.result === 'add'
+        checkedCondition.pass && checkedCondition.result === 'exclude'
       )
     )) {
       formValuesCopy[key] = undefined

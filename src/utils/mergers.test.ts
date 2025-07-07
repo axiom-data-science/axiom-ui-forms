@@ -98,8 +98,6 @@ describe('mergers.ts', () => {
         ]
       })
 
-      console.log(result?.textField)
-
       expect(result?.textField?.id).toEqual('textField')
       expect(result?.numberField?.id).toEqual('numberField')
     })
@@ -182,7 +180,6 @@ describe('mergers.ts', () => {
       const resultMap = Object.fromEntries(result.map(field => [field.id, field]))
       const section1 = resultMap?.section1 as IObjectField ?? undefined
 
-      console.log(section1)
       expect(section1).not.toBe(undefined)
       expect(section1?.fields?.find(f => f.id === 'field1')?.label).toEqual('Updated Field 1')
       expect(section1?.fields?.find(f => f.id === 'field2')?.label).toEqual('Field 2')
@@ -357,8 +354,6 @@ describe('mergers.ts', () => {
         ],
         fieldOverrides
       })
-
-      console.log(mergedFormSection)
 
       expect(mergedFormSection?.pages?.length).toEqual(2)
     })

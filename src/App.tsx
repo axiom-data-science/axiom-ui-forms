@@ -1,6 +1,6 @@
 import FormManager from '@/Form/Manage/Manage'
 import React, { createContext, useContext, useState, type ReactElement } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 import SetTester from '@/SetTester'
 import MapTester from '@/Form/MapTester'
 import SchemaToForm from '@/Form/SchemaToForm'
@@ -33,6 +33,8 @@ import { useAtom } from 'jotai'
 import { debounce } from 'lodash-es'
 import MeditorForm from '@/Meditor/MeditorForm'
 import WaterLevelForm from '@/WaterLevel/WaterLevelForm'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Metadata from '@/Binner/Metadata'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -128,6 +130,18 @@ function fallbackRender ({ error, resetErrorBoundary }: { error: Error, resetErr
   )
 }
 
+const queryClient = new QueryClient()
+
+function BinnerMetadataRoute (): ReactElement {
+  const { dataset } = useParams<{ dataset: string }>()
+  if (!dataset) {
+    return <div>Dataset not specified</div>
+  }
+  return <QueryClientProvider client={queryClient}>
+    <Metadata dataset={dataset} />
+  </QueryClientProvider>
+}
+
 const App = (): ReactElement => {
   const [layout, setLayout] = useAtom(layoutAtom)
   const updateLayoutValue = (): void => {
@@ -197,7 +211,10 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/water-level" element={<WaterLevelForm />}>
               <Route path="*" element={<WaterLevelForm />} />
-              </Route>
+            </Route>
+            <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
+              <Route path="*" element={<BinnerMetadataRoute />}/>
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>

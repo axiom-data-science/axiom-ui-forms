@@ -17,7 +17,6 @@ describe('manipulators.ts', () => {
       }
 
       const secondField = createOneOfMultipleField(fieldWithPath, 1)
-      console.log(secondField)
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
     })
@@ -82,8 +81,6 @@ describe('manipulators.ts', () => {
         value,
         formValues
       })
-
-      console.log(updatedValues)
 
       expect(updatedValues.field1).toBe('newValue')
       expect(updatedValues.field2).toBe('value2')
@@ -216,7 +213,6 @@ describe('manipulators.ts', () => {
         value: 'new data field value',
         formValues: result
       })
-      console.log(result2)
       expect(result2?.data).toBe('new data field value')
     })
   })

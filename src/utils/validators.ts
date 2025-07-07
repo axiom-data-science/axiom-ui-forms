@@ -1,6 +1,6 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult } from '@/Form/Creator/FormCreatorTypes'
-import { getFieldsFromFormSection, getFieldValue, getValueFromPath } from '@/utils/getters'
+import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult, type ICheckConditionResult } from '@/Form/Creator/FormCreatorTypes'
+import { getFieldsFromFormSection, getFieldValue, getValueFromRelativePath } from '@/utils/getters'
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
   if (val === undefined || val === null) {
@@ -46,7 +46,7 @@ const runCheck = (
     : (fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== '')
 }
 
-const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues): ICheckConditionResult => {
+const checkFieldCondition = (field: IFormField, condition: IFieldCondition, formValues: IFormValues): ICheckConditionResult => {
   const fieldToEval = condition.field ?? condition.dependsOn
   if (fieldToEval === undefined) {
     console.warn('Field condition is missing field or dependsOn property')
@@ -55,10 +55,15 @@ const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues
       result: condition.result ?? 'include'
     }
   }
+  if (Array.isArray(fieldToEval)) {
+    console.warn('Field condition dependsOn (or field) should not be an array, use conditionsSet for multiple conditions. dependsOn as array will be deprated')
+  }
   const dependsOn = Array.isArray(fieldToEval) ? fieldToEval : [fieldToEval]
   const val = condition.value
   const pass = dependsOn.every(d => {
-    const fieldValue = getValueFromPath(d, formValues)
+    /* const fieldPathIsRelative = d.startsWith('.')
+    const fieldValue = getValueFromPath(d, formValues) */
+    const fieldValue = getValueFromRelativePath(field, d, formValues)
     return runCheck(
       fieldValue,
       condition.operator ?? '=',
@@ -71,17 +76,12 @@ const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues
   }
 }
 
-interface ICheckConditionResult {
-  pass: boolean
-  result: IFieldConditionResult
-}
-
 export const checkCondition = (field: IFormField, formValues: IFormValues): ICheckConditionResult => {
   let pass: boolean = true
   let result: IFieldConditionResult | undefined
   if (field.conditionsSet !== undefined) {
     const passingConditions = field.conditionsSet.conditions.filter(c => {
-      const result = checkFieldCondition(c, formValues)
+      const result = checkFieldCondition(field, c, formValues)
       return result.pass
     })
 
@@ -93,7 +93,7 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): IChe
   }
 
   if (field.conditions !== undefined && pass) {
-    const f = checkFieldCondition(field.conditions, formValues)
+    const f = checkFieldCondition(field, field.conditions, formValues)
     pass = f.pass
     result = field.conditions.result
   }

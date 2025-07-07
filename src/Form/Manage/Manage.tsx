@@ -65,7 +65,7 @@ const FormManager = ({
   }
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   useEffect(() => {
-    setFormValues(assignDefaultValuesToFormValues(form, {}))
+    setFormValues(assignDefaultValuesToFormValues(form, formValues ?? {}))
   }, [form])
   const sections = [
     {

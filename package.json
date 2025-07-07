@@ -1,6 +1,6 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "type": "module",
   "description": "Axiom UI Forms",
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@axdspub/axiom-maps": "^0.4.9",
+    "@axdspub/axiom-ui-data-services": "^0.1.3",
     "@axdspub/axiom-ui-utilities": "^0.2.1",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-yaml": "^6.1.2",
