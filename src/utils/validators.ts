@@ -1,6 +1,6 @@
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { getFieldsFromFormSection, getFieldValue, getValueFromPath } from ***REMOVED***@/utils/getters***REMOVED***
+import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult, type ICheckConditionResult } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { getFieldsFromFormSection, getFieldValue, getValueFromRelativePath } from ***REMOVED***@/utils/getters***REMOVED***
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
   if (val === undefined || val === null) {
@@ -46,7 +46,7 @@ const runCheck = (
     : (fieldValue !== null && fieldValue !== undefined && fieldValue !== false && fieldValue !== ***REMOVED******REMOVED***)
 }
 
-const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues): ICheckConditionResult => {
+const checkFieldCondition = (field: IFormField, condition: IFieldCondition, formValues: IFormValues): ICheckConditionResult => {
   const fieldToEval = condition.field ?? condition.dependsOn
   if (fieldToEval === undefined) {
     console.warn(***REMOVED***Field condition is missing field or dependsOn property***REMOVED***)
@@ -55,10 +55,15 @@ const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues
       result: condition.result ?? ***REMOVED***include***REMOVED***
     }
   }
+  if (Array.isArray(fieldToEval)) {
+    console.warn(***REMOVED***Field condition dependsOn (or field) should not be an array, use conditionsSet for multiple conditions. dependsOn as array will be deprated***REMOVED***)
+  }
   const dependsOn = Array.isArray(fieldToEval) ? fieldToEval : [fieldToEval]
   const val = condition.value
   const pass = dependsOn.every(d => {
-    const fieldValue = getValueFromPath(d, formValues)
+    /* const fieldPathIsRelative = d.startsWith(***REMOVED***.***REMOVED***)
+    const fieldValue = getValueFromPath(d, formValues) */
+    const fieldValue = getValueFromRelativePath(field, d, formValues)
     return runCheck(
       fieldValue,
       condition.operator ?? ***REMOVED***=***REMOVED***,
@@ -71,17 +76,12 @@ const checkFieldCondition = (condition: IFieldCondition, formValues: IFormValues
   }
 }
 
-interface ICheckConditionResult {
-  pass: boolean
-  result: IFieldConditionResult
-}
-
 export const checkCondition = (field: IFormField, formValues: IFormValues): ICheckConditionResult => {
   let pass: boolean = true
   let result: IFieldConditionResult | undefined
   if (field.conditionsSet !== undefined) {
     const passingConditions = field.conditionsSet.conditions.filter(c => {
-      const result = checkFieldCondition(c, formValues)
+      const result = checkFieldCondition(field, c, formValues)
       return result.pass
     })
 
@@ -93,7 +93,7 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): IChe
   }
 
   if (field.conditions !== undefined && pass) {
-    const f = checkFieldCondition(field.conditions, formValues)
+    const f = checkFieldCondition(field, field.conditions, formValues)
     pass = f.pass
     result = field.conditions.result
   }

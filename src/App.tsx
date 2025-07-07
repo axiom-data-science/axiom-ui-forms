@@ -1,6 +1,6 @@
 import FormManager from ***REMOVED***@/Form/Manage/Manage***REMOVED***
 import React, { createContext, useContext, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import { BrowserRouter, Route, Routes } from ***REMOVED***react-router-dom***REMOVED***
+import { BrowserRouter, Route, Routes, useParams } from ***REMOVED***react-router-dom***REMOVED***
 import SetTester from ***REMOVED***@/SetTester***REMOVED***
 import MapTester from ***REMOVED***@/Form/MapTester***REMOVED***
 import SchemaToForm from ***REMOVED***@/Form/SchemaToForm***REMOVED***
@@ -33,6 +33,8 @@ import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { debounce } from ***REMOVED***lodash-es***REMOVED***
 import MeditorForm from ***REMOVED***@/Meditor/MeditorForm***REMOVED***
 import WaterLevelForm from ***REMOVED***@/WaterLevel/WaterLevelForm***REMOVED***
+import { QueryClient, QueryClientProvider } from ***REMOVED***@tanstack/react-query***REMOVED***
+import Metadata from ***REMOVED***@/Binner/Metadata***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -128,6 +130,18 @@ function fallbackRender ({ error, resetErrorBoundary }: { error: Error, resetErr
   )
 }
 
+const queryClient = new QueryClient()
+
+function BinnerMetadataRoute (): ReactElement {
+  const { dataset } = useParams<{ dataset: string }>()
+  if (!dataset) {
+    return <div>Dataset not specified</div>
+  }
+  return <QueryClientProvider client={queryClient}>
+    <Metadata dataset={dataset} />
+  </QueryClientProvider>
+}
+
 const App = (): ReactElement => {
   const [layout, setLayout] = useAtom(layoutAtom)
   const updateLayoutValue = (): void => {
@@ -197,7 +211,10 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/water-level" element={<WaterLevelForm />}>
               <Route path="*" element={<WaterLevelForm />} />
-              </Route>
+            </Route>
+            <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
+              <Route path="*" element={<BinnerMetadataRoute />}/>
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>

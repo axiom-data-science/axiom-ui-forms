@@ -1,20 +1,21 @@
 import React, { useContext, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
+import FormCreator, { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { Tabs, Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { JSONInput } from ***REMOVED***@/Form/Components/Inputs***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { ObjectToSchemaButton } from ***REMOVED***@/Form/Creator/ObjectToSchema***REMOVED***
+import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 
 const Footer = (): ReactElement => {
   const { formValues } = useContext(FormContext)
   return (
-        <div className=***REMOVED***p-20***REMOVED***>
+        <div className=***REMOVED***py-20***REMOVED***>
         <CopyButton
             string={JSON.stringify(formValues, null, 2)}
             OnCopiedElement={<><CheckIcon className=***REMOVED*** inline***REMOVED*** /> Copied to clipboard</>}
@@ -33,7 +34,130 @@ const fixOverLayWidth = (width: number): number => {
   )
 }
 
-const FormWithEditorOverlay = ({
+const FormOutput = (): ReactElement => {
+  const [formValues] = useAtom(formValuesAtom)
+  return (
+    <pre className=***REMOVED***h-full whitespace-pre-wrap overflow-auto p-4 bg-slate-100 text-xs***REMOVED***>
+      {JSON.stringify(formValues, null, 2)}
+    </pre>
+  )
+}
+
+export const FormWithEditorOverlay = ({
+  formState
+}: {
+  formState: [IForm | undefined, (form: IForm | undefined) => void]
+}): ReactElement => {
+  const [editing, setEditing] = useState<boolean>(false)
+  const [formInput, setFormInput] = formState ?? useState<IForm | undefined>(undefined)
+  const [sidebarWidth, setSidebarWidth] = useState<number>(1200)
+  const [layout] = useAtom(layoutAtom)
+  const formValueState = useAtom(formValuesAtom)
+
+  return (
+    <>
+    <div className={`${layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED*** ? ***REMOVED***m-4***REMOVED*** : ***REMOVED***m-10 mt-4***REMOVED***} relative`}>
+      {
+            formInput !== undefined
+              ? <FormCreator
+              form={formInput}
+              formValueState={formValueState}
+              footer={
+                  <Footer />
+              }
+          />
+              : ***REMOVED***No form config provided***REMOVED***
+            }
+            <>
+            {
+
+                  !editing
+                    ? <Tooltip
+                      content=***REMOVED***Edit form config***REMOVED***
+                      side=***REMOVED***left***REMOVED***
+                      className=***REMOVED***bg-white text-black p-2 rounded-md absolute top-0 right-0***REMOVED***
+                      ><Pencil2Icon className=***REMOVED***cursor-pointer w-6 h-6***REMOVED*** onClick={() => {
+                        setEditing(true)
+                      }} /></Tooltip>
+                    : ***REMOVED******REMOVED***
+
+            }
+            {
+              !editing
+                ? ***REMOVED******REMOVED***
+                : <div
+                    className=***REMOVED***fixed bottom-0 right-0 h-full bg-white shadow-2xl z-50  flex flex-row***REMOVED***
+                    style={{ width: `${fixOverLayWidth(sidebarWidth)}px` }}
+                  >
+                  <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 absolute top-4 left-8***REMOVED*** onClick={() => {
+                    setEditing(false)
+                  }} />
+                    <div className=***REMOVED***w-[16px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center***REMOVED***
+                              onMouseDown={(e) => {
+                                const startX = e.clientX
+                                const startWidth = sidebarWidth
+
+                                const onMouseMove = (event: MouseEvent): void => {
+                                  const newWidth = startWidth - (event.clientX - startX)
+                                  setSidebarWidth(fixOverLayWidth(newWidth))
+                                  document.body.classList.add(***REMOVED***cursor-ew-resize***REMOVED***)
+                                  document.body.classList.add(***REMOVED***select-none***REMOVED***)
+                                  event.preventDefault() // Prevent text selection
+                                  event.stopPropagation()
+                                }
+
+                                const onMouseUp = (): void => {
+                                  document.removeEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
+                                  document.removeEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
+                                  document.body.classList.remove(***REMOVED***cursor-ew-resize***REMOVED***)
+                                  document.body.classList.remove(***REMOVED***select-none***REMOVED***)
+                                }
+
+                                document.addEventListener(***REMOVED***mousemove***REMOVED***, onMouseMove)
+                                document.addEventListener(***REMOVED***mouseup***REMOVED***, onMouseUp)
+                              }}
+                              >
+                              <DragHandleDots2Icon />
+                              <DragHandleDots2Icon className=***REMOVED***-mt-1***REMOVED*** />
+                              <DragHandleDots2Icon className=***REMOVED***-mt-1***REMOVED*** />
+                    </div>
+              <Tabs
+                className=***REMOVED***flex flex-col h-full p-8 flex-grow***REMOVED***
+                defaultContentClassName=***REMOVED***h-full overflow-auto p-4***REMOVED***
+                tabs={[
+                  {
+                    id: ***REMOVED***form-override***REMOVED***,
+                    label: ***REMOVED***Form Override***REMOVED***,
+                    content: <JSONInput
+                    value={formInput !== undefined ? JSON.stringify(formInput, null, 2) : ***REMOVED******REMOVED***}
+                    onChange={(e) => {
+                      setFormInput(e !== undefined ? e as unknown as IForm : undefined)
+                    } }
+                    field={{
+                      id: ***REMOVED***formInput***REMOVED***,
+                      label: ***REMOVED******REMOVED***,
+                      type: ***REMOVED***json***REMOVED***
+                    }}
+                    />
+                  },
+                  {
+                    id: ***REMOVED***form-output***REMOVED***,
+                    label: ***REMOVED***Form output***REMOVED***,
+                    content: <FormOutput />
+                  }
+
+                ].filter(t => t !== undefined)}
+                />
+                </div>
+        }
+      </>
+      </div>
+      </>
+
+  )
+}
+
+const SchemaFormWithEditorOverlay = ({
   label,
   schemaState,
   formOverrideState,
@@ -223,4 +347,4 @@ const FormWithEditorOverlay = ({
   )
 }
 
-export default FormWithEditorOverlay
+export default SchemaFormWithEditorOverlay

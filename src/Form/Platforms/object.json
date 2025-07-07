@@ -1,0 +1,208 @@
+{
+  "base": {
+    "attributes": {
+      "featureType": "trajectory",
+      "keywords": "EARTH SCIENCE > OCEANS,EARTH SCIENCE > AGRICULTURE > ANIMAL SCIENCE > ANIMAL ECOLOGY AND BEHAVIOR,Earth Remote Sensing Instruments > Passive Remote Sensing > Positioning/Navigation > Radio > ARGOS,Satellite Telemetry",
+      "naming_authority": "gov.noaa.ioos.atn",
+      "project": "IOOS Animal Telemetry Network",
+      "platform_category": "atn",
+      "sea_name": "",
+      "creator_name": "Morgan Gilmour",
+      "creator_url": "",
+      "creator_email": "mgilmour@usgs.gov",
+      "license": "",
+      "institution": "ATN DAC",
+      "date_modified": "2024-06-11T18:31:21Z",
+      "time_coverage_start": "2022-05-29T09:36:37",
+      "time_coverage_end": "2022-06-02T22:22:46",
+      "geospatial_bounds": "POLYGON ((-162.391998 5.63132, -162.40947 5.637999, -162.545288 5.744949, -162.550797 5.749421, -162.563217 5.774139, -162.576248 5.822252, -162.572174 5.826431, -162.570709 5.827929, -162.569778 5.828797, -162.56929 5.82923, -162.568268 5.8299, -162.458954 5.865793, -162.455231 5.86687, -162.445023 5.868207, -162.133545 5.903079, -162.088333 5.88871, -162.08725 5.888099, -162.086945 5.887838, -162.086884 5.88773, -162.088547 5.871348, -162.093033 5.865157, -162.093613 5.864579, -162.119812 5.843125, -162.382507 5.631602, -162.391998 5.63132))",
+      "geospatial_vertical_max": 0,
+      "geospatial_vertical_min": 0,
+      "id": "RFBO_2022_03",
+      "platform_groups": "atn",
+      "platform_tags": "axds:atn:ptt:16,axds:atn:tag:id:16,axds:atn:animal:id:RFBO_2022_03,atn:data:status:embargo",
+      "title": " telemetry event (tagnumber: 16) starting 2022-05-29T09:36:37Z",
+      "summary": " telemetry event (tagnumber: 16) from 2022-05-29T09:36:37Z to 2022-06-02T22:22:46Z within POLYGON ((-162.391998 5.63132, -162.40947 5.637999, -162.545288 5.744949, -162.550797 5.749421, -162.563217 5.774139, -162.576248 5.822252, -162.572174 5.826431, -162.570709 5.827929, -162.569778 5.828797, -162.56929 5.82923, -162.568268 5.8299, -162.458954 5.865793, -162.455231 5.86687, -162.445023 5.868207, -162.133545 5.903079, -162.088333 5.88871, -162.08725 5.888099, -162.086945 5.887838, -162.086884 5.88773, -162.088547 5.871348, -162.093033 5.865157, -162.093613 5.864579, -162.119812 5.843125, -162.382507 5.631602, -162.391998 5.63132))",
+      "packrat_uuid": "4dfc46ff-1668-5484-b0e5-3f5ff2c3247f",
+      "packrat_source": "axiom.netcdf_harvest.netcdf_harvest",
+      "packrat_source_id": "atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03",
+      "axds:platforms:primary_axis:trajectory": "deploy_id",
+      "axds:platforms:primary_axis:station": "station",
+      "axds:platforms:primary_axis:profile": "profile",
+      "axds:platforms:primary_axis:sample": "obs",
+      "axds:platforms:primary_axis:t": "time",
+      "axds:platforms:primary_axis:x": "lon",
+      "axds:platforms:primary_axis:y": "lat",
+      "axds:platforms:primary_axis:z": "z",
+      "axds:platforms:rows:count": 2773
+    }
+  },
+  "overrides": {
+    "attributes": {}
+  },
+  "meta": {
+    "attributes": {
+      "featureType": "trajectory",
+      "keywords": "EARTH SCIENCE > OCEANS,EARTH SCIENCE > AGRICULTURE > ANIMAL SCIENCE > ANIMAL ECOLOGY AND BEHAVIOR,Earth Remote Sensing Instruments > Passive Remote Sensing > Positioning/Navigation > Radio > ARGOS,Satellite Telemetry",
+      "naming_authority": "gov.noaa.ioos.atn",
+      "project": "IOOS Animal Telemetry Network",
+      "platform_category": "atn",
+      "sea_name": "",
+      "creator_name": "Morgan Gilmour",
+      "creator_url": "",
+      "creator_email": "mgilmour@usgs.gov",
+      "license": "",
+      "institution": "ATN DAC",
+      "date_modified": "2024-06-11T18:31:21Z",
+      "time_coverage_start": "2022-05-29T09:36:37",
+      "time_coverage_end": "2022-06-02T22:22:46",
+      "geospatial_bounds": "POLYGON ((-162.391998 5.63132, -162.40947 5.637999, -162.545288 5.744949, -162.550797 5.749421, -162.563217 5.774139, -162.576248 5.822252, -162.572174 5.826431, -162.570709 5.827929, -162.569778 5.828797, -162.56929 5.82923, -162.568268 5.8299, -162.458954 5.865793, -162.455231 5.86687, -162.445023 5.868207, -162.133545 5.903079, -162.088333 5.88871, -162.08725 5.888099, -162.086945 5.887838, -162.086884 5.88773, -162.088547 5.871348, -162.093033 5.865157, -162.093613 5.864579, -162.119812 5.843125, -162.382507 5.631602, -162.391998 5.63132))",
+      "geospatial_vertical_max": 0,
+      "geospatial_vertical_min": 0,
+      "id": "RFBO_2022_03",
+      "platform_groups": "atn",
+      "platform_tags": "axds:atn:ptt:16,axds:atn:tag:id:16,axds:atn:animal:id:RFBO_2022_03,atn:data:status:embargo",
+      "title": " telemetry event (tagnumber: 16) starting 2022-05-29T09:36:37Z",
+      "summary": " telemetry event (tagnumber: 16) from 2022-05-29T09:36:37Z to 2022-06-02T22:22:46Z within POLYGON ((-162.391998 5.63132, -162.40947 5.637999, -162.545288 5.744949, -162.550797 5.749421, -162.563217 5.774139, -162.576248 5.822252, -162.572174 5.826431, -162.570709 5.827929, -162.569778 5.828797, -162.56929 5.82923, -162.568268 5.8299, -162.458954 5.865793, -162.455231 5.86687, -162.445023 5.868207, -162.133545 5.903079, -162.088333 5.88871, -162.08725 5.888099, -162.086945 5.887838, -162.086884 5.88773, -162.088547 5.871348, -162.093033 5.865157, -162.093613 5.864579, -162.119812 5.843125, -162.382507 5.631602, -162.391998 5.63132))",
+      "packrat_uuid": "4dfc46ff-1668-5484-b0e5-3f5ff2c3247f",
+      "packrat_source": "axiom.netcdf_harvest.netcdf_harvest",
+      "packrat_source_id": "atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03",
+      "axds:platforms:primary_axis:trajectory": "deploy_id",
+      "axds:platforms:primary_axis:station": "station",
+      "axds:platforms:primary_axis:profile": "profile",
+      "axds:platforms:primary_axis:sample": "obs",
+      "axds:platforms:primary_axis:t": "time",
+      "axds:platforms:primary_axis:x": "lon",
+      "axds:platforms:primary_axis:y": "lat",
+      "axds:platforms:primary_axis:z": "z",
+      "axds:platforms:rows:count": 2773
+    },
+    "variables": {
+      "deploy_id": {
+        "attributes": {
+          "long_name": "Platform identifier",
+          "non_null_count": 0
+        }
+      },
+      "time": {
+        "attributes": {
+          "units": "seconds since 1990-01-01 00:00:00Z",
+          "standard_name": "time",
+          "long_name": "Time",
+          "actual_min": "2022-05-29T09:36:37Z",
+          "actual_max": "2022-06-02T22:22:46Z",
+          "non_null_count": 2773
+        }
+      },
+      "z": {
+        "attributes": {
+          "long_name": "depth",
+          "standard_name": "depth",
+          "units": "m",
+          "valid_min": 0,
+          "valid_max": 0,
+          "positive": "down",
+          "actual_min": 0,
+          "actual_max": 0,
+          "non_null_count": 2773
+        }
+      },
+      "lat": {
+        "attributes": {
+          "long_name": "Location",
+          "standard_name": "latitude",
+          "units": "degrees_north",
+          "valid_min": -90,
+          "valid_max": 90,
+          "actual_min": 5.63132,
+          "actual_max": 5.903079,
+          "non_null_count": 2773
+        }
+      },
+      "lon": {
+        "attributes": {
+          "long_name": "Location",
+          "standard_name": "longitude",
+          "units": "degrees_east",
+          "valid_min": -180,
+          "valid_max": 180,
+          "actual_min": -162.576248,
+          "actual_max": -162.086884,
+          "non_null_count": 2773
+        }
+      },
+      "location_class": {
+        "attributes": {
+          "long_name": "Location Quality Class",
+          "non_null_count": 2773
+        }
+      },
+      "platform_id": {
+        "attributes": {
+          "non_null_count": 2773
+        }
+      },
+      "crs": {
+        "attributes": {
+          "long_name": "Coordinate Reference System",
+          "non_null_count": 0
+        }
+      }
+    }
+  },
+  "files": {
+    "inventory.json": {
+      "size_mb": 0.003189,
+      "modified": "2024-06-24T19:59:12.122000",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/inventory.json",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/inventory.json"
+    },
+    "raw.nc": {
+      "size_mb": 0.286715,
+      "modified": "2024-06-24T19:55:43.826164",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/raw.nc",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/raw.nc"
+    },
+    "data.viz.parquet": {
+      "size_mb": 0.110858,
+      "modified": "2024-06-24T19:59:12.314543",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/data.viz.parquet",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/data.viz.parquet"
+    },
+    "meta.json": {
+      "size_mb": 0.010217,
+      "modified": "2024-06-24T19:59:12.522543",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/meta.json",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/meta.json"
+    },
+    "data.csv.gz": {
+      "size_mb": 0.039086,
+      "modified": "2024-06-24T19:59:11.833817",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/data.csv.gz",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/data.csv.gz"
+    },
+    "data.json.gz": {
+      "size_mb": 0.046545,
+      "modified": "2024-06-24T19:59:11.577819",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/data.json.gz",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/data.json.gz"
+    },
+    "processed.nc": {
+      "size_mb": 0.286715,
+      "modified": "2024-06-24T19:55:47.947130",
+      "path": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/processed.nc",
+      "url": "https://files.stage.platforms.axds.co/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03/processed.nc"
+    },
+    "folder": "platforms/axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03",
+    "urlpath": "axiom/netcdf_harvest/atn/orben-pbr-megafauna/orben-pbr-megafauna_RFBO_2022_03"
+  },
+  "tags": [
+    "tag"
+  ],
+  "groups": [
+    "df6c01d0-6bb0-4eb5-933d-02f9b0891b37"
+  ],
+  "qcconfig": {},
+  "configjson": {},
+  "type": "platform"
+}

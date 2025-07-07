@@ -66,7 +66,7 @@
                     "id": "general_information",
                     "label": "General Information",
                     "fields": [
-                        {"prop" :"water_level_sensor_information.category"},
+                        {"prop" :"water_level_sensor_information.category", "defaultValue": "radar"},
                         {"prop" :"water_level_sensor_information.manufacturer_model"},
                         {"prop" :"water_level_sensor_information.serial_number"}
                     ]
@@ -154,54 +154,64 @@
                             "prop": "local_tidal_datum_establishment_wrap",
                             "type": "object",
                             "skip_path": true,
-                            "label": "",
+                            "label": "Tester",
+                            "conditions": {
+                                "dependsOn": "water_level_sensor_information.category",
+                                "value": "radar",
+                                "result": "disable"
+                            },
                             "fields": [
                                 {
-                            "prop": "local_tidal_datum_establishment.dates",
-                            "label": "",
-                            "skip_path": true,
-                            "type": "object",
-                            "layout": "horizontal",
-                            "fields": [
-                                {"prop": "local_tidal_datum_establishment.record_start_date"},
-                                {"prop": "local_tidal_datum_establishment.record_end_date"}
-                            ]
-                        },
-                        {
-                            "prop": "local_tidal_datum_establishment.computation",
-                            "label": "",
-                            "skip_path": true,
-                            "type": "object",
-                            "layout": "horizontal",
-                            "fields": [
-                                {"prop": "local_tidal_datum_establishment.computation_tool"},
-                                {"prop": "local_tidal_datum_establishment.computation_method"},
-                                {"prop": "local_tidal_datum_establishment.computed_by"}
-                            ]
-                        },
-                        {
-                            "prop": "local_tidal_datum_establishment.control_station",
-                            "label": "",
-                            "skip_path": true,
-                            "type": "object",
-                            "layout": "horizontal",
-                            "fields": [
-                                {"prop": "local_tidal_datum_establishment.control_station_stamping"},
-                                {"prop": "local_tidal_datum_establishment.control_station_ngs_pid"},
-                                {"prop": "local_tidal_datum_establishment.control_station_epoch"}
-                            ]
-                        },
-                        {
-                            "prop": "local_tidal_datum_establishment.datum_computation",
-                            "label": "",
-                            "skip_path": true,
-                            "type": "object",
-                            "layout": "horizontal",
-                            "fields": [
-                                {"prop": "local_tidal_datum_establishment.datum_type"},
-                                {"prop": "local_tidal_datum_establishment.computation_date"}
-                            ]
-                        }
+                                    "prop": "local_tidal_datum_establishment.dates",
+                                    "label": "",
+                                    "skip_path": true,
+                                    "type": "object",
+                                    "layout": "horizontal",
+                                    "fields": [
+                                        {"prop": "local_tidal_datum_establishment.record_start_date"},
+                                        {"prop": "local_tidal_datum_establishment.record_end_date"}
+                                    ]
+                                },
+                                {
+                                    "prop": "local_tidal_datum_establishment.computation",
+                                    "label": "",
+                                    "skip_path": true,
+                                    "type": "object",
+                                    "layout": "horizontal",
+                                    "fields": [
+                                        {"prop": "local_tidal_datum_establishment.computation_tool"},
+                                        {"prop": "local_tidal_datum_establishment.computation_method"},
+                                        {"prop": "local_tidal_datum_establishment.computed_by"}
+                                    ]
+                                },
+                                {
+                                    "prop": "local_tidal_datum_establishment.control_station",
+                                    "label": "",
+                                    "skip_path": true,
+                                    "type": "object",
+                                    "layout": "horizontal",
+                                    "conditions": {
+                                        "dependsOn": "water_level_sensor_information.category",
+                                        "value": "radar",
+                                        "result": "enable"
+                                    },
+                                    "fields": [
+                                        {"prop": "local_tidal_datum_establishment.control_station_stamping"},
+                                        {"prop": "local_tidal_datum_establishment.control_station_ngs_pid"},
+                                        {"prop": "local_tidal_datum_establishment.control_station_epoch"}
+                                    ]
+                                },
+                                {
+                                    "prop": "local_tidal_datum_establishment.datum_computation",
+                                    "label": "",
+                                    "skip_path": true,
+                                    "type": "object",
+                                    "layout": "horizontal",
+                                    "fields": [
+                                        {"prop": "local_tidal_datum_establishment.datum_type"},
+                                        {"prop": "local_tidal_datum_establishment.computation_date"}
+                                    ]
+                                }
 
                             ]
                         }

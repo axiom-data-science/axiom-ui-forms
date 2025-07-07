@@ -29,6 +29,11 @@ export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_
 export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
 
 export type IFieldConditionResult = ***REMOVED***exclude***REMOVED*** | ***REMOVED***include***REMOVED*** | ***REMOVED***disable***REMOVED*** | ***REMOVED***enable***REMOVED***
+
+export interface ICheckConditionResult {
+  pass: boolean
+  result: IFieldConditionResult
+}
 export interface IFieldConditionsSet {
   logic?: ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***
   conditions: Array<Omit<IFieldCondition, ***REMOVED***result***REMOVED***>>
@@ -39,7 +44,7 @@ export type IFieldConditionOperator = ***REMOVED***=***REMOVED*** | ***REMOVED**
 export interface IFieldCondition {
   dependsOn?: string | string[]
   field?: string | string[]
-  value: string | number | boolean
+  value?: string | number | boolean
   operator?: IFieldConditionOperator
   result?: IFieldConditionResult
 }
@@ -54,7 +59,6 @@ interface IFormFieldRoot {
   description?: string | null | undefined
   multiple?: boolean
   path?: IFormField[]
-  fullPath?: string[]
   destPath?: string
   level?: number
   index?: number
@@ -270,7 +274,7 @@ export interface IFormSettings {
 
 export interface IForm {
   id: string
-  label: string
+  label?: string
   navigationType?: ***REMOVED***tabs***REMOVED*** | ***REMOVED***wizard***REMOVED*** | ***REMOVED***pages***REMOVED***
   description?: string
   fields?: IFormField[]

@@ -17,7 +17,6 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
       }
 
       const secondField = createOneOfMultipleField(fieldWithPath, 1)
-      console.log(secondField)
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
     })
@@ -82,8 +81,6 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
         value,
         formValues
       })
-
-      console.log(updatedValues)
 
       expect(updatedValues.field1).toBe(***REMOVED***newValue***REMOVED***)
       expect(updatedValues.field2).toBe(***REMOVED***value2***REMOVED***)
@@ -216,7 +213,6 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
         value: ***REMOVED***new data field value***REMOVED***,
         formValues: result
       })
-      console.log(result2)
       expect(result2?.data).toBe(***REMOVED***new data field value***REMOVED***)
     })
   })

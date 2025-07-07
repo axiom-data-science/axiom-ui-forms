@@ -81,6 +81,27 @@ function getObjectFieldValue (field: IObjectField, formValues: IFormValues, inde
   return Object.fromEntries(vals.map(v => [v.key, v.val]))
 }
 
+export function getValueFromRelativePath (field: IFormField, path: string, formValues: IFormValues): IValueType | IValueType[] | undefined {
+  const backPath = path.match(/^\.+/)?.[0]?.length ?? 0
+  const fieldPathFields = field.path ?? []
+  const offset = field.type === ***REMOVED***object***REMOVED*** && field.skip_path ? 0 : 1
+  if (backPath > 0 && (fieldPathFields.length - offset) >= backPath) {
+    const targetField = fieldPathFields[fieldPathFields.length - backPath - offset]
+    const valueAtRoot = getFieldValue(targetField, formValues, targetField.multiple ? targetField.index : undefined)
+    if (valueAtRoot === undefined || valueAtRoot === null) {
+      return undefined
+    }
+    const pathToEval = path.replace(/^\.+/, ***REMOVED******REMOVED***)
+    if (pathToEval === ***REMOVED******REMOVED***) {
+      return valueAtRoot
+    }
+    return get(valueAtRoot, pathToEval)
+  } else {
+    // absolute path, get the field value from the field
+    return getValueFromPath(path, formValues)
+  }
+}
+
 /**
  * Returns the value of a given field from the form values
  *

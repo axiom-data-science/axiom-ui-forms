@@ -1,6 +1,6 @@
 import { render, screen } from ***REMOVED***@testing-library/react***REMOVED***
 import { vi } from ***REMOVED***vitest***REMOVED***
-import App from ***REMOVED***./App***REMOVED***
+import App from ***REMOVED***./AppTry***REMOVED***
 import React from ***REMOVED***react***REMOVED***
 
 describe(***REMOVED***App***REMOVED***, () => {
@@ -20,7 +20,7 @@ describe(***REMOVED***App***REMOVED***, () => {
     render(<App />)
 
     // Replace ***REMOVED***element-text***REMOVED*** with actual text or test IDs from your app
-    const elements = screen.getAllByText(/form with object/i) // Adjust the regex or query to match your elements
+    const elements = screen.getAllByText(/welcome to the home/i) // Adjust the regex or query to match your elements
     expect(elements.length).toBeGreaterThan(0) // Ensure multiple elements are present
   })
 })

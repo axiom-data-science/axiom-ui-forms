@@ -1,9 +1,9 @@
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type ICheckConditionResult, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
-import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField, updateFormValuesWithFieldValue } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -18,6 +18,7 @@ interface IFieldCreator {
   defaultClassName?: string
   value?: IValueType | IValueType[]
   disabled?: boolean
+  conditionResult?: ICheckConditionResult
 }
 
 const toolButtonClass = ***REMOVED***border-white hover:border-single hover:border-1 hover:border-slate-400***REMOVED***
@@ -54,6 +55,20 @@ const DeleteMultiple = ({
   )
 }
 
+const getFieldWrapperClass = (field: IFormField): string => {
+  const cl = []
+  const level = field.level ?? 0
+  const type = field.type
+  const multiple = field.multiple ?? false
+  if ((type === ***REMOVED***object***REMOVED*** && level > 2) || multiple) {
+    cl.push(***REMOVED***p-4***REMOVED***)
+    if (level > 0) {
+      cl.push(level % 2 ? ***REMOVED***bg-slate-200***REMOVED*** : ***REMOVED***bg-slate-100***REMOVED***)
+    }
+  }
+  return cl.join(***REMOVED*** ***REMOVED***)
+}
+
 const OneOfMultiple = ({
   InputComponent,
   field,
@@ -79,7 +94,7 @@ const OneOfMultiple = ({
   }
 
   return (
-    <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
+    <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***} py-2 ${getFieldWrapperClass(field)}`} data-testid={`field-${field.id}-${index}`}>
           <InputComponent
           field={field}
           value={value}
@@ -90,7 +105,6 @@ const OneOfMultiple = ({
             onChange(newValues)
           }}
         />
-
             <div className=***REMOVED***flex flex-row justify-between w-full p-2***REMOVED***>
               {index > 0 && (
               <DeleteMultiple doDelete={() => {
@@ -125,10 +139,20 @@ const MultipleFieldCreator = ({
   disabled = false,
   value
 }: IFieldCreator): ReactElement => {
-  const { formValues, setFormValues, inputOverrides } = useFormContext()
-  const defaultOnChange = (v: IValueType[] | undefined): void => {
+  const { formValues, setFormValues, inputOverrides, form } = useFormContext()
+  /* const defaultOnChange = (v: IValueType[] | undefined): void => {
     const formValuesCopy = updateFormValuesWithFieldValue(field, v, formValues)
     setFormValues(formValuesCopy)
+  } */
+
+  const defaultOnChange = (v: IValueType[] | undefined): void => {
+    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
+      form,
+      field,
+      value: v,
+      formValues
+    })
+    setFormValues(formValuesCopyClean)
   }
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
@@ -146,7 +170,7 @@ const MultipleFieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  return <div>
+  return <div className=***REMOVED***flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed***REMOVED***>
     {
       initialValues?.map((value, index) => {
         return <OneOfMultiple
@@ -170,7 +194,8 @@ const FieldCreator = ({
   onChange,
   className,
   disabled,
-  defaultClassName = ***REMOVED***py-2 flex flex-col gap-8 flex-grow h-full***REMOVED***
+  defaultClassName = ***REMOVED***flex flex-col gap-8 flex-grow h-full***REMOVED***,
+  conditionResult
 }: IFieldCreator): ReactElement | null => {
   const { form, inputOverrides, setFormValues, formValues } = useFormContext()
   const InputComponent = {
@@ -178,7 +203,7 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
-  const conditionResult = checkCondition(field, formValues)
+  conditionResult = conditionResult ?? checkCondition(field, formValues)
 
   if (
     (conditionResult.pass && conditionResult.result === ***REMOVED***exclude***REMOVED***) ||
@@ -211,7 +236,10 @@ const FieldCreator = ({
     ? <div className={utils.makeClassName({
       className,
       defaultClassName,
-      extras: disabled ? [disabledClassName] : undefined
+      extras: [
+        disabled ? disabledClassName : undefined,
+        getFieldWrapperClass(field)
+      ]
     })}>{
       field.multiple === true
         ? <MultipleFieldCreator

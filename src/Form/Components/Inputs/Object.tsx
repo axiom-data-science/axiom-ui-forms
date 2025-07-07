@@ -1,6 +1,8 @@
 import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { cleanAndUpdateFormValuesWithFieldValue } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -27,26 +29,38 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
             ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
             : null
         }
-        <div className={`p-4 bg-slate-100  ${cl}${disabled ? ***REMOVED*** opacity-70 cursor-not-allowed***REMOVED*** : ***REMOVED******REMOVED***}`}>
+        <div className={`${cl}${disabled ? ***REMOVED*** opacity-70 cursor-not-allowed***REMOVED*** : ***REMOVED******REMOVED***}`}>
         {
           field.fields.map((childField) => {
             const key = (field.path ?? [field.id]).concat(childField.id).join(***REMOVED***.***REMOVED***)
+            const conditionResult = field.multiple
+              ? checkCondition(childField, initialValue)
+              : undefined
 
             return (
               <FieldCreator
                 disabled={disabled}
+                conditionResult={conditionResult}
                 onChange={(e) => {
                   if (childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true) {
                     onChange(e)
                   } else {
-                    initialValue[childField.id] = e
-                    onChange({ ...initialValue })
+                    // only use local path since we***REMOVED***re only appending to the local object value rather than the full form value
+                    const localField = { ...childField, path: childField?.path?.slice(childField?.path?.length - 1) ?? undefined }
+                    const cleanedValues = cleanAndUpdateFormValuesWithFieldValue({
+                      form: { id: ***REMOVED******REMOVED***, label: ***REMOVED******REMOVED***, fields: field.fields.map(f => ({ ...f, path: f?.path?.slice(f?.path?.length - 1) ?? undefined })) },
+                      field: localField,
+                      value: e,
+                      formValues: structuredClone(initialValue)
+                    })
+                    onChange({ ...cleanedValues })
                   }
                 }}
+                // conditionResult={conditionResult}
                 className={utils.makeClassName({
-                  defaultClassName: ***REMOVED***p-0***REMOVED***,
                   className: fc
                 })}
+                // conditionResult={conditionResult}
                 // default to null here so that FormCreator doesn***REMOVED***t go out and look for the value again
                 // todo: update this so that it***REMOVED***s clearer. difference between undefined and null too small
                 value={(
