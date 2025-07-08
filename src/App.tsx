@@ -4,10 +4,10 @@ import { BrowserRouter, Route, Routes, useParams } from ***REMOVED***react-route
 import SetTester from ***REMOVED***@/SetTester***REMOVED***
 import MapTester from ***REMOVED***@/Form/MapTester***REMOVED***
 import SchemaToForm from ***REMOVED***@/Form/SchemaToForm***REMOVED***
-import pagedFormJson from ***REMOVED***@/Form/testData/pagedForm.json***REMOVED***
-import wizardFormJson from ***REMOVED***@/Form/testData/wizardForm.json***REMOVED***
-import pttOilSpillForm from ***REMOVED***@/Form/testData/pttFormConfigOpenOilModel.json***REMOVED***
-import customElementFormJson from ***REMOVED***@/Form/testData/customElementForm.json***REMOVED***
+import pagedFormJson from ***REMOVED***@/Form/testData/forms/pagedForm.json***REMOVED***
+import wizardFormJson from ***REMOVED***@/Form/testData/forms/wizardForm.json***REMOVED***
+import pttOilSpillForm from ***REMOVED***@/Form/testData/forms/pttFormConfigOpenOilModel.json***REMOVED***
+import customElementFormJson from ***REMOVED***@/Form/testData/forms/customElementForm.json***REMOVED***
 import { type INumberField, type IForm, type IFormValues, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Form from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
@@ -35,6 +35,7 @@ import MeditorForm from ***REMOVED***@/Meditor/MeditorForm***REMOVED***
 import WaterLevelForm from ***REMOVED***@/WaterLevel/WaterLevelForm***REMOVED***
 import { QueryClient, QueryClientProvider } from ***REMOVED***@tanstack/react-query***REMOVED***
 import Metadata from ***REMOVED***@/Binner/Metadata***REMOVED***
+import NestedDataTest from ***REMOVED***@/Form/NestedDataTest***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -215,6 +216,7 @@ const App = (): ReactElement => {
             <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
               <Route path="*" element={<BinnerMetadataRoute />}/>
             </Route>
+            <Route path="/nested-data-test" element={<NestedDataTest />} />
           </Routes>
         </BrowserRouter>
     </div>

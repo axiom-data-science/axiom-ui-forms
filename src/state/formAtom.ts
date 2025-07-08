@@ -4,13 +4,13 @@ import { atom } from ***REMOVED***jotai***REMOVED***
 
 const urlArg = ***REMOVED***form***REMOVED***
 const base64String = getQueryParam(urlArg)
-const baseFormAtom = atom<IForm>((base64String !== null ? base64ToJson<IForm>(base64String) : {}) as any as IForm)
+const baseFormAtom = atom<IForm | undefined>((base64String !== null ? base64ToJson<IForm>(base64String) : {}) as any as IForm)
 const formAtom = atom(
   (get) => {
     return get(baseFormAtom)
   },
-  (get, set, newForm: IForm) => {
-    updateUrlParam(urlArg, jsonToBase64<IForm>(newForm))
+  (get, set, newForm: IForm | undefined) => {
+    updateUrlParam(urlArg, newForm === undefined ? ***REMOVED******REMOVED*** : jsonToBase64<IForm>(newForm))
     set(baseFormAtom, newForm)
   }
 )

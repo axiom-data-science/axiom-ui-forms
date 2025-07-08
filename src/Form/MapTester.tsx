@@ -4,7 +4,7 @@ import { getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import FormMappingInput from ***REMOVED***@/Form/Manage/FormMappingInput***REMOVED***
-import testForm from ***REMOVED***@/Form/testData/nestedForm.json***REMOVED***
+import testForm from ***REMOVED***@/Form/testData/forms/nestedForm.json***REMOVED***
 import { Checkbox, Input, TextArea } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 

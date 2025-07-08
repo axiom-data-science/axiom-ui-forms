@@ -142,8 +142,10 @@ const TextInput = ({ field, onChange, value, className, disabled }: IFieldInputP
                 }
                 onChange(undefined)
               }
-            }} />
-    {error !== undefined && <p className=***REMOVED***text-red-500 text-xs py-2***REMOVED***>{error}</p>}
+            }}
+          after={error !== undefined && <p className=***REMOVED***text-red-500 text-xs py-2***REMOVED***>{error}</p>}
+
+            />
     </>
   )
 }

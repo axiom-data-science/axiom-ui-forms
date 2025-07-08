@@ -1,19 +1,18 @@
-import { Button, MultiAccordion, Tabs } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { Button, SelectInput } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactNode, useState, type ReactElement, useEffect } from ***REMOVED***react***REMOVED***
-import FormConfigInput from ***REMOVED***@/Form/Manage/FormConfigInput***REMOVED***
-import Form from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import formAtom from ***REMOVED***@/state/formAtom***REMOVED***
-import { RawFormOutput } from ***REMOVED***@/Form/Manage/RawFormOutput***REMOVED***
-import { getQueryParam, updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { CheckIcon, Cross1Icon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import testForm from ***REMOVED***@/Form/testData/formObject.json***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { FormWithEditorOverlay } from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
+import { updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 
-type IDisplayType = ***REMOVED***stack***REMOVED*** | ***REMOVED***tab***REMOVED***
+const formConfigs = import.meta.glob<IForm>(***REMOVED***/src/Form/testData/forms/**/*.json***REMOVED***, { eager: true, import: ***REMOVED***default***REMOVED*** })
+
+const testForm = (formConfigs?.[***REMOVED***/src/Form/testData/forms/formObject.json***REMOVED***] ?? { id: ***REMOVED***testForm***REMOVED***, label: ***REMOVED***Test Form***REMOVED*** })
 
 const ClearForm = ({
   message = ***REMOVED***Clear form***REMOVED***,
@@ -24,7 +23,6 @@ const ClearForm = ({
 
 }): ReactElement => {
   const [confirm, setConfirm] = useState(false)
-
   return (
     <>
       {
@@ -50,6 +48,42 @@ const ClearForm = ({
   )
 }
 
+const SelectNewForm = ({
+  onChange,
+  files,
+  fileParam = ***REMOVED***form-init***REMOVED***
+}: {
+  files: Record<string, any>
+  fileParam?: string
+  onChange: (key: string) => void
+}): ReactElement => {
+  const url = new URL(document.location.href)
+  const formInitParam = url.searchParams.get(fileParam) ?? ***REMOVED******REMOVED***
+  return <div className=***REMOVED***text-sm***REMOVED***>
+    <SelectInput
+      className=***REMOVED***bg-blue-600 text-white hover:bg-blue-900 rounded-md shadow-md***REMOVED***
+      id=***REMOVED***select-new-form***REMOVED***
+      testId=***REMOVED***select-new-form***REMOVED***
+      size=***REMOVED***xs***REMOVED***
+      placeholder=***REMOVED***Select new form config***REMOVED***
+      value={formInitParam}
+      options={Object.keys(files).map(k => {
+        return {
+          label: k.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***).replace(***REMOVED***.json***REMOVED***, ***REMOVED******REMOVED***),
+          value: k
+        }
+      })}
+      onChange={(e) => {
+        if (e?.value !== undefined && files[e.value] !== undefined) {
+          updateUrlParam(fileParam, e.value)
+          onChange(e.value)
+        }
+      }}
+    />
+
+  </div>
+}
+
 const FormManager = ({
   formValueState,
   mappingState,
@@ -57,61 +91,44 @@ const FormManager = ({
 }: {
   formValueState?: [IFormValues, (v: IFormValues) => void]
   mappingState?: [IFormMapping, (v: IFormMapping) => void]
-  formState?: [IForm, (v: IForm) => void]
+  formState?: [IForm, (v: IForm | undefined) => void]
 }): ReactElement => {
   const [form, setForm] = formState ?? useAtom(formAtom)
-  if (Object.values(form).length === 0) {
-    setForm(structuredClone(testForm as IForm))
+  if (Object.values(form ?? {}).length === 0) {
+    setForm(structuredClone(testForm))
   }
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   useEffect(() => {
-    setFormValues(assignDefaultValuesToFormValues(form, formValues ?? {}))
-  }, [form])
-  const sections = [
-    {
-      id: ***REMOVED***config***REMOVED***,
-      label: ***REMOVED***Form config***REMOVED***,
-      content: <FormConfigInput
-          formState={[form, setForm]}
-        />
-    },
-    {
-      id: ***REMOVED***raw_output***REMOVED***,
-      label: ***REMOVED***Raw Output***REMOVED***,
-      content: <RawFormOutput formValueState={[formValues, setFormValues]} />
+    if (form !== undefined) {
+      setFormValues(assignDefaultValuesToFormValues(form, formValues ?? {}))
     }
-  ]
-  const params = Object.fromEntries(new URLSearchParams(window.location.search))
-  const display: IDisplayType = params.display === ***REMOVED***stack***REMOVED*** ? ***REMOVED***stack***REMOVED*** : ***REMOVED***tab***REMOVED***
+  }, [form])
   return (
-          <div className=***REMOVED***flex flex-col h-full gap-4 p-20***REMOVED***>
-            <div className=***REMOVED***flex flex-row gap-4 justify-end***REMOVED***>
+          <div className=***REMOVED***flex flex-col h-full gap-4***REMOVED***>
+            <div className=***REMOVED***flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4***REMOVED***>
+                <SelectNewForm
+                  files={formConfigs}
+                  onChange={key => {
+                    const form = formConfigs[key]
+                    setForm(structuredClone({
+                      ...form,
+                      description: `*From: \`${key.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***)}\`*${form.description !== undefined ? `\n\n${form.description}` : ***REMOVED******REMOVED***}`
+                    }))
+                    setFormValues(assignDefaultValuesToFormValues(form, {}))
+                  }}
+
+                  />
                 <ClearForm onConfirm={() => {
                   setFormValues({})
                 }} />
                 <ClearForm message=***REMOVED***Clear form config***REMOVED*** onConfirm={() => {
-                  setForm(structuredClone(testForm as IForm))
+                  setForm(structuredClone(testForm))
                 }} />
+
             </div>
-               <div className=***REMOVED***grid grid-cols-2 gap-8 flex-grow***REMOVED***>
-
-               <Form form={form} formValueState={[formValues, setFormValues]} />
-
-                    <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
-                      {
-                        display !== ***REMOVED***tab***REMOVED***
-                          ? <MultiAccordion tabs={sections} />
-                          : <Tabs
-                              tabs={sections}
-                              selectedTab={getQueryParam(***REMOVED***tab***REMOVED***) ?? undefined}
-                              onChange={(tab) => {
-                                updateUrlParam(***REMOVED***tab***REMOVED***, tab)
-                              }}
-                         />
-                      }
-
-                    </div>
-               </div>
+            <div className=***REMOVED***px-20***REMOVED***>
+             <FormWithEditorOverlay formState={[form, setForm]} />
+             </div>
           </div>
   )
 }
