@@ -92,7 +92,7 @@ const FormCreator = ({
   error,
   onChange,
   className,
-  defaultClassName = 'flex flex-col gap-2 flex-grow',
+  defaultClassName = 'flex flex-col gap-8 flex-grow',
   urlNavigable = true,
   inputOverrides,
   schema,

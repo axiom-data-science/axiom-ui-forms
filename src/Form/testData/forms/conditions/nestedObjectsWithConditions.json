@@ -29,7 +29,7 @@
           "label": "Object 1 Field 2",
           "multiple": true,
           "conditions": {
-            "field": ".object1Field1",
+            "field": "object1Field1",
             "value": "option1"
           }
         },
@@ -70,6 +70,16 @@
                     }
                 },
                 {
+                  "id": "object1Field3Field4",
+                  "type": "text",
+                  "label": "Object 1 Field 3 Field 4",
+                  "conditions": {
+                    "field": "object1Field3Field3.subsub2",
+                    "value": "hi",
+                    "result": "enable"
+                  }
+                },
+                {
                   "id": "object1Field3Field3",
                   "type": "object",
                   "label": "Object 1 Field 3 Field 3",
@@ -84,6 +94,11 @@
                         "value": "optionB",
                         "result": "enable"
                       }
+                    },
+                    {
+                      "id": "subsub2",
+                      "type": "text",
+                      "label": "Sub Sub Field 2"
                     }
                   ]
                 }

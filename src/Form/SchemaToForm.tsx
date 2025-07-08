@@ -3,7 +3,7 @@ import { Tabs, TextArea } from '@axdspub/axiom-ui-utilities'
 import { type JSONSchema6 } from 'json-schema'
 import React, { useMemo, useState, type ReactElement } from 'react'
 
-import testSchema from '@/Form/testData/pttSchemaModified.json'
+import testSchema from '@/Form/testData/schemas/pttSchemaModified.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormCreator from '@/Form/Creator/FormCreator'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'

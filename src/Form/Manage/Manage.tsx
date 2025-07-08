@@ -1,19 +1,18 @@
-import { Button, MultiAccordion, Tabs } from '@axdspub/axiom-ui-utilities'
+import { Button, SelectInput } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactNode, useState, type ReactElement, useEffect } from 'react'
-import FormConfigInput from '@/Form/Manage/FormConfigInput'
-import Form from '@/Form/Creator/FormCreator'
 import { useAtom } from 'jotai'
 import formAtom from '@/state/formAtom'
-import { RawFormOutput } from '@/Form/Manage/RawFormOutput'
-import { getQueryParam, updateUrlParam } from '@/helpers'
 import formValuesAtom from '@/state/formValuesAtom'
 import { CheckIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
-import testForm from '@/Form/testData/formObject.json'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
 import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
+import { FormWithEditorOverlay } from '@/Form/FormWithEditorOverlay'
+import { updateUrlParam } from '@/helpers'
 
-type IDisplayType = 'stack' | 'tab'
+const formConfigs = import.meta.glob<IForm>('/src/Form/testData/forms/**/*.json', { eager: true, import: 'default' })
+
+const testForm = (formConfigs?.['/src/Form/testData/forms/formObject.json'] ?? { id: 'testForm', label: 'Test Form' })
 
 const ClearForm = ({
   message = 'Clear form',
@@ -24,7 +23,6 @@ const ClearForm = ({
 
 }): ReactElement => {
   const [confirm, setConfirm] = useState(false)
-
   return (
     <>
       {
@@ -50,6 +48,42 @@ const ClearForm = ({
   )
 }
 
+const SelectNewForm = ({
+  onChange,
+  files,
+  fileParam = 'form-init'
+}: {
+  files: Record<string, any>
+  fileParam?: string
+  onChange: (key: string) => void
+}): ReactElement => {
+  const url = new URL(document.location.href)
+  const formInitParam = url.searchParams.get(fileParam) ?? ''
+  return <div className='text-sm'>
+    <SelectInput
+      className='bg-blue-600 text-white hover:bg-blue-900 rounded-md shadow-md'
+      id='select-new-form'
+      testId='select-new-form'
+      size='xs'
+      placeholder='Select new form config'
+      value={formInitParam}
+      options={Object.keys(files).map(k => {
+        return {
+          label: k.replace('/src/Form/testData/forms/', '').replace('.json', ''),
+          value: k
+        }
+      })}
+      onChange={(e) => {
+        if (e?.value !== undefined && files[e.value] !== undefined) {
+          updateUrlParam(fileParam, e.value)
+          onChange(e.value)
+        }
+      }}
+    />
+
+  </div>
+}
+
 const FormManager = ({
   formValueState,
   mappingState,
@@ -57,61 +91,44 @@ const FormManager = ({
 }: {
   formValueState?: [IFormValues, (v: IFormValues) => void]
   mappingState?: [IFormMapping, (v: IFormMapping) => void]
-  formState?: [IForm, (v: IForm) => void]
+  formState?: [IForm, (v: IForm | undefined) => void]
 }): ReactElement => {
   const [form, setForm] = formState ?? useAtom(formAtom)
-  if (Object.values(form).length === 0) {
-    setForm(structuredClone(testForm as IForm))
+  if (Object.values(form ?? {}).length === 0) {
+    setForm(structuredClone(testForm))
   }
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   useEffect(() => {
-    setFormValues(assignDefaultValuesToFormValues(form, formValues ?? {}))
-  }, [form])
-  const sections = [
-    {
-      id: 'config',
-      label: 'Form config',
-      content: <FormConfigInput
-          formState={[form, setForm]}
-        />
-    },
-    {
-      id: 'raw_output',
-      label: 'Raw Output',
-      content: <RawFormOutput formValueState={[formValues, setFormValues]} />
+    if (form !== undefined) {
+      setFormValues(assignDefaultValuesToFormValues(form, formValues ?? {}))
     }
-  ]
-  const params = Object.fromEntries(new URLSearchParams(window.location.search))
-  const display: IDisplayType = params.display === 'stack' ? 'stack' : 'tab'
+  }, [form])
   return (
-          <div className='flex flex-col h-full gap-4 p-20'>
-            <div className='flex flex-row gap-4 justify-end'>
+          <div className='flex flex-col h-full gap-4'>
+            <div className='flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4'>
+                <SelectNewForm
+                  files={formConfigs}
+                  onChange={key => {
+                    const form = formConfigs[key]
+                    setForm(structuredClone({
+                      ...form,
+                      description: `*From: \`${key.replace('/src/Form/testData/forms/', '')}\`*${form.description !== undefined ? `\n\n${form.description}` : ''}`
+                    }))
+                    setFormValues(assignDefaultValuesToFormValues(form, {}))
+                  }}
+
+                  />
                 <ClearForm onConfirm={() => {
                   setFormValues({})
                 }} />
                 <ClearForm message='Clear form config' onConfirm={() => {
-                  setForm(structuredClone(testForm as IForm))
+                  setForm(structuredClone(testForm))
                 }} />
+
             </div>
-               <div className='grid grid-cols-2 gap-8 flex-grow'>
-
-               <Form form={form} formValueState={[formValues, setFormValues]} />
-
-                    <div className='flex flex-col gap-4'>
-                      {
-                        display !== 'tab'
-                          ? <MultiAccordion tabs={sections} />
-                          : <Tabs
-                              tabs={sections}
-                              selectedTab={getQueryParam('tab') ?? undefined}
-                              onChange={(tab) => {
-                                updateUrlParam('tab', tab)
-                              }}
-                         />
-                      }
-
-                    </div>
-               </div>
+            <div className='px-20'>
+             <FormWithEditorOverlay formState={[form, setForm]} />
+             </div>
           </div>
   )
 }

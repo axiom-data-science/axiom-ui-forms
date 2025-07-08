@@ -4,10 +4,10 @@ import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 import SetTester from '@/SetTester'
 import MapTester from '@/Form/MapTester'
 import SchemaToForm from '@/Form/SchemaToForm'
-import pagedFormJson from '@/Form/testData/pagedForm.json'
-import wizardFormJson from '@/Form/testData/wizardForm.json'
-import pttOilSpillForm from '@/Form/testData/pttFormConfigOpenOilModel.json'
-import customElementFormJson from '@/Form/testData/customElementForm.json'
+import pagedFormJson from '@/Form/testData/forms/pagedForm.json'
+import wizardFormJson from '@/Form/testData/forms/wizardForm.json'
+import pttOilSpillForm from '@/Form/testData/forms/pttFormConfigOpenOilModel.json'
+import customElementFormJson from '@/Form/testData/forms/customElementForm.json'
 import { type INumberField, type IForm, type IFormValues, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 import Form from '@/Form/Creator/FormCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
@@ -35,6 +35,7 @@ import MeditorForm from '@/Meditor/MeditorForm'
 import WaterLevelForm from '@/WaterLevel/WaterLevelForm'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Metadata from '@/Binner/Metadata'
+import NestedDataTest from '@/Form/NestedDataTest'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -215,6 +216,7 @@ const App = (): ReactElement => {
             <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
               <Route path="*" element={<BinnerMetadataRoute />}/>
             </Route>
+            <Route path="/nested-data-test" element={<NestedDataTest />} />
           </Routes>
         </BrowserRouter>
     </div>

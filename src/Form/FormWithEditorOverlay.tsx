@@ -1,8 +1,8 @@
-import React, { useContext, useState, type ReactElement } from 'react'
+import React, { type ReactNode, useContext, useState, type ReactElement } from 'react'
 import FormCreator, { SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
-import { FormContext } from '@/Form/Creator/FormContextProvider'
+import { FormContext, useFormContext } from '@/Form/Creator/FormContextProvider'
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from '@radix-ui/react-icons'
 import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
@@ -35,7 +35,7 @@ const fixOverLayWidth = (width: number): number => {
 }
 
 const FormOutput = (): ReactElement => {
-  const [formValues] = useAtom(formValuesAtom)
+  const { formValues } = useFormContext()
   return (
     <pre className='h-full whitespace-pre-wrap overflow-auto p-4 bg-slate-100 text-xs'>
       {JSON.stringify(formValues, null, 2)}
@@ -43,39 +43,22 @@ const FormOutput = (): ReactElement => {
   )
 }
 
-export const FormWithEditorOverlay = ({
-  formState
+const FormEditor = ({
+  children
 }: {
-  formState: [IForm | undefined, (form: IForm | undefined) => void]
+  children: ReactNode
 }): ReactElement => {
   const [editing, setEditing] = useState<boolean>(false)
-  const [formInput, setFormInput] = formState ?? useState<IForm | undefined>(undefined)
   const [sidebarWidth, setSidebarWidth] = useState<number>(1200)
-  const [layout] = useAtom(layoutAtom)
-  const formValueState = useAtom(formValuesAtom)
 
-  return (
-    <>
-    <div className={`${layout.size === 'sm' || layout.size === 'md' ? 'm-4' : 'm-10 mt-4'} relative`}>
-      {
-            formInput !== undefined
-              ? <FormCreator
-              form={formInput}
-              formValueState={formValueState}
-              footer={
-                  <Footer />
-              }
-          />
-              : 'No form config provided'
-            }
-            <>
+  return <>
             {
 
                   !editing
                     ? <Tooltip
-                      content='Edit form config'
+                      content='Edit schema and field overrides'
                       side='left'
-                      className='bg-white text-black p-2 rounded-md absolute top-0 right-0'
+                      className='bg-white bg-opacity-50 hover:bg-opacity-100 text-black p-2 rounded-md top-20 right-10 fixed z-10 shadow-lg'
                       ><Pencil2Icon className='cursor-pointer w-6 h-6' onClick={() => {
                         setEditing(true)
                       }} /></Tooltip>
@@ -121,7 +104,35 @@ export const FormWithEditorOverlay = ({
                               <DragHandleDots2Icon className='-mt-1' />
                               <DragHandleDots2Icon className='-mt-1' />
                     </div>
-              <Tabs
+                    {children}
+                    </div>
+            }
+                  </>
+}
+
+export const FormWithEditorOverlay = ({
+  formState
+}: {
+  formState: [IForm | undefined, (form: IForm | undefined) => void]
+}): ReactElement => {
+  const [formInput, setFormInput] = formState ?? useState<IForm | undefined>(undefined)
+  const [layout] = useAtom(layoutAtom)
+  const formValueState = useAtom(formValuesAtom)
+
+  return (
+    <>
+    <div className={`${layout.size === 'sm' || layout.size === 'md' ? 'm-4' : 'm-10 mt-4'} relative`}>
+      {
+            formInput !== undefined
+              ? <FormCreator
+              form={formInput}
+              formValueState={formValueState}
+              footer={
+                  <Footer />
+              }
+              header={
+                <FormEditor>
+                  <Tabs
                 className='flex flex-col h-full p-8 flex-grow'
                 defaultContentClassName='h-full overflow-auto p-4'
                 tabs={[
@@ -148,9 +159,11 @@ export const FormWithEditorOverlay = ({
 
                 ].filter(t => t !== undefined)}
                 />
-                </div>
-        }
-      </>
+                </FormEditor>
+              }
+          />
+              : 'No form config provided'
+            }
       </div>
       </>
 
@@ -172,16 +185,14 @@ const SchemaFormWithEditorOverlay = ({
   rootFieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
 }): ReactElement => {
-  const [editing, setEditing] = useState<boolean>(false)
   const [schemaInput, setSchemaInput] = schemaState ?? useState<JSONSchema6 | undefined>(undefined)
   const [rootFieldOverridesInput, setRootFieldOverridesInput] = rootFieldOverrideState ?? []
   const [fieldOverridesInput, setFieldOverridesInput] = fieldOverrideState ?? useState<IFormFieldOverride[]>([])
   const [formOverrideInput, setFormOverrideInput] = formOverrideState ?? useState<IFormOverride | undefined>(undefined)
-  const [sidebarWidth, setSidebarWidth] = useState<number>(1200)
   const [layout] = useAtom(layoutAtom)
 
   return (
-    <>
+
     <div className={`${layout.size === 'sm' || layout.size === 'md' ? 'm-4' : 'm-10 mt-4'} relative`}>
       {
             schemaInput !== undefined
@@ -195,77 +206,17 @@ const SchemaFormWithEditorOverlay = ({
               footer={
                   <Footer />
               }
-          />
-              : 'No schema provided'
-            }
-            <>
-            {
+              header={<FormEditor>
+                <>
+                <ObjectToSchemaButton
+                  size='xs'
+                  className='top-2 right-2 absolute'
+                  onUpdate={(newSchema: JSONSchema6 | undefined) => {
+                    setSchemaInput(newSchema)
+                  }}
+                />
 
-                  !editing
-                    ? <Tooltip
-                      content='Edit schema and field overrides'
-                      side='left'
-                      className='bg-white text-black p-2 rounded-md absolute top-0 right-0'
-                      ><Pencil2Icon className='cursor-pointer w-6 h-6' onClick={() => {
-                        setEditing(true)
-                      }} /></Tooltip>
-                    : ''
-
-            }
-            {
-              !editing
-                ? ''
-                : <div
-                    className='fixed bottom-0 right-0 h-full bg-white shadow-2xl z-50  flex flex-row'
-                    style={{ width: `${fixOverLayWidth(sidebarWidth)}px` }}
-                  >
-                  <Cross2Icon className='cursor-pointer w-6 h-6 absolute top-4 left-8' onClick={() => {
-                    setEditing(false)
-                  }} />
-                      {
-      setSchemaInput !== undefined
-
-        ? <ObjectToSchemaButton
-        size='xs'
-        className='top-2 right-2 absolute'
-      onUpdate={(newSchema: JSONSchema6 | undefined) => {
-        setSchemaInput(newSchema)
-        setEditing(true)
-      }}
-
-    />
-        : ''
-  }
-                    <div className='w-[16px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center'
-                              onMouseDown={(e) => {
-                                const startX = e.clientX
-                                const startWidth = sidebarWidth
-
-                                const onMouseMove = (event: MouseEvent): void => {
-                                  const newWidth = startWidth - (event.clientX - startX)
-                                  setSidebarWidth(fixOverLayWidth(newWidth))
-                                  document.body.classList.add('cursor-ew-resize')
-                                  document.body.classList.add('select-none')
-                                  event.preventDefault() // Prevent text selection
-                                  event.stopPropagation()
-                                }
-
-                                const onMouseUp = (): void => {
-                                  document.removeEventListener('mousemove', onMouseMove)
-                                  document.removeEventListener('mouseup', onMouseUp)
-                                  document.body.classList.remove('cursor-ew-resize')
-                                  document.body.classList.remove('select-none')
-                                }
-
-                                document.addEventListener('mousemove', onMouseMove)
-                                document.addEventListener('mouseup', onMouseUp)
-                              }}
-                              >
-                              <DragHandleDots2Icon />
-                              <DragHandleDots2Icon className='-mt-1' />
-                              <DragHandleDots2Icon className='-mt-1' />
-                    </div>
-              <Tabs
+                <Tabs
                 className='flex flex-col h-full p-8 flex-grow'
                 defaultContentClassName='h-full overflow-auto p-4'
                 tabs={[
@@ -334,15 +285,21 @@ const SchemaFormWithEditorOverlay = ({
                     }}
                     />
                       }
-                    : undefined
+                    : undefined,
+                  {
+                    id: 'form-output',
+                    label: 'Form output',
+                    content: <FormOutput />
+                  }
 
                 ].filter(t => t !== undefined)}
                 />
-                </div>
+                </>
+              </FormEditor>}
+            />
+              : ''
         }
-      </>
-      </div>
-      </>
+        </div>
 
   )
 }
