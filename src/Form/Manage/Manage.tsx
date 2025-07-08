@@ -3,7 +3,7 @@ import React, { type ReactNode, useState, type ReactElement, useEffect } from 'r
 import { useAtom } from 'jotai'
 import formAtom from '@/state/formAtom'
 import formValuesAtom from '@/state/formValuesAtom'
-import { CheckIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
+import { CheckIcon, Cross1Icon, ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
 import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
@@ -59,7 +59,7 @@ const SelectNewForm = ({
 }): ReactElement => {
   const url = new URL(document.location.href)
   const formInitParam = url.searchParams.get(fileParam) ?? ''
-  return <div className='text-sm'>
+  return <div className='text-sm flex flex-row gap-2 items-center'>
     <SelectInput
       className='bg-blue-600 text-white hover:bg-blue-900 rounded-md shadow-md'
       id='select-new-form'
@@ -80,6 +80,12 @@ const SelectNewForm = ({
         }
       }}
     />
+    <ReloadIcon className='inline w-5 h-5 cursor-pointer hover:text-blue-900'
+      onClick={() => {
+        if (formInitParam !== null && formInitParam !== '') {
+          onChange(formInitParam)
+        }
+      }} />
 
   </div>
 }
