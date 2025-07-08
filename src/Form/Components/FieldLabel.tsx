@@ -62,10 +62,17 @@ export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, d
 
 const FieldLabel = ({ field, disabled, value, onChange, className }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn, className?: string }): ReactElement => {
   return <>{
-      field.label !== undefined && field.label !== null && <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} /></p>
+      field.label !== undefined && field.label !== null && <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} />{
+        field.settings?.descriptionPresentation === ***REMOVED***tooltip***REMOVED***
+          ? <FieldDescriptionTooltip field={field} disabled={disabled} />
+          : <></>
+      }</p>
     }
-    <FieldDescriptionText field={field} disabled={disabled} />
-
+    {
+      field.settings?.descriptionPresentation === ***REMOVED***inline***REMOVED*** || field.settings?.descriptionPresentation === undefined
+        ? <FieldDescriptionText field={field} disabled={disabled} />
+        : <></>
+    }
   </>
 }
 

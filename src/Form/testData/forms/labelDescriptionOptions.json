@@ -1,0 +1,336 @@
+{
+    "id": "labelDescriptionOptions",
+    "label": "Label and description options",
+    "description": "This form contains various label and description options for testing purposes.",
+    "fields": [
+  {
+    "id": "short",
+    "label": "Test component - tooltip description",
+    "description": "This is a short text component",
+    "type": "text",
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    }
+  },
+  {
+    "id": "short2",
+    "label": "Test component - inline description",
+    "description": "This is a short text component",
+    "type": "text",
+    "settings": {
+      "descriptionPresentation": "inline"
+    }
+  },
+  {
+    "id": "long",
+    "label": "Long string component - tooltip description",
+    "description": "This is a long text component",
+    "type": "long_text",
+    "required": false,
+    "multiple": false,
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    }   
+  },
+   {
+    "id": "long2",
+    "label": "Long string component - inline description",
+    "description": "This is a long text component",
+    "type": "long_text",
+    "required": false,
+    "multiple": false,
+    "settings": {
+      "descriptionPresentation": "inline"
+    }   
+  },
+  {
+    "id": "agree",
+    "label": "Boolean component - inline description",
+    "type": "boolean",
+    "description": "This is a boolean component",
+    "required": true,
+    "settings": {
+      "descriptionPresentation": "inline"
+    }   
+  },
+    {
+    "id": "agree2",
+    "label": "Boolean component - tooltip description",
+    "type": "boolean",
+    "description": "This is a boolean component",
+    "required": true,
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    }   
+  },
+  {
+    "label": "Select component - tooltip description",
+    "description": "This is a select component",
+    "id": "color",
+    "type": "select",
+    "required": true,
+    "multiple": false,
+    "options": [
+      {
+        "label": "Red",
+        "value": "red"
+      },
+      {
+        "label": "Green",
+        "value": "green"
+      },
+      {
+        "label": "Blue",
+        "value": "blue"
+      }
+    ],
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    }
+  },
+    {
+    "label": "Select component - inline description",
+    "description": "This is a select component",
+    "id": "color",
+    "type": "select",
+    "required": true,
+    "multiple": false,
+    "options": [
+      {
+        "label": "Red",
+        "value": "red"
+      },
+      {
+        "label": "Green",
+        "value": "green"
+      },
+      {
+        "label": "Blue",
+        "value": "blue"
+      }
+    ]
+  },
+  {
+    "label": "Radio component - tooltip description",
+    "description": "This is a radio component",
+    "id": "size",
+    "type": "radio",
+    "required": false,
+    "layout": "vertical",
+    "multiple": true,
+    "options": [
+      {
+        "label": "Small",
+        "value": "small"
+      },
+      {
+        "label": "Medium",
+        "value": "medium"
+      },
+      {
+        "label": "Large",
+        "value": "large"
+      }
+    ],
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    }
+  },
+    {
+    "label": "Radio component - inline description",
+    "description": "This is a radio component",
+    "id": "size2",
+    "type": "radio",
+    "required": false,
+    "layout": "vertical",
+    "multiple": true,
+    "options": [
+      {
+        "label": "Small",
+        "value": "small"
+      },
+      {
+        "label": "Medium",
+        "value": "medium"
+      },
+      {
+        "label": "Large",
+        "value": "large"
+      }
+    ],
+    "settings": {
+      "descriptionPresentation": "inline"
+    }
+  },
+  {
+    "label": "Object component - tooltip description",
+    "id": "address",
+    "type": "object",
+    "required": true,
+    "layout": "vertical",
+    "multiple": true,
+    "description": "This is an object component",
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    },
+    "fields": [
+      {
+        "id": "street",
+        "label": "Street",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "city_state_zip",
+        "type": "object",
+        "required": false,
+        "layout": "horizontal",
+        "label": "",
+        "fields": [
+          {
+            "id": "city",
+            "label": "City",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "state",
+            "label": "State",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "zip",
+            "label": "Zip",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "notes",
+        "label": "Notes",
+        "type": "text",
+        "multiple": true
+      },
+      {
+        "id": "family",
+        "label": "Family members",
+        "type": "object",
+        "multiple": true,
+        "fields": [
+          {
+            "id": "name",
+            "label": "Name",
+            "type": "object",
+            "layout": "horizontal",
+            "fields": [
+              {
+                "id": "firstName",
+                "label": "First name",
+                "type": "text"
+              },
+              {
+                "id": "lastName",
+                "label": "Last name",
+                "type": "text"
+              }
+            ]
+          },
+          {
+            "id": "age",
+            "label": "Age",
+            "type": "text",
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+    {
+    "label": "Object component - tooltip description",
+    "id": "address2",
+    "type": "object",
+    "required": true,
+    "layout": "vertical",
+    "multiple": true,
+    "description": "This is an object component",
+    "settings": {
+      "descriptionPresentation": "inline"
+    },
+    "fields": [
+      {
+        "id": "street",
+        "label": "Street",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "city_state_zip",
+        "type": "object",
+        "required": false,
+        "layout": "horizontal",
+        "label": "",
+        "fields": [
+          {
+            "id": "city",
+            "label": "City",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "state",
+            "label": "State",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "zip",
+            "label": "Zip",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "notes",
+        "label": "Notes",
+        "type": "text",
+        "multiple": true
+      },
+      {
+        "id": "family",
+        "label": "Family members",
+        "type": "object",
+        "multiple": true,
+        "fields": [
+          {
+            "id": "name",
+            "label": "Name",
+            "type": "object",
+            "layout": "horizontal",
+            "fields": [
+              {
+                "id": "firstName",
+                "label": "First name",
+                "type": "text"
+              },
+              {
+                "id": "lastName",
+                "label": "Last name",
+                "type": "text"
+              }
+            ]
+          },
+          {
+            "id": "age",
+            "label": "Age",
+            "type": "text",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+]
+}

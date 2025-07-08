@@ -3,7 +3,7 @@ import React, { type ReactNode, useState, type ReactElement, useEffect } from **
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import formAtom from ***REMOVED***@/state/formAtom***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
-import { CheckIcon, Cross1Icon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { CheckIcon, Cross1Icon, ReloadIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulators***REMOVED***
@@ -59,7 +59,7 @@ const SelectNewForm = ({
 }): ReactElement => {
   const url = new URL(document.location.href)
   const formInitParam = url.searchParams.get(fileParam) ?? ***REMOVED******REMOVED***
-  return <div className=***REMOVED***text-sm***REMOVED***>
+  return <div className=***REMOVED***text-sm flex flex-row gap-2 items-center***REMOVED***>
     <SelectInput
       className=***REMOVED***bg-blue-600 text-white hover:bg-blue-900 rounded-md shadow-md***REMOVED***
       id=***REMOVED***select-new-form***REMOVED***
@@ -80,6 +80,12 @@ const SelectNewForm = ({
         }
       }}
     />
+    <ReloadIcon className=***REMOVED***inline w-5 h-5 cursor-pointer hover:text-blue-900***REMOVED***
+      onClick={() => {
+        if (formInitParam !== null && formInitParam !== ***REMOVED******REMOVED***) {
+          onChange(formInitParam)
+        }
+      }} />
 
   </div>
 }

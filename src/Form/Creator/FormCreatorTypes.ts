@@ -51,6 +51,11 @@ export interface IFieldCondition {
 
 type IFieldConstraints = Record<string, unknown>
 
+interface IFormFieldSettingsBase {
+  [key: string]: unknown
+  descriptionPresentation?: ***REMOVED***inline***REMOVED*** | ***REMOVED***tooltip***REMOVED***
+}
+
 interface IFormFieldRoot {
   id: string
   type: string
@@ -66,7 +71,7 @@ interface IFormFieldRoot {
   conditions?: IFieldCondition
   conditionsSet?: IFieldConditionsSet
   constraints?: IFieldConstraints
-  settings?: Record<string, unknown>
+  settings?: IFormFieldSettingsBase
 }
 
 export interface IConstantField extends IFormFieldRoot {
@@ -78,7 +83,7 @@ interface INumberValueInput extends IFormFieldRoot {
     min?: number
     max?: number
   }
-  settings?: {
+  settings?: IFormFieldSettingsBase & {
     step?: number
     canBeNull?: boolean
     nonNullDefaultValue?: number
@@ -104,7 +109,7 @@ interface ILongTextField extends IStringValueInput {
 
 export interface IJSONField extends IFormFieldRoot {
   type: ***REMOVED***json***REMOVED***
-  settings?: {
+  settings?: IFormFieldSettingsBase & {
     exportAsString?: boolean
     allowEmpty?: boolean
   }
@@ -233,7 +238,7 @@ export interface IGeometryField extends IFormFieldRoot {
   type: ***REMOVED***geometry***REMOVED***
   exclude_types?: string[]
   include_types?: string[]
-  settings?: {
+  settings?: IFormFieldSettingsBase & {
     drawEnabled?: boolean
     drawPolygonEnabled?: boolean
     drawPathEnabled?: boolean
