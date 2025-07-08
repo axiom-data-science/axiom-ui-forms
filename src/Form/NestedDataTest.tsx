@@ -1,5 +1,5 @@
 import { FormContext } from '@/Form/Creator/FormContextProvider'
-import { type IFormValues } from '@/Form/Creator/FormCreatorTypes'
+import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import React, { useState, type ReactElement } from 'react'
 
 const NestedDataTest = (): ReactElement => {
@@ -10,8 +10,7 @@ const NestedDataTest = (): ReactElement => {
       {
         id: 'nested-data-test-field',
         label: 'Nested Data Field',
-        type: 'text',
-        value: ''
+        type: 'text'
       },
       {
         id: 'nested-data-multi-object',
@@ -22,14 +21,12 @@ const NestedDataTest = (): ReactElement => {
           {
             id: 'nested-data-multi-object-field-1',
             label: 'Nested Object Field 1',
-            type: 'text',
-            value: ''
+            type: 'text'
           },
           {
             id: 'nested-data-multi-object-field-2',
             label: 'Nested Object Field 2',
-            type: 'number',
-            value: 0
+            type: 'number'
           }
         ]
       }
