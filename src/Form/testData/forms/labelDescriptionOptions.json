@@ -248,7 +248,7 @@
     ]
   },
     {
-    "label": "Object component - tooltip description",
+    "label": "Object component - inline description",
     "id": "address2",
     "type": "object",
     "required": true,
