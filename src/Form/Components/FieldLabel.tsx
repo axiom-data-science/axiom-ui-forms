@@ -6,6 +6,7 @@ import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons'
 import { isEqual } from 'lodash-es'
 import React, { type ReactElement } from 'react'
 
+const SHOW_DEBUG = import.meta.env.VITE_SHOW_DEBUG === 'true'
 export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn }): ReactElement => {
   const isDifferent = onChange !== undefined && !field.multiple && field.defaultValue !== undefined && !isEqual(value, field.defaultValue)
   return (
@@ -45,9 +46,13 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
           : undefined
 
       ]
-    })}><InlineMarkdown>{field.label}</InlineMarkdown> <span className='text-xs text-slate-400'>{field.id}</span> { field.required === true ? <span className='text-red-500'>*</span> : ''}{
-      field.label !== '' && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} />
-    }<br /><span className='text-xs text-slate-400'>{makeJsonPath(field) ?? 'NA'}</span></span>
+    })}>
+      <InlineMarkdown>{field.label}</InlineMarkdown>
+      { SHOW_DEBUG && <span className='text-xs text-slate-400'>{field.id}</span> }
+      { field.required === true ? <span className='text-red-500'>*</span> : ''}
+      { field.label !== '' && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} /> }
+      { SHOW_DEBUG && <span className={SHOW_DEBUG ? '' : 'hidden'}><br /><span className='text-xs text-slate-400'>{makeJsonPath(field) ?? 'NA'}</span></span>}
+    </span>
   )
 }
 

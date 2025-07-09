@@ -9,6 +9,7 @@ import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import React, { useState, type ReactElement } from 'react'
 
+const SHOW_DEBUG = import.meta.env.VITE_SHOW_DEBUG === 'true'
 const disabledClassName = '' // 'opacity-50 pointer-events-none cursor-not-allowed'
 
 interface IFieldCreator {
@@ -168,7 +169,9 @@ export const MultipleFieldCreator = ({
   return <div className='flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed'>
     {
       initialValues?.map((va, index) => {
-        return <div key={`${field.id}-${index}`}><span className='text-red-500'>{makeJsonPath(field)}</span><span className='text-green-500'>{makeJsonPath(createOneOfMultipleField(field, index))}</span><OneOfMultiple
+        return <div key={`${field.id}-${index}`}>{
+          SHOW_DEBUG && <><span className='text-red-500'>{makeJsonPath(field)}</span><span className='text-green-500'>{makeJsonPath(createOneOfMultipleField(field, index))}</span></>
+        }<OneOfMultiple
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
           field={createOneOfMultipleField(field, index)}
