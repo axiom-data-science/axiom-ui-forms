@@ -36,6 +36,7 @@ import WaterLevelForm from ***REMOVED***@/WaterLevel/WaterLevelForm***REMOVED***
 import { QueryClient, QueryClientProvider } from ***REMOVED***@tanstack/react-query***REMOVED***
 import Metadata from ***REMOVED***@/Binner/Metadata***REMOVED***
 import NestedDataTest from ***REMOVED***@/Form/NestedDataTest***REMOVED***
+import JsonPathTester from ***REMOVED***@/Form/JSONPathTester***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -217,6 +218,7 @@ const App = (): ReactElement => {
               <Route path="*" element={<BinnerMetadataRoute />}/>
             </Route>
             <Route path="/nested-data-test" element={<NestedDataTest />} />
+            <Route path=***REMOVED***/json-path-tester***REMOVED*** element={<JsonPathTester />} />
           </Routes>
         </BrowserRouter>
     </div>

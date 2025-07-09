@@ -72,6 +72,7 @@ interface IFormFieldRoot {
   conditionsSet?: IFieldConditionsSet
   constraints?: IFieldConstraints
   settings?: IFormFieldSettingsBase
+  parent?: IFormField
 }
 
 export interface IConstantField extends IFormFieldRoot {

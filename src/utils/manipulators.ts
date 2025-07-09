@@ -1,7 +1,7 @@
 import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
-import { merge, set } from ***REMOVED***lodash-es***REMOVED***
+import { merge, omit, set } from ***REMOVED***lodash-es***REMOVED***
 
 export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
   if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
@@ -178,19 +178,17 @@ const assignIndexToField = (field: IFormField, index: number): IFormField => {
   }
 }
 
-const assignIndexToFields = (parentField: IObjectField, index: number): IFormField[] => {
+const assignIndexToFields = (parentField: IObjectField, index: number, level: number = 1): IFormField[] => {
   return parentField.fields.map(f => {
-    if (f.path !== undefined && parentField.level !== undefined && f.path[parentField.level - 1] !== undefined) {
+    if (f.path !== undefined && parentField.level !== undefined && f.path[parentField.level - level] !== undefined) {
       const newPath = f.path.slice()
-      newPath[parentField.level - 1] = {
-        ...parentField,
-        index
-      }
+      newPath[parentField.level - level] = assignIndexToField(parentField, index)
       f.path = newPath
     }
-    return {
-      ...f
+    if (f.type === ***REMOVED***object***REMOVED*** && f.fields !== undefined) {
+      f.fields = assignIndexToFields(f, index, 1)
     }
+    return structuredClone(f)
   })
 }
 

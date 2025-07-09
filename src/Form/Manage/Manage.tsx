@@ -132,7 +132,7 @@ const FormManager = ({
                 }} />
 
             </div>
-            <div className=***REMOVED***px-20***REMOVED***>
+            <div className=***REMOVED***px-20 h-full overflow-auto***REMOVED***>
              <FormWithEditorOverlay formState={[form, setForm]} />
              </div>
           </div>

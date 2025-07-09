@@ -30,10 +30,10 @@ const FormStatus = (): ReactElement => {
   const status = calculateSectionStatus([form], formValues)
 
   return (
-    <>
-    <p className=***REMOVED***text-xs mt-4***REMOVED***>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
-    <p className=***REMOVED***text-xs mt-2***REMOVED***>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
-    </>
+    <div className=***REMOVED***flex flex-col gap-2 text-xs***REMOVED***>
+    <p>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
+    <p>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
+    </div>
   )
 }
 
