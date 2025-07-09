@@ -1,7 +1,6 @@
 import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
@@ -45,10 +44,10 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
                   if (childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true) {
                     onChange(e)
                   } else {
-                    const path = getPathFromField(field)
-                    console.log(***REMOVED***field path is ***REMOVED***, path)
-                    const childPath = getPathFromField(childField)
-                    console.log(***REMOVED***child field path is ***REMOVED***, childPath)
+                    // onst path = getPathFromField(field)
+                    // console.log(***REMOVED***field path is ***REMOVED***, path)
+                    // const childPath = getPathFromField(childField)
+                    // console.log(***REMOVED***child field path is ***REMOVED***, childPath)
 
                     // only use local path since we***REMOVED***re only appending to the local object value rather than the full form value
                     /* const localForm = copyAndAddPathToFields(field as IFormSection) // { ...childField, path: childField?.path?.slice(childField?.path?.length - 1) ?? undefined }

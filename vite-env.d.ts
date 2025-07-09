@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
   readonly TEST_VAR: string
+  readonly SHOW_DEBUG: boolean
 }
 
 interface ImportMeta {

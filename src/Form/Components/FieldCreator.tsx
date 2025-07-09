@@ -9,6 +9,7 @@ import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
+const SHOW_DEBUG = import.meta.env.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
 const disabledClassName = ***REMOVED******REMOVED*** // ***REMOVED***opacity-50 pointer-events-none cursor-not-allowed***REMOVED***
 
 interface IFieldCreator {
@@ -168,7 +169,9 @@ export const MultipleFieldCreator = ({
   return <div className=***REMOVED***flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed***REMOVED***>
     {
       initialValues?.map((va, index) => {
-        return <div key={`${field.id}-${index}`}><span className=***REMOVED***text-red-500***REMOVED***>{makeJsonPath(field)}</span><span className=***REMOVED***text-green-500***REMOVED***>{makeJsonPath(createOneOfMultipleField(field, index))}</span><OneOfMultiple
+        return <div key={`${field.id}-${index}`}>{
+          SHOW_DEBUG && <><span className=***REMOVED***text-red-500***REMOVED***>{makeJsonPath(field)}</span><span className=***REMOVED***text-green-500***REMOVED***>{makeJsonPath(createOneOfMultipleField(field, index))}</span></>
+        }<OneOfMultiple
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
           field={createOneOfMultipleField(field, index)}

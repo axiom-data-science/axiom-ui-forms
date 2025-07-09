@@ -6,6 +6,7 @@ import { InfoCircledIcon, ReloadIcon } from ***REMOVED***@radix-ui/react-icons**
 import { isEqual } from ***REMOVED***lodash-es***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
+const SHOW_DEBUG = import.meta.env.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
 export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn }): ReactElement => {
   const isDifferent = onChange !== undefined && !field.multiple && field.defaultValue !== undefined && !isEqual(value, field.defaultValue)
   return (
@@ -45,9 +46,13 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
           : undefined
 
       ]
-    })}><InlineMarkdown>{field.label}</InlineMarkdown> <span className=***REMOVED***text-xs text-slate-400***REMOVED***>{field.id}</span> { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}{
-      field.label !== ***REMOVED******REMOVED*** && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} />
-    }<br /><span className=***REMOVED***text-xs text-slate-400***REMOVED***>{makeJsonPath(field) ?? ***REMOVED***NA***REMOVED***}</span></span>
+    })}>
+      <InlineMarkdown>{field.label}</InlineMarkdown>
+      { SHOW_DEBUG && <span className=***REMOVED***text-xs text-slate-400***REMOVED***>{field.id}</span> }
+      { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}
+      { field.label !== ***REMOVED******REMOVED*** && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} /> }
+      { SHOW_DEBUG && <span className={SHOW_DEBUG ? ***REMOVED******REMOVED*** : ***REMOVED***hidden***REMOVED***}><br /><span className=***REMOVED***text-xs text-slate-400***REMOVED***>{makeJsonPath(field) ?? ***REMOVED***NA***REMOVED***}</span></span>}
+    </span>
   )
 }
 
