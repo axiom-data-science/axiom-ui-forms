@@ -23,7 +23,7 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
 export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
   return (
     field.description !== undefined
-      ? <Tooltip tooltipWrapperClassName=***REMOVED***!z-50***REMOVED*** content={<span className=***REMOVED***leading-6***REMOVED***>{field.description}</span>} contentClassName=***REMOVED***max-w-[400px]***REMOVED***><InfoCircledIcon /></Tooltip>
+      ? <Tooltip tooltipWrapperClassName=***REMOVED***!z-50***REMOVED*** content={<span className=***REMOVED***leading-6***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown></span>} contentClassName=***REMOVED***max-w-[400px]***REMOVED***><InfoCircledIcon /></Tooltip>
       : <></>
   )
 }
@@ -70,7 +70,7 @@ const FieldLabel = ({ field, disabled, value, onChange, className }: { field: IF
   return <>{
       field.label !== undefined && field.label !== null && <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} />{
         field.settings?.descriptionPresentation === ***REMOVED***tooltip***REMOVED***
-          ? <FieldDescriptionTooltip field={field} disabled={disabled} />
+          ? <> <FieldDescriptionTooltip field={field} disabled={disabled} /></>
           : <></>
       }</p>
     }
