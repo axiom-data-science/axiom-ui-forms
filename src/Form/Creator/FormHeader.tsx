@@ -14,7 +14,7 @@ const FormHeader = ({
 }): ReactElement => {
   return (
     <div className='flex flex-col gap-4'>
-      <h2 className='text-2xl font-bold'>{form.label}</h2>
+      <h2 className='text-2xl font-bold'><InlineMarkdown>{form.label}</InlineMarkdown></h2>
       {note !== undefined
         ? <Markdown>{note}</Markdown>
         : null}
