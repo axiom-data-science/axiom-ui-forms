@@ -1,7 +1,7 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type ICompositeValueType, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
-import { cleanAndUpdateFormValuesWithFieldValue } from '@/utils/manipulators'
+import { getPathFromField } from '@/utils/getters'
 import { checkCondition } from '@/utils/validators'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
@@ -45,15 +45,29 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
                   if (childField.type === 'object' && childField.skip_path === true) {
                     onChange(e)
                   } else {
+                    const path = getPathFromField(field)
+                    console.log('field path is ', path)
+                    const childPath = getPathFromField(childField)
+                    console.log('child field path is ', childPath)
+
                     // only use local path since we're only appending to the local object value rather than the full form value
+                    /* const localForm = copyAndAddPathToFields(field as IFormSection) // { ...childField, path: childField?.path?.slice(childField?.path?.length - 1) ?? undefined }
                     const localField = { ...childField, path: childField?.path?.slice(childField?.path?.length - 1) ?? undefined }
                     const cleanedValues = cleanAndUpdateFormValuesWithFieldValue({
-                      form: { id: '', label: '', fields: field.fields.map(f => ({ ...f, path: f?.path?.slice(f?.path?.length - 1) ?? undefined })) },
+                      form: localForm,
                       field: localField,
                       value: e,
                       formValues: structuredClone(initialValue)
-                    })
-                    onChange({ ...cleanedValues })
+                    }) */
+                    /* const cleanedValues = cleanAndUpdateFormValuesWithFieldValue({
+                      form: field as IFormSection,
+                      field: childField,
+                      value: e,
+                      formValues: structuredClone(initialValue)
+                    }) */
+                    const newValue = structuredClone(initialValue)
+                    newValue[childField.id] = e
+                    onChange(newValue)
                   }
                 }}
                 // conditionResult={conditionResult}

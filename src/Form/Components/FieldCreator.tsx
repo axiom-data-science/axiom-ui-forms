@@ -2,7 +2,7 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import inputMap from '@/Form/Components/Inputs/inputMap'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
 import { type ICheckConditionResult, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
-import { getFieldValue } from '@/utils/getters'
+import { getFieldValue, makeJsonPath } from '@/utils/getters'
 import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField } from '@/utils/manipulators'
 import { checkCondition } from '@/utils/validators'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
@@ -60,7 +60,7 @@ const getFieldWrapperClass = (field: IFormField): string => {
   const level = field.level ?? 0
   const type = field.type
   const multiple = field.multiple ?? false
-  if ((type === 'object' && level > 2) || multiple) {
+  if ((type === 'object' && level > 1) || multiple) {
     cl.push('p-4')
     if (level > 0) {
       cl.push(level % 2 ? 'bg-slate-200' : 'bg-slate-100')
@@ -133,18 +133,13 @@ const OneOfMultiple = ({
   )
 }
 
-const MultipleFieldCreator = ({
+export const MultipleFieldCreator = ({
   field,
   onChange,
   disabled = false,
   value
 }: IFieldCreator): ReactElement => {
   const { formValues, setFormValues, inputOverrides, form } = useFormContext()
-  /* const defaultOnChange = (v: IValueType[] | undefined): void => {
-    const formValuesCopy = updateFormValuesWithFieldValue(field, v, formValues)
-    setFormValues(formValuesCopy)
-  } */
-
   const defaultOnChange = (v: IValueType[] | undefined): void => {
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
       form,
@@ -172,17 +167,17 @@ const MultipleFieldCreator = ({
 
   return <div className='flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed'>
     {
-      initialValues?.map((value, index) => {
-        return <OneOfMultiple
+      initialValues?.map((va, index) => {
+        return <div key={`${field.id}-${index}`}><span className='text-red-500'>{makeJsonPath(field)}</span><span className='text-green-500'>{makeJsonPath(createOneOfMultipleField(field, index))}</span><OneOfMultiple
           key={`${field.id}-${index}`}
           InputComponent={InputComponent}
           field={createOneOfMultipleField(field, index)}
-          value={value}
+          value={va}
           index={index}
           onChange={onChange ?? defaultOnChange}
           values={initialValues}
           disabled={disabled}
-          />
+          /></div>
       })
     }
   </div>

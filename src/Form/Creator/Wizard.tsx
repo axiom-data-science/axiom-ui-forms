@@ -127,10 +127,10 @@ export const WizardNavLargeScreen = ({
               }
               {
                 form?.settings?.show_progress
-                  ? <>
-                    <p className='text-xs mt-4'>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
-                    <p className='text-xs mt-2'>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
-                  </>
+                  ? <div className='flex flex-col gap-2 text-xs'>
+                    <p>{sectionStatus[p.id]?.completed} of {sectionStatus[p.id]?.total} total</p>
+                    <p>{sectionStatus[p.id]?.requiredCompleted} of {sectionStatus[p.id]?.requiredTotal} required</p>
+                  </div>
                   : ''
               }
 

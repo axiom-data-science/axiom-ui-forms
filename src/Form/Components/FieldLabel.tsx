@@ -1,5 +1,6 @@
 import InlineMarkdown from '@/Form/Components/InlineMarkdown'
 import { type IValueType, type IFormField, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
+import { makeJsonPath } from '@/utils/getters'
 import { Tooltip, utils } from '@axdspub/axiom-ui-utilities'
 import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons'
 import { isEqual } from 'lodash-es'
@@ -44,9 +45,9 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
           : undefined
 
       ]
-    })}><InlineMarkdown>{field.label}</InlineMarkdown> { field.required === true ? <span className='text-red-500'>*</span> : ''}{
+    })}><InlineMarkdown>{field.label}</InlineMarkdown> <span className='text-xs text-slate-400'>{field.id}</span> { field.required === true ? <span className='text-red-500'>*</span> : ''}{
       field.label !== '' && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} />
-    }</span>
+    }<br /><span className='text-xs text-slate-400'>{makeJsonPath(field) ?? 'NA'}</span></span>
   )
 }
 
