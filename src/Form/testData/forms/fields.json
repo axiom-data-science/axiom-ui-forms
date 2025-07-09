@@ -1,4 +1,8 @@
-[
+{
+  "label": "Form with various field types",
+  "description": "This form contains various field types for testing purposes.",
+  "id": "fieldsForm",
+  "fields": [
   {
     "id": "short",
     "label": "Test component",
@@ -149,3 +153,4 @@
     ]
   }
 ]
+}

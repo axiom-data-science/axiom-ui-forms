@@ -1,5 +1,5 @@
 {
-  "label": "Conditions example combining conditions set and conditions",
+  "label": "Conditions example combining `conditionsSet` and `conditions`",
   "id": "objectForm",
   "description": "Field 4 only shows up when when field1 is ***REMOVED***please***REMOVED*** AND field2 is ***REMOVED***open***REMOVED*** AND field3 is ***REMOVED***sesame***REMOVED***.",
   "fields": [

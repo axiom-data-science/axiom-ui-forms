@@ -90,7 +90,7 @@
                       "type": "text",
                       "label": "Sub Sub Field 1",
                       "conditions": {
-                        "field": ".object1Field3Field1",
+                        "field": "..object1Field3Field1",
                         "value": "optionB",
                         "result": "enable"
                       }

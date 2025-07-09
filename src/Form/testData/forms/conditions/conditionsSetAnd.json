@@ -1,5 +1,5 @@
 {
-  "label": "Condiions set example with AND logic",
+  "label": "ConditionsSet example with AND logic",
   "id": "objectForm",
   "description": "Field 3 only shows up when when field1 is ***REMOVED***open***REMOVED*** AND field2 is ***REMOVED***sesame***REMOVED***.",
   "fields": [
