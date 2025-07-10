@@ -84,6 +84,12 @@ const leewayFormOverride: IFormOverride = {
             },
             {
               prop: ***REMOVED***radius***REMOVED***
+            },
+            {
+              prop: ***REMOVED***do3D***REMOVED***
+            },
+            {
+              prop: ***REMOVED***z***REMOVED***
             }
           ]
         },

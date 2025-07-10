@@ -196,6 +196,9 @@ const larvalFormOverride: IFormOverride = {
             },
             {
               prop: ***REMOVED***coastline_action***REMOVED***
+            },
+            {
+              prop: ***REMOVED***seafloor_action***REMOVED***
             }
           ]
         },

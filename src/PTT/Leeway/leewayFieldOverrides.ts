@@ -2,10 +2,20 @@ import { type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorT
 
 const leewayFieldOverrides: IFormFieldOverride[] = [
   {
-    prop: ***REMOVED***z***REMOVED***,
+    prop: ***REMOVED***do3D***REMOVED***,
+    description: ***REMOVED***The present scenario is always run in 2D, so this option is not available.***REMOVED***,
     conditions: {
-      dependsOn: ***REMOVED***do3D***REMOVED***,
-      value: true
+      result: ***REMOVED***disable***REMOVED***
+    }
+  },
+  {
+    prop: ***REMOVED***z***REMOVED***,
+    description: ***REMOVED***For the present scenario, the depth is always 0 (the surface).***REMOVED***,
+    conditions: {
+      result: ***REMOVED***disable***REMOVED***
+    },
+    settings: {
+      descriptionPresentation: ***REMOVED***tooltip***REMOVED***
     }
   },
   {

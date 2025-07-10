@@ -7,13 +7,14 @@ const oilFormOverride: IFormFieldOverride[] = [
   },
   {
     prop: ***REMOVED***oil_film_thickness***REMOVED***,
-    description: ***REMOVED***Initial oil film thickness, in meters.***REMOVED***,
+    description: ***REMOVED***Initial oil film thickness, in meters. The film thickness may not be a critical parameter with respect to the drift or entrainment rate because there is a competing effect between thicker, more concentrated oil leading to fewer wave breaking events within the slick area, but also more oil entrained per event. The thickness might be more important for evaporation, which should be proportional to surface area (or inversely proportional to thickness).***REMOVED***,
     constraints: {
       min: 0.00001,
       max: 0.1
     },
     settings: {
-      step: 0.0001
+      step: 0.0001,
+      descriptionPresentation: ***REMOVED***tooltip***REMOVED***
     },
     defaultValue: 0.001
   },
@@ -41,11 +42,26 @@ const oilFormOverride: IFormFieldOverride[] = [
   //   defaultValue: false
   // },
   {
+    prop: ***REMOVED***oil_film_options***REMOVED***,
+    label: ***REMOVED***Oil Film Options***REMOVED***,
+    type: ***REMOVED***object***REMOVED***,
+    skip_path: true,
+    fields: [
+      {
+        prop: ***REMOVED***oil_film_thickness***REMOVED***
+      },
+      {
+        prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
+      }
+    ]
+  },
+  {
     prop: ***REMOVED***subsea_options_distribution***REMOVED***,
     skip_path: true,
     type: ***REMOVED***object***REMOVED***,
     conditions: {
       dependsOn: ***REMOVED***z***REMOVED***,
+      operator: ***REMOVED***!=***REMOVED***,
       value: 0
     },
     fields: [
@@ -54,17 +70,27 @@ const oilFormOverride: IFormFieldOverride[] = [
       }
     ]
   },
-  {
-    prop: ***REMOVED***droplet_size_distribution***REMOVED***,
-    defaultValue: ***REMOVED******REMOVED***
-  },
+  // {
+  //   prop: ***REMOVED***droplet_size_distribution***REMOVED***,
+  //   defaultValue: ***REMOVED******REMOVED***
+  // },
   {
     prop: ***REMOVED***subsea_options_uniform_distribution_parameters***REMOVED***,
     skip_path: true,
     type: ***REMOVED***object***REMOVED***,
-    conditions: {
-      dependsOn: ***REMOVED***droplet_size_distribution***REMOVED***,
-      value: ***REMOVED***uniform***REMOVED***
+    conditionsSet: {
+      logic: ***REMOVED***and***REMOVED***,
+      conditions: [
+        {
+          dependsOn: ***REMOVED***z***REMOVED***,
+          operator: ***REMOVED***!=***REMOVED***,
+          value: 0
+        },
+        {
+          dependsOn: ***REMOVED***droplet_size_distribution***REMOVED***,
+          value: ***REMOVED***uniform***REMOVED***
+        }
+      ]
     },
     fields: [
       {
@@ -79,9 +105,19 @@ const oilFormOverride: IFormFieldOverride[] = [
     prop: ***REMOVED***subsea_options_lognormal_distribution_parameters***REMOVED***,
     skip_path: true,
     type: ***REMOVED***object***REMOVED***,
-    conditions: {
-      dependsOn: ***REMOVED***droplet_size_distribution***REMOVED***,
-      value: ***REMOVED***lognormal***REMOVED***
+    conditionsSet: {
+      logic: ***REMOVED***and***REMOVED***,
+      conditions: [
+        {
+          dependsOn: ***REMOVED***z***REMOVED***,
+          operator: ***REMOVED***!=***REMOVED***,
+          value: 0
+        },
+        {
+          dependsOn: ***REMOVED***droplet_size_distribution***REMOVED***,
+          value: ***REMOVED***lognormal***REMOVED***
+        }
+      ]
     },
     fields: [
       {
@@ -96,9 +132,19 @@ const oilFormOverride: IFormFieldOverride[] = [
     prop: ***REMOVED***subsea_options_normal_distribution_parameters***REMOVED***,
     skip_path: true,
     type: ***REMOVED***object***REMOVED***,
-    conditions: {
-      dependsOn: ***REMOVED***droplet_size_distribution***REMOVED***,
-      value: ***REMOVED***normal***REMOVED***
+    conditionsSet: {
+      logic: ***REMOVED***and***REMOVED***,
+      conditions: [
+        {
+          dependsOn: ***REMOVED***z***REMOVED***,
+          operator: ***REMOVED***!=***REMOVED***,
+          value: 0
+        },
+        {
+          dependsOn: ***REMOVED***droplet_size_distribution***REMOVED***,
+          value: ***REMOVED***normal***REMOVED***
+        }
+      ]
     },
     fields: [
       {
@@ -168,6 +214,10 @@ const oilFormOverride: IFormFieldOverride[] = [
     settings: {
       step: 0.01
     }
+  },
+  {
+    prop: ***REMOVED***depth_options***REMOVED***,
+    description: ***REMOVED***For an oil spill scenario, selecting an initial depth below the surface enables additional parameters under "Oil options".***REMOVED***
   }
 ]
 

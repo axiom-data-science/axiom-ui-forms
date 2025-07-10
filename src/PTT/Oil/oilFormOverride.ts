@@ -20,58 +20,6 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
-      id: ***REMOVED***oil-options***REMOVED***,
-      label: ***REMOVED***Oil options***REMOVED***,
-      pages: [
-        {
-          // description: ***REMOVED***Oil options for the simulation***REMOVED***,
-          id: ***REMOVED***basic***REMOVED***,
-          label: ***REMOVED***Basic options***REMOVED***,
-          fields: [
-            {
-              prop: ***REMOVED***oil_type***REMOVED***
-            },
-            // {
-            //   prop: ***REMOVED***subsea_or_not***REMOVED***
-            // },
-            // {
-            //   prop: ***REMOVED***oil_spill_scenarios***REMOVED***
-            // },
-            {
-              prop: ***REMOVED***m3_per_hour***REMOVED***
-            },
-            {
-              prop: ***REMOVED***oil_weathering_options***REMOVED***
-            }
-          ]
-        },
-        {
-          id: ***REMOVED***advanced***REMOVED***,
-          label: ***REMOVED***Advanced options***REMOVED***,
-          fields: [
-            {
-              prop: ***REMOVED***subsea_options_distribution***REMOVED***
-            },
-            {
-              prop: ***REMOVED***subsea_options_uniform_distribution_parameters***REMOVED***
-            },
-            {
-              prop: ***REMOVED***subsea_options_lognormal_distribution_parameters***REMOVED***
-            },
-            {
-              prop: ***REMOVED***subsea_options_normal_distribution_parameters***REMOVED***
-            },
-            {
-              prop: ***REMOVED***oil_film_thickness***REMOVED***
-            },
-            {
-              prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
-            }
-          ]
-        }
-      ]
-    },
-    {
       id: ***REMOVED***ocean-model***REMOVED***,
       label: ***REMOVED***Ocean Model and time***REMOVED***,
       pages: [
@@ -117,12 +65,12 @@ const oilFormOverride: IFormOverride = {
           label: ***REMOVED***Basic options***REMOVED***,
           description: `Suggestions:
           
-          To model an oil slick, select a point with a non-zero radius, click out a polygon, or input a shapefile. 
-          Use a starting depth of 0 for the sea surface, and run in 2D to save time.
+          To model an oil slick: select a point with a non-zero radius, click out a polygon, or input a shapefile. 
+          Use a starting depth of 0 for the sea surface and run in 2D to save time.
           
-          To model a ship track spill, select a line, use a starting depth of 0 for the sea surface, and run in 2D.
+          To model a ship track spill: select a line, use a starting depth of 0 for the sea surface, and run in 2D.
 
-          To model a subsea blowout, select a point and start particles at the seafloor or some other non-zero depth.
+          To model a subsea blowout: select a point and start particles at the seafloor or some other non-zero depth.
           `,
           fields: [
             {
@@ -161,6 +109,58 @@ const oilFormOverride: IFormOverride = {
             {
               prop: ***REMOVED***radius_type***REMOVED***,
               defaultValue: ***REMOVED***gaussian***REMOVED***
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: ***REMOVED***oil-options***REMOVED***,
+      label: ***REMOVED***Oil options***REMOVED***,
+      pages: [
+        {
+          // description: ***REMOVED***Oil options for the simulation***REMOVED***,
+          id: ***REMOVED***basic***REMOVED***,
+          label: ***REMOVED***Basic options***REMOVED***,
+          fields: [
+            {
+              prop: ***REMOVED***oil_type***REMOVED***
+            },
+            // {
+            //   prop: ***REMOVED***subsea_or_not***REMOVED***
+            // },
+            // {
+            //   prop: ***REMOVED***oil_spill_scenarios***REMOVED***
+            // },
+            {
+              prop: ***REMOVED***m3_per_hour***REMOVED***
+            },
+            {
+              prop: ***REMOVED***oil_weathering_options***REMOVED***
+            }
+          ]
+        },
+        {
+          id: ***REMOVED***advanced***REMOVED***,
+          label: ***REMOVED***Advanced options***REMOVED***,
+          fields: [
+            {
+              prop: ***REMOVED***oil_film_options***REMOVED***
+            },
+            // {
+            //   prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
+            // },
+            {
+              prop: ***REMOVED***subsea_options_distribution***REMOVED***
+            },
+            {
+              prop: ***REMOVED***subsea_options_uniform_distribution_parameters***REMOVED***
+            },
+            {
+              prop: ***REMOVED***subsea_options_lognormal_distribution_parameters***REMOVED***
+            },
+            {
+              prop: ***REMOVED***subsea_options_normal_distribution_parameters***REMOVED***
             }
           ]
         }
