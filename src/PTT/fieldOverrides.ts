@@ -296,6 +296,11 @@ The hindcast Northwest Gulf of Alaska model was run from January 1999 through De
       dependsOn: ***REMOVED***shape_type***REMOVED***,
       value: ***REMOVED***point***REMOVED***
     }
+  },
+  {
+    prop: ***REMOVED***output_format***REMOVED***,
+    label: ***REMOVED***Output Format***REMOVED***,
+    description: ***REMOVED***Select the format for the output file.***REMOVED***
   }
 ]
 export default fieldOverrides

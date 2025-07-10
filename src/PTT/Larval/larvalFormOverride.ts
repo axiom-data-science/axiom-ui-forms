@@ -117,15 +117,11 @@ const larvalFormOverride: IFormOverride = {
               prop: ***REMOVED***hatched***REMOVED***
             },
             {
-              prop: ***REMOVED***length***REMOVED***
+              prop: ***REMOVED***egg_options***REMOVED***
             },
             {
-              prop: ***REMOVED***weight***REMOVED***
-            },
-            {
-              prop: ***REMOVED***stage_fraction***REMOVED***
+              prop: ***REMOVED***larvae_options***REMOVED***
             }
-
           ]
         },
         {
