@@ -30,7 +30,10 @@ The hindcast Northwest Gulf of Alaska model was run from January 1999 through De
         label: 'Hindcast Northwest Gulf of Alaska Model (NWGOA)',
         value: 'NWGOA'
       }
-    ]
+    ],
+    settings: {
+      descriptionPresentation: 'tooltip'
+    }
   },
   {
     prop: 'time_step',

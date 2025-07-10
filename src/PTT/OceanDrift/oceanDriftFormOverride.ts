@@ -164,6 +164,9 @@ const oceanDriftFormOverride: IFormOverride = {
             },
             {
               prop: 'coastline_action'
+            },
+            {
+              prop: 'seafloor_action'
             }
           ]
         },

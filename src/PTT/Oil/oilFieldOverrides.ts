@@ -7,13 +7,14 @@ const oilFormOverride: IFormFieldOverride[] = [
   },
   {
     prop: 'oil_film_thickness',
-    description: 'Initial oil film thickness, in meters.',
+    description: 'Initial oil film thickness, in meters. The film thickness may not be a critical parameter with respect to the drift or entrainment rate because there is a competing effect between thicker, more concentrated oil leading to fewer wave breaking events within the slick area, but also more oil entrained per event. The thickness might be more important for evaporation, which should be proportional to surface area (or inversely proportional to thickness).',
     constraints: {
       min: 0.00001,
       max: 0.1
     },
     settings: {
-      step: 0.0001
+      step: 0.0001,
+      descriptionPresentation: 'tooltip'
     },
     defaultValue: 0.001
   },
@@ -41,11 +42,26 @@ const oilFormOverride: IFormFieldOverride[] = [
   //   defaultValue: false
   // },
   {
+    prop: 'oil_film_options',
+    label: 'Oil Film Options',
+    type: 'object',
+    skip_path: true,
+    fields: [
+      {
+        prop: 'oil_film_thickness'
+      },
+      {
+        prop: 'update_oilfilm_thickness'
+      }
+    ]
+  },
+  {
     prop: 'subsea_options_distribution',
     skip_path: true,
     type: 'object',
     conditions: {
       dependsOn: 'z',
+      operator: '!=',
       value: 0
     },
     fields: [
@@ -54,17 +70,27 @@ const oilFormOverride: IFormFieldOverride[] = [
       }
     ]
   },
-  {
-    prop: 'droplet_size_distribution',
-    defaultValue: ''
-  },
+  // {
+  //   prop: 'droplet_size_distribution',
+  //   defaultValue: ''
+  // },
   {
     prop: 'subsea_options_uniform_distribution_parameters',
     skip_path: true,
     type: 'object',
-    conditions: {
-      dependsOn: 'droplet_size_distribution',
-      value: 'uniform'
+    conditionsSet: {
+      logic: 'and',
+      conditions: [
+        {
+          dependsOn: 'z',
+          operator: '!=',
+          value: 0
+        },
+        {
+          dependsOn: 'droplet_size_distribution',
+          value: 'uniform'
+        }
+      ]
     },
     fields: [
       {
@@ -79,9 +105,19 @@ const oilFormOverride: IFormFieldOverride[] = [
     prop: 'subsea_options_lognormal_distribution_parameters',
     skip_path: true,
     type: 'object',
-    conditions: {
-      dependsOn: 'droplet_size_distribution',
-      value: 'lognormal'
+    conditionsSet: {
+      logic: 'and',
+      conditions: [
+        {
+          dependsOn: 'z',
+          operator: '!=',
+          value: 0
+        },
+        {
+          dependsOn: 'droplet_size_distribution',
+          value: 'lognormal'
+        }
+      ]
     },
     fields: [
       {
@@ -96,9 +132,19 @@ const oilFormOverride: IFormFieldOverride[] = [
     prop: 'subsea_options_normal_distribution_parameters',
     skip_path: true,
     type: 'object',
-    conditions: {
-      dependsOn: 'droplet_size_distribution',
-      value: 'normal'
+    conditionsSet: {
+      logic: 'and',
+      conditions: [
+        {
+          dependsOn: 'z',
+          operator: '!=',
+          value: 0
+        },
+        {
+          dependsOn: 'droplet_size_distribution',
+          value: 'normal'
+        }
+      ]
     },
     fields: [
       {
@@ -168,6 +214,10 @@ const oilFormOverride: IFormFieldOverride[] = [
     settings: {
       step: 0.01
     }
+  },
+  {
+    prop: 'depth_options',
+    description: 'For an oil spill scenario, selecting an initial depth below the surface enables additional parameters under "Oil options".'
   }
 ]
 

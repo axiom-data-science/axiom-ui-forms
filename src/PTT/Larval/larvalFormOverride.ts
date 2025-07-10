@@ -196,6 +196,9 @@ const larvalFormOverride: IFormOverride = {
             },
             {
               prop: 'coastline_action'
+            },
+            {
+              prop: 'seafloor_action'
             }
           ]
         },

@@ -20,58 +20,6 @@ const oilFormOverride: IFormOverride = {
       ]
     },
     {
-      id: 'oil-options',
-      label: 'Oil options',
-      pages: [
-        {
-          // description: 'Oil options for the simulation',
-          id: 'basic',
-          label: 'Basic options',
-          fields: [
-            {
-              prop: 'oil_type'
-            },
-            // {
-            //   prop: 'subsea_or_not'
-            // },
-            // {
-            //   prop: 'oil_spill_scenarios'
-            // },
-            {
-              prop: 'm3_per_hour'
-            },
-            {
-              prop: 'oil_weathering_options'
-            }
-          ]
-        },
-        {
-          id: 'advanced',
-          label: 'Advanced options',
-          fields: [
-            {
-              prop: 'subsea_options_distribution'
-            },
-            {
-              prop: 'subsea_options_uniform_distribution_parameters'
-            },
-            {
-              prop: 'subsea_options_lognormal_distribution_parameters'
-            },
-            {
-              prop: 'subsea_options_normal_distribution_parameters'
-            },
-            {
-              prop: 'oil_film_thickness'
-            },
-            {
-              prop: 'update_oilfilm_thickness'
-            }
-          ]
-        }
-      ]
-    },
-    {
       id: 'ocean-model',
       label: 'Ocean Model and time',
       pages: [
@@ -117,12 +65,12 @@ const oilFormOverride: IFormOverride = {
           label: 'Basic options',
           description: `Suggestions:
           
-          To model an oil slick, select a point with a non-zero radius, click out a polygon, or input a shapefile. 
-          Use a starting depth of 0 for the sea surface, and run in 2D to save time.
+          To model an oil slick: select a point with a non-zero radius, click out a polygon, or input a shapefile. 
+          Use a starting depth of 0 for the sea surface and run in 2D to save time.
           
-          To model a ship track spill, select a line, use a starting depth of 0 for the sea surface, and run in 2D.
+          To model a ship track spill: select a line, use a starting depth of 0 for the sea surface, and run in 2D.
 
-          To model a subsea blowout, select a point and start particles at the seafloor or some other non-zero depth.
+          To model a subsea blowout: select a point and start particles at the seafloor or some other non-zero depth.
           `,
           fields: [
             {
@@ -161,6 +109,58 @@ const oilFormOverride: IFormOverride = {
             {
               prop: 'radius_type',
               defaultValue: 'gaussian'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'oil-options',
+      label: 'Oil options',
+      pages: [
+        {
+          // description: 'Oil options for the simulation',
+          id: 'basic',
+          label: 'Basic options',
+          fields: [
+            {
+              prop: 'oil_type'
+            },
+            // {
+            //   prop: 'subsea_or_not'
+            // },
+            // {
+            //   prop: 'oil_spill_scenarios'
+            // },
+            {
+              prop: 'm3_per_hour'
+            },
+            {
+              prop: 'oil_weathering_options'
+            }
+          ]
+        },
+        {
+          id: 'advanced',
+          label: 'Advanced options',
+          fields: [
+            {
+              prop: 'oil_film_options'
+            },
+            // {
+            //   prop: 'update_oilfilm_thickness'
+            // },
+            {
+              prop: 'subsea_options_distribution'
+            },
+            {
+              prop: 'subsea_options_uniform_distribution_parameters'
+            },
+            {
+              prop: 'subsea_options_lognormal_distribution_parameters'
+            },
+            {
+              prop: 'subsea_options_normal_distribution_parameters'
             }
           ]
         }
