@@ -122,7 +122,7 @@ interface ICustomField extends IFormFieldRoot {
 
 interface ISelectOption {
   label: string
-  value: string | number
+  value: string | number | boolean
 }
 
 interface ISelectableInput extends IFormFieldRoot {
