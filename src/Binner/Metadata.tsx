@@ -42,14 +42,33 @@ const MetadataManagementForm = ({ data, dataset }: { data: binner.IBinningServic
     }
   })
 
+  /**
+   *
+   *                  {
+                        id: 'function',
+                        label: 'Function',
+                        type: 'select',
+                        options: [
+                          { label: 'Count', value: 'count' },
+                          { label: 'Distinct Count', value: 'distinct_count' },
+                          { label: 'Sum', value: 'sum' },
+                          { label: 'Average', value: 'avg' },
+                          { label: 'Min', value: 'min' },
+                          { label: 'Max', value: 'max' }
+                        ]
+                      },
+   *
+   */
+
   const operationOptions = [
-    { label: '=', value: 'eq' },
-    { label: '!=', value: 'neq' },
-    { label: '>', value: 'gt' },
-    { label: '>=', value: 'gte' },
-    { label: '<', value: 'lt' },
-    { label: '<=', value: 'lte' },
-    { label: 'NOT NULL', value: 'is.notnull' }
+    { label: '=', value: '=' },
+    { label: '!=', value: '!=' },
+    { label: '>', value: '>' },
+    { label: '>=', value: '>=' },
+    { label: '<', value: '<' },
+    { label: '<=', value: '<=' },
+    { label: 'NOT NULL', value: 'is.notnull' },
+    { label: 'ILIKE', value: 'ilike' }
   ]
 
   const form: IForm = {
@@ -241,18 +260,26 @@ const MetadataManagementForm = ({ data, dataset }: { data: binner.IBinningServic
                 },
                 fields: [
                   {
-                    id: 'label',
-                    label: 'Label',
-                    type: 'text',
-                    required: true
+                    id: 'option-label-value-wrap',
+                    label: '',
+                    type: 'object',
+                    layout: 'grid2',
+                    skip_path: true,
+                    fields: [
+                      {
+                        id: 'label',
+                        label: 'Label',
+                        type: 'text',
+                        required: true
+                      },
+                      {
+                        id: 'value',
+                        label: 'Value',
+                        type: 'text',
+                        required: true
+                      }
+                    ]
                   },
-                  {
-                    id: 'value',
-                    label: 'Value',
-                    type: 'text',
-                    required: true
-                  },
-
                   {
                     id: 'query',
                     label: 'Query',
@@ -273,8 +300,8 @@ const MetadataManagementForm = ({ data, dataset }: { data: binner.IBinningServic
                         })
                       },
                       {
-                        id: 'operation',
-                        label: 'Operation',
+                        id: 'operator',
+                        label: 'Operator',
                         type: 'select',
                         required: true,
                         options: operationOptions
