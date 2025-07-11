@@ -106,14 +106,8 @@ const OneOfMultiple = ({
             onChange(newValues)
           }}
         />
-            <div className=***REMOVED***flex flex-row justify-between w-full p-2***REMOVED***>
-              {index > 0 && (
-              <DeleteMultiple doDelete={() => {
-                const newValues = [...values]
-                newValues.splice(index, 1)
-                onChange(newValues)
-              }} />
-              )}
+            <div className=***REMOVED***flex flex-row w-full p-2 gap-4***REMOVED***>
+
               <div className=***REMOVED***flex gap-2***REMOVED***>
                 <Button
                 size=***REMOVED***xs***REMOVED***
@@ -129,6 +123,13 @@ const OneOfMultiple = ({
                   }}>Duplicate <CopyIcon className=***REMOVED***inline ml-2***REMOVED*** />
                 </Button>
               </div>
+              {index > 0 && (
+              <DeleteMultiple doDelete={() => {
+                const newValues = [...values]
+                newValues.splice(index, 1)
+                onChange(newValues)
+              }} />
+              )}
             </div>
         </div>
   )
