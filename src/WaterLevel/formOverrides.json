@@ -154,12 +154,8 @@
                             "prop": "local_tidal_datum_establishment_wrap",
                             "type": "object",
                             "skip_path": true,
-                            "label": "Tester",
-                            "conditions": {
-                                "dependsOn": "water_level_sensor_information.category",
-                                "value": "radar",
-                                "result": "disable"
-                            },
+                            "label": "",
+                            
                             "fields": [
                                 {
                                     "prop": "local_tidal_datum_establishment.dates",
