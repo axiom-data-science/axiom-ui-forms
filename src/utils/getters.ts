@@ -1,6 +1,12 @@
 import { type IFormSection, type IFormValues, type IValueType, type IFormField, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { get } from ***REMOVED***lodash-es***REMOVED***
 
+const getFieldExtra = (field: IFormField, index?: number): string => {
+  return field.multiple && (field.index !== undefined || index !== undefined)
+    ? `[${index ?? field.index}]`
+    : ***REMOVED******REMOVED***
+}
+
 /**
  * Returns the JSON path for a given field
  *
@@ -12,15 +18,15 @@ export const makeJsonPath = (field: IFormField, index?: number): string | undefi
   if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
     return undefined
   }
-  const fieldExtra = `${field.multiple && (field.index !== undefined || index !== undefined) ? `[${index ?? field.index}]` : ***REMOVED******REMOVED***}`
   if (field.destPath !== undefined) {
-    return `${field.destPath}${fieldExtra}`
+    return `${field.destPath}${getFieldExtra(field, index)}`
   } else if (field.path === undefined) {
-    return `${field.id}${fieldExtra}`
+    return `${field.id}${getFieldExtra(field, index)}`
   } else {
     const path = field.path
     const pathLen = path.length
-    return field.path.map((f, i) => (f.multiple && (i < (pathLen - 1) || index !== undefined || f.index !== undefined)) ? `${f.id}${`[${index ?? f.index ?? 0}]`}` : f.id).join(***REMOVED***.***REMOVED***)
+    return field.path.map((f, i) => `${f.id}${`${getFieldExtra(f, i >= pathLen - 1 ? index : undefined)}`}`
+    ).join(***REMOVED***.***REMOVED***)
   }
 }
 
@@ -87,7 +93,15 @@ export function getValueFromRelativePath (field: IFormField, path: string, formV
   const offset = field.type === ***REMOVED***object***REMOVED*** && field.skip_path ? 0 : 1
   if (backPath > 0 && (fieldPathFields.length - offset) >= backPath) {
     const targetField = fieldPathFields[fieldPathFields.length - backPath - offset]
-    const valueAtRoot = getFieldValue(targetField, formValues, targetField.multiple ? targetField.index : undefined)
+    const valueAtRoot = getFieldValue(
+      {
+        ...targetField,
+        path: targetField.path ?? fieldPathFields.slice(0, fieldPathFields.length - backPath - offset + 1)
+      },
+      formValues,
+      targetField.multiple ? targetField.index : undefined
+    )
+
     if (valueAtRoot === undefined || valueAtRoot === null) {
       return undefined
     }
