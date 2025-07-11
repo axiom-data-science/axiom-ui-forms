@@ -1,7 +1,7 @@
 import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from '@/utils/getters'
 import { checkCondition } from '@/utils/validators'
-import { merge, omit, set } from 'lodash-es'
+import { merge, set } from 'lodash-es'
 
 export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
   if (field.type === 'object' && field.skip_path === true) {
@@ -17,7 +17,7 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
       return addFieldPath(childField, field.path?.slice())
     })
   }
-  return field
+  return structuredClone(field)
 }
 
 function addPathsToFormSections (section: IFormSection): IFormSection {
@@ -174,21 +174,25 @@ export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormVa
 const assignIndexToField = (field: IFormField, index: number): IFormField => {
   return {
     ...field,
+    path: undefined,
     index
   }
 }
 
-const assignIndexToFields = (parentField: IObjectField, index: number, level: number = 1): IFormField[] => {
+const assignIndexToFields = (parentField: IObjectField, indexField: IObjectField, index: number, level?: number): IFormField[] => {
   return parentField.fields.map(f => {
-    if (f.path !== undefined && parentField.level !== undefined && f.path[parentField.level - level] !== undefined) {
+    if (f.path !== undefined && level !== undefined && f.path[level] !== undefined) {
       const newPath = f.path.slice()
-      newPath[parentField.level - level] = assignIndexToField(parentField, index)
+      newPath[level] = assignIndexToField(indexField, index)
       f.path = newPath
     }
     if (f.type === 'object' && f.fields !== undefined) {
-      f.fields = assignIndexToFields(f, index, 1)
+      f.fields = assignIndexToFields(f, indexField, index, level)
+      return structuredClone(f)
     }
-    return structuredClone(f)
+    return {
+      ...f
+    }
   })
 }
 
@@ -198,7 +202,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
     const last = assignIndexToField(path[path.length - 1], index)
     path[path.length - 1] = last
     if (last.type === 'object' && last.fields !== undefined) {
-      last.fields = assignIndexToFields(last, index)
+      last.fields = assignIndexToFields(last, last, index, last.level !== undefined ? (last.level - 1) : undefined)
     }
   }
 
@@ -212,7 +216,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
   }
 
   if (field.type === 'object' && field.fields !== undefined && out.type === 'object') {
-    out.fields = assignIndexToFields(field, index)
+    out.fields = assignIndexToFields(field, field, index)
   }
   return out
 }
