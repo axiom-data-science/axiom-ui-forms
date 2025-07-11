@@ -42,14 +42,33 @@ const MetadataManagementForm = ({ data, dataset }: { data: binner.IBinningServic
     }
   })
 
+  /**
+   *
+   *                  {
+                        id: ***REMOVED***function***REMOVED***,
+                        label: ***REMOVED***Function***REMOVED***,
+                        type: ***REMOVED***select***REMOVED***,
+                        options: [
+                          { label: ***REMOVED***Count***REMOVED***, value: ***REMOVED***count***REMOVED*** },
+                          { label: ***REMOVED***Distinct Count***REMOVED***, value: ***REMOVED***distinct_count***REMOVED*** },
+                          { label: ***REMOVED***Sum***REMOVED***, value: ***REMOVED***sum***REMOVED*** },
+                          { label: ***REMOVED***Average***REMOVED***, value: ***REMOVED***avg***REMOVED*** },
+                          { label: ***REMOVED***Min***REMOVED***, value: ***REMOVED***min***REMOVED*** },
+                          { label: ***REMOVED***Max***REMOVED***, value: ***REMOVED***max***REMOVED*** }
+                        ]
+                      },
+   *
+   */
+
   const operationOptions = [
-    { label: ***REMOVED***=***REMOVED***, value: ***REMOVED***eq***REMOVED*** },
-    { label: ***REMOVED***!=***REMOVED***, value: ***REMOVED***neq***REMOVED*** },
-    { label: ***REMOVED***>***REMOVED***, value: ***REMOVED***gt***REMOVED*** },
-    { label: ***REMOVED***>=***REMOVED***, value: ***REMOVED***gte***REMOVED*** },
-    { label: ***REMOVED***<***REMOVED***, value: ***REMOVED***lt***REMOVED*** },
-    { label: ***REMOVED***<=***REMOVED***, value: ***REMOVED***lte***REMOVED*** },
-    { label: ***REMOVED***NOT NULL***REMOVED***, value: ***REMOVED***is.notnull***REMOVED*** }
+    { label: ***REMOVED***=***REMOVED***, value: ***REMOVED***=***REMOVED*** },
+    { label: ***REMOVED***!=***REMOVED***, value: ***REMOVED***!=***REMOVED*** },
+    { label: ***REMOVED***>***REMOVED***, value: ***REMOVED***>***REMOVED*** },
+    { label: ***REMOVED***>=***REMOVED***, value: ***REMOVED***>=***REMOVED*** },
+    { label: ***REMOVED***<***REMOVED***, value: ***REMOVED***<***REMOVED*** },
+    { label: ***REMOVED***<=***REMOVED***, value: ***REMOVED***<=***REMOVED*** },
+    { label: ***REMOVED***NOT NULL***REMOVED***, value: ***REMOVED***is.notnull***REMOVED*** },
+    { label: ***REMOVED***ILIKE***REMOVED***, value: ***REMOVED***ilike***REMOVED*** }
   ]
 
   const form: IForm = {
@@ -241,18 +260,26 @@ const MetadataManagementForm = ({ data, dataset }: { data: binner.IBinningServic
                 },
                 fields: [
                   {
-                    id: ***REMOVED***label***REMOVED***,
-                    label: ***REMOVED***Label***REMOVED***,
-                    type: ***REMOVED***text***REMOVED***,
-                    required: true
+                    id: ***REMOVED***option-label-value-wrap***REMOVED***,
+                    label: ***REMOVED******REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    layout: ***REMOVED***grid2***REMOVED***,
+                    skip_path: true,
+                    fields: [
+                      {
+                        id: ***REMOVED***label***REMOVED***,
+                        label: ***REMOVED***Label***REMOVED***,
+                        type: ***REMOVED***text***REMOVED***,
+                        required: true
+                      },
+                      {
+                        id: ***REMOVED***value***REMOVED***,
+                        label: ***REMOVED***Value***REMOVED***,
+                        type: ***REMOVED***text***REMOVED***,
+                        required: true
+                      }
+                    ]
                   },
-                  {
-                    id: ***REMOVED***value***REMOVED***,
-                    label: ***REMOVED***Value***REMOVED***,
-                    type: ***REMOVED***text***REMOVED***,
-                    required: true
-                  },
-
                   {
                     id: ***REMOVED***query***REMOVED***,
                     label: ***REMOVED***Query***REMOVED***,
@@ -273,8 +300,8 @@ const MetadataManagementForm = ({ data, dataset }: { data: binner.IBinningServic
                         })
                       },
                       {
-                        id: ***REMOVED***operation***REMOVED***,
-                        label: ***REMOVED***Operation***REMOVED***,
+                        id: ***REMOVED***operator***REMOVED***,
+                        label: ***REMOVED***Operator***REMOVED***,
                         type: ***REMOVED***select***REMOVED***,
                         required: true,
                         options: operationOptions

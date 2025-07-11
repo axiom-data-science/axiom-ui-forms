@@ -1,0 +1,53 @@
+{
+    "label" : "Binner dataset",
+    "description": "Binner dataset description",
+    "settings": {
+        "location_property": "value",
+        "max_cluster_zoom": 10
+    },
+    "filters": [
+        {
+            "column": "id",
+            "label": "ID",
+            "type": "select",
+            "options": [
+                {
+                    "label": "Option 1",
+                    "value": "option1",
+                    "filters": [
+                        {
+                            "field": "id",
+                            "operator": "eq",
+                            "value": "some-value"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "visualizations": [
+        {
+            "label": "First viz",
+            "map": {
+                "features": {
+                    "query": {
+                        "select": [
+                            {
+                                "column": "id",
+                                "alias": "ID",
+                                "function": "count"
+                            }
+                        ],
+                        "filters": [
+                            {
+                                "field": "id",
+                                "operator": "eq",
+                                "value": "some-value"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
