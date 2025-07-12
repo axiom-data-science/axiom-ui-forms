@@ -2,7 +2,7 @@ import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOV
 import { type IValueType, type IFormField, type IValueChangeFn } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import { Tooltip, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import { InfoCircledIcon, ReloadIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { InfoCircledIcon, PlusIcon, ReloadIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { isEqual } from ***REMOVED***lodash-es***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -21,9 +21,22 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
 }
 
 export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
+  const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ***REMOVED******REMOVED***
+  const longDescription = field.long_description ?? ***REMOVED******REMOVED***
   return (
     field.description !== undefined
-      ? <Tooltip tooltipWrapperClassName=***REMOVED***!z-50***REMOVED*** content={<span className=***REMOVED***leading-6***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown></span>} contentClassName=***REMOVED***max-w-[400px]***REMOVED***><InfoCircledIcon /></Tooltip>
+      ? <span onClick={() => {
+        if (hasLongDescription) {
+          window.open(longDescription, ***REMOVED***_blank***REMOVED***)
+        }
+      }}>
+        <Tooltip
+          tooltipWrapperClassName=***REMOVED***!z-50***REMOVED***
+          content={<span className=***REMOVED***leading-6***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className=***REMOVED***text-xs text-slate-400***REMOVED***><PlusIcon className=***REMOVED***inline w-4 h-4 mt-0***REMOVED*** /> Click for more information</span>}</span>}
+          contentClassName=***REMOVED***max-w-[400px]***REMOVED***
+
+        ><InfoCircledIcon /></Tooltip>
+        </span>
       : <></>
   )
 }
@@ -57,11 +70,18 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
 }
 
 export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
+  const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ***REMOVED******REMOVED***
+  const longDescription = field.long_description ?? ***REMOVED******REMOVED***
+  const longDescriptionButton = hasLongDescription
+    ? <span className=***REMOVED***ml-2 text-xs text-white bg-slate-400 p-1 px-2 rounded-md cursor-pointer hover:bg-slate-500***REMOVED*** onClick={() => {
+      window.open(longDescription, ***REMOVED***_blank***REMOVED***)
+    }}><PlusIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-0***REMOVED*** /> More</span>
+    : null
   return (
     <>{
       field.description !== undefined
-        ? <p className=***REMOVED***text-xs pb-2***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown></p>
-        : ***REMOVED******REMOVED***
+        ? <p className=***REMOVED***text-xs pb-2***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{longDescriptionButton}</p>
+        : longDescriptionButton
     }</>
   )
 }
