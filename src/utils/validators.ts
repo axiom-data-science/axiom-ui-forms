@@ -52,7 +52,8 @@ const checkFieldCondition = (field: IFormField, condition: IFieldCondition, form
     console.warn('Field condition is missing field or dependsOn property')
     return {
       pass: true,
-      result: condition.result ?? 'include'
+      result: condition.result ?? 'include',
+      newDefaultValue: condition.newDefaultValue
     }
   }
   if (Array.isArray(fieldToEval)) {
@@ -72,13 +73,15 @@ const checkFieldCondition = (field: IFormField, condition: IFieldCondition, form
   })
   return {
     pass,
-    result: condition.result ?? 'include'
+    result: condition.result ?? 'include',
+    newDefaultValue: condition.newDefaultValue
   }
 }
 
 export const checkCondition = (field: IFormField, formValues: IFormValues): ICheckConditionResult => {
   let pass: boolean = true
   let result: IFieldConditionResult | undefined
+  let newDefaultValue: IValueType | IValueType[] | undefined
   if (field.conditionsSet !== undefined) {
     const passingConditions = field.conditionsSet.conditions.filter(c => {
       const result = checkFieldCondition(field, c, formValues)
@@ -96,11 +99,13 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): IChe
     const f = checkFieldCondition(field, field.conditions, formValues)
     pass = f.pass
     result = field.conditions.result
+    newDefaultValue = f.newDefaultValue
   }
 
   return {
     pass,
-    result: result ?? 'include'
+    result: result ?? 'include',
+    newDefaultValue
   }
 }
 

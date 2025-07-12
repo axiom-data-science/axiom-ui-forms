@@ -217,6 +217,9 @@ const FieldCreator = ({
   } else if (conditionResult.result === 'enable' && conditionResult.pass) {
     disabled = false
   }
+  if (conditionResult.newDefaultValue !== undefined) {
+    value = conditionResult.newDefaultValue
+  }
 
   const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
