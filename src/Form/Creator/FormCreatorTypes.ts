@@ -33,6 +33,7 @@ export type IFieldConditionResult = ***REMOVED***exclude***REMOVED*** | ***REMOV
 export interface ICheckConditionResult {
   pass: boolean
   result: IFieldConditionResult
+  newDefaultValue?: IValueType | IValueType[]
 }
 export interface IFieldConditionsSet {
   logic?: ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***
@@ -47,6 +48,7 @@ export interface IFieldCondition {
   value?: string | number | boolean
   operator?: IFieldConditionOperator
   result?: IFieldConditionResult
+  newDefaultValue?: IValueType | IValueType[]
 }
 
 type IFieldConstraints = Record<string, unknown>
