@@ -2,7 +2,7 @@ import InlineMarkdown from '@/Form/Components/InlineMarkdown'
 import { type IValueType, type IFormField, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
 import { makeJsonPath } from '@/utils/getters'
 import { Tooltip, utils } from '@axdspub/axiom-ui-utilities'
-import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons'
+import { InfoCircledIcon, PlusIcon, ReloadIcon } from '@radix-ui/react-icons'
 import { isEqual } from 'lodash-es'
 import React, { type ReactElement } from 'react'
 
@@ -21,9 +21,22 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
 }
 
 export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
+  const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ''
+  const longDescription = field.long_description ?? ''
   return (
     field.description !== undefined
-      ? <Tooltip tooltipWrapperClassName='!z-50' content={<span className='leading-6'><InlineMarkdown>{field.description}</InlineMarkdown></span>} contentClassName='max-w-[400px]'><InfoCircledIcon /></Tooltip>
+      ? <span onClick={() => {
+        if (hasLongDescription) {
+          window.open(longDescription, '_blank')
+        }
+      }}>
+        <Tooltip
+          tooltipWrapperClassName='!z-50'
+          content={<span className='leading-6'><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className='text-xs text-slate-400'><PlusIcon className='inline w-4 h-4 mt-0' /> Click for more information</span>}</span>}
+          contentClassName='max-w-[400px]'
+
+        ><InfoCircledIcon /></Tooltip>
+        </span>
       : <></>
   )
 }
@@ -57,11 +70,18 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
 }
 
 export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
+  const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ''
+  const longDescription = field.long_description ?? ''
+  const longDescriptionButton = hasLongDescription
+    ? <span className='ml-2 text-xs text-white bg-slate-400 p-1 px-2 rounded-md cursor-pointer hover:bg-slate-500' onClick={() => {
+      window.open(longDescription, '_blank')
+    }}><PlusIcon className='inline w-3 h-3 -mt-1 mr-0' /> More</span>
+    : null
   return (
     <>{
       field.description !== undefined
-        ? <p className='text-xs pb-2'><InlineMarkdown>{field.description}</InlineMarkdown></p>
-        : ''
+        ? <p className='text-xs pb-2'><InlineMarkdown>{field.description}</InlineMarkdown>{longDescriptionButton}</p>
+        : longDescriptionButton
     }</>
   )
 }

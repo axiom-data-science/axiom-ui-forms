@@ -62,6 +62,7 @@ interface IFormFieldRoot {
   required?: boolean
   label?: string | null | undefined
   description?: string | null | undefined
+  long_description?: string | null | undefined
   multiple?: boolean
   path?: IFormField[]
   destPath?: string
