@@ -17,7 +17,9 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
       return addFieldPath(childField, field.path?.slice())
     })
   }
-  return structuredClone(field)
+  // return field
+  return field.multiple ? structuredClone(field) : field
+  // return structuredClone(field)
 }
 
 function addPathsToFormSections (section: IFormSection): IFormSection {
@@ -85,6 +87,15 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
   Object.keys(formValues).forEach(key => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
     const field = fields?.find(f => getPathFromField(f) === path)
+    if (field?.type === ***REMOVED***object***REMOVED*** && field?.multiple === true && Array.isArray(formValuesCopy[key])) {
+      return formValuesCopy[key].map((value, index) => {
+        const checkedOneOfMultiple = checkCondition(field, value as IFormValues)
+        if (!checkedOneOfMultiple.pass && checkedOneOfMultiple.result === ***REMOVED***include***REMOVED***) {
+          return undefined
+        }
+        return value
+      })
+    }
     const checkedCondition = field !== undefined
       ? checkCondition(field, formValues)
       : { pass: true, result: ***REMOVED***include***REMOVED*** }
@@ -188,7 +199,8 @@ const assignIndexToFields = (parentField: IObjectField, indexField: IObjectField
     }
     if (f.type === ***REMOVED***object***REMOVED*** && f.fields !== undefined) {
       f.fields = assignIndexToFields(f, indexField, index, level)
-      return structuredClone(f)
+      return f.multiple ? structuredClone(f) : f
+      // return structuredClone(f)
     }
     return {
       ...f
@@ -212,6 +224,8 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
     index,
     required: false,
     label: index > 0 ? null : field.label,
+    description: index > 0 ? null : field.description,
+    long_description: index > 0 ? null : field.long_description,
     id: `${field.id}-${index}`
   }
 
