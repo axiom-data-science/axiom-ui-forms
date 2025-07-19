@@ -1,0 +1,46 @@
+{
+  "label": "Form with object",
+  "description": "Field 3 field is conditionally displayed when field1 is ***REMOVED***option1***REMOVED*** OR field2 is ***REMOVED***sesame***REMOVED***.",
+  "id": "objectForm",
+  "fields": [
+    {
+      "id": "colormixer",
+      "label": "Select a color",
+      "type": "select",
+      "options": [
+        { "label": "Purple", "value": "purple" },
+        { "label": "Green", "value": "green" },
+        { "label": "Orange", "value": "orange" }
+      ]
+    },
+    {
+        "id": "primaries",
+        "label": "Primary colors to mix",
+        "type": "text",
+        "placeholder": "Enter primary colors here",
+        "conditionsSet": {
+          "logic": "or",
+          "conditions": [
+            {
+              "dependsOn": "colormixer",
+              "operator": "=",
+              "value": "purple",
+              "newDefaultValue": "red, blue"
+            },
+            {
+              "dependsOn": "colormixer",
+              "operator": "=",
+              "value": "green",
+              "newDefaultValue": "yellow, blue"  
+            },
+            {
+              "dependsOn": "colormixer",
+              "operator": "=",
+              "value": "orange",
+              "newDefaultValue": "red, yellow"
+            }
+          ]
+        }
+    }
+  ]
+}

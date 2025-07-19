@@ -1,0 +1,81 @@
+{
+  "label": "Nested objects with conditions",
+  "id": "objectForm",
+  "fields": [
+    {
+        "id": "label",
+        "type": "text",
+        "label": "Label",
+        "placeholder": "Enter label here",
+        "multiple": true
+    },
+    {
+      "id": "object1",
+      "type": "object",
+      "label": "Object 1",
+      "multiple": true,
+      "fields": [
+        {
+            "id": "label",
+            "type": "text",
+            "label": "Label",
+            "placeholder": "Enter label here",
+            "conditions": {
+                "field": "option",
+                "value": "option1",
+                "result": "enable"
+            }
+        },
+        {
+          "id": "option",
+          "type": "select",
+          "label": "Option",
+          "options": [
+            {
+              "label": "Option 1",
+              "value": "option1"
+            },
+            {
+              "label": "Option 2",
+              "value": "option2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+        "id": "object2",
+        "type": "object",
+        "label": "Object 2",
+        "fields": [
+        {
+            "id": "label",
+            "type": "text",
+            "label": "Label",
+            "placeholder": "Enter label here",
+            "conditions": {
+                "field": ".option",
+                "value": "option1",
+                "result": "enable"
+            }
+        },
+        {
+          "id": "option",
+          "type": "select",
+          "label": "Option",
+          "options": [
+            {
+              "label": "Option 1",
+              "value": "option1"
+            },
+            {
+              "label": "Option 2",
+              "value": "option2"
+            }
+          ]
+        }
+        ]
+
+    }
+  ]
+}
