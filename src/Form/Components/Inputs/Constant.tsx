@@ -10,7 +10,7 @@ const notify = memoize((k, v, onChange) => {
 
 const ConstantInput = ({ value, field, onChange }: IFieldInputProps): ReactElement => {
   const constantField = field as IConstantField
-  const val = constantField.defaultValue
+  const val = value ?? constantField.defaultValue
   notify(`${field.path ? field.path.map(f => f.id).join(***REMOVED***.***REMOVED***) : field.id}.${JSON.stringify(val)}`, val, onChange)
   return (
     <></>
