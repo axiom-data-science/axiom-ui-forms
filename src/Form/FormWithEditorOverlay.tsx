@@ -4,7 +4,7 @@ import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import { FormContext, useFormContext } from '@/Form/Creator/FormContextProvider'
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from '@radix-ui/react-icons'
-import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { JSONInput } from '@/Form/Components/Inputs'
 import { useAtom } from 'jotai'
@@ -111,13 +111,15 @@ const FormEditor = ({
 }
 
 export const FormWithEditorOverlay = ({
-  formState
+  formState,
+  formValueState
 }: {
   formState: [IForm | undefined, (form: IForm | undefined) => void]
+  formValueState?: IFormValueState
 }): ReactElement => {
   const [formInput, setFormInput] = formState ?? useState<IForm | undefined>(undefined)
   const [layout] = useAtom(layoutAtom)
-  const formValueState = useAtom(formValuesAtom)
+  const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
 
   return (
     <>
@@ -126,7 +128,7 @@ export const FormWithEditorOverlay = ({
             formInput !== undefined
               ? <FormCreator
               form={formInput}
-              formValueState={formValueState}
+              formValueState={[formValues, setFormValues]}
               footer={
                   <Footer />
               }
