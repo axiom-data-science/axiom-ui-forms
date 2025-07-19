@@ -37,8 +37,9 @@ export interface ICheckConditionResult {
 }
 export interface IFieldConditionsSet {
   logic?: 'and' | 'or'
-  conditions: Array<Omit<IFieldCondition, 'result'>>
+  conditions: IFieldCondition[]
   result?: IFieldConditionResult
+  newDefaultValue?: IValueType | IValueType[]
 }
 
 export type IFieldConditionOperator = '=' | 'eq' | '>' | 'gt' | '>=' | 'gte' | '<' | 'lt' | '<=' | 'lte' | '!=' | '!eq'
@@ -125,7 +126,7 @@ interface ICustomField extends IFormFieldRoot {
 
 interface ISelectOption {
   label: string
-  value: string | number | boolean
+  value: string | number
 }
 
 interface ISelectableInput extends IFormFieldRoot {
