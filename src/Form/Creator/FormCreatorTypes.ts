@@ -37,8 +37,9 @@ export interface ICheckConditionResult {
 }
 export interface IFieldConditionsSet {
   logic?: ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***
-  conditions: Array<Omit<IFieldCondition, ***REMOVED***result***REMOVED***>>
+  conditions: IFieldCondition[]
   result?: IFieldConditionResult
+  newDefaultValue?: IValueType | IValueType[]
 }
 
 export type IFieldConditionOperator = ***REMOVED***=***REMOVED*** | ***REMOVED***eq***REMOVED*** | ***REMOVED***>***REMOVED*** | ***REMOVED***gt***REMOVED*** | ***REMOVED***>=***REMOVED*** | ***REMOVED***gte***REMOVED*** | ***REMOVED***<***REMOVED*** | ***REMOVED***lt***REMOVED*** | ***REMOVED***<=***REMOVED*** | ***REMOVED***lte***REMOVED*** | ***REMOVED***!=***REMOVED*** | ***REMOVED***!eq***REMOVED***
@@ -125,7 +126,7 @@ interface ICustomField extends IFormFieldRoot {
 
 interface ISelectOption {
   label: string
-  value: string | number | boolean
+  value: string | number
 }
 
 interface ISelectableInput extends IFormFieldRoot {

@@ -202,6 +202,29 @@ const FieldCreator = ({
     ...(inputOverrides ?? {})
   }[field.type]
 
+  const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
+    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
+      form,
+      field,
+      value: v,
+      formValues
+    })
+    setFormValues(formValuesCopyClean)
+  }
+  const onChangeFn = onChange ?? defaultOnChange
+
+  /* useEffect(() => {
+    const fieldValue = getFieldValue(field, formValues)
+    if (
+      !(
+        (value === undefined || value === null) && (fieldValue === undefined || fieldValue === null)
+      ) &&
+        value !== fieldValue
+    ) {
+      onChangeFn(value)
+    }
+  }, [value]) */
+
   conditionResult = conditionResult ?? checkCondition(field, formValues)
 
   if (
@@ -218,23 +241,25 @@ const FieldCreator = ({
     disabled = false
   }
   if (conditionResult.newDefaultValue !== undefined) {
-    value = conditionResult.newDefaultValue
+    if (value !== conditionResult.newDefaultValue) {
+      value = conditionResult.newDefaultValue
+      return <FieldCreator
+        field={field}
+        value={value}
+        onChange={onChange}
+        className={className}
+        defaultClassName={defaultClassName}
+        disabled={disabled}
+        conditionResult={{ ...conditionResult, newDefaultValue: undefined }}
+      />
+    }
   }
-
-  const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
-    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
-      form,
-      field,
-      value: v,
-      formValues
-    })
-    setFormValues(formValuesCopyClean)
-  }
-  const onChangeFn = onChange ?? defaultOnChange
 
   const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
 
-  return InputComponent !== undefined
+  return <>
+  {
+  InputComponent !== undefined
     ? <div className={utils.makeClassName({
       className,
       defaultClassName,
@@ -261,6 +286,8 @@ const FieldCreator = ({
         <p className=***REMOVED***font-bold mb-2***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline***REMOVED*** /> {field.label ?? ***REMOVED******REMOVED***}</p>
         <p className=***REMOVED***p-4 text-sm bg-slate-100***REMOVED***>No component definition for <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>type</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.type}</span> at <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>id</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.id}</span></p>
       </div>
+    }
+    </>
 }
 
 export default FieldCreator
