@@ -25,12 +25,14 @@ export const makeJsonPath = (field: IFormField, index?: number): string | undefi
   } else {
     const path = field.path
     const pathLen = path.length
-    return field.path.map((f, i) => `${f.id}${`${getFieldExtra(f, i >= pathLen - 1 ? index : undefined)}`}`
-    ).join(***REMOVED***.***REMOVED***)
+    return field.path.map((f, i) => {
+      const defaultMultipleIndex = f.multiple && f.index === undefined && i < (pathLen - 1) ? 0 : undefined
+      return `${f.id}${`${getFieldExtra(f, i >= pathLen - 1 ? index : defaultMultipleIndex)}`}`
+    }).join(***REMOVED***.***REMOVED***)
   }
 }
 
-/**
+/** `
  * Returns the child fields of a given field
  *
  * @param field - The field to get the child fields from
