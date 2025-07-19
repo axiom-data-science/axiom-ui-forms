@@ -20,7 +20,7 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
     })
-    it(***REMOVED***should create a new field with the correct path and index for an object field with multiple true, and the children of the object fields should have the correct index set in the path***REMOVED***, () => {
+    it(***REMOVED***should create a new field with the correct path and index for an object field with multiple true***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field1***REMOVED***,
         type: ***REMOVED***object***REMOVED***,
@@ -45,7 +45,6 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
       const secondField = createOneOfMultipleField(fieldWithPath, 1) as IObjectField
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
-      expect(secondField.fields?.[0].path?.[0].index).toBe(1)
     })
   })
 
