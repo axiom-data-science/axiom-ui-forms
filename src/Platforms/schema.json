@@ -1,0 +1,606 @@
+{
+  "type": "object",
+  "properties": {
+    "base": {
+      "type": "object",
+      "properties": {
+        "featureType": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "naming_authority": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "platform_category": {
+          "type": "string"
+        },
+        "sea_name": {
+          "type": "string"
+        },
+        "creator_name": {
+          "type": "string"
+        },
+        "creator_url": {
+          "type": "string"
+        },
+        "creator_email": {
+          "type": "string",
+          "format": "email"
+        },
+        "license": {
+          "type": "string"
+        },
+        "institution": {
+          "type": "string"
+        },
+        "date_modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "time_coverage_start": {
+          "type": "string",
+          "format": "style"
+        },
+        "time_coverage_end": {
+          "type": "string"
+        },
+        "geospatial_bounds": {
+          "type": "string"
+        },
+        "geospatial_vertical_max": {
+          "type": "integer"
+        },
+        "geospatial_vertical_min": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "platform_groups": {
+          "type": "string"
+        },
+        "platform_tags": {
+          "type": "string",
+          "format": "uri"
+        },
+        "title": {
+          "type": "string",
+          "format": "style"
+        },
+        "summary": {
+          "type": "string",
+          "format": "style"
+        },
+        "packrat_uuid": {
+          "type": "string"
+        },
+        "packrat_source": {
+          "type": "string"
+        },
+        "packrat_source_id": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:trajectory": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:station": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:profile": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:sample": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:t": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:x": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:y": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:z": {
+          "type": "string"
+        },
+        "axds:platforms:rows:count": {
+          "type": "integer"
+        }
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "type": "object"
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "featureType": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "naming_authority": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "platform_category": {
+          "type": "string"
+        },
+        "sea_name": {
+          "type": "string"
+        },
+        "creator_name": {
+          "type": "string"
+        },
+        "creator_url": {
+          "type": "string"
+        },
+        "creator_email": {
+          "type": "string",
+          "format": "email"
+        },
+        "license": {
+          "type": "string"
+        },
+        "institution": {
+          "type": "string"
+        },
+        "date_modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "time_coverage_start": {
+          "type": "string",
+          "format": "style"
+        },
+        "time_coverage_end": {
+          "type": "string"
+        },
+        "geospatial_bounds": {
+          "type": "string"
+        },
+        "geospatial_vertical_max": {
+          "type": "integer"
+        },
+        "geospatial_vertical_min": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "platform_groups": {
+          "type": "string"
+        },
+        "platform_tags": {
+          "type": "string",
+          "format": "uri"
+        },
+        "title": {
+          "type": "string",
+          "format": "style"
+        },
+        "summary": {
+          "type": "string",
+          "format": "style"
+        },
+        "packrat_uuid": {
+          "type": "string"
+        },
+        "packrat_source": {
+          "type": "string"
+        },
+        "packrat_source_id": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:trajectory": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:station": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:profile": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:sample": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:t": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:x": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:y": {
+          "type": "string"
+        },
+        "axds:platforms:primary_axis:z": {
+          "type": "string"
+        },
+        "axds:platforms:rows:count": {
+          "type": "integer"
+        }
+      }
+    },
+    "variables": {
+      "type": "object",
+      "properties": {
+        "deploy_id": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "long_name": {
+                  "type": "string"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "time": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "units": {
+                  "type": "string",
+                  "format": "style"
+                },
+                "standard_name": {
+                  "type": "string"
+                },
+                "long_name": {
+                  "type": "string"
+                },
+                "actual_min": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "actual_max": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "z": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "long_name": {
+                  "type": "string"
+                },
+                "standard_name": {
+                  "type": "string"
+                },
+                "units": {
+                  "type": "string"
+                },
+                "valid_min": {
+                  "type": "integer"
+                },
+                "valid_max": {
+                  "type": "integer"
+                },
+                "positive": {
+                  "type": "string"
+                },
+                "actual_min": {
+                  "type": "integer"
+                },
+                "actual_max": {
+                  "type": "integer"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "lat": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "long_name": {
+                  "type": "string"
+                },
+                "standard_name": {
+                  "type": "string"
+                },
+                "units": {
+                  "type": "string"
+                },
+                "valid_min": {
+                  "type": "integer"
+                },
+                "valid_max": {
+                  "type": "integer"
+                },
+                "actual_min": {
+                  "type": "number"
+                },
+                "actual_max": {
+                  "type": "number"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "lon": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "long_name": {
+                  "type": "string"
+                },
+                "standard_name": {
+                  "type": "string"
+                },
+                "units": {
+                  "type": "string"
+                },
+                "valid_min": {
+                  "type": "integer"
+                },
+                "valid_max": {
+                  "type": "integer"
+                },
+                "actual_min": {
+                  "type": "number"
+                },
+                "actual_max": {
+                  "type": "number"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "location_class": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "long_name": {
+                  "type": "string"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "platform_id": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "crs": {
+          "type": "object",
+          "properties": {
+            "attributes": {
+              "type": "object",
+              "properties": {
+                "long_name": {
+                  "type": "string"
+                },
+                "non_null_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "object",
+      "properties": {
+        "inventory.json": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "raw.nc": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "data.viz.parquet": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "meta.json": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "data.csv.gz": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "data.json.gz": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "processed.nc": {
+          "type": "object",
+          "properties": {
+            "size_mb": {
+              "type": "number"
+            },
+            "modified": {
+              "type": "string",
+              "format": "style"
+            },
+            "path": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "folder": {
+          "type": "string"
+        },
+        "urlpath": {
+          "type": "string"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "qcconfig": {
+      "type": "object"
+    },
+    "configjson": {
+      "type": "object"
+    },
+    "type": {
+      "type": "string"
+    }
+  }
+}

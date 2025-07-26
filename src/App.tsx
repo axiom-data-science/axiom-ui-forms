@@ -37,6 +37,7 @@ import { QueryClient, QueryClientProvider } from ***REMOVED***@tanstack/react-qu
 import Metadata from ***REMOVED***@/Binner/Metadata***REMOVED***
 import NestedDataTest from ***REMOVED***@/Form/NestedDataTest***REMOVED***
 import JsonPathTester from ***REMOVED***@/Form/JSONPathTester***REMOVED***
+import PlatformsMetadata from ***REMOVED***@/Platforms/PlatformsMetadata***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -219,6 +220,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/nested-data-test" element={<NestedDataTest />} />
             <Route path=***REMOVED***/json-path-tester***REMOVED*** element={<JsonPathTester />} />
+            <Route path=***REMOVED***/platform-metadata***REMOVED*** element={<PlatformsMetadata />}>
+              <Route path=***REMOVED*******REMOVED*** element={<PlatformsMetadata />} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>
