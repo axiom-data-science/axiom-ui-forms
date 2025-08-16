@@ -6,7 +6,7 @@ import { InfoCircledIcon, PlusIcon, ReloadIcon } from ***REMOVED***@radix-ui/rea
 import { isEqual } from ***REMOVED***lodash-es***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
-const SHOW_DEBUG = import.meta.env.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
+const SHOW_DEBUG = import.meta?.env?.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
 export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn }): ReactElement => {
   const isDifferent = onChange !== undefined && !field.multiple && field.defaultValue !== undefined && !isEqual(value, field.defaultValue)
   return (

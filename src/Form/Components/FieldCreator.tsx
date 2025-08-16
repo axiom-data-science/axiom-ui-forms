@@ -9,7 +9,7 @@ import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
-const SHOW_DEBUG = import.meta.env.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
+const SHOW_DEBUG = import.meta?.env?.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
 const disabledClassName = ***REMOVED******REMOVED*** // ***REMOVED***opacity-50 pointer-events-none cursor-not-allowed***REMOVED***
 
 interface IFieldCreator {
