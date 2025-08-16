@@ -85,7 +85,7 @@ const SchemaToFormPTT = (): ReactElement => {
                         label='Select a schema'
                         value={selectedSchema}
                         onChange={e => {
-                          setSelectedSchema(e?.value)
+                          setSelectedSchema(e?.value !== undefined ? String(e.value) : undefined)
                         }}
                         options={[
                           { value: 'openOil', label: 'Open Oil' }
