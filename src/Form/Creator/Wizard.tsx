@@ -57,7 +57,7 @@ export const WizardNavMobile = ({
           className=***REMOVED***shadow-lg***REMOVED***
           value={activeId ?? ***REMOVED******REMOVED***}
           onChange={(e) => {
-            setActiveId(e?.value)
+            setActiveId(e?.value !== undefined ? String(e.value) : undefined)
           }}
           options={steps.map(p => ({
             value: p.id,

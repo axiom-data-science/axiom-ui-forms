@@ -76,7 +76,7 @@ const SelectNewForm = ({
       onChange={(e) => {
         if (e?.value !== undefined && files[e.value] !== undefined) {
           updateUrlParam(fileParam, e.value)
-          onChange(e.value)
+          onChange(e.value !== undefined ? String(e.value) : ***REMOVED******REMOVED***)
         }
       }}
     />
