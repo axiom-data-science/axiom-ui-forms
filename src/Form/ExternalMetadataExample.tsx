@@ -107,7 +107,7 @@ const ExternalMetadataExample = (): ReactElement => {
                                             urn: v?.value !== undefined
                                               ? parametersById[v.value]?.parameterName
                                               : undefined,
-                                            unit: getUnitsForParameter(v?.value ?? '', oikos)[0]?.unit
+                                            unit: getUnitsForParameter(v?.value !== undefined ? String(v.value) : '', oikos)[0]?.unit
                                           })
                                         }}
                                         placeholder='Select parameter'

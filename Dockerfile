@@ -24,7 +24,7 @@ RUN npm run build
 FROM nginx:1.25.1 AS nginx
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 
