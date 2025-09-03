@@ -80,10 +80,10 @@ const larvalFormOverride: IFormOverride = {
               prop: 'shapefile'
             },
             {
-              prop: 'radius'
+              prop: 'number'
             },
             {
-              prop: 'number'
+              prop: 'radius'
             },
             {
               prop: 'do3D'
@@ -117,15 +117,11 @@ const larvalFormOverride: IFormOverride = {
               prop: 'hatched'
             },
             {
-              prop: 'length'
+              prop: 'egg_options'
             },
             {
-              prop: 'weight'
-            },
-            {
-              prop: 'stage_fraction'
+              prop: 'larvae_options'
             }
-
           ]
         },
         {
@@ -146,7 +142,10 @@ const larvalFormOverride: IFormOverride = {
           label: 'Basic options',
           fields: [
             {
-              prop: 'wind_drift_factor'
+              prop: 'wind_drift'
+            },
+            {
+              prop: 'wind_drift_options'
             },
             {
               prop: 'vertical_mixing'
@@ -164,10 +163,16 @@ const larvalFormOverride: IFormOverride = {
           label: 'Advanced options',
           fields: [
             {
-              prop: 'wind_uncertainty'
+              prop: 'vertical_mixing_options'
+            },
+            {
+              prop: 'diffusivitymodel'
             },
             {
               prop: 'current_uncertainty'
+            },
+            {
+              prop: 'wind_uncertainty'
             }
           ]
         }
@@ -187,6 +192,9 @@ const larvalFormOverride: IFormOverride = {
             },
             {
               prop: 'coastline_action'
+            },
+            {
+              prop: 'seafloor_action'
             }
           ]
         },

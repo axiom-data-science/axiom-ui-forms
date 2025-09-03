@@ -80,10 +80,10 @@ const leewayFormOverride: IFormOverride = {
               prop: 'shapefile'
             },
             {
-              prop: 'radius'
+              prop: 'number'
             },
             {
-              prop: 'number'
+              prop: 'radius'
             },
             {
               prop: 'do3D'
@@ -137,12 +137,6 @@ const leewayFormOverride: IFormOverride = {
           label: 'Basic options',
           fields: [
             {
-              prop: 'wind_drift_factor'
-            },
-            {
-              prop: 'vertical_mixing'
-            },
-            {
               prop: 'stokes_drift'
             },
             {
@@ -155,10 +149,13 @@ const leewayFormOverride: IFormOverride = {
           label: 'Advanced options',
           fields: [
             {
-              prop: 'wind_uncertainty'
+              prop: 'diffusivitymodel'
             },
             {
               prop: 'current_uncertainty'
+            },
+            {
+              prop: 'wind_uncertainty'
             }
           ]
         }
