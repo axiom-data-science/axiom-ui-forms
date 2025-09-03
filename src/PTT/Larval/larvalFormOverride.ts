@@ -58,7 +58,6 @@ const larvalFormOverride: IFormOverride = {
     {
       id: 'map',
       label: 'Map',
-      description: 'Should able to select a point, polygon or upload a shapefile',
       pages: [
         {
           id: 'selection',
