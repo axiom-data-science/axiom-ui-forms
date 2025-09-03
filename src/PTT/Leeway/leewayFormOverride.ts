@@ -58,7 +58,6 @@ const leewayFormOverride: IFormOverride = {
     {
       id: ***REMOVED***map***REMOVED***,
       label: ***REMOVED***Map***REMOVED***,
-      description: ***REMOVED***Should able to select a point, polygon or upload a shapefile***REMOVED***,
       pages: [
         {
           id: ***REMOVED***selection***REMOVED***,
