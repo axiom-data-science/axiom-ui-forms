@@ -157,7 +157,7 @@ export const ActivePage = ({
       <div className={className}>
               {
           formSection?.description !== undefined
-            ? <p className=' text-sm'><InfoCircledIcon className='inline -mt-1' /> <InlineMarkdown>{formSection.description}</InlineMarkdown></p>
+            ? <div className='mb-4'><InfoCircledIcon className='inline -mt-1' /> <InlineMarkdown>{formSection.description}</InlineMarkdown></div>
             : ''
         }
         <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
