@@ -16,13 +16,13 @@ const FormHeader = ({
     <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
       <h2 className=***REMOVED***text-2xl font-bold***REMOVED***><InlineMarkdown>{form.label}</InlineMarkdown></h2>
       {note !== undefined
-        ? <Markdown>{note}</Markdown>
+        ? <div><InlineMarkdown>{note}</InlineMarkdown></div>
         : null}
       {error !== undefined
         ? <p className=***REMOVED***pb-4 text-rose-800***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline mr-2***REMOVED*** /> <InlineMarkdown>{error}</InlineMarkdown></p>
         : null}
       {form.description !== undefined
-        ? <Markdown>{form.description}</Markdown>
+        ? <div><InlineMarkdown>{form.description}</InlineMarkdown></div>
         : null}
     </div>
   )

@@ -118,7 +118,7 @@ const FormManager = ({
                     const form = formConfigs[key]
                     setForm(structuredClone({
                       ...form,
-                      description: `*From: \`${key.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***)}\`*${form.description !== undefined ? `\n\n${form.description}` : ***REMOVED******REMOVED***}`
+                      description: `From: [${key.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***)}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ***REMOVED******REMOVED***}`
                     }))
                     setFormValues(assignDefaultValuesToFormValues(form, {}))
                   }}
