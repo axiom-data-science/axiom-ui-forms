@@ -2,9 +2,10 @@ import InlineMarkdown from '@/Form/Components/InlineMarkdown'
 import { type IValueType, type IFormField, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
 import { makeJsonPath } from '@/utils/getters'
 import { Tooltip, utils } from '@axdspub/axiom-ui-utilities'
-import { InfoCircledIcon, PlusIcon, ReloadIcon } from '@radix-ui/react-icons'
+import { Cross2Icon, InfoCircledIcon, PlusIcon, ReloadIcon } from '@radix-ui/react-icons'
 import { isEqual } from 'lodash-es'
-import React, { type ReactElement } from 'react'
+import React, { useState, type ReactElement } from 'react'
+import { createPortal } from 'react-dom'
 
 const SHOW_DEBUG = import.meta?.env?.VITE_SHOW_DEBUG === 'true'
 export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn }): ReactElement => {
@@ -20,24 +21,45 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
   )
 }
 
-export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
-  const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ''
+const LongDescriptionModal = ({field, setShowModal}: { field: IFormField, setShowModal: (show: boolean) => void }): ReactElement => {
   const longDescription = field.long_description ?? ''
   return (
-    field.description !== undefined
+    createPortal(
+      <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center' onClick={() => { 
+        setShowModal(false) 
+        }}>
+        <div className='absolute top-10 right-10 left-10 bg-white shadow-xl p-10' onClick={(e) => { e.stopPropagation() }}>
+          <Cross2Icon className='absolute top-4 right-4 cursor-pointer hover:text-slate-500 w-6 h-6' onClick={() => setShowModal(false)} />
+          <InlineMarkdown>{longDescription}</InlineMarkdown>
+        </div>
+      </div>,
+      window.document.body
+    )
+  )
+}
+
+export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
+  const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ''
+  const [showModal, setShowModal] = useState(false)
+  return (
+    <>{
+    field.description !== undefined || hasLongDescription
       ? <span onClick={() => {
         if (hasLongDescription) {
-          window.open(longDescription, '_blank')
+          setShowModal(true)
         }
       }}>
         <Tooltip
           tooltipWrapperClassName='!z-50'
-          content={<span className='leading-6'><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className='text-xs text-slate-400'><PlusIcon className='inline w-4 h-4 mt-0' /> Click for more information</span>}</span>}
+          content={<span className='leading-6'><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className='italic block text-xs my-1'><PlusIcon className='inline w-3 h-3 -mt-1 mr-0' /> Click for more information</span>}</span>}
           contentClassName='max-w-[400px]'
 
-        ><InfoCircledIcon /></Tooltip>
+        ><InfoCircledIcon className={`${hasLongDescription ? '-my-1 p-1 rounded-2xl shadow-md w-6 h-6 text-blue-600' : 'w-4 h-4'}`} /></Tooltip>
         </span>
       : <></>
+      }{
+       showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />
+      }</>
   )
 }
 
@@ -70,19 +92,26 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
 }
 
 export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, disabled?: boolean }): ReactElement => {
+  const [showModal, setShowModal] = useState(false)
   const hasLongDescription = field.long_description !== undefined && field.long_description !== null && field.long_description !== ''
-  const longDescription = field.long_description ?? ''
+  const hasDescription = field.description !== undefined && field.description !== null && field.description !== ''
   const longDescriptionButton = hasLongDescription
-    ? <span className='ml-2 text-xs text-white bg-slate-400 p-1 px-2 rounded-md cursor-pointer hover:bg-slate-500' onClick={() => {
-      window.open(longDescription, '_blank')
-    }}><PlusIcon className='inline w-3 h-3 -mt-1 mr-0' /> More</span>
+    ? <span className={`${hasDescription ? 'ml-2' : ''} text-xs text-blue-500  p-1 rounded-2xl cursor-pointer  hover:text-blue-700 shadow-md -my-2`} onClick={() => {
+      setShowModal(true)
+    }}>
+      <Tooltip content='Click for more information'>
+        <InfoCircledIcon className='inline w-4 h-4 -mt-1 mr-0' /> {!hasDescription && 'More'}
+      </Tooltip>
+    </span>
     : null
   return (
     <>{
-      field.description !== undefined
-        ? <p className='text-xs pb-2'><InlineMarkdown>{field.description}</InlineMarkdown>{longDescriptionButton}</p>
-        : longDescriptionButton
-    }</>
+        (hasDescription || hasLongDescription) && <p className='text-xs pb-2'><InlineMarkdown>{field.description}</InlineMarkdown>{longDescriptionButton}</p>
+    }
+    {
+       showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />
+      }
+    </>
   )
 }
 

@@ -7,6 +7,7 @@
     "id": "short",
     "label": "Test component - tooltip description",
     "description": "This is a short text component",
+    "long_description": "More about this short text component\n- First bullet point with a [link](https://portal.axds.co)\n- Second *bullet point*",
     "type": "text",
     "settings": {
       "descriptionPresentation": "tooltip"
@@ -16,6 +17,25 @@
     "id": "short2",
     "label": "Test component - inline description",
     "description": "This is a short text component",
+    "long_description": "More about this long text component",
+    "type": "text",
+    "settings": {
+      "descriptionPresentation": "inline"
+    }
+  },
+    {
+    "id": "short3",
+    "label": "Test component - only long description",
+    "long_description": "More about this short text component\n- First bullet point with a [link](https://portal.axds.co)\n- Second *bullet point*",
+    "type": "text",
+    "settings": {
+      "descriptionPresentation": "tooltip"
+    }
+  },
+      {
+    "id": "short4",
+    "label": "Test component - only long description",
+    "long_description": "More about this short text component\n- First bullet point with a [link](https://portal.axds.co)\n- Second *bullet point*",
     "type": "text",
     "settings": {
       "descriptionPresentation": "inline"
@@ -91,7 +111,7 @@
     {
     "label": "Select component - inline description",
     "description": "This is a select component",
-    "id": "color",
+    "id": "color-inline",
     "type": "select",
     "required": true,
     "multiple": false,
