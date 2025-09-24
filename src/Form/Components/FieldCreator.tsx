@@ -3,7 +3,7 @@ import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type ICheckConditionResult, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldValue, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
-import { cleanAndUpdateFormValuesWithFieldValue, createOneOfMultipleField } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { cleanAndUpdateFormValuesWithFieldValue, cloneObject, createOneOfMultipleField } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -119,7 +119,7 @@ const OneOfMultiple = ({
                   size=***REMOVED***xs***REMOVED***
                   className={toolButtonClass}
                   onClick={() => {
-                    addValue(structuredClone(value))
+                    addValue(cloneObject(value))
                   }}>Duplicate <CopyIcon className=***REMOVED***inline ml-2***REMOVED*** />
                 </Button>
               </div>

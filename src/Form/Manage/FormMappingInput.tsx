@@ -1,7 +1,7 @@
 import { type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
 import { getFields } from ***REMOVED***@/utils/getters***REMOVED***
-import { addFieldPath } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { addFieldPath, cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { Input } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -13,7 +13,7 @@ const FormMappingInput = ({
   mappingState: [IFormMapping, (mapping: IFormMapping) => void]
 }): ReactElement => {
   const [mapping, setMappings] = mappingState
-  const uniqueFields = getFields(form?.fields?.map(f => addFieldPath(structuredClone(f))))
+  const uniqueFields = getFields(form?.fields?.map(f => addFieldPath(cloneObject(f))))
   return (
             <>
                  <div className=***REMOVED***flex flex-col gap-4***REMOVED***>

@@ -6,7 +6,7 @@ import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 import { CheckIcon, Cross1Icon, ReloadIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IFormMapping } from ***REMOVED***@/Form/FormMappingTypes***REMOVED***
-import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { assignDefaultValuesToFormValues, cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { FormWithEditorOverlay } from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
 import { updateUrlParam } from ***REMOVED***@/helpers***REMOVED***
 
@@ -101,7 +101,7 @@ const FormManager = ({
 }): ReactElement => {
   const [form, setForm] = formState ?? useAtom(formAtom)
   if (Object.values(form ?? {}).length === 0) {
-    setForm(structuredClone(testForm))
+    setForm(cloneObject(testForm))
   }
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   useEffect(() => {
@@ -116,7 +116,7 @@ const FormManager = ({
                   files={formConfigs}
                   onChange={key => {
                     const form = formConfigs[key]
-                    setForm(structuredClone({
+                    setForm(cloneObject({
                       ...form,
                       description: `From: [${key.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***)}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ***REMOVED******REMOVED***}`
                     }))
@@ -128,7 +128,7 @@ const FormManager = ({
                   setFormValues({})
                 }} />
                 <ClearForm message=***REMOVED***Clear form config***REMOVED*** onConfirm={() => {
-                  setForm(structuredClone(testForm))
+                  setForm(cloneObject(testForm))
                 }} />
 
             </div>

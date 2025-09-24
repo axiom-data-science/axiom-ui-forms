@@ -3,7 +3,7 @@ import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProp
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { getFieldsFromFormSection, getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
-import { copyAndAddPathToFields, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { cloneObject, copyAndAddPathToFields, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
@@ -100,7 +100,7 @@ const FormCreator = ({
   header
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
-  const activeFormValues = structuredClone(formValueState?.[0] ?? {})
+  const activeFormValues = cloneObject(formValueState?.[0] ?? {})
   getFieldsFromFormSection(activeForm).forEach(field => {
     if (field.defaultValue !== undefined && getFieldValue(field, activeFormValues) === undefined) {
       updateFormValuesWithFieldValueInPlace(field, field.defaultValue, activeFormValues)

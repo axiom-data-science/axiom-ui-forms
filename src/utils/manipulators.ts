@@ -3,6 +3,10 @@ import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REM
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { merge, set } from ***REMOVED***lodash-es***REMOVED***
 
+export const cloneObject = (object: any): any => {
+  return window.structuredClone(object)
+}
+
 export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFormField => {
   if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
     field.path = parentPath !== undefined ? parentPath.slice() : []
@@ -18,8 +22,8 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
     })
   }
   // return field
-  return field.multiple ? structuredClone(field) : field
-  // return structuredClone(field)
+  return field.multiple ? cloneObject(field) : field
+  // return cloneObject(field)
 }
 
 function addPathsToFormSections (section: IFormSection): IFormSection {
@@ -42,7 +46,7 @@ function addPathsToFormSections (section: IFormSection): IFormSection {
 }
 
 export function copyAndAddPathToFields (formOrContainer: IFormSection | IForm): IForm {
-  const form = addPathsToFormSections(structuredClone(formOrContainer)) as IForm
+  const form = addPathsToFormSections(cloneObject(formOrContainer)) as IForm
   return form
 }
 
@@ -78,12 +82,12 @@ function removePathsFromFormSections (section: IFormSection): IFormSection {
 }
 
 export function copyAndRemovePathFromFields (formOrContainer: IFormSection | IForm): IForm {
-  const form = removePathsFromFormSections(structuredClone(formOrContainer)) as IForm
+  const form = removePathsFromFormSections(cloneObject(formOrContainer)) as IForm
   return form
 }
 
 export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], formValuesPath: string = ***REMOVED******REMOVED***): IFormValues {
-  const formValuesCopy = structuredClone(formValues)
+  const formValuesCopy = cloneObject(formValues)
   Object.keys(formValues).forEach(key => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
     const field = fields?.find(f => getPathFromField(f) === path)
@@ -139,7 +143,7 @@ export function updateFormValuesWithFieldValueInPlace (field: IFormField, newVal
 }
 
 export function updateFormValuesWithFieldValue (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): IFormValues {
-  const formValuesCopy = structuredClone(formValues)
+  const formValuesCopy = cloneObject(formValues)
   updateFormValuesWithFieldValueInPlace(field, newValue, formValuesCopy)
   return formValuesCopy
 }
@@ -172,7 +176,7 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
 }
 
 export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormValues): IFormValues => {
-  const formValuesCopy = structuredClone(formValues)
+  const formValuesCopy = cloneObject(formValues)
   const formWithPaths = copyAndAddPathToFields(form)
   getFieldsFromFormSection(formWithPaths).forEach(field => {
     if (field.defaultValue !== undefined && getFieldValue(field, formValuesCopy) === undefined) {
@@ -199,8 +203,8 @@ const assignIndexToFields = (parentField: IObjectField, indexField: IObjectField
     }
     if (f.type === ***REMOVED***object***REMOVED*** && f.fields !== undefined) {
       f.fields = assignIndexToFields(f, indexField, index, level)
-      return f.multiple ? structuredClone(f) : f
-      // return structuredClone(f)
+      return f.multiple ? cloneObject(f) : f
+      // return cloneObject(f)
     }
     return {
       ...f
