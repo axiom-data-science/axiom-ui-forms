@@ -1,6 +1,6 @@
 import { type IFormFieldOverride, type IFormField, type IForm, type IFormSection, type IFormSectionOverride, type IPage, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getPathFromField } from '@/utils/getters'
-import { copyAndAddPathToFields } from '@/utils/manipulators'
+import { cloneObject, copyAndAddPathToFields } from '@/utils/manipulators'
 import { schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { type JSONSchema6 } from 'json-schema'
 
@@ -165,7 +165,7 @@ export const mergeFormSections = ({
   formOverrides: IFormSectionOverride[]
   fieldOverrides: Record<string, IFormFieldOverride[]>
 }): IFormSection => {
-  const form = structuredClone(formSection)
+  const form = cloneObject(formSection)
   const fieldsMap = formFieldsMap ?? buildFieldMapFromForm(formSection)
   const pagesMap: Record<string, IFormSectionOverride[]> = {}
   const wizardStepsMap: Record<string, IFormSectionOverride[]> = {}

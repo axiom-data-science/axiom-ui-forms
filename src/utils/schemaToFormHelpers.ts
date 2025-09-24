@@ -13,7 +13,7 @@ import { resolveRefs } from '@/utils/resolveRefs'
 import { omit } from 'lodash-es'
 import { type ISelectOptionProps } from '@axdspub/axiom-ui-utilities'
 import { getFieldsFromFormSection, getPathFromField, makeJsonPath } from '@/utils/getters'
-import { copyAndAddPathToFields } from '@/utils/manipulators'
+import { cloneObject, copyAndAddPathToFields } from '@/utils/manipulators'
 
 const getValidator = (schema: number): ValidateFunction => {
   const ajv = new Ajv({
@@ -47,7 +47,7 @@ export const validateSchema = (schemaOb: unknown, version: number = 6): { schema
   const bundledSchema = await bundle('https://axds.co/test')
   return { schema: bundledSchema as JSONSchema6 } */
 
-  const resolved = resolveRefs(structuredClone(schemaOb) as JSONSchema6)
+  const resolved = resolveRefs(cloneObject(schemaOb) as JSONSchema6)
   return { schema: resolved, unrefed: schemaOb as JSONSchema6 }
 }
 

@@ -1,7 +1,7 @@
 import { type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
 import { getFields } from '@/utils/getters'
-import { addFieldPath } from '@/utils/manipulators'
+import { addFieldPath, cloneObject } from '@/utils/manipulators'
 import { Input } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
@@ -13,7 +13,7 @@ const FormMappingInput = ({
   mappingState: [IFormMapping, (mapping: IFormMapping) => void]
 }): ReactElement => {
   const [mapping, setMappings] = mappingState
-  const uniqueFields = getFields(form?.fields?.map(f => addFieldPath(structuredClone(f))))
+  const uniqueFields = getFields(form?.fields?.map(f => addFieldPath(cloneObject(f))))
   return (
             <>
                  <div className='flex flex-col gap-4'>

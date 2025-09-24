@@ -6,7 +6,7 @@ import formValuesAtom from '@/state/formValuesAtom'
 import { CheckIcon, Cross1Icon, ReloadIcon, TrashIcon } from '@radix-ui/react-icons'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { type IFormMapping } from '@/Form/FormMappingTypes'
-import { assignDefaultValuesToFormValues } from '@/utils/manipulators'
+import { assignDefaultValuesToFormValues, cloneObject } from '@/utils/manipulators'
 import { FormWithEditorOverlay } from '@/Form/FormWithEditorOverlay'
 import { updateUrlParam } from '@/helpers'
 
@@ -101,7 +101,7 @@ const FormManager = ({
 }): ReactElement => {
   const [form, setForm] = formState ?? useAtom(formAtom)
   if (Object.values(form ?? {}).length === 0) {
-    setForm(structuredClone(testForm))
+    setForm(cloneObject(testForm))
   }
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
   useEffect(() => {
@@ -116,7 +116,7 @@ const FormManager = ({
                   files={formConfigs}
                   onChange={key => {
                     const form = formConfigs[key]
-                    setForm(structuredClone({
+                    setForm(cloneObject({
                       ...form,
                       description: `From: [${key.replace('/src/Form/testData/forms/', '')}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ''}`
                     }))
@@ -128,7 +128,7 @@ const FormManager = ({
                   setFormValues({})
                 }} />
                 <ClearForm message='Clear form config' onConfirm={() => {
-                  setForm(structuredClone(testForm))
+                  setForm(cloneObject(testForm))
                 }} />
 
             </div>

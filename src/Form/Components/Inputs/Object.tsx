@@ -1,6 +1,7 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type ICompositeValueType, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { cloneObject } from '@/utils/manipulators'
 import { checkCondition } from '@/utils/validators'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
@@ -56,15 +57,15 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
                       form: localForm,
                       field: localField,
                       value: e,
-                      formValues: structuredClone(initialValue)
+                      formValues: cloneObject(initialValue)
                     }) */
                     /* const cleanedValues = cleanAndUpdateFormValuesWithFieldValue({
                       form: field as IFormSection,
                       field: childField,
                       value: e,
-                      formValues: structuredClone(initialValue)
+                      formValues: cloneObject(initialValue)
                     }) */
-                    const newValue = structuredClone(initialValue)
+                    const newValue = cloneObject(initialValue)
                     newValue[childField.id] = e
                     onChange(newValue)
                   }

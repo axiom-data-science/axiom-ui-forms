@@ -4,10 +4,11 @@ import { SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs } from '@axdspub/axiom-ui-utilities'
 import { atom, useAtom } from 'jotai'
+import { cloneObject } from '@/utils/manipulators'
 
 const formValueAtom = atom<IFormValues>({})
-const allFormOverrides = [structuredClone(formOverrides)]
-const allFieldOverrides = [fieldOverrides, fieldOverrides2].map(d => structuredClone(d))
+const allFormOverrides = [cloneObject(formOverrides)]
+const allFieldOverrides = [fieldOverrides, fieldOverrides2].map(d => cloneObject(d))
 
 const Debug = (): ReactElement => {
   const allFormOverrides = [formOverrides]
