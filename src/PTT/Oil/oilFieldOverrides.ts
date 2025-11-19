@@ -32,7 +32,7 @@ const oilFormOverride: IFormFieldOverride[] = [
   },
   {
     prop: 'oil_type',
-    defaultValue: ['EC02713', 'Alaska North Slope [2015]']
+    defaultValue: 'EC02713'
   },
   // {
   //   prop: 'subsea_or_not',
