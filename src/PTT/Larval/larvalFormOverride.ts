@@ -122,13 +122,6 @@ const larvalFormOverride: IFormOverride = {
               prop: ***REMOVED***larvae_options***REMOVED***
             }
           ]
-        },
-        {
-          id: ***REMOVED***advanced***REMOVED***,
-          label: ***REMOVED***Advanced options***REMOVED***,
-          fields: [
-
-          ]
         }
       ]
     },
