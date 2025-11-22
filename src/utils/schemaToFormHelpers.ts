@@ -272,7 +272,7 @@ const schemaToFormField = ({
   }
 
   if (type === 'select' || type === 'checkbox') {
-    const schemaOptions = schemaField.enum ?? schemaField.oneOf ?? schemaField.anyOf ?? []
+    const schemaOptions = schemaField.oneOf ?? schemaField.anyOf ?? schemaField.enum ?? []
     const options = schemaOptions.map(e => {
       const value = getValueFromSchema(e)
       const label = getLabelFromSchema(e)
