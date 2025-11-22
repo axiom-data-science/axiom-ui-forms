@@ -122,13 +122,6 @@ const larvalFormOverride: IFormOverride = {
               prop: 'larvae_options'
             }
           ]
-        },
-        {
-          id: 'advanced',
-          label: 'Advanced options',
-          fields: [
-
-          ]
         }
       ]
     },
