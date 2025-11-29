@@ -3,7 +3,7 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
 import { EMapShape, type IMap, type IMapDrawEvent, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
-import { OpenLayersMap as Map } from ***REMOVED***@axdspub/axiom-maps/library/openlayers***REMOVED***
+import { MapLoader } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 import { type GeoJSON } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { TrashIcon, SquareIcon, BorderSolidIcon, DrawingPinFilledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
@@ -486,7 +486,7 @@ export const GeoJSONInput = ({ field, onChange, value, disabled }: IFieldInputPr
               <div className="absolute z-50 bg-white bg-opacity-20 cursor-not-allowed top-0 right-0 left-0 bottom-0"></div>
           )
         }
-        <Map {...MAP_CONFIG} setState={setMapState} />
+        <MapLoader {...MAP_CONFIG} setState={setMapState} mapLibraryKey=***REMOVED***openlayers***REMOVED*** />
 
       <div className="mt-4">
         <div className="flex justify-between items-center mb-2">

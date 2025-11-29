@@ -223,6 +223,9 @@ const App = (): ReactElement => {
             <Route path=***REMOVED***/platform-metadata***REMOVED*** element={<PlatformsMetadata />}>
               <Route path=***REMOVED*******REMOVED*** element={<PlatformsMetadata />} />
             </Route>
+            <Route path=***REMOVED***/binner-metadata***REMOVED*** element={<></>}>
+              <Route path=***REMOVED*******REMOVED*** element={<></>} />
+            </Route>
           </Routes>
         </BrowserRouter>
     </div>

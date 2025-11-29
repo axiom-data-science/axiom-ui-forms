@@ -3,7 +3,7 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IGeometryField, type IFieldInputProps, type IFormField, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED*** // Added IFormField explicitly
 
 import { EMapShape, type IMap, type IMapDrawEvent, type IStyleableMapProps } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
-import { OpenLayersMap as Map } from ***REMOVED***@axdspub/axiom-maps/library/openlayers***REMOVED***
+import { MapLoader } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 // Import Geometry type if not already done
 import { type Feature, type GeoJSON, type Geometry } from ***REMOVED***geojson***REMOVED***
 import React, { useEffect, useState, type ReactElement, useCallback } from ***REMOVED***react***REMOVED*** // Added useCallback
@@ -368,7 +368,7 @@ export const GeometryInput = ({ field, onChange, value, disabled }: IFieldInputP
                     )
                   }
                 {/* Map Component */}
-                <Map {...MAP_CONFIG} setState={setMapState} />
+                <MapLoader {...MAP_CONFIG} setState={setMapState} mapLibraryKey=***REMOVED***openlayers***REMOVED*** />
 
                 {/* Coordinate Input Section */}
                 {showCoordinateInput && (
