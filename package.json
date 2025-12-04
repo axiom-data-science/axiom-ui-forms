@@ -1,18 +1,13 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.3.7",
+  "version": "0.3.9",
   "private": false,
-  "type": "module",
   "description": "Axiom UI Forms",
-  "main": "./library/umd/library.js",
-  "module": "./library/esm/src/library.js",
+    "type": "module",
   "types": "./library/axiom-ui-forms.d.ts",
-  "exports": {
-    ".": {
-      "import": "./library/esm/src/library.js",
-      "require": "./library/umd/library.js"
-    }
-  },
+  "main": "./library/index.cjs.js",
+  "module": "./library/index.esm.js",
+  "typings": "./library/axiom-ui-forms.d.ts",
   "files": [
     "library/**"
   ],

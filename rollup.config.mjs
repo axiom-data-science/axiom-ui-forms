@@ -39,13 +39,22 @@ const config = [
       warn(warning)
     },
     output: [
-      /* {
-        file: 'library/cjs.js',
+      {
+        dir: 'library',
+        entryFileNames: 'cjs.js',
         format: 'cjs',
         sourcemap: true,
         globals
-      }, */
+      },
       {
+        dir: 'library',
+        entryFileNames: 'index.esm.js',
+        format: 'esm',
+        sourcemap: true,
+        globals
+        // preserveModules: true
+      }
+      /* {
         dir: 'library/esm',
         format: 'esm',
         sourcemap: true,
@@ -53,7 +62,7 @@ const config = [
         preserveModules: true,
         // inlineDynamicImports: true,
         globals
-      }//,
+      } *///,
       /* {
         file: 'library/browser.js',
         format: 'iife',
