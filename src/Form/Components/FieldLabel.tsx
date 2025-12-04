@@ -1,3 +1,4 @@
+import config from ***REMOVED***@/config/environment***REMOVED***
 import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
 import { type IValueType, type IFormField, type IValueChangeFn } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
@@ -7,7 +8,7 @@ import { isEqual } from ***REMOVED***lodash-es***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { createPortal } from ***REMOVED***react-dom***REMOVED***
 
-const SHOW_DEBUG = import.meta?.env?.VITE_SHOW_DEBUG === ***REMOVED***true***REMOVED***
+const SHOW_DEBUG = config.SHOW_DEBUG
 export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn }): ReactElement => {
   const isDifferent = onChange !== undefined && !field.multiple && field.defaultValue !== undefined && !isEqual(value, field.defaultValue)
   return (

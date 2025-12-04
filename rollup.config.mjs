@@ -39,13 +39,22 @@ const config = [
       warn(warning)
     },
     output: [
-      /* {
-        file: ***REMOVED***library/cjs.js***REMOVED***,
+      {
+        dir: ***REMOVED***library***REMOVED***,
+        entryFileNames: ***REMOVED***cjs.js***REMOVED***,
         format: ***REMOVED***cjs***REMOVED***,
         sourcemap: true,
         globals
-      }, */
+      },
       {
+        dir: ***REMOVED***library***REMOVED***,
+        entryFileNames: ***REMOVED***index.esm.js***REMOVED***,
+        format: ***REMOVED***esm***REMOVED***,
+        sourcemap: true,
+        globals
+        // preserveModules: true
+      }
+      /* {
         dir: ***REMOVED***library/esm***REMOVED***,
         format: ***REMOVED***esm***REMOVED***,
         sourcemap: true,
@@ -53,7 +62,7 @@ const config = [
         preserveModules: true,
         // inlineDynamicImports: true,
         globals
-      }//,
+      } *///,
       /* {
         file: ***REMOVED***library/browser.js***REMOVED***,
         format: ***REMOVED***iife***REMOVED***,
