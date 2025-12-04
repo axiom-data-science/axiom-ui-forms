@@ -1,3 +1,4 @@
+import HABForm from ***REMOVED***@/PTT/HAB/HABForm***REMOVED***
 import LarvalForm from ***REMOVED***@/PTT/Larval/LarvalForm***REMOVED***
 import LeewayForm from ***REMOVED***@/PTT/Leeway/LeewayForm***REMOVED***
 import OceanDriftForm from ***REMOVED***@/PTT/OceanDrift/OceanDriftForm***REMOVED***
@@ -27,6 +28,11 @@ const tabs = [
     id: ***REMOVED***leeway-model***REMOVED***,
     label: ***REMOVED***Leeway Model***REMOVED***,
     content: <LeewayForm />
+  },
+    {
+    id: ***REMOVED***hab-model***REMOVED***,
+    label: ***REMOVED***HAB Model***REMOVED***,
+    content: <HABForm />
   }
 ]
 const tabMap = Object.fromEntries(tabs.map(tab => [tab.id, tab]))

@@ -1,0 +1,675 @@
+{
+  "$defs": {
+    "CoastlineActionEnum": {
+      "description": "Enum for coastline actions used in OpenDrift.",
+      "enum": [
+        "none",
+        "stranding",
+        "previous"
+      ],
+      "title": "CoastlineActionEnum",
+      "type": "string"
+    },
+    "DiffusivityModelEnum": {
+      "description": "Enum for diffusivity models used in OpenDrift.",
+      "enum": [
+        "environment",
+        "stepfunction",
+        "windspeed_Sundby1983",
+        "windspeed_Large1994",
+        "gls_tke",
+        "constant"
+      ],
+      "title": "DiffusivityModelEnum",
+      "type": "string"
+    },
+    "DriftModelEnum": {
+      "description": "Enum for drift models used in OpenDrift.",
+      "enum": [
+        "OceanDrift",
+        "LarvalFish",
+        "OpenOil",
+        "Leeway",
+        "HarmfulAlgalBloom"
+      ],
+      "title": "DriftModelEnum",
+      "type": "string"
+    },
+    "HABSpeciesTypeEnum": {
+      "description": "Enum for species types used in HarmfulAlgalBloom model in OpenDrift.",
+      "enum": [
+        "Pseudo_nitzschia",
+        "custom"
+      ],
+      "title": "HABSpeciesTypeEnum",
+      "type": "string"
+    },
+    "LogLevelEnum": {
+      "description": "Log verbosity.",
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ],
+      "title": "LogLevelEnum",
+      "type": "string"
+    },
+    "ModelEnum": {
+      "description": "Lagrangian model software to use for simulation.",
+      "enum": [
+        "opendrift"
+      ],
+      "title": "ModelEnum",
+      "type": "string"
+    },
+    "OceanModelEnum": {
+      "enum": [
+        "CIOFS",
+        "CIOFSOP",
+        "CIOFSFRESH",
+        "NWGOA",
+        "CIOFS3",
+        "ONTHEFLY",
+        "TXLA"
+      ],
+      "title": "OceanModelEnum",
+      "type": "string"
+    },
+    "OutputFormatEnum": {
+      "description": "Output file format.",
+      "enum": [
+        "netcdf",
+        "parquet"
+      ],
+      "title": "OutputFormatEnum",
+      "type": "string"
+    },
+    "RadiusTypeEnum": {
+      "description": "Enum for radius types used in OpenDrift.",
+      "enum": [
+        "gaussian",
+        "uniform"
+      ],
+      "title": "RadiusTypeEnum",
+      "type": "string"
+    },
+    "SeafloorActionEnum": {
+      "description": "Enum for seafloor actions used in OpenDrift.",
+      "enum": [
+        "none",
+        "lift_to_seafloor",
+        "deactivate",
+        "previous"
+      ],
+      "title": "SeafloorActionEnum",
+      "type": "string"
+    },
+    "SeedFlagEnum": {
+      "description": "Method for seeding drifters.",
+      "enum": [
+        "elements",
+        "geojson"
+      ],
+      "title": "SeedFlagEnum",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Harmful algal bloom model configuration for OpenDrift.",
+  "properties": {
+    "model": {
+      "$ref": "#/$defs/ModelEnum",
+      "default": "opendrift",
+      "ptm_level": 1
+    },
+    "lon": {
+      "anyOf": [
+        {
+          "maximum": 180,
+          "minimum": -180,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": -151.0,
+      "description": "Central longitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+      "ptm_level": 1,
+      "title": "Lon",
+      "units": "degrees_east"
+    },
+    "lat": {
+      "anyOf": [
+        {
+          "maximum": 90,
+          "minimum": -90,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": 58.0,
+      "description": "Central latitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+      "ptm_level": 1,
+      "title": "Lat",
+      "units": "degrees_north"
+    },
+    "geojson": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "GeoJSON describing a polygon within which to seed drifters. To use this parameter, also have `seed_flag==\"geojson\"`.",
+      "ptm_level": 1,
+      "title": "Geojson"
+    },
+    "seed_flag": {
+      "$ref": "#/$defs/SeedFlagEnum",
+      "default": "elements",
+      "description": "Method for seeding drifters. Options are \"elements\" or \"geojson\". If \"elements\", seed drifters at or around a single point defined by lon and lat. If \"geojson\", seed drifters within a polygon described by a GeoJSON object.",
+      "ptm_level": 1
+    },
+    "start_time": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "2022-01-01T00:00:00",
+      "description": "Start time for drifter simulation. start_time or end_time must be input. If a timezone is included, it will be used and the time will be converted to UTC which is the same timezone as the models.",
+      "ptm_level": 1,
+      "title": "Start Time"
+    },
+    "start_time_end": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "If used, this creates a range of start times for drifters, starting with `start_time` and ending with `start_time_end`. Drifters will be initialized linearly between the two start times. If a timezone is included, it will be used and the time will be converted to UTC which is the same timezone as the models.",
+      "ptm_level": 2,
+      "title": "Start Time End"
+    },
+    "run_forward": {
+      "default": true,
+      "description": "Run forward in time.",
+      "ptm_level": 2,
+      "title": "Run Forward",
+      "type": "boolean"
+    },
+    "time_step": {
+      "default": 300,
+      "description": "Interval between particles updates, in seconds.",
+      "maximum": 1440,
+      "minimum": 0.01,
+      "ptm_level": 3,
+      "title": "Time Step",
+      "type": "number",
+      "units": "seconds"
+    },
+    "time_step_output": {
+      "default": 3600,
+      "description": "Time step at which element properties are stored and eventually written to file. This must be larger than the calculation time step, and be an integer multiple of this.",
+      "maximum": 86400,
+      "minimum": 1,
+      "ptm_level": 3,
+      "title": "Time Step Output",
+      "type": "number",
+      "units": "seconds"
+    },
+    "steps": {
+      "anyOf": [
+        {
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Maximum number of steps. End of simulation will be start_time + steps * time_step.",
+      "ptm_level": 1,
+      "title": "Steps"
+    },
+    "duration": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Duration should be input as a string of ISO 8601. The length of the simulation. steps, end_time, or duration must be input by user.",
+      "ptm_level": 1,
+      "title": "Duration"
+    },
+    "end_time": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The end of the simulation. steps, end_time, or duration must be input by user. start_time or end_time must be input. If a timezone is included, it will be used and the time will be converted to UTC which is the same timezone as the models.",
+      "ptm_level": 1,
+      "title": "End Time"
+    },
+    "ocean_model": {
+      "$ref": "#/$defs/OceanModelEnum",
+      "default": "CIOFSOP",
+      "description": "Name of ocean model to use for driving drifter simulation.",
+      "ptm_level": 1
+    },
+    "ocean_model_local": {
+      "default": true,
+      "description": "Set to True to use local version of known `ocean_model` instead of remote version.",
+      "ptm_level": 3,
+      "title": "Ocean Model Local",
+      "type": "boolean"
+    },
+    "do3D": {
+      "default": false,
+      "description": "Set to True to run drifters in 3D, by default False for most drift models.",
+      "ptm_level": 1,
+      "title": "Do3D",
+      "type": "boolean"
+    },
+    "use_static_masks": {
+      "default": true,
+      "description": "If False, use static ocean model land masks. This saves some computation time but since the available ocean models run in wet/dry mode, it is inconsistent with the ROMS output files in some places since the drifters may be allowed (due to the static mask) to enter a cell they wouldn***REMOVED***t otherwise. However, it doesn***REMOVED***t make much of a difference for simulations that aren***REMOVED***t in the tidal flats. Use the time-varying wet/dry masks (set to True) if drifters are expected to run in the tidal flats. This costs some more computational time but is fully consistent with the ROMS output files.",
+      "ptm_level": 3,
+      "title": "Use Static Masks",
+      "type": "boolean"
+    },
+    "output_file": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Name of file to write output to. If None, default name is used.",
+      "ptm_level": 3,
+      "title": "Output File"
+    },
+    "output_format": {
+      "$ref": "#/$defs/OutputFormatEnum",
+      "default": "netcdf",
+      "description": "Output file format. Options are \"netcdf\" or \"parquet\".",
+      "ptm_level": 2
+    },
+    "use_cache": {
+      "default": true,
+      "description": "Set to True to use cache for storing interpolators.",
+      "ptm_level": 3,
+      "title": "Use Cache",
+      "type": "boolean"
+    },
+    "log_level": {
+      "$ref": "#/$defs/LogLevelEnum",
+      "default": "INFO",
+      "description": "Log verbosity",
+      "ptm_level": 3
+    },
+    "horizontal_diffusivity": {
+      "anyOf": [
+        {
+          "maximum": 100000,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Add horizontal diffusivity (random walk). For known ocean models, the value is calculated as the approximate horizontal grid resolution for the selected ocean model times an estimate of the scale of sub-gridscale velocity of 0.1 m/s.",
+      "od_mapping": "drift:horizontal_diffusivity",
+      "ptm_level": 2,
+      "title": "Horizontal Diffusivity",
+      "units": "m2/s"
+    },
+    "stokes_drift": {
+      "default": true,
+      "description": "Advection elements with Stokes drift (wave orbital motion).",
+      "od_mapping": "drift:stokes_drift",
+      "ptm_level": 2,
+      "title": "Stokes Drift",
+      "type": "boolean"
+    },
+    "z": {
+      "anyOf": [
+        {
+          "maximum": 0,
+          "minimum": -10000,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": 0,
+      "description": "Depth below sea level where elements are released. This depth is neglected if seafloor seeding is set selected.",
+      "od_mapping": "seed:z",
+      "ptm_level": 1,
+      "title": "Z",
+      "units": "m"
+    },
+    "number": {
+      "default": 1,
+      "description": "The number of elements for the simulation.",
+      "minimum": 1,
+      "od_mapping": "seed:number",
+      "ptm_level": 1,
+      "title": "Number",
+      "type": "integer",
+      "units": 1
+    },
+    "drift_model": {
+      "$ref": "#/$defs/DriftModelEnum",
+      "default": "HarmfulAlgalBloom"
+    },
+    "save_interpolator": {
+      "default": false,
+      "description": "Whether to save the interpolator.",
+      "title": "Save Interpolator",
+      "type": "boolean"
+    },
+    "interpolator_filename": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Filename to save interpolator to or read interpolator from. Exclude suffix (which should be .pickle).",
+      "ptm_level": 3,
+      "title": "Interpolator Filename"
+    },
+    "export_variables": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of variables to export. Options available with `m.all_export_variables` for a given `drift_model`. [***REMOVED***lon***REMOVED***, ***REMOVED***lat***REMOVED***, ***REMOVED***ID***REMOVED***, ***REMOVED***status***REMOVED***, ***REMOVED***z***REMOVED***] will always be exported. Default of None means all possible variables are exported.",
+      "ptm_level": 3,
+      "title": "Export Variables"
+    },
+    "plots": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "object"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Dictionary of plots to generate using OpenDrift.",
+      "ptm_level": 1,
+      "title": "Plots"
+    },
+    "radius": {
+      "default": 1000.0,
+      "description": "Radius around each lon-lat pair, within which particles will be seeded according to `radius_type`.",
+      "maximum": 1000000,
+      "minimum": 0.0,
+      "ptm_level": 2,
+      "title": "Radius",
+      "type": "number",
+      "units": "m"
+    },
+    "radius_type": {
+      "$ref": "#/$defs/RadiusTypeEnum",
+      "default": "gaussian",
+      "description": "Distribution for seeding particles around location. Options: ***REMOVED***gaussian***REMOVED*** or ***REMOVED***uniform***REMOVED***.",
+      "ptm_level": 3
+    },
+    "max_speed": {
+      "default": 7.0,
+      "description": "Typical maximum speed of elements, used to estimate reader buffer size",
+      "exclusiveMinimum": 0,
+      "od_mapping": "drift:max_speed",
+      "ptm_level": 1,
+      "title": "Maximum speed",
+      "type": "number",
+      "units": "m/s"
+    },
+    "use_auto_landmask": {
+      "default": false,
+      "description": "If True, use a global-scale land mask from https://www.generic-mapping-tools.org/remote-datasets/earth-mask.html. Dataset scale selected is `auto`. If False, use the land mask from the ocean model.",
+      "od_mapping": "general:use_auto_landmask",
+      "ptm_level": 3,
+      "title": "Use Auto Landmask",
+      "type": "boolean"
+    },
+    "coastline_action": {
+      "$ref": "#/$defs/CoastlineActionEnum",
+      "default": "stranding",
+      "description": "This controls particle behavior at the coastline. Use `previous` for a particle to move back to its previous location if it hits land. Use `stranding` to have a particle stick (that is, become deactivated) where it interacts with land. With None, objects may also move over land.",
+      "od_mapping": "general:coastline_action",
+      "ptm_level": 2,
+      "title": "Coastline Action"
+    },
+    "current_uncertainty": {
+      "default": 0,
+      "description": "Add gaussian perturbation with this standard deviation to current components at each time step",
+      "maximum": 5,
+      "minimum": 0,
+      "od_mapping": "drift:current_uncertainty",
+      "ptm_level": 2,
+      "title": "Current Uncertainty",
+      "type": "number",
+      "units": "m/s"
+    },
+    "wind_uncertainty": {
+      "default": 0,
+      "description": "Add gaussian perturbation with this standard deviation to wind components at each time step.",
+      "maximum": 5,
+      "minimum": 0,
+      "od_mapping": "drift:wind_uncertainty",
+      "ptm_level": 2,
+      "title": "Wind Uncertainty",
+      "type": "number",
+      "units": "m/s"
+    },
+    "seed_seafloor": {
+      "default": false,
+      "description": "Elements are seeded at seafloor, and seeding depth (z) is neglected and must be None.",
+      "od_mapping": "seed:seafloor",
+      "ptm_level": 2,
+      "title": "Seed Seafloor",
+      "type": "boolean"
+    },
+    "diffusivitymodel": {
+      "$ref": "#/$defs/DiffusivityModelEnum",
+      "default": "windspeed_Large1994",
+      "description": "Algorithm/source used for profile of vertical diffusivity. Environment means that diffusivity is acquired from readers or environment constants/fallback. Parameterizations based on wind speed are also available.",
+      "od_mapping": "vertical_mixing:diffusivitymodel",
+      "ptm_level": 3,
+      "title": "Diffusivity model",
+      "units": "seconds"
+    },
+    "mixed_layer_depth": {
+      "default": 10,
+      "description": "mixed_layer_depth controls how deep the vertical diffusivity profile reaches. This sets the fallback value for ocean_mixed_layer_thickness if not available from any reader.",
+      "minimum": 0.0,
+      "od_mapping": "environment:mixed_layer_depth",
+      "ptm_level": 3,
+      "title": "Mixed Layer Depth",
+      "type": "number",
+      "units": "m"
+    },
+    "seafloor_action": {
+      "$ref": "#/$defs/SeafloorActionEnum",
+      "default": "lift_to_seafloor",
+      "description": "This controls particle behavior at the seafloor. Use `deactivate` to stick particles to the seafloor at the point of interaction. Use `lift_to_seafloor` to elevate particles up to seabed if below. User `previous` to move elements back to previous position. Use None to ignore seafloor.",
+      "od_mapping": "general:seafloor_action",
+      "ptm_level": 2,
+      "title": "Seafloor Action"
+    },
+    "wind_drift_depth": {
+      "anyOf": [
+        {
+          "maximum": 10,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": 0.1,
+      "description": "The direct wind drift (windage) is linearly decreasing from the surface value (wind_drift_factor) until 0 at this depth.",
+      "od_mapping": "drift:wind_drift_depth",
+      "ptm_level": 3,
+      "title": "Wind Drift Depth",
+      "units": "meters"
+    },
+    "vertical_mixing_timestep": {
+      "default": 60,
+      "description": "Time step used for inner (fast) loop of the vertical mixing model. Set this smaller to increase frequency of vertical mixing calculation; number of loops is calculated as int(self.time_step/vertical_mixing_timestep) so vertical_mixing_timestep must be smaller than time_step.",
+      "maximum": 3600,
+      "minimum": 0.1,
+      "od_mapping": "vertical_mixing:timestep",
+      "ptm_level": 3,
+      "title": "Vertical Mixing Timestep",
+      "type": "number",
+      "units": "seconds"
+    },
+    "wind_drift_factor": {
+      "default": 0.02,
+      "description": "Elements at surface are moved with this fraction of the wind vector, in addition to currents and Stokes drift.",
+      "minimum": 0,
+      "od_mapping": "seed:wind_drift_factor",
+      "ptm_level": 2,
+      "title": "Wind Drift Factor",
+      "type": "number",
+      "units": "1"
+    },
+    "vertical_mixing": {
+      "default": false,
+      "description": "Activate vertical mixing scheme. Vertical mixing includes movement due to buoyancy and turbulent mixing.",
+      "od_mapping": "drift:vertical_mixing",
+      "ptm_level": 2,
+      "title": "Vertical Mixing",
+      "type": "boolean"
+    },
+    "temperature_death_min": {
+      "description": "Minimum temperature for living. Below this temperature, cells have high mortality rate. Between this and temperature_viable_min, cells have no growth.",
+      "maximum": 40.0,
+      "minimum": -5.0,
+      "od_mapping": "hab:temperature_death_min",
+      "ptm_level": 2,
+      "title": "Cell death below this temperature",
+      "type": "number",
+      "units": "degrees"
+    },
+    "temperature_death_max": {
+      "description": "Maximum temperature for living. Above this temperature, cells have high mortality rate. Between temperature_viable_max and this parameter, cells have no growth.",
+      "maximum": 40.0,
+      "minimum": -5.0,
+      "od_mapping": "hab:temperature_death_max",
+      "ptm_level": 2,
+      "title": "Cell death above this temperature",
+      "type": "number",
+      "units": "degrees"
+    },
+    "mortality_rate_high": {
+      "description": "Rate of mortality applied below temperature_death_min and above temperature_death_max.",
+      "maximum": 10.0,
+      "minimum": 0.0,
+      "od_mapping": "hab:mortality_rate_high",
+      "ptm_level": 2,
+      "title": "High mortality rate",
+      "type": "number",
+      "units": "days^-1"
+    },
+    "salinity_death_min": {
+      "description": "Minimum salinity for living. Below this salinity, cells have high mortality rate. Between this and salinity_viable_min, cells have no growth.",
+      "maximum": 50.0,
+      "minimum": 0.0,
+      "od_mapping": "hab:salinity_death_min",
+      "ptm_level": 2,
+      "title": "Cell death below this salinity",
+      "type": "number",
+      "units": "psu"
+    },
+    "salinity_death_max": {
+      "description": "Maximum salinity for living. Above this salinity, cells have high mortality rate. Between salinity_viable_max and this parameter, cells have no growth.",
+      "maximum": 50.0,
+      "minimum": 0.0,
+      "od_mapping": "hab:salinity_death_max",
+      "ptm_level": 2,
+      "title": "Cell death above this salinity",
+      "type": "number",
+      "units": "psu"
+    },
+    "species_type": {
+      "$ref": "#/$defs/HABSpeciesTypeEnum",
+      "default": "Pseudo_nitzschia",
+      "description": "HarmfulAlgalBloom species category for this simulation. This option maps to individual properties which can instead be set manually if desired.",
+      "ptm_level": 1,
+      "title": "HAB Species Type"
+    }
+  },
+  "required": [
+    "temperature_death_min",
+    "temperature_death_max",
+    "mortality_rate_high",
+    "salinity_death_min",
+    "salinity_death_max"
+  ],
+  "title": "HarmfulAlgalBloomModelConfig",
+  "type": "object"
+}
