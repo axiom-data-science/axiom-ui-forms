@@ -1,3 +1,4 @@
+import HABForm from '@/PTT/HAB/HABForm'
 import LarvalForm from '@/PTT/Larval/LarvalForm'
 import LeewayForm from '@/PTT/Leeway/LeewayForm'
 import OceanDriftForm from '@/PTT/OceanDrift/OceanDriftForm'
@@ -27,6 +28,11 @@ const tabs = [
     id: 'leeway-model',
     label: 'Leeway Model',
     content: <LeewayForm />
+  },
+    {
+    id: 'hab-model',
+    label: 'HAB Model',
+    content: <HABForm />
   }
 ]
 const tabMap = Object.fromEntries(tabs.map(tab => [tab.id, tab]))
