@@ -271,23 +271,25 @@ const schemaToFormField = ({
     }
   }
 
-  if (type === ***REMOVED***select***REMOVED*** || type === ***REMOVED***checkbox***REMOVED***) {
+  if (type === ***REMOVED***select***REMOVED*** || type === ***REMOVED***checkbox***REMOVED*** || type === ***REMOVED***radio***REMOVED***) {
     const schemaOptions = schemaField.oneOf ?? schemaField.anyOf ?? schemaField.enum ?? []
-    const options = schemaOptions.map(e => {
+    const options: ISelectOptionProps[] = schemaOptions.map(e => {
       const value = getValueFromSchema(e)
       const label = getLabelFromSchema(e)
-      const description = typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) ? e.description : undefined
+      const description: string | undefined = typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) ? String(e.description) : undefined
       return value !== undefined
         ? {
             value: String(value),
             label: label ?? String(value),
-            description
+            ...(
+              description !== undefined ? { description } : {}
+            )
           }
         : null
-    }).filter(d => d !== null)
+    }).filter((d) => d !== null)
     return {
       ...ob,
-      type,
+      type: options.find(d => d.description !== undefined) ? ***REMOVED***radio***REMOVED*** : type,
       options
     }
   }
