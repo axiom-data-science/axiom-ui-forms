@@ -1,4 +1,5 @@
 import type { GeoJSON } from ***REMOVED***geojson***REMOVED***
+import { type ReactNode } from ***REMOVED***react***REMOVED***
 
 interface IValueTypes {
   text: string
@@ -127,6 +128,7 @@ interface ICustomField extends IFormFieldRoot {
 interface ISelectOption {
   label: string
   value: string | number
+  [key: string]: string | number | boolean | Record<string, unknown> | ReactNode
 }
 
 interface ISelectableInput extends IFormFieldRoot {

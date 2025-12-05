@@ -276,10 +276,12 @@ const schemaToFormField = ({
     const options = schemaOptions.map(e => {
       const value = getValueFromSchema(e)
       const label = getLabelFromSchema(e)
+      const description = typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) ? e.description : undefined
       return value !== undefined
         ? {
             value: String(value),
-            label: label ?? String(value)
+            label: label ?? String(value),
+            description
           }
         : null
     }).filter(d => d !== null)

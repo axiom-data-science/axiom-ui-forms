@@ -112,6 +112,65 @@ const habFormOverrid: IFormOverride = {
           id: ***REMOVED***basic***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
+            {
+              prop: ***REMOVED***species_type***REMOVED***,
+              type: ***REMOVED***radio***REMOVED***,
+              defaultValue: ***REMOVED***custom***REMOVED***
+            },
+            {
+              prop: ***REMOVED***custom_species_type_settings***REMOVED***,
+              label: ***REMOVED***Species type options***REMOVED***,
+              skip_path: true,
+              type: ***REMOVED***object***REMOVED***,
+              conditions: {
+                dependsOn: ***REMOVED***species_type***REMOVED***,
+                operator: ***REMOVED***=***REMOVED***,
+                value: ***REMOVED***custom***REMOVED***
+              },
+              fields: [
+                {
+                  prop: ***REMOVED***temperature_death_min***REMOVED***,
+                  conditions: {
+                    dependsOn: ***REMOVED***species_type***REMOVED***,
+                    operator: ***REMOVED***=***REMOVED***,
+                    value: ***REMOVED***custom***REMOVED***
+                  }
+                },
+                {
+                  prop: ***REMOVED***temperature_death_max***REMOVED***,
+                  conditions: {
+                    dependsOn: ***REMOVED***species_type***REMOVED***,
+                    operator: ***REMOVED***=***REMOVED***,
+                    value: ***REMOVED***custom***REMOVED***
+                  }
+                },
+                {
+                  prop: ***REMOVED***mortality_rate_high***REMOVED***,
+                  conditions: {
+                    dependsOn: ***REMOVED***species_type***REMOVED***,
+                    operator: ***REMOVED***=***REMOVED***,
+                    value: ***REMOVED***custom***REMOVED***
+                  }
+                },
+                {
+                  prop: ***REMOVED***salinity_death_min***REMOVED***,
+                  conditions: {
+                    dependsOn: ***REMOVED***species_type***REMOVED***,
+                    operator: ***REMOVED***=***REMOVED***,
+                    value: ***REMOVED***custom***REMOVED***
+                  }
+                },
+                {
+                  prop: ***REMOVED***salinity_death_max***REMOVED***,
+                  conditions: {
+                    dependsOn: ***REMOVED***species_type***REMOVED***,
+                    operator: ***REMOVED***=***REMOVED***,
+                    value: ***REMOVED***custom***REMOVED***
+                  }
+                }
+              ]
+
+            }
 
           ]
         },
