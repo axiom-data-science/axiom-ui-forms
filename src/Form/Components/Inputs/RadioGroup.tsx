@@ -16,7 +16,24 @@ const RadioInput = ({ field, onChange, value, disabled }: IFieldInputProps): Rea
           onChange={onChange}
         />}
         testId={field.id}
-        options={field.options}
+        options={field.options.map(o => {
+            return {
+               ...o,
+              label: <FieldLabel 
+                key={String(o.value)} 
+                textClassName='font-normal'
+                field={{
+                    id: String(o.value),
+                    label: o.label,
+                    type: 'custom:option',
+                    description: o['description'] !== undefined ? String(o['description']) : undefined,
+                    settings: {
+                      descriptionPresentation: 'tooltip'
+                    }
+                }}  
+              />
+            }
+        })}
         value={initialValue !== undefined && initialValue !== null ? String(initialValue) : ''}
         onChange={(e) => {
           onChange(e?.value)

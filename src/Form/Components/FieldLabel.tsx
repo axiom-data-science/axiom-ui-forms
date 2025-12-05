@@ -116,9 +116,9 @@ export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, d
   )
 }
 
-const FieldLabel = ({ field, disabled, value, onChange, className }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn, className?: string }): ReactElement => {
+const FieldLabel = ({ field, disabled, value, onChange, className, textClassName }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn, className?: string, textClassName?: string }): ReactElement => {
   return <>{
-      field.label !== undefined && field.label !== null && <p className='pb-2'><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} />{
+      field.label !== undefined && field.label !== null && <p className='pb-2'><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} className={textClassName} />{
         field.settings?.descriptionPresentation === 'tooltip'
           ? <> <FieldDescriptionTooltip field={field} disabled={disabled} /></>
           : <></>

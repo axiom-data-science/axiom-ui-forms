@@ -112,6 +112,65 @@ const habFormOverrid: IFormOverride = {
           id: 'basic',
           label: 'Basic options',
           fields: [
+            {
+              prop: 'species_type',
+              type: 'radio',
+              defaultValue: 'custom'
+            },
+            {
+              prop: 'custom_species_type_settings',
+              label: 'Species type options',
+              skip_path: true,
+              type: 'object',
+              conditions: {
+                dependsOn: 'species_type',
+                operator: '=',
+                value: 'custom'
+              },
+              fields: [
+                {
+                  prop: 'temperature_death_min',
+                  conditions: {
+                    dependsOn: 'species_type',
+                    operator: '=',
+                    value: 'custom'
+                  }
+                },
+                {
+                  prop: 'temperature_death_max',
+                  conditions: {
+                    dependsOn: 'species_type',
+                    operator: '=',
+                    value: 'custom'
+                  }
+                },
+                {
+                  prop: 'mortality_rate_high',
+                  conditions: {
+                    dependsOn: 'species_type',
+                    operator: '=',
+                    value: 'custom'
+                  }
+                },
+                {
+                  prop: 'salinity_death_min',
+                  conditions: {
+                    dependsOn: 'species_type',
+                    operator: '=',
+                    value: 'custom'
+                  }
+                },
+                {
+                  prop: 'salinity_death_max',
+                  conditions: {
+                    dependsOn: 'species_type',
+                    operator: '=',
+                    value: 'custom'
+                  }
+                }
+              ]
+
+            }
 
           ]
         },
