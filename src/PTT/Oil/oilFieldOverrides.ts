@@ -32,7 +32,8 @@ const oilFormOverride: IFormFieldOverride[] = [
   },
   {
     prop: 'oil_type',
-    defaultValue: 'EC02713'
+    defaultValue: 'EC02713',
+    type: 'select'
   },
   // {
   //   prop: 'subsea_or_not',

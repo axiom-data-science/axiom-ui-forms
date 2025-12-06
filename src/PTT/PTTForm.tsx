@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, type ReactElement } from 'react'
 import { type JSONSchema6 } from 'json-schema'
 import { type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'

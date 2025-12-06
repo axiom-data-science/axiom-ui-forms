@@ -1,3 +1,4 @@
+"use client";
 import { TextArea } from '@axdspub/axiom-ui-utilities'
 import { set, isArray, isObject, get } from 'lodash-es'
 import React, { type ReactElement, useState } from 'react'

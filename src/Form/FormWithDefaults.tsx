@@ -1,3 +1,4 @@
+"use client";
 import FormCreator from '@/Form/Creator/FormCreator'
 import { type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { assignDefaultValuesToFormValues } from '@/utils/manipulators'

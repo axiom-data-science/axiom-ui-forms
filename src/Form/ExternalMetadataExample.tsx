@@ -1,3 +1,4 @@
+"use client";
 import { FormCreator } from '@/Form'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type IFieldInputProps, type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'

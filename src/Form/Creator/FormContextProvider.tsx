@@ -1,3 +1,4 @@
+"use client";
 import { type IFieldInputProps, type IForm, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { type JSONSchema6 } from 'json-schema'
 import React, { createContext, type ReactElement, type PropsWithChildren, useContext } from 'react'

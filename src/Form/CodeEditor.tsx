@@ -1,3 +1,4 @@
+"use client";
 import React, { type ReactElement, useState } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
