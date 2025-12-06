@@ -120,10 +120,6 @@ export interface IJSONField extends IFormFieldRoot {
   }
 }
 
-interface ICustomField extends IFormFieldRoot {
-  type: `custom:${string}`
-}
-
 interface ISelectOption {
   label: string
   value: string | number
@@ -141,6 +137,10 @@ interface ISelectableInput extends IFormFieldRoot {
     value_key: string
     label_key: string
   }
+}
+
+interface ICustomField extends IFormFieldRoot, ISelectableInput {
+  type: `custom:${string}`
 }
 
 interface ISingleSelectableInput extends ISelectableInput {

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***

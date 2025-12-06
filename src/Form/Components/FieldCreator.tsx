@@ -1,3 +1,4 @@
+"use client";
 import config from ***REMOVED***@/config/environment***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***

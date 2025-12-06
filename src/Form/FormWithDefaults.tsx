@@ -1,3 +1,4 @@
+"use client";
 import FormCreator from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { assignDefaultValuesToFormValues } from ***REMOVED***@/utils/manipulators***REMOVED***

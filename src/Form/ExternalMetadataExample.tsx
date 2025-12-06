@@ -1,3 +1,4 @@
+"use client";
 import { FormCreator } from ***REMOVED***@/Form***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps, type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***

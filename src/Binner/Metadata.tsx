@@ -1,3 +1,4 @@
+"use client";
 // edit metadata associated with a binninator dataset
 
 import { type IFormField, type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***

@@ -32,7 +32,8 @@ const oilFormOverride: IFormFieldOverride[] = [
   },
   {
     prop: ***REMOVED***oil_type***REMOVED***,
-    defaultValue: ***REMOVED***EC02713***REMOVED***
+    defaultValue: ***REMOVED***EC02713***REMOVED***,
+    type: ***REMOVED***select***REMOVED***
   },
   // {
   //   prop: ***REMOVED***subsea_or_not***REMOVED***,

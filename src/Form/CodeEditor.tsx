@@ -1,3 +1,4 @@
+"use client";
 import React, { type ReactElement, useState } from ***REMOVED***react***REMOVED***
 import CodeMirror from ***REMOVED***@uiw/react-codemirror***REMOVED***
 import { json } from ***REMOVED***@codemirror/lang-json***REMOVED***

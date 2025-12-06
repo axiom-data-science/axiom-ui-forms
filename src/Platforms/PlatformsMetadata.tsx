@@ -1,3 +1,4 @@
+"use client";
 import FormWithEditorOverlay from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
