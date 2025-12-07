@@ -152,6 +152,9 @@ export const MultipleFieldCreator = ({
       formValues
     })
     setFormValues(formValuesCopyClean)
+    if (typeof onChange === ***REMOVED***function***REMOVED***) {
+      onChange(v)
+    }
   }
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
@@ -180,7 +183,7 @@ export const MultipleFieldCreator = ({
           field={createOneOfMultipleField(field, index)}
           value={va}
           index={index}
-          onChange={onChange ?? defaultOnChange}
+          onChange={defaultOnChange}
           values={initialValues}
           disabled={disabled}
           /></div>
@@ -212,8 +215,11 @@ const FieldCreator = ({
       formValues
     })
     setFormValues(formValuesCopyClean)
+    if(typeof onChange === ***REMOVED***function***REMOVED***) {
+      onChange(v)
+    }
   }
-  const onChangeFn = onChange ?? defaultOnChange
+  const onChangeFn = defaultOnChange
 
   /* useEffect(() => {
     const fieldValue = getFieldValue(field, formValues)
