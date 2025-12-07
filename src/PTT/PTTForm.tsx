@@ -1,10 +1,11 @@
 "use client";
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import { type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormOverride, type IFormFieldOverride, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import rootFieldAtom from ***REMOVED***@/PTT/rootFieldAtom***REMOVED***
 import FormWithEditorOverlay from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
+import { formValueStateAtom } from ***REMOVED***@/state/formContextAtom***REMOVED***;
 
 const PTTForm = ({
   label,
@@ -24,6 +25,7 @@ const PTTForm = ({
   const formOverrideState = useState<IFormOverride | undefined>(formOverride)
 
   return (
+    <>
     <FormWithEditorOverlay
       label={label}
       schemaState={schemaState}
@@ -31,6 +33,7 @@ const PTTForm = ({
       formOverrideState={formOverrideState}
       rootFieldOverrideState={rootFieldOverrideState}
       />
+    </>
 
   )
 }

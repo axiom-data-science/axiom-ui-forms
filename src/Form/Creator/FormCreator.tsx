@@ -1,6 +1,6 @@
 ***REMOVED***use client***REMOVED***
 
-import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { FormContext, IFormContextValue, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
@@ -23,8 +23,14 @@ export interface IFormCreatorProps {
   defaultClassName?: string
   urlNavigable?: boolean
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-  header?: ReactNode
-  footer?: ReactNode
+  Header?: React.FC<{formValues: IFormValues}> | ReactNode
+  Footer?: React.FC<{formValues: IFormValues}> | ReactNode
+}
+
+
+const FormComponentWrap = ({Component}: {Component: React.FC<IFormContextValue>}): ReactElement => {
+  const formContext = useFormContext()
+  return <Component {...formContext} />
 }
 
 const FormStatus = (): ReactElement => {
@@ -38,6 +44,7 @@ const FormStatus = (): ReactElement => {
     </div>
   )
 }
+
 
 export const SchemaFormCreator = ({
   label,
@@ -98,8 +105,8 @@ const FormCreator = ({
   urlNavigable = true,
   inputOverrides,
   schema,
-  footer,
-  header
+  Footer,
+  Header
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
   const activeFormValues = cloneObject(formValueState?.[0] ?? {})
@@ -124,7 +131,7 @@ const FormCreator = ({
       schema,
       urlNavigable: activeForm.settings.url_navigable
     }}>
-      {header ?? ***REMOVED******REMOVED***}
+      {typeof Header === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Header} /> : Header ?? ***REMOVED******REMOVED***}
       <div className={utils.makeClassName({
         className: activeForm?.settings?.class_name,
         defaultClassName,
@@ -141,7 +148,7 @@ const FormCreator = ({
             onChange={onChange}
             />
       </div>
-      {footer ?? ***REMOVED******REMOVED***}
+      {typeof Footer === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Footer} /> : Footer ?? ***REMOVED******REMOVED***}
     </FormContext.Provider>
   )
 }

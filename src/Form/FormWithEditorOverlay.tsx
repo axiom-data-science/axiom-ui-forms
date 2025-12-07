@@ -2,9 +2,9 @@ import React, { type ReactNode, useContext, useState, type ReactElement } from *
 import FormCreator, { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
-import { FormContext, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { FormContext, IFormContextValue, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm, type IFormValueState } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm, type IFormValueState, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { Tabs, Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { JSONInput } from ***REMOVED***@/Form/Components/Inputs***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
@@ -12,17 +12,15 @@ import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { ObjectToSchemaButton } from ***REMOVED***@/Form/Creator/ObjectToSchema***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
 
-const Footer = (): ReactElement => {
-  const { formValues } = useContext(FormContext)
+const Footer = ({ formValues }: { formValues?: IFormValues }): ReactElement => {
   return (
-        <div className=***REMOVED***py-20***REMOVED***>
-        <CopyButton
-            string={JSON.stringify(formValues, null, 2)}
-            OnCopiedElement={<><CheckIcon className=***REMOVED*** inline***REMOVED*** /> Copied to clipboard</>}
-            ToCopyElement={<><CopyIcon className=***REMOVED*** inline***REMOVED*** /> Copy form output</>}
-        />
-        </div>
-
+    <div className=***REMOVED***py-20***REMOVED***>
+      <CopyButton
+        string={JSON.stringify(formValues ?? {}, null, 2)}
+        OnCopiedElement={<><CheckIcon className=***REMOVED*** inline***REMOVED*** /> Copied to clipboard</>}
+        ToCopyElement={<><CopyIcon className=***REMOVED*** inline***REMOVED*** /> Copy form output</>}
+      />
+    </div>
   )
 }
 
@@ -129,40 +127,38 @@ export const FormWithEditorOverlay = ({
               ? <FormCreator
               form={formInput}
               formValueState={[formValues, setFormValues]}
-              footer={
-                  <Footer />
-              }
-              header={
-                <FormEditor>
-                  <Tabs
-                className=***REMOVED***flex flex-col h-full p-8 flex-grow***REMOVED***
-                defaultContentClassName=***REMOVED***h-full overflow-auto p-4***REMOVED***
-                tabs={[
-                  {
-                    id: ***REMOVED***form-override***REMOVED***,
-                    label: ***REMOVED***Form Override***REMOVED***,
-                    content: <JSONInput
-                    value={formInput !== undefined ? JSON.stringify(formInput, null, 2) : ***REMOVED******REMOVED***}
-                    onChange={(e) => {
-                      setFormInput(e !== undefined ? e as unknown as IForm : undefined)
-                    } }
-                    field={{
-                      id: ***REMOVED***formInput***REMOVED***,
-                      label: ***REMOVED******REMOVED***,
-                      type: ***REMOVED***json***REMOVED***
-                    }}
-                    />
-                  },
-                  {
-                    id: ***REMOVED***form-output***REMOVED***,
-                    label: ***REMOVED***Form output***REMOVED***,
-                    content: <FormOutput />
-                  }
+              Footer={Footer}
+              Header={
+                  <FormEditor>
+                    <Tabs
+                  className=***REMOVED***flex flex-col h-full p-8 flex-grow***REMOVED***
+                  defaultContentClassName=***REMOVED***h-full overflow-auto p-4***REMOVED***
+                  tabs={[
+                    {
+                      id: ***REMOVED***form-override***REMOVED***,
+                      label: ***REMOVED***Form Override***REMOVED***,
+                      content: <JSONInput
+                      value={formInput !== undefined ? JSON.stringify(formInput, null, 2) : ***REMOVED******REMOVED***}
+                      onChange={(e) => {
+                        setFormInput(e !== undefined ? e as unknown as IForm : undefined)
+                      } }
+                      field={{
+                        id: ***REMOVED***formInput***REMOVED***,
+                        label: ***REMOVED******REMOVED***,
+                        type: ***REMOVED***json***REMOVED***
+                      }}
+                      />
+                    },
+                    {
+                      id: ***REMOVED***form-output***REMOVED***,
+                      label: ***REMOVED***Form output***REMOVED***,
+                      content: <FormOutput />
+                    }
 
-                ].filter(t => t !== undefined)}
-                />
-                </FormEditor>
-              }
+                  ].filter(t => t !== undefined)}
+                  />
+                  </FormEditor>
+                }
           />
               : ***REMOVED***No form config provided***REMOVED***
             }
@@ -205,10 +201,8 @@ const SchemaFormWithEditorOverlay = ({
               schema={schemaInput}
               formOverrides={formOverrideInput !== undefined ? [formOverrideInput] : undefined}
               formFieldOverrides={[rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)}
-              footer={
-                  <Footer />
-              }
-              header={<FormEditor>
+              Footer={Footer}
+              Header={<FormEditor>
                 <>
                 <ObjectToSchemaButton
                   size=***REMOVED***xs***REMOVED***
