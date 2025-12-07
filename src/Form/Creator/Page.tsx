@@ -1,11 +1,11 @@
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormSection, type IValueChangeFn, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/utils/validators'
 import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from '@radix-ui/react-icons'
-import React, { useEffect, useState, type ReactElement } from 'react'
+import React, { ReactNode, useEffect, useState, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
 import InlineMarkdown from '@/Form/Components/InlineMarkdown'
@@ -125,6 +125,7 @@ export interface INavProps {
   sections: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }
 
 export interface IPageLayoutProps {
@@ -140,6 +141,7 @@ export interface IPageLayoutProps {
   NavComponent?: React.FC<INavProps>
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }
 
 export const ActivePage = ({

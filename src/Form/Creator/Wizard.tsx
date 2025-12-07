@@ -1,10 +1,10 @@
 import { calculateSectionStatus } from '@/utils/validators'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
+import { IFormValues, type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
 import { type IPageLayoutProps, ActivePage, type INavProps } from '@/Form/Creator/Page'
 import { SelectInput, utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
-import React, { type ReactElement } from 'react'
+import React, { ReactNode, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
@@ -21,7 +21,8 @@ const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
 export const WizardNavMobile = ({
   sections,
   sectionStatus,
-  level
+  level,
+  SubmitButton
 }: INavProps): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
@@ -34,6 +35,7 @@ export const WizardNavMobile = ({
   // const params = (useParams()['*'] ?? '').split('/')
   // const path = params.slice(0, level).join('/')
   return (
+    <>
       <div className='flex flex-row gap-4 justify-center items-center'>{
         prevIndex >= 0
           ? <NavElement
@@ -82,6 +84,8 @@ export const WizardNavMobile = ({
             })}><CaretRightIcon className='inline w-8 h-8' /></span>
         }
       </div>
+      {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
+    </>
   )
 }
 
@@ -95,7 +99,8 @@ export const WizardNav = (props: INavProps): ReactElement => {
 export const WizardNavLargeScreen = ({
   sections,
   sectionStatus,
-  level
+  level,
+  SubmitButton
 }: INavProps): ReactElement => {
   const { form } = useFormContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
@@ -133,6 +138,7 @@ export const WizardNavLargeScreen = ({
                   </div>
                   : ''
               }
+              {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
 
             </div>
           )
@@ -145,11 +151,13 @@ export const WizardNavLargeScreen = ({
 export const WizardNavSmall = ({
   sections,
   sectionStatus,
-  level
+  level,
+  SubmitButton
 }: {
   sections?: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
@@ -191,7 +199,9 @@ export const WizardNavSmall = ({
             : <span className={utils.createButtonClass({
               className: 'px-4 bg-white border-none text-sm text-slate-400'
             })}>Next</span>
+           
         }
+         {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
       </div>
   )
 }
@@ -202,6 +212,7 @@ export interface IWizardLayoutProps extends IPageLayoutProps {
     sections?: IFormSection[]
     sectionStatus: IFormSectionStatus
     className?: string
+    SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
   }>
 }
 
@@ -230,7 +241,8 @@ const WizardLayoutContent = ({
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
   className = 'flex flex-col gap-4 pt-8 flex-grow h-full',
-  level
+  level,
+  SubmitButton
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -247,6 +259,7 @@ const WizardLayoutContent = ({
             sections={sections}
             sectionStatus={sectionStatus}
             level={level}
+            SubmitButton={SubmitButton}
           />
         <ContentComponent
             formSection={formSection}
@@ -258,6 +271,7 @@ const WizardLayoutContent = ({
           sections={sections}
           sectionStatus={sectionStatus}
           level={level}
+          SubmitButton={SubmitButton}
           />
       </div>
   )
