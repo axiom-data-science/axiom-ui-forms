@@ -1,19 +1,21 @@
-import { type IFieldInputProps, type IFormSection, type IValueChangeFn } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { IFormValues, type IFieldInputProps, type IFormSection, type IValueChangeFn } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormFields from ***REMOVED***@/Form/Creator/FormFields***REMOVED***
 import PageLayout from ***REMOVED***@/Form/Creator/Page***REMOVED***
 import WizardLayout from ***REMOVED***@/Form/Creator/Wizard***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const FormSection = ({
   formSection,
   onChange,
   level = 0,
-  inputOverrides
+  inputOverrides,
+  SubmitButton
 }: {
   formSection?: IFormSection
   onChange?: IValueChangeFn
   level?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 
 }): ReactElement => {
   if (formSection === undefined) {
@@ -45,7 +47,7 @@ const FormSection = ({
         <>
           {
             hasWizardSteps
-              ? <WizardLayout sections={wizardSteps} onChange={onChange} level={level} />
+              ? <WizardLayout sections={wizardSteps} onChange={onChange} level={level} SubmitButton={SubmitButton} />
 
               : hasPages
                 ? <PageLayout sections={pages} onChange={onChange} level={level} />

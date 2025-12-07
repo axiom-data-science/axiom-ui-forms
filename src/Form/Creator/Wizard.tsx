@@ -1,10 +1,10 @@
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormSection, type IWizardStep } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { IFormValues, type IFormSection, type IWizardStep } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IPageLayoutProps, ActivePage, type INavProps } from ***REMOVED***@/Form/Creator/Page***REMOVED***
 import { SelectInput, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CaretRightIcon, CaretLeftIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
@@ -21,7 +21,8 @@ const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
 export const WizardNavMobile = ({
   sections,
   sectionStatus,
-  level
+  level,
+  SubmitButton
 }: INavProps): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
@@ -34,6 +35,7 @@ export const WizardNavMobile = ({
   // const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
   // const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
   return (
+    <>
       <div className=***REMOVED***flex flex-row gap-4 justify-center items-center***REMOVED***>{
         prevIndex >= 0
           ? <NavElement
@@ -82,6 +84,8 @@ export const WizardNavMobile = ({
             })}><CaretRightIcon className=***REMOVED***inline w-8 h-8***REMOVED*** /></span>
         }
       </div>
+      {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
+    </>
   )
 }
 
@@ -95,7 +99,8 @@ export const WizardNav = (props: INavProps): ReactElement => {
 export const WizardNavLargeScreen = ({
   sections,
   sectionStatus,
-  level
+  level,
+  SubmitButton
 }: INavProps): ReactElement => {
   const { form } = useFormContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
@@ -133,6 +138,7 @@ export const WizardNavLargeScreen = ({
                   </div>
                   : ***REMOVED******REMOVED***
               }
+              {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
 
             </div>
           )
@@ -145,11 +151,13 @@ export const WizardNavLargeScreen = ({
 export const WizardNavSmall = ({
   sections,
   sectionStatus,
-  level
+  level,
+  SubmitButton
 }: {
   sections?: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
@@ -191,7 +199,9 @@ export const WizardNavSmall = ({
             : <span className={utils.createButtonClass({
               className: ***REMOVED***px-4 bg-white border-none text-sm text-slate-400***REMOVED***
             })}>Next</span>
+           
         }
+         {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
       </div>
   )
 }
@@ -202,6 +212,7 @@ export interface IWizardLayoutProps extends IPageLayoutProps {
     sections?: IFormSection[]
     sectionStatus: IFormSectionStatus
     className?: string
+    SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
   }>
 }
 
@@ -230,7 +241,8 @@ const WizardLayoutContent = ({
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
   className = ***REMOVED***flex flex-col gap-4 pt-8 flex-grow h-full***REMOVED***,
-  level
+  level,
+  SubmitButton
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -247,6 +259,7 @@ const WizardLayoutContent = ({
             sections={sections}
             sectionStatus={sectionStatus}
             level={level}
+            SubmitButton={SubmitButton}
           />
         <ContentComponent
             formSection={formSection}
@@ -258,6 +271,7 @@ const WizardLayoutContent = ({
           sections={sections}
           sectionStatus={sectionStatus}
           level={level}
+          SubmitButton={SubmitButton}
           />
       </div>
   )

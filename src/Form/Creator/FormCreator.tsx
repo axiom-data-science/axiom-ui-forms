@@ -25,6 +25,7 @@ export interface IFormCreatorProps {
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   Header?: React.FC<{formValues: IFormValues}> | ReactNode
   Footer?: React.FC<{formValues: IFormValues}> | ReactNode
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }
 
 
@@ -106,7 +107,8 @@ const FormCreator = ({
   inputOverrides,
   schema,
   Footer,
-  Header
+  Header,
+  SubmitButton
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
   const activeFormValues = cloneObject(formValueState?.[0] ?? {})
@@ -146,6 +148,7 @@ const FormCreator = ({
           <FormSection
             formSection={activeForm}
             onChange={onChange}
+            SubmitButton={SubmitButton}
             />
       </div>
       {typeof Footer === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Footer} /> : Footer ?? ***REMOVED******REMOVED***}

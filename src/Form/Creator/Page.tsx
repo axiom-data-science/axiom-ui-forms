@@ -1,11 +1,11 @@
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormSection, type IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { ReactNode, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
@@ -125,6 +125,7 @@ export interface INavProps {
   sections: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }
 
 export interface IPageLayoutProps {
@@ -140,6 +141,7 @@ export interface IPageLayoutProps {
   NavComponent?: React.FC<INavProps>
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
 }
 
 export const ActivePage = ({
