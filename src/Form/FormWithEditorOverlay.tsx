@@ -2,9 +2,9 @@ import React, { type ReactNode, useContext, useState, type ReactElement } from '
 import FormCreator, { SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
-import { FormContext, useFormContext } from '@/Form/Creator/FormContextProvider'
+import { FormContext, IFormContextValue, useFormContext } from '@/Form/Creator/FormContextProvider'
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from '@radix-ui/react-icons'
-import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm, type IFormValueState } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm, type IFormValueState, IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { JSONInput } from '@/Form/Components/Inputs'
 import { useAtom } from 'jotai'
@@ -12,17 +12,15 @@ import layoutAtom from '@/utils/responsive/layoutState'
 import { ObjectToSchemaButton } from '@/Form/Creator/ObjectToSchema'
 import formValuesAtom from '@/state/formValuesAtom'
 
-const Footer = (): ReactElement => {
-  const { formValues } = useContext(FormContext)
+const Footer = ({ formValues }: { formValues?: IFormValues }): ReactElement => {
   return (
-        <div className='py-20'>
-        <CopyButton
-            string={JSON.stringify(formValues, null, 2)}
-            OnCopiedElement={<><CheckIcon className=' inline' /> Copied to clipboard</>}
-            ToCopyElement={<><CopyIcon className=' inline' /> Copy form output</>}
-        />
-        </div>
-
+    <div className='py-20'>
+      <CopyButton
+        string={JSON.stringify(formValues ?? {}, null, 2)}
+        OnCopiedElement={<><CheckIcon className=' inline' /> Copied to clipboard</>}
+        ToCopyElement={<><CopyIcon className=' inline' /> Copy form output</>}
+      />
+    </div>
   )
 }
 
@@ -129,40 +127,38 @@ export const FormWithEditorOverlay = ({
               ? <FormCreator
               form={formInput}
               formValueState={[formValues, setFormValues]}
-              footer={
-                  <Footer />
-              }
-              header={
-                <FormEditor>
-                  <Tabs
-                className='flex flex-col h-full p-8 flex-grow'
-                defaultContentClassName='h-full overflow-auto p-4'
-                tabs={[
-                  {
-                    id: 'form-override',
-                    label: 'Form Override',
-                    content: <JSONInput
-                    value={formInput !== undefined ? JSON.stringify(formInput, null, 2) : ''}
-                    onChange={(e) => {
-                      setFormInput(e !== undefined ? e as unknown as IForm : undefined)
-                    } }
-                    field={{
-                      id: 'formInput',
-                      label: '',
-                      type: 'json'
-                    }}
-                    />
-                  },
-                  {
-                    id: 'form-output',
-                    label: 'Form output',
-                    content: <FormOutput />
-                  }
+              Footer={Footer}
+              Header={
+                  <FormEditor>
+                    <Tabs
+                  className='flex flex-col h-full p-8 flex-grow'
+                  defaultContentClassName='h-full overflow-auto p-4'
+                  tabs={[
+                    {
+                      id: 'form-override',
+                      label: 'Form Override',
+                      content: <JSONInput
+                      value={formInput !== undefined ? JSON.stringify(formInput, null, 2) : ''}
+                      onChange={(e) => {
+                        setFormInput(e !== undefined ? e as unknown as IForm : undefined)
+                      } }
+                      field={{
+                        id: 'formInput',
+                        label: '',
+                        type: 'json'
+                      }}
+                      />
+                    },
+                    {
+                      id: 'form-output',
+                      label: 'Form output',
+                      content: <FormOutput />
+                    }
 
-                ].filter(t => t !== undefined)}
-                />
-                </FormEditor>
-              }
+                  ].filter(t => t !== undefined)}
+                  />
+                  </FormEditor>
+                }
           />
               : 'No form config provided'
             }
@@ -205,10 +201,8 @@ const SchemaFormWithEditorOverlay = ({
               schema={schemaInput}
               formOverrides={formOverrideInput !== undefined ? [formOverrideInput] : undefined}
               formFieldOverrides={[rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)}
-              footer={
-                  <Footer />
-              }
-              header={<FormEditor>
+              Footer={Footer}
+              Header={<FormEditor>
                 <>
                 <ObjectToSchemaButton
                   size='xs'

@@ -67,7 +67,7 @@ const inputOverrides = {
                 formValueState={formValueState}
                 formFieldOverrides={formValues['field-overrides'] !== undefined ? JSON.parse(`[${String(formValues['field-overrides'])}]`) as unknown as IFormFieldOverride[][] : undefined}
                 formOverrides={formValues['form-overrides'] as unknown as IFormOverride[]}
-                footer={<FormFooter />}
+                Footer={<FormFooter />}
 
                 />
               </div>

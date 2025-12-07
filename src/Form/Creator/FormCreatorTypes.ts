@@ -1,3 +1,4 @@
+import { type IFormContextValue } from '@/Form/Creator/FormContextProvider'
 import type { GeoJSON } from 'geojson'
 
 interface IValueTypes {
@@ -344,4 +345,5 @@ export interface IFieldInputProps {
   value?: IValueType
   className?: string
   disabled?: boolean
+  context?: IFormContextValue
 }
