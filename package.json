@@ -15,7 +15,7 @@
     "react-router-dom": "^7.0.0"
   },
   "dependencies": {
-    "@axdspub/axiom-maps": "^1.0.8.alpha.0.0.0",
+    "@axdspub/axiom-maps": "^1.0.8",
     "@axdspub/axiom-ui-data-services": "^1.0.2",
     "@axdspub/axiom-ui-utilities": "^1.0.5",
     "@codemirror/lang-json": "^6.0.1",
