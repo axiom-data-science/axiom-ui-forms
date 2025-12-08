@@ -138,7 +138,6 @@ export const WizardNavLargeScreen = ({
                   </div>
                   : ***REMOVED******REMOVED***
               }
-              {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
 
             </div>
           )
@@ -170,7 +169,7 @@ export const WizardNavSmall = ({
   // const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
   // const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
   return (
-      <div className=***REMOVED***flex flex-row gap-4 justify-end***REMOVED***>{
+      <div className=***REMOVED***flex flex-row gap-4 justify-end  p-4 sticky bottom-0 bg-white/80 z-10***REMOVED***>{
         prevIndex >= 0
           ? <NavElement
               className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700***REMOVED***

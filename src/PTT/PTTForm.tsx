@@ -5,7 +5,7 @@ import { type IFormOverride, type IFormFieldOverride, IFormValues } from ***REMO
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import rootFieldAtom from ***REMOVED***@/PTT/rootFieldAtom***REMOVED***
 import FormWithEditorOverlay from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
-import { formValueStateAtom } from ***REMOVED***@/state/formContextAtom***REMOVED***;
+import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***;
 
 const PTTForm = ({
   label,
@@ -32,6 +32,16 @@ const PTTForm = ({
       fieldOverrideState={fieldOverrideState}
       formOverrideState={formOverrideState}
       rootFieldOverrideState={rootFieldOverrideState}
+      SubmitButton={({formValues}: {formValues: IFormValues}) => (
+        <Button
+          type=***REMOVED***submit***REMOVED***
+          onClick={()=>{
+            console.log(formValues)
+          }}
+        >
+          Submit
+        </Button>
+      )}
       />
     </>
 

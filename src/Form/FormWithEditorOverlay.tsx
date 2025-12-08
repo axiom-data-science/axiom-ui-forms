@@ -1,5 +1,5 @@
 import React, { type ReactNode, useContext, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import FormCreator, { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
+import FormCreator, { IFormCreatorProps, SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
 import { FormContext, IFormContextValue, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
@@ -174,7 +174,8 @@ const SchemaFormWithEditorOverlay = ({
   formOverrideState,
   rootFieldOverrideState,
   fieldOverrideState,
-  inputOverrides
+  inputOverrides,
+  ...props
 }: {
   label: string
   schemaState?: [JSONSchema6 | undefined, (schema: JSONSchema6 | undefined) => void]
@@ -182,7 +183,7 @@ const SchemaFormWithEditorOverlay = ({
   fieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
   rootFieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-}): ReactElement => {
+} & Omit<IFormCreatorProps, ***REMOVED***Header***REMOVED*** | ***REMOVED***Footer***REMOVED*** | ***REMOVED***form***REMOVED***>): ReactElement => {
   const [schemaInput, setSchemaInput] = schemaState ?? useState<JSONSchema6 | undefined>(undefined)
   const [rootFieldOverridesInput, setRootFieldOverridesInput] = rootFieldOverrideState ?? []
   const [fieldOverridesInput, setFieldOverridesInput] = fieldOverrideState ?? useState<IFormFieldOverride[]>([])
@@ -195,6 +196,7 @@ const SchemaFormWithEditorOverlay = ({
       {
             schemaInput !== undefined
               ? <SchemaFormCreator
+              {...props}
               id=***REMOVED***ptt-form***REMOVED***
               label={label}
               inputOverrides={inputOverrides}
