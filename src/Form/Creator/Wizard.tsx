@@ -138,7 +138,6 @@ export const WizardNavLargeScreen = ({
                   </div>
                   : ''
               }
-              {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
 
             </div>
           )
@@ -170,7 +169,7 @@ export const WizardNavSmall = ({
   // const params = (useParams()['*'] ?? '').split('/')
   // const path = params.slice(0, level).join('/')
   return (
-      <div className='flex flex-row gap-4 justify-end'>{
+      <div className='flex flex-row gap-4 justify-end  p-4 sticky bottom-0 bg-white/80 z-10'>{
         prevIndex >= 0
           ? <NavElement
               className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
