@@ -9,7 +9,7 @@ import { schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***RE
 import { SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import fieldOverrides from ***REMOVED***@/PTT/fieldOverrides***REMOVED***
 
-const OilForm = (): ReactElement => {
+const LarvalForm = (): ReactElement => {
   return (
     <PTTForm
       label=***REMOVED***Larval Fish Model Form***REMOVED***
@@ -20,14 +20,6 @@ const OilForm = (): ReactElement => {
 
   )
 }
-const LarvalForm = (): ReactElement => {
-  return <div className=***REMOVED***p-20***REMOVED***><SchemaFormCreator
-    schema={schema as JSONSchema6}
-    formFieldOverrides={[larvalFieldOverrides, fieldOverrides]}
-    formOverrides={[formOverride]}
-    label=***REMOVED***Larval Fish Model Form***REMOVED***
-  />
-  </div>
-}
+
 
 export default LarvalForm

@@ -32,6 +32,9 @@ const PTTForm = ({
       fieldOverrideState={fieldOverrideState}
       formOverrideState={formOverrideState}
       rootFieldOverrideState={rootFieldOverrideState}
+      initialFormValues={{
+        title: label
+      }}
       SubmitButton={({formValues}: {formValues: IFormValues}) => (
         <Button
           type=***REMOVED***submit***REMOVED***

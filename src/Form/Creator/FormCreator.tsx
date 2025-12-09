@@ -16,6 +16,7 @@ export interface IFormCreatorProps {
   form: IForm
   schema?: JSONSchema6
   formValueState?: [IFormValues, (v: IFormValues) => void]
+  initialFormValues?: IFormValues
   note?: string
   error?: string
   onChange?: IValueChangeFn
@@ -108,7 +109,8 @@ const FormCreator = ({
   schema,
   Footer,
   Header,
-  SubmitButton
+  SubmitButton,
+  initialFormValues
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
   const activeFormValues = cloneObject(formValueState?.[0] ?? {})
@@ -117,7 +119,10 @@ const FormCreator = ({
       updateFormValuesWithFieldValueInPlace(field, field.defaultValue, activeFormValues)
     }
   })
-  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>(seedFormValuesWithDefaults(activeForm))
+  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>({
+    ...seedFormValuesWithDefaults(activeForm),
+    ...initialFormValues
+  })
 
   activeForm.settings = {
     url_navigable: urlNavigable,
