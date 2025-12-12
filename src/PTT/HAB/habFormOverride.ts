@@ -16,6 +16,10 @@ const habFormOverrid: IFormOverride = {
           type: 'text',
           required: true,
           description: 'Title of your simulation'
+        },
+        {
+          prop: 'drift_model',
+          type: 'constant'
         }
       ]
     },
@@ -32,9 +36,6 @@ const habFormOverrid: IFormOverride = {
             },
             {
               prop: 'start_time'
-            },
-            {
-              prop: 'end_time'
             },
             {
               prop: 'duration'
@@ -169,17 +170,13 @@ const habFormOverrid: IFormOverride = {
                   }
                 }
               ]
-
             }
-
           ]
         },
         {
           id: 'advanced',
           label: 'Advanced options',
-          fields: [
-
-          ]
+          fields: []
         }
       ]
     },
@@ -227,7 +224,6 @@ const habFormOverrid: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: 'run-mechanics',
@@ -262,8 +258,6 @@ const habFormOverrid: IFormOverride = {
         }
       ]
     }
-
   ]
 }
-
 export default habFormOverrid
