@@ -16,6 +16,10 @@ const habFormOverrid: IFormOverride = {
           type: ***REMOVED***text***REMOVED***,
           required: true,
           description: ***REMOVED***Title of your simulation***REMOVED***
+        },
+        {
+          prop: ***REMOVED***drift_model***REMOVED***,
+          type: ***REMOVED***constant***REMOVED***
         }
       ]
     },
@@ -32,9 +36,6 @@ const habFormOverrid: IFormOverride = {
             },
             {
               prop: ***REMOVED***start_time***REMOVED***
-            },
-            {
-              prop: ***REMOVED***end_time***REMOVED***
             },
             {
               prop: ***REMOVED***duration***REMOVED***
@@ -169,17 +170,13 @@ const habFormOverrid: IFormOverride = {
                   }
                 }
               ]
-
             }
-
           ]
         },
         {
           id: ***REMOVED***advanced***REMOVED***,
           label: ***REMOVED***Advanced options***REMOVED***,
-          fields: [
-
-          ]
+          fields: []
         }
       ]
     },
@@ -227,7 +224,6 @@ const habFormOverrid: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: ***REMOVED***run-mechanics***REMOVED***,
@@ -262,8 +258,6 @@ const habFormOverrid: IFormOverride = {
         }
       ]
     }
-
   ]
 }
-
 export default habFormOverrid
