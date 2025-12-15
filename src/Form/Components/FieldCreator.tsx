@@ -196,7 +196,7 @@ const FieldCreator = ({
   field,
   value,
   onChange,
-  className,
+  className = field.type === ***REMOVED***constant***REMOVED*** ? ***REMOVED***hidden***REMOVED*** : undefined,
   disabled,
   defaultClassName = ***REMOVED***flex flex-col gap-8 flex-grow h-full***REMOVED***,
   conditionResult
