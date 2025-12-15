@@ -16,6 +16,10 @@ const leewayFormOverride: IFormOverride = {
           type: 'text',
           required: true,
           description: 'Title of your simulation'
+        },
+        {
+          prop: 'drift_model',
+          type: 'constant'
         }
       ]
     },
@@ -32,9 +36,6 @@ const leewayFormOverride: IFormOverride = {
             },
             {
               prop: 'start_time'
-            },
-            {
-              prop: 'end_time'
             },
             {
               prop: 'duration'
@@ -63,6 +64,15 @@ const leewayFormOverride: IFormOverride = {
           id: 'selection',
           label: 'Basic options',
           fields: [
+            {
+              prop: 'seed_flag'
+            },
+            {
+              prop: 'lat'
+            },
+            {
+              prop: 'lon'
+            },
             {
               prop: 'shape_type'
             },
@@ -115,15 +125,12 @@ const leewayFormOverride: IFormOverride = {
             {
               prop: 'object_type'
             }
-
           ]
         },
         {
           id: 'advanced',
           label: 'Advanced options',
-          fields: [
-
-          ]
+          fields: []
         }
       ]
     },
@@ -159,7 +166,6 @@ const leewayFormOverride: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: 'run-mechanics',
@@ -191,7 +197,6 @@ const leewayFormOverride: IFormOverride = {
         }
       ]
     }
-
   ]
 }
 

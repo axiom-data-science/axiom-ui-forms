@@ -16,6 +16,10 @@ const larvalFormOverride: IFormOverride = {
           type: 'text',
           required: true,
           description: 'Title of your simulation'
+        },
+        {
+          prop: 'drift_model',
+          type: 'constant'
         }
       ]
     },
@@ -32,9 +36,6 @@ const larvalFormOverride: IFormOverride = {
             },
             {
               prop: 'start_time'
-            },
-            {
-              prop: 'end_time'
             },
             {
               prop: 'duration'
@@ -63,6 +64,15 @@ const larvalFormOverride: IFormOverride = {
           id: 'selection',
           label: 'Basic options',
           fields: [
+            {
+              prop: 'seed_flag'
+            },
+            {
+              prop: 'lat'
+            },
+            {
+              prop: 'lon'
+            },
             {
               prop: 'shape_type'
             },
@@ -169,7 +179,6 @@ const larvalFormOverride: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: 'run-mechanics',
@@ -204,7 +213,6 @@ const larvalFormOverride: IFormOverride = {
         }
       ]
     }
-
   ]
 }
 

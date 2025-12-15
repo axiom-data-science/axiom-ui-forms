@@ -1,9 +1,9 @@
 import { type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 
-const habFormOverrid: IFormOverride = {
-  id: 'larval',
-  label: 'Larval Form',
-  description: 'Larval Form',
+const habFormOverride: IFormOverride = {
+  id: 'hab',
+  label: 'HAB Form',
+  description: 'HAB Form',
   wizard_steps: [
     {
       id: 'title',
@@ -64,6 +64,15 @@ const habFormOverrid: IFormOverride = {
           id: 'selection',
           label: 'Basic options',
           fields: [
+            {
+              prop: 'seed_flag'
+            },
+            {
+              prop: 'lat'
+            },
+            {
+              prop: 'lon'
+            },
             {
               prop: 'shape_type'
             },
@@ -260,4 +269,4 @@ const habFormOverrid: IFormOverride = {
     }
   ]
 }
-export default habFormOverrid
+export default habFormOverride
