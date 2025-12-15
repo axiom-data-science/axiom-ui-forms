@@ -196,7 +196,7 @@ const FieldCreator = ({
   field,
   value,
   onChange,
-  className,
+  className = field.type === 'constant' ? 'hidden' : undefined,
   disabled,
   defaultClassName = 'flex flex-col gap-8 flex-grow h-full',
   conditionResult
