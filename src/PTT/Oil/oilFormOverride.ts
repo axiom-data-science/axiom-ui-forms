@@ -16,6 +16,10 @@ const oilFormOverride: IFormOverride = {
           type: ***REMOVED***text***REMOVED***,
           required: true,
           description: ***REMOVED***Title of your simulation***REMOVED***
+        },
+        {
+          prop: ***REMOVED***drift_model***REMOVED***,
+          type: ***REMOVED***constant***REMOVED***
         }
       ]
     },
@@ -32,9 +36,6 @@ const oilFormOverride: IFormOverride = {
             },
             {
               prop: ***REMOVED***start_time***REMOVED***
-            },
-            {
-              prop: ***REMOVED***end_time***REMOVED***
             },
             {
               prop: ***REMOVED***duration***REMOVED***
@@ -58,18 +59,21 @@ const oilFormOverride: IFormOverride = {
     {
       id: ***REMOVED***map***REMOVED***,
       label: ***REMOVED***Map***REMOVED***,
-      // description: ***REMOVED***Should able to select a point, polygon or upload a shapefile***REMOVED***,
       pages: [
         {
           id: ***REMOVED***selection***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
-          description: `Suggestions:
-- To model an oil slick: select a point with a non-zero radius, click out a polygon, or input a shapefile. 
-- Use a starting depth of 0 for the sea surface and run in 2D to save time.        
-- To model a ship track spill: select a line, use a starting depth of 0 for the sea surface, and run in 2D.
-- To model a subsea blowout: select a point and start particles at the seafloor or some other non-zero depth.
-          `,
+          description: ***REMOVED***Suggestions:\n- To model an oil slick: select a point with a non-zero radius, click out a polygon, or input a shapefile. \n- Use a starting depth of 0 for the sea surface and run in 2D to save time.        \n- To model a ship track spill: select a line, use a starting depth of 0 for the sea surface, and run in 2D.\n- To model a subsea blowout: select a point and start particles at the seafloor or some other non-zero depth.\n          ***REMOVED***,
           fields: [
+            {
+              prop: ***REMOVED***seed_flag***REMOVED***
+            },
+            {
+              prop: ***REMOVED***lat***REMOVED***
+            },
+            {
+              prop: ***REMOVED***lon***REMOVED***
+            },
             {
               prop: ***REMOVED***shape_type***REMOVED***
             },
@@ -116,19 +120,12 @@ const oilFormOverride: IFormOverride = {
       label: ***REMOVED***Oil options***REMOVED***,
       pages: [
         {
-          // description: ***REMOVED***Oil options for the simulation***REMOVED***,
           id: ***REMOVED***basic***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
             {
               prop: ***REMOVED***oil_type***REMOVED***
             },
-            // {
-            //   prop: ***REMOVED***subsea_or_not***REMOVED***
-            // },
-            // {
-            //   prop: ***REMOVED***oil_spill_scenarios***REMOVED***
-            // },
             {
               prop: ***REMOVED***m3_per_hour***REMOVED***
             },
@@ -144,9 +141,6 @@ const oilFormOverride: IFormOverride = {
             {
               prop: ***REMOVED***oil_film_options***REMOVED***
             },
-            // {
-            //   prop: ***REMOVED***update_oilfilm_thickness***REMOVED***
-            // },
             {
               prop: ***REMOVED***subsea_options_distribution***REMOVED***
             },
@@ -207,7 +201,6 @@ const oilFormOverride: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: ***REMOVED***run-mechanics***REMOVED***,
@@ -242,7 +235,6 @@ const oilFormOverride: IFormOverride = {
         }
       ]
     }
-
   ]
 }
 

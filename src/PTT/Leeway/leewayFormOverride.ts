@@ -16,6 +16,10 @@ const leewayFormOverride: IFormOverride = {
           type: ***REMOVED***text***REMOVED***,
           required: true,
           description: ***REMOVED***Title of your simulation***REMOVED***
+        },
+        {
+          prop: ***REMOVED***drift_model***REMOVED***,
+          type: ***REMOVED***constant***REMOVED***
         }
       ]
     },
@@ -32,9 +36,6 @@ const leewayFormOverride: IFormOverride = {
             },
             {
               prop: ***REMOVED***start_time***REMOVED***
-            },
-            {
-              prop: ***REMOVED***end_time***REMOVED***
             },
             {
               prop: ***REMOVED***duration***REMOVED***
@@ -63,6 +64,15 @@ const leewayFormOverride: IFormOverride = {
           id: ***REMOVED***selection***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
+            {
+              prop: ***REMOVED***seed_flag***REMOVED***
+            },
+            {
+              prop: ***REMOVED***lat***REMOVED***
+            },
+            {
+              prop: ***REMOVED***lon***REMOVED***
+            },
             {
               prop: ***REMOVED***shape_type***REMOVED***
             },
@@ -115,15 +125,12 @@ const leewayFormOverride: IFormOverride = {
             {
               prop: ***REMOVED***object_type***REMOVED***
             }
-
           ]
         },
         {
           id: ***REMOVED***advanced***REMOVED***,
           label: ***REMOVED***Advanced options***REMOVED***,
-          fields: [
-
-          ]
+          fields: []
         }
       ]
     },
@@ -159,7 +166,6 @@ const leewayFormOverride: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: ***REMOVED***run-mechanics***REMOVED***,
@@ -191,7 +197,6 @@ const leewayFormOverride: IFormOverride = {
         }
       ]
     }
-
   ]
 }
 

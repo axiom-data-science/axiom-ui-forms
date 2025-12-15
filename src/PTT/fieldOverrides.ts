@@ -4,19 +4,7 @@ const fieldOverrides: IFormFieldOverride[] = [
   {
     prop: ***REMOVED***ocean_model***REMOVED***,
     label: ***REMOVED***Ocean Model***REMOVED***,
-    description: `
-
-    Operational Cook Inlet Model (CIOFSOP): 
-
-  The operational Cook Inlet model is operationally run with a 48 forecast time period with saved model output available starting August 31, 2021, run in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details, see the [CIOFS website](https://tidesandcurrents.noaa.gov/ofs/ciofs/ciofs_info.html) and [development report](https://espis.boem.gov/Technical%20Summaries/5560.pdf).
-
-    Hindcast Cook Inlet Model (CIOFS):
-
-The hindcast Cook Inlet model was run from January 1999 through December 2022, in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details and performance, see [report](https://ciofs.axds.co/).
-
-    Hindcast Northwest Gulf of Alaska Model (NWGOA): 
-The hindcast Northwest Gulf of Alaska model was run from January 1999 through December 2008, in the northwest Gulf of Alaska and covering Cook Inlet. It has a horizontal resolution of approximately 1.5 km with 50 vertical layers that follow the bathymetric terrain. Freshwater forcing is from a watershed model. For more model details and performance, see [report](https://www.govinfo.gov/content/pkg/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf/pdf/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf.pdf) or [publication](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019JC015724).`,
-
+    long_description: ***REMOVED***- **Operational Cook Inlet Model (CIOFSOP):**<br />The operational Cook Inlet model is operationally run with a 48 forecast time period with saved model output available starting August 31, 2021, run in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details, see the [CIOFS website](https://tidesandcurrents.noaa.gov/ofs/ciofs/ciofs_info.html) and [development report](https://espis.boem.gov/Technical%20Summaries/5560.pdf).\n\n- **Hindcast Cook Inlet Model (CIOFS):**<br />The hindcast Cook Inlet model was run from January 1999 through December 2022, in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details and performance, see [report](https://ciofs.axds.co/).\n\n- **Hindcast Northwest Gulf of Alaska Model (NWGOA):**<br />The hindcast Northwest Gulf of Alaska model was run from January 1999 through December 2008, in the northwest Gulf of Alaska and covering Cook Inlet. It has a horizontal resolution of approximately 1.5 km with 50 vertical layers that follow the bathymetric terrain. Freshwater forcing is from a watershed model. For more model details and performance, see [report](https://www.govinfo.gov/content/pkg/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf/pdf/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf.pdf) or [publication](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019JC015724).***REMOVED***,
     options: [
       {
         label: ***REMOVED***Operational Cook Inlet Model (CIOFSOP)***REMOVED***,
@@ -38,12 +26,19 @@ The hindcast Northwest Gulf of Alaska model was run from January 1999 through De
   {
     prop: ***REMOVED***time_step***REMOVED***,
     constraints: {
-      // min: 0,
       max: 3600
     },
     settings: {
       step: 60
     }
+  },
+  {
+    prop: ***REMOVED***start_time***REMOVED***,
+    type: ***REMOVED***custom:start_time***REMOVED***
+  },
+  {
+    prop: ***REMOVED***duration***REMOVED***,
+    type: ***REMOVED***custom:duration***REMOVED***
   },
   {
     prop: ***REMOVED***time_step_output***REMOVED***,
@@ -55,6 +50,21 @@ The hindcast Northwest Gulf of Alaska model was run from January 1999 through De
   {
     prop: ***REMOVED***seed_seafloor***REMOVED***,
     description: ***REMOVED***If checked, particles will be seeded at the seafloor and Initial depth is not used.***REMOVED***
+  },
+  {
+    prop: ***REMOVED***seed_flag***REMOVED***,
+    type: ***REMOVED***constant***REMOVED***,
+    defaultValue: ***REMOVED***geojson***REMOVED***
+  },
+  {
+    prop: ***REMOVED***lat***REMOVED***,
+    type: ***REMOVED***constant***REMOVED***,
+    defaultValue: null
+  },
+  {
+    prop: ***REMOVED***lon***REMOVED***,
+    type: ***REMOVED***constant***REMOVED***,
+    defaultValue: null
   },
   {
     prop: ***REMOVED***z***REMOVED***,
@@ -276,10 +286,6 @@ The hindcast Northwest Gulf of Alaska model was run from January 1999 through De
     prop: ***REMOVED***depth_options***REMOVED***,
     skip_path: true,
     type: ***REMOVED***object***REMOVED***,
-    // conditions: {
-    //   dependsOn: ***REMOVED***do3D***REMOVED***,
-    //   value: true
-    // },
     fields: [
       {
         prop: ***REMOVED***seed_seafloor***REMOVED***

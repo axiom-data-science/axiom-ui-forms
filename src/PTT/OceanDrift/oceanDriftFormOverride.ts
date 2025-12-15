@@ -16,6 +16,10 @@ const oceanDriftFormOverride: IFormOverride = {
           type: ***REMOVED***text***REMOVED***,
           required: true,
           description: ***REMOVED***Title of your simulation***REMOVED***
+        },
+        {
+          prop: ***REMOVED***drift_model***REMOVED***,
+          type: ***REMOVED***constant***REMOVED***
         }
       ]
     },
@@ -32,9 +36,6 @@ const oceanDriftFormOverride: IFormOverride = {
             },
             {
               prop: ***REMOVED***start_time***REMOVED***
-            },
-            {
-              prop: ***REMOVED***end_time***REMOVED***
             },
             {
               prop: ***REMOVED***duration***REMOVED***
@@ -64,6 +65,15 @@ const oceanDriftFormOverride: IFormOverride = {
           id: ***REMOVED***selection***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
+            {
+              prop: ***REMOVED***seed_flag***REMOVED***
+            },
+            {
+              prop: ***REMOVED***lat***REMOVED***
+            },
+            {
+              prop: ***REMOVED***lon***REMOVED***
+            },
             {
               prop: ***REMOVED***shape_type***REMOVED***
             },
@@ -149,7 +159,6 @@ const oceanDriftFormOverride: IFormOverride = {
           ]
         }
       ]
-
     },
     {
       id: ***REMOVED***run-mechanics***REMOVED***,
@@ -184,7 +193,6 @@ const oceanDriftFormOverride: IFormOverride = {
         }
       ]
     }
-
   ]
 }
 
