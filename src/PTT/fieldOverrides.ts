@@ -19,8 +19,10 @@ const fieldOverrides: IFormFieldOverride[] = [
         value: ***REMOVED***NWGOA***REMOVED***
       }
     ],
+    defaultValue: ***REMOVED***CIOFSOP***REMOVED***,
     settings: {
-      descriptionPresentation: ***REMOVED***tooltip***REMOVED***
+      descriptionPresentation: ***REMOVED***tooltip***REMOVED***,
+      allowNull: false
     }
   },
   {
