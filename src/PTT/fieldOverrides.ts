@@ -19,8 +19,10 @@ const fieldOverrides: IFormFieldOverride[] = [
         value: 'NWGOA'
       }
     ],
+    defaultValue: 'CIOFSOP',
     settings: {
-      descriptionPresentation: 'tooltip'
+      descriptionPresentation: 'tooltip',
+      allowNull: false
     }
   },
   {
