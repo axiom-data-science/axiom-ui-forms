@@ -72,10 +72,10 @@ const fieldOverrides: IFormFieldOverride[] = [
     prop: ***REMOVED***z***REMOVED***,
     label: ***REMOVED***Initial depth for particles***REMOVED***,
     description: ***REMOVED***Depth below sea level (in meters) where elements are released. Input 0 for the surface.***REMOVED***,
-    constraints: {
-      min: 0,
-      max: 5000
-    },
+    // constraints: {
+    //   min: 0,
+    //   max: 5000
+    // },
     conditions: {
       dependsOn: ***REMOVED***seed_seafloor***REMOVED***,
       value: false
