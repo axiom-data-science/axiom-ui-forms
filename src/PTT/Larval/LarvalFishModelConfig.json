@@ -29,7 +29,8 @@
         "OceanDrift",
         "LarvalFish",
         "OpenOil",
-        "Leeway"
+        "Leeway",
+        "HarmfulAlgalBloom"
       ],
       "title": "DriftModelEnum",
       "type": "string"
@@ -56,15 +57,25 @@
     },
     "OceanModelEnum": {
       "enum": [
-        "NWGOA",
         "CIOFS",
-        "CIOFS3",
         "CIOFSOP",
         "CIOFSFRESH",
-        "TXLA",
-        "ONTHEFLY"
+        "NWGOA",
+        "CIOFS3",
+        "ONTHEFLY",
+        "TXLA"
       ],
       "title": "OceanModelEnum",
+      "type": "string"
+    },
+    "OutputFormatEnum": {
+      "description": "Output file format.",
+      "enum": [
+        "netcdf",
+        "parquet",
+        "both"
+      ],
+      "title": "OutputFormatEnum",
       "type": "string"
     },
     "RadiusTypeEnum": {
@@ -86,15 +97,6 @@
       ],
       "title": "SeafloorActionEnum",
       "type": "string"
-    },
-    "SeedFlagEnum": {
-      "description": "Method for seeding drifters.",
-      "enum": [
-        "elements",
-        "geojson"
-      ],
-      "title": "SeedFlagEnum",
-      "type": "string"
     }
   },
   "additionalProperties": false,
@@ -108,14 +110,16 @@
     "lon": {
       "anyOf": [
         {
+          "maximum": 180,
+          "minimum": -180,
           "type": "number"
         },
         {
           "type": "null"
         }
       ],
-      "default": -151,
-      "description": "Central longitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+      "default": null,
+      "description": "Central longitude for seeding drifters. If this is set, `lat` should also be set, and `geojson` should be None.",
       "ptm_level": 1,
       "title": "Lon",
       "units": "degrees_east"
@@ -123,14 +127,16 @@
     "lat": {
       "anyOf": [
         {
+          "maximum": 90,
+          "minimum": -90,
           "type": "number"
         },
         {
           "type": "null"
         }
       ],
-      "default": 58,
-      "description": "Central latitude for seeding drifters. Only used if `seed_flag==\"elements\"`.",
+      "default": null,
+      "description": "Central latitude for seeding drifters. If this is set, `lon` should also be set, and `geojson` should be None.",
       "ptm_level": 1,
       "title": "Lat",
       "units": "degrees_north"
@@ -146,15 +152,9 @@
         }
       ],
       "default": null,
-      "description": "GeoJSON describing a polygon within which to seed drifters. To use this parameter, also have `seed_flag==\"geojson\"`.",
+      "description": "GeoJSON describing a polygon within which to seed drifters; must contain \"geometry\". If this is set, `lon` and `lat` should be None.",
       "ptm_level": 1,
       "title": "Geojson"
-    },
-    "seed_flag": {
-      "$ref": "#/$defs/SeedFlagEnum",
-      "default": "elements",
-      "description": "Method for seeding drifters. Options are \"elements\" or \"geojson\". If \"elements\", seed drifters at or around a single point defined by lon and lat. If \"geojson\", seed drifters within a polygon described by a GeoJSON object.",
-      "ptm_level": 1
     },
     "start_time": {
       "anyOf": [
@@ -167,7 +167,7 @@
         }
       ],
       "default": "2022-01-01T00:00:00",
-      "description": "Start time for drifter simulation. start_time or end_time must be input.",
+      "description": "Start time for drifter simulation. start_time or end_time must be input. If a timezone is included, it will be used and the time will be converted to UTC which is the same timezone as the models.",
       "ptm_level": 1,
       "title": "Start Time"
     },
@@ -182,7 +182,7 @@
         }
       ],
       "default": null,
-      "description": "If used, this creates a range of start times for drifters, starting with `start_time` and ending with `start_time_end`. Drifters will be initialized linearly between the two start times.",
+      "description": "If used, this creates a range of start times for drifters, starting with `start_time` and ending with `start_time_end`. Drifters will be initialized linearly between the two start times. If a timezone is included, it will be used and the time will be converted to UTC which is the same timezone as the models.",
       "ptm_level": 2,
       "title": "Start Time End"
     },
@@ -196,6 +196,8 @@
     "time_step": {
       "default": 300,
       "description": "Interval between particles updates, in seconds.",
+      "maximum": 1440,
+      "minimum": 0.01,
       "ptm_level": 3,
       "title": "Time Step",
       "type": "number",
@@ -204,6 +206,8 @@
     "time_step_output": {
       "default": 3600,
       "description": "Time step at which element properties are stored and eventually written to file. This must be larger than the calculation time step, and be an integer multiple of this.",
+      "maximum": 86400,
+      "minimum": 1,
       "ptm_level": 3,
       "title": "Time Step Output",
       "type": "number",
@@ -212,6 +216,8 @@
     "steps": {
       "anyOf": [
         {
+          "maximum": 10000,
+          "minimum": 1,
           "type": "integer"
         },
         {
@@ -248,7 +254,7 @@
         }
       ],
       "default": null,
-      "description": "The end of the simulation. steps, end_time, or duration must be input by user. start_time or end_time must be input.",
+      "description": "The end of the simulation. steps, end_time, or duration must be input by user. start_time or end_time must be input. If a timezone is included, it will be used and the time will be converted to UTC which is the same timezone as the models.",
       "ptm_level": 1,
       "title": "End Time"
     },
@@ -258,11 +264,53 @@
       "description": "Name of ocean model to use for driving drifter simulation.",
       "ptm_level": 1
     },
+    "ocean_model_local": {
+      "default": true,
+      "description": "Set to True to use local version of known `ocean_model` instead of remote version.",
+      "ptm_level": 3,
+      "title": "Ocean Model Local",
+      "type": "boolean"
+    },
     "do3D": {
       "default": true,
       "description": "Set to True to run drifters in 3D, by default False for most drift models.",
       "ptm_level": 1,
       "title": "Do3D",
+      "type": "boolean"
+    },
+    "use_static_masks": {
+      "default": true,
+      "description": "If False, use static ocean model land masks. This saves some computation time but since the available ocean models run in wet/dry mode, it is inconsistent with the ROMS output files in some places since the drifters may be allowed (due to the static mask) to enter a cell they wouldn***REMOVED***t otherwise. However, it doesn***REMOVED***t make much of a difference for simulations that aren***REMOVED***t in the tidal flats. Use the time-varying wet/dry masks (set to True) if drifters are expected to run in the tidal flats. This costs some more computational time but is fully consistent with the ROMS output files.",
+      "ptm_level": 3,
+      "title": "Use Static Masks",
+      "type": "boolean"
+    },
+    "output_file": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Name of file to write output to. If None, default name is used.",
+      "ptm_level": 3,
+      "title": "Output File"
+    },
+    "output_format": {
+      "$ref": "#/$defs/OutputFormatEnum",
+      "default": "netcdf",
+      "description": "Output file format. Options are \"netcdf\", \"parquet\", or \"both\".",
+      "ptm_level": 2
+    },
+    "use_cache": {
+      "default": true,
+      "description": "Set to True to use cache for storing interpolators.",
+      "ptm_level": 3,
+      "title": "Use Cache",
       "type": "boolean"
     },
     "log_level": {
@@ -274,6 +322,8 @@
     "horizontal_diffusivity": {
       "anyOf": [
         {
+          "maximum": 100000,
+          "minimum": 0,
           "type": "number"
         },
         {
@@ -298,6 +348,8 @@
     "z": {
       "anyOf": [
         {
+          "maximum": 0,
+          "minimum": -10000,
           "type": "number"
         },
         {
@@ -314,6 +366,7 @@
     "number": {
       "default": 1,
       "description": "The number of elements for the simulation.",
+      "minimum": 1,
       "od_mapping": "seed:number",
       "ptm_level": 1,
       "title": "Number",
@@ -323,6 +376,27 @@
     "drift_model": {
       "$ref": "#/$defs/DriftModelEnum",
       "default": "LarvalFish"
+    },
+    "save_interpolator": {
+      "default": false,
+      "description": "Whether to save the interpolator.",
+      "title": "Save Interpolator",
+      "type": "boolean"
+    },
+    "interpolator_filename": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Filename to save interpolator to or read interpolator from. Exclude suffix (which should be .pickle).",
+      "ptm_level": 3,
+      "title": "Interpolator Filename"
     },
     "export_variables": {
       "anyOf": [
@@ -363,8 +437,10 @@
       "title": "Plots"
     },
     "radius": {
-      "default": 1000,
+      "default": 1000.0,
       "description": "Radius around each lon-lat pair, within which particles will be seeded according to `radius_type`.",
+      "maximum": 1000000,
+      "minimum": 0.0,
       "ptm_level": 2,
       "title": "Radius",
       "type": "number",
@@ -377,13 +453,22 @@
       "ptm_level": 3
     },
     "max_speed": {
-      "default": 7,
+      "default": 7.0,
       "description": "Typical maximum speed of elements, used to estimate reader buffer size",
+      "exclusiveMinimum": 0,
       "od_mapping": "drift:max_speed",
       "ptm_level": 1,
       "title": "Maximum speed",
       "type": "number",
       "units": "m/s"
+    },
+    "use_auto_landmask": {
+      "default": false,
+      "description": "If True, use a global-scale land mask from https://www.generic-mapping-tools.org/remote-datasets/earth-mask.html. Dataset scale selected is `auto`. If False, use the land mask from the ocean model.",
+      "od_mapping": "general:use_auto_landmask",
+      "ptm_level": 3,
+      "title": "Use Auto Landmask",
+      "type": "boolean"
     },
     "coastline_action": {
       "$ref": "#/$defs/CoastlineActionEnum",
@@ -396,6 +481,8 @@
     "current_uncertainty": {
       "default": 0,
       "description": "Add gaussian perturbation with this standard deviation to current components at each time step",
+      "maximum": 5,
+      "minimum": 0,
       "od_mapping": "drift:current_uncertainty",
       "ptm_level": 2,
       "title": "Current Uncertainty",
@@ -405,6 +492,8 @@
     "wind_uncertainty": {
       "default": 0,
       "description": "Add gaussian perturbation with this standard deviation to wind components at each time step.",
+      "maximum": 5,
+      "minimum": 0,
       "od_mapping": "drift:wind_uncertainty",
       "ptm_level": 2,
       "title": "Wind Uncertainty",
@@ -431,6 +520,7 @@
     "mixed_layer_depth": {
       "default": 10,
       "description": "mixed_layer_depth controls how deep the vertical diffusivity profile reaches. This sets the fallback value for ocean_mixed_layer_thickness if not available from any reader.",
+      "minimum": 0.0,
       "od_mapping": "environment:mixed_layer_depth",
       "ptm_level": 3,
       "title": "Mixed Layer Depth",
@@ -448,6 +538,8 @@
     "wind_drift_depth": {
       "anyOf": [
         {
+          "maximum": 10,
+          "minimum": 0,
           "type": "number"
         },
         {
@@ -464,6 +556,8 @@
     "vertical_mixing_timestep": {
       "default": 60,
       "description": "Time step used for inner (fast) loop of the vertical mixing model. Set this smaller to increase frequency of vertical mixing calculation; number of loops is calculated as int(self.time_step/vertical_mixing_timestep) so vertical_mixing_timestep must be smaller than time_step.",
+      "maximum": 3600,
+      "minimum": 0.1,
       "od_mapping": "vertical_mixing:timestep",
       "ptm_level": 3,
       "title": "Vertical Mixing Timestep",
@@ -473,6 +567,7 @@
     "wind_drift_factor": {
       "default": 0.02,
       "description": "Elements at surface are moved with this fraction of the wind vector, in addition to currents and Stokes drift.",
+      "minimum": 0,
       "od_mapping": "seed:wind_drift_factor",
       "ptm_level": 2,
       "title": "Wind Drift Factor",
@@ -490,6 +585,7 @@
     "diameter": {
       "default": 0.0014,
       "description": "Seeding value of diameter. The diameter gives the egg diameter so must be used with `hatched=0`.",
+      "exclusiveMinimum": 0,
       "od_mapping": "seed:diameter",
       "ptm_level": 2,
       "title": "Diameter",
@@ -499,6 +595,7 @@
     "neutral_buoyancy_salinity": {
       "default": 31.25,
       "description": "Seeding value of neutral_buoyancy_salinity. This is a property of the egg so must be used with `hatched=0`.",
+      "exclusiveMinimum": 0,
       "od_mapping": "seed:neutral_buoyancy_salinity",
       "ptm_level": 2,
       "title": "Neutral Buoyancy Salinity",
@@ -508,13 +605,15 @@
     "stage_fraction": {
       "anyOf": [
         {
+          "maximum": 1,
+          "minimum": 0,
           "type": "number"
         },
         {
           "type": "null"
         }
       ],
-      "default": 0,
+      "default": 0.0,
       "description": "Seeding value of stage_fraction. stage_fraction tracks percentage of development time completed, from 0 to 1, where a value of 1 means the egg has hatched. If `hatched==1` then `stage_fraction` is ignored in `OpenDrift`, but has to be None.",
       "od_mapping": "seed:stage_fraction",
       "ptm_level": 2,
@@ -524,6 +623,8 @@
     "hatched": {
       "default": 0,
       "description": "Seeding value of hatched. 0 for eggs, 1 for larvae.",
+      "maximum": 1,
+      "minimum": 0,
       "od_mapping": "seed:hatched",
       "ptm_level": 2,
       "title": "Hatched",
@@ -533,6 +634,7 @@
     "length": {
       "anyOf": [
         {
+          "exclusiveMinimum": 0,
           "type": "number"
         },
         {
@@ -549,6 +651,7 @@
     "weight": {
       "default": 0.08,
       "description": "Seeding value of weight. This is the starting weight for larval fish, whenever they reach that stage.",
+      "exclusiveMinimum": 0,
       "od_mapping": "seed:weight",
       "ptm_level": 2,
       "title": "Weight",
@@ -556,6 +659,6 @@
       "units": "mg"
     }
   },
-  "title": "PublicLarvaeSimulationConfig",
+  "title": "LarvalFishModelConfig",
   "type": "object"
 }

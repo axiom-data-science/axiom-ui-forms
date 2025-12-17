@@ -4,7 +4,7 @@ const fieldOverrides: IFormFieldOverride[] = [
   {
     prop: ***REMOVED***ocean_model***REMOVED***,
     label: ***REMOVED***Ocean Model***REMOVED***,
-    long_description: ***REMOVED***- **Operational Cook Inlet Model (CIOFSOP):**<br />The operational Cook Inlet model is operationally run with a 48 forecast time period with saved model output available starting August 31, 2021, run in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details, see the [CIOFS website](https://tidesandcurrents.noaa.gov/ofs/ciofs/ciofs_info.html) and [development report](https://espis.boem.gov/Technical%20Summaries/5560.pdf).\n\n- **Hindcast Cook Inlet Model (CIOFS):**<br />The hindcast Cook Inlet model was run from January 1999 through December 2022, in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details and performance, see [report](https://ciofs.axds.co/).\n\n- **Hindcast Northwest Gulf of Alaska Model (NWGOA):**<br />The hindcast Northwest Gulf of Alaska model was run from January 1999 through December 2008, in the northwest Gulf of Alaska and covering Cook Inlet. It has a horizontal resolution of approximately 1.5 km with 50 vertical layers that follow the bathymetric terrain. Freshwater forcing is from a watershed model. For more model details and performance, see [report](https://www.govinfo.gov/content/pkg/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf/pdf/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf.pdf) or [publication](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019JC015724).***REMOVED***,
+    long_description: ***REMOVED***- **Operational Cook Inlet Model (CIOFSOP):** The operational Cook Inlet model is operationally run with a 48 forecast time period with saved model output available starting August 31, 2021, run in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details, see the [CIOFS website](https://tidesandcurrents.noaa.gov/ofs/ciofs/ciofs_info.html) and [development report](https://espis.boem.gov/Technical%20Summaries/5560.pdf).\n\n- **Hindcast Cook Inlet Model (CIOFS):** The hindcast Cook Inlet model was run from January 1999 through December 2022, in Cook Inlet, Alaska. The horizontal grid has resolution ranging from 10 meters in the estuaries to 3.5 kilometers in the deeper offshore waters and uses 30 sigma layers that follow the bathymetric terrain. Freshwater forcing is from river inputs using discharge observations from 12 major rivers supplied by the USGS. For more model details and performance, see [report](https://ciofs.axds.co/).\n\n- **Hindcast Northwest Gulf of Alaska Model (NWGOA):** The hindcast Northwest Gulf of Alaska model was run from January 1999 through December 2008, in the northwest Gulf of Alaska and covering Cook Inlet. It has a horizontal resolution of approximately 1.5 km with 50 vertical layers that follow the bathymetric terrain. Freshwater forcing is from a watershed model. For more model details and performance, see [report](https://www.govinfo.gov/content/pkg/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf/pdf/GOVPUB-I-48b50b5dc536ac94c0275ac7d0445ebf.pdf) or [publication](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019JC015724).***REMOVED***,
     options: [
       {
         label: ***REMOVED***Operational Cook Inlet Model (CIOFSOP)***REMOVED***,
@@ -72,10 +72,10 @@ const fieldOverrides: IFormFieldOverride[] = [
     prop: ***REMOVED***z***REMOVED***,
     label: ***REMOVED***Initial depth for particles***REMOVED***,
     description: ***REMOVED***Depth below sea level (in meters) where elements are released. Input 0 for the surface.***REMOVED***,
-    constraints: {
-      min: 0,
-      max: 5000
-    },
+    // constraints: {
+    //   min: 0,
+    //   max: 5000
+    // },
     conditions: {
       dependsOn: ***REMOVED***seed_seafloor***REMOVED***,
       value: false

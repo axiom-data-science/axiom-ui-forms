@@ -127,11 +127,11 @@ const leewayFormOverride: IFormOverride = {
             }
           ]
         },
-        {
-          id: ***REMOVED***advanced***REMOVED***,
-          label: ***REMOVED***Advanced options***REMOVED***,
-          fields: []
-        }
+        // {
+        //   id: ***REMOVED***advanced***REMOVED***,
+        //   label: ***REMOVED***Advanced options***REMOVED***,
+        //   fields: []
+        // }
       ]
     },
     {
@@ -155,9 +155,6 @@ const leewayFormOverride: IFormOverride = {
           label: ***REMOVED***Advanced options***REMOVED***,
           fields: [
             {
-              prop: ***REMOVED***diffusivitymodel***REMOVED***
-            },
-            {
               prop: ***REMOVED***current_uncertainty***REMOVED***
             },
             {
@@ -175,9 +172,9 @@ const leewayFormOverride: IFormOverride = {
           id: ***REMOVED***basic***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
-            {
-              prop: ***REMOVED***output_format***REMOVED***
-            },
+            // {
+            //   prop: ***REMOVED***output_format***REMOVED***
+            // },
             {
               prop: ***REMOVED***coastline_action***REMOVED***
             }
