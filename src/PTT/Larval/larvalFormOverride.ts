@@ -168,9 +168,6 @@ const larvalFormOverride: IFormOverride = {
               prop: 'vertical_mixing_options'
             },
             {
-              prop: 'diffusivitymodel'
-            },
-            {
               prop: 'current_uncertainty'
             },
             {
@@ -188,9 +185,9 @@ const larvalFormOverride: IFormOverride = {
           id: 'basic',
           label: 'Basic options',
           fields: [
-            {
-              prop: 'output_format'
-            },
+            // {
+            //   prop: 'output_format'
+            // },
             {
               prop: 'coastline_action'
             },

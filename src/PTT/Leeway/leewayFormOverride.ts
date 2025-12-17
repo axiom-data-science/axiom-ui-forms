@@ -127,11 +127,11 @@ const leewayFormOverride: IFormOverride = {
             }
           ]
         },
-        {
-          id: 'advanced',
-          label: 'Advanced options',
-          fields: []
-        }
+        // {
+        //   id: 'advanced',
+        //   label: 'Advanced options',
+        //   fields: []
+        // }
       ]
     },
     {
@@ -155,9 +155,6 @@ const leewayFormOverride: IFormOverride = {
           label: 'Advanced options',
           fields: [
             {
-              prop: 'diffusivitymodel'
-            },
-            {
               prop: 'current_uncertainty'
             },
             {
@@ -175,9 +172,9 @@ const leewayFormOverride: IFormOverride = {
           id: 'basic',
           label: 'Basic options',
           fields: [
-            {
-              prop: 'output_format'
-            },
+            // {
+            //   prop: 'output_format'
+            // },
             {
               prop: 'coastline_action'
             }

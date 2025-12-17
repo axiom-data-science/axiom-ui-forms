@@ -190,9 +190,6 @@ const oilFormOverride: IFormOverride = {
               prop: 'vertical_mixing_options'
             },
             {
-              prop: 'diffusivitymodel'
-            },
-            {
               prop: 'current_uncertainty'
             },
             {
@@ -210,9 +207,9 @@ const oilFormOverride: IFormOverride = {
           id: 'basic',
           label: 'Basic options',
           fields: [
-            {
-              prop: 'output_format'
-            },
+            // {
+            //   prop: 'output_format'
+            // },
             {
               prop: 'coastline_action'
             },

@@ -125,7 +125,7 @@ const habFormOverride: IFormOverride = {
             {
               prop: 'species_type',
               type: 'radio',
-              defaultValue: 'custom'
+              defaultValue: 'PN'
             },
             {
               prop: 'custom_species_type_settings',
@@ -182,11 +182,11 @@ const habFormOverride: IFormOverride = {
             }
           ]
         },
-        {
-          id: 'advanced',
-          label: 'Advanced options',
-          fields: []
-        }
+        // {
+        //   id: 'advanced',
+        //   label: 'Advanced options',
+        //   fields: []
+        // }
       ]
     },
     {
@@ -222,9 +222,6 @@ const habFormOverride: IFormOverride = {
               prop: 'vertical_mixing_options'
             },
             {
-              prop: 'diffusivitymodel'
-            },
-            {
               prop: 'current_uncertainty'
             },
             {
@@ -242,9 +239,9 @@ const habFormOverride: IFormOverride = {
           id: 'basic',
           label: 'Basic options',
           fields: [
-            {
-              prop: 'output_format'
-            },
+            // {
+            //   prop: 'output_format'
+            // },
             {
               prop: 'coastline_action'
             },
