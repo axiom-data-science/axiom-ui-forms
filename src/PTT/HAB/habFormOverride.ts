@@ -125,7 +125,7 @@ const habFormOverride: IFormOverride = {
             {
               prop: ***REMOVED***species_type***REMOVED***,
               type: ***REMOVED***radio***REMOVED***,
-              defaultValue: ***REMOVED***custom***REMOVED***
+              defaultValue: ***REMOVED***PN***REMOVED***
             },
             {
               prop: ***REMOVED***custom_species_type_settings***REMOVED***,
@@ -182,11 +182,11 @@ const habFormOverride: IFormOverride = {
             }
           ]
         },
-        {
-          id: ***REMOVED***advanced***REMOVED***,
-          label: ***REMOVED***Advanced options***REMOVED***,
-          fields: []
-        }
+        // {
+        //   id: ***REMOVED***advanced***REMOVED***,
+        //   label: ***REMOVED***Advanced options***REMOVED***,
+        //   fields: []
+        // }
       ]
     },
     {
@@ -222,9 +222,6 @@ const habFormOverride: IFormOverride = {
               prop: ***REMOVED***vertical_mixing_options***REMOVED***
             },
             {
-              prop: ***REMOVED***diffusivitymodel***REMOVED***
-            },
-            {
               prop: ***REMOVED***current_uncertainty***REMOVED***
             },
             {
@@ -242,9 +239,9 @@ const habFormOverride: IFormOverride = {
           id: ***REMOVED***basic***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
-            {
-              prop: ***REMOVED***output_format***REMOVED***
-            },
+            // {
+            //   prop: ***REMOVED***output_format***REMOVED***
+            // },
             {
               prop: ***REMOVED***coastline_action***REMOVED***
             },

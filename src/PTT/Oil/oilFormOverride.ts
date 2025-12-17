@@ -190,9 +190,6 @@ const oilFormOverride: IFormOverride = {
               prop: ***REMOVED***vertical_mixing_options***REMOVED***
             },
             {
-              prop: ***REMOVED***diffusivitymodel***REMOVED***
-            },
-            {
               prop: ***REMOVED***current_uncertainty***REMOVED***
             },
             {
@@ -210,9 +207,9 @@ const oilFormOverride: IFormOverride = {
           id: ***REMOVED***basic***REMOVED***,
           label: ***REMOVED***Basic options***REMOVED***,
           fields: [
-            {
-              prop: ***REMOVED***output_format***REMOVED***
-            },
+            // {
+            //   prop: ***REMOVED***output_format***REMOVED***
+            // },
             {
               prop: ***REMOVED***coastline_action***REMOVED***
             },
