@@ -63,7 +63,8 @@ const oilFormOverride: IFormOverride = {
         {
           id: 'selection',
           label: 'Basic options',
-          description: 'Suggestions:\n- To model an oil slick: select a point with a non-zero radius, click out a polygon, or input a shapefile. \n- Use a starting depth of 0 for the sea surface and run in 2D to save time.        \n- To model a ship track spill: select a line, use a starting depth of 0 for the sea surface, and run in 2D.\n- To model a subsea blowout: select a point and start particles at the seafloor or some other non-zero depth.\n          ',
+          description: 'Suggestions',
+          long_description: 'Suggestions:\n- To model an oil slick: select a point with a non-zero radius, click out a polygon, or input a shapefile. \n- Use a starting depth of 0 for the sea surface and run in 2D to save time.        \n- To model a ship track spill: select a line, use a starting depth of 0 for the sea surface, and run in 2D.\n- To model a subsea blowout: select a point and start particles at the seafloor or some other non-zero depth.\n          ',
           fields: [
             {
               prop: 'seed_flag'
