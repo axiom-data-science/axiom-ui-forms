@@ -167,7 +167,6 @@ export const ActivePage = ({
                 label: formSection.description,
                 type: ***REMOVED***text***REMOVED***,
                 settings:{
-                  ...formSection.settings,
                   descriptionPresentation: ***REMOVED***tooltip***REMOVED***
                 }
               }}

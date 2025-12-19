@@ -268,7 +268,6 @@ export interface IFormSection {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  settings?: IFormFieldSettingsBase
 }
 
 export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {
