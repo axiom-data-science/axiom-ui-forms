@@ -53,6 +53,7 @@ export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField
         }
       }}>
         <Tooltip
+          dark={true}
           tooltipWrapperClassName='!z-50'
           content={<span className='leading-6'><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className='italic block text-xs my-1'><PlusIcon className='inline w-3 h-3 -mt-1 mr-0' /> Click for more information</span>}</span>}
           contentClassName='max-w-[400px]'
@@ -102,7 +103,7 @@ export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, d
     ? <span className={`${hasDescription ? 'ml-2' : ''} text-xs text-blue-500  p-1 rounded-2xl cursor-pointer  hover:text-blue-700 shadow-md -my-2`} onClick={() => {
       setShowModal(true)
     }}>
-      <Tooltip content='Click for more information'>
+      <Tooltip dark={true} content='Click for more information'>
         <InfoCircledIcon className='inline w-4 h-4 -mt-1 mr-0' /> {!hasDescription && 'More'}
       </Tooltip>
     </span>
