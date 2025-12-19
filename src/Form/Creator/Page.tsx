@@ -167,7 +167,6 @@ export const ActivePage = ({
                 label: formSection.description,
                 type: 'text',
                 settings:{
-                  ...formSection.settings,
                   descriptionPresentation: 'tooltip'
                 }
               }}
