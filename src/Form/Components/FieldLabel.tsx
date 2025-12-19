@@ -19,7 +19,7 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
         if (disabled !== true) {
           onChange(field.defaultValue)
         }
-      }}><Tooltip content={`Reset to default value${String(field.defaultValue) !== String({}) ? ` (${String(field.defaultValue ?? 'NA')})` : ''}`}><ReloadIcon className='inline-block ml-2 cursor-pointer hover:text-slate-500' /></Tooltip></span>
+      }}><Tooltip dark={true} content={`Reset to default value${String(field.defaultValue) !== String({}) ? ` (${String(field.defaultValue ?? 'NA')})` : ''}`}><ReloadIcon className='inline-block ml-2 cursor-pointer hover:text-slate-500' /></Tooltip></span>
       : <></>
   )
 }
