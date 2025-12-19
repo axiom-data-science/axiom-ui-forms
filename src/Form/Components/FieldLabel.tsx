@@ -53,6 +53,7 @@ export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField
         }
       }}>
         <Tooltip
+          dark={true}
           tooltipWrapperClassName=***REMOVED***!z-50***REMOVED***
           content={<span className=***REMOVED***leading-6***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className=***REMOVED***italic block text-xs my-1***REMOVED***><PlusIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-0***REMOVED*** /> Click for more information</span>}</span>}
           contentClassName=***REMOVED***max-w-[400px]***REMOVED***
@@ -102,7 +103,7 @@ export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, d
     ? <span className={`${hasDescription ? ***REMOVED***ml-2***REMOVED*** : ***REMOVED******REMOVED***} text-xs text-blue-500  p-1 rounded-2xl cursor-pointer  hover:text-blue-700 shadow-md -my-2`} onClick={() => {
       setShowModal(true)
     }}>
-      <Tooltip content=***REMOVED***Click for more information***REMOVED***>
+      <Tooltip dark={true} content=***REMOVED***Click for more information***REMOVED***>
         <InfoCircledIcon className=***REMOVED***inline w-4 h-4 -mt-1 mr-0***REMOVED*** /> {!hasDescription && ***REMOVED***More***REMOVED***}
       </Tooltip>
     </span>
