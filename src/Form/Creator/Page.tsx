@@ -12,6 +12,7 @@ import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOV
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import FieldLabel, { FieldLabelText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 
 const PageNav = ({
   sections,
@@ -159,7 +160,22 @@ export const ActivePage = ({
       <div className={className}>
               {
           formSection?.description !== undefined
-            ? <div className=***REMOVED***mb-4***REMOVED***><InfoCircledIcon className=***REMOVED***inline -mt-1***REMOVED*** /> <InlineMarkdown>{formSection.description}</InlineMarkdown></div>
+            ? <div className=***REMOVED***mb-4***REMOVED***> 
+            <FieldLabel field={{
+                ...formSection,
+                description: null,
+                label: formSection.description,
+                type: ***REMOVED***text***REMOVED***,
+                settings:{
+                  ...formSection.settings,
+                  descriptionPresentation: ***REMOVED***tooltip***REMOVED***
+                }
+              }}
+              textClassName=***REMOVED***font-normal***REMOVED***
+
+            />
+            
+            </div>
             : ***REMOVED******REMOVED***
         }
         <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
