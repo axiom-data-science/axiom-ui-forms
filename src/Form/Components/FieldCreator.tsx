@@ -248,7 +248,7 @@ const FieldCreator = ({
   } else if (conditionResult.result === ***REMOVED***enable***REMOVED*** && conditionResult.pass) {
     disabled = false
   }
-  if (conditionResult.newDefaultValue !== undefined) {
+  if (conditionResult.pass && conditionResult.newDefaultValue !== undefined) {
     if (value !== conditionResult.newDefaultValue) {
       value = conditionResult.newDefaultValue
       return <FieldCreator
