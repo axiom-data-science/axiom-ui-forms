@@ -1,0 +1,30 @@
+{
+  "label": "Form with object",
+  "description": "Field ***REMOVED***value***REMOVED*** is conditionally set to be disabled and have a value of 0 when ***REMOVED***checkboxField***REMOVED*** is ***REMOVED***false***REMOVED***.",
+  "id": "objectForm",
+  "fields": [
+    {
+      "id": "checkboxField",
+      "label": "Is it true?",
+      "type": "boolean",
+      "defaultValue": true
+    },
+    {
+        "id": "value",
+        "label": "Value",
+        "type": "number",
+        "defaultValue": 5.4,
+        "constraints": {
+          "min": 0,
+          "max": 10,
+          "step": 0.1
+        },
+        "conditions": {
+          "field": "checkboxField",
+          "value": false,
+          "result": "disable",
+          "newDefaultValue": 0
+        }
+    }
+  ]
+}
