@@ -13,7 +13,9 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
   const isDifferent = onChange !== undefined && !field.multiple && field.defaultValue !== undefined && !isEqual(value, field.defaultValue)
   return (
     isDifferent
-      ? <span data-testid="revert-to-default" className={disabled ? ***REMOVED***cursor-not-allowed***REMOVED*** : ***REMOVED***cursor-pointer***REMOVED***} onClick={() => {
+      ? <span data-testid="revert-to-default" className={disabled ? ***REMOVED***cursor-not-allowed***REMOVED*** : ***REMOVED***cursor-pointer***REMOVED***} onClick={(e) => {
+        e.stopPropagation()
+        e.preventDefault()
         if (disabled !== true) {
           onChange(field.defaultValue)
         }
