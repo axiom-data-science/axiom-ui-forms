@@ -43,7 +43,10 @@ const SliderInput = ({
       field={field}
       disabled={disabled}
       value={value}
-      onChange={onChange}
+      onChange={(v) => {
+        updateTemp(Number(v))
+        onChange(v)
+      }}
       />
     <div className=***REMOVED***flex flex-row gap-4***REMOVED***>
       <Slider
