@@ -1,4 +1,4 @@
-import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField, type ICheckConditionResult } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from '@/utils/getters'
 import { checkCondition } from '@/utils/validators'
 import { merge, set } from 'lodash-es'
@@ -100,7 +100,7 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
         return value
       })
     }
-    const checkedCondition = field !== undefined
+    const checkedCondition: ICheckConditionResult = field !== undefined
       ? checkCondition(field, formValues)
       : { pass: true, result: 'include' }
     if (field !== undefined && (
@@ -118,6 +118,8 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
       field?.type === 'object' || field === undefined
     )) {
       formValuesCopy[key] = cleanFormValuesLevel((formValuesCopy[key] ?? {}) as IFormValues, fields, path)
+      /* } else if (field !== undefined && checkedCondition.pass && checkedCondition.newDefaultValue !== undefined) {
+        formValuesCopy[key] = checkedCondition.newDefaultValue */
     } else if (field === undefined) {
       formValuesCopy[key] = undefined
     }
@@ -138,6 +140,7 @@ export function updateFormValuesWithFieldValueInPlace (field: IFormField, newVal
   if (fieldPath === undefined) {
     merge(formValues, newValue)
   } else {
+    console.log('fieldPath', fieldPath, newValue)
     set(formValues, fieldPath ?? '', newValue)
   }
 }
@@ -172,6 +175,26 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
     value,
     cleanedFormValues
   )
+
+  const path = getPathFromField(field)
+  console.log('path', path)
+
+  const fieldsWithPassingConditionsThatThisFieldAffects = getFieldsFromFormSection(form).filter(f => {
+    if (f.conditions !== undefined || f.conditionsSet !== undefined) {
+      const dependsOnFields = f.conditions !== undefined
+        ? [f.conditions.field ?? f.conditions.dependsOn]
+        : f.conditionsSet !== undefined
+          ? f.conditionsSet.conditions.map(c => c.field ?? c.dependsOn)
+          : []
+      console.log('dependsOnFields', dependsOnFields)
+      const conditionResult = checkCondition(f, { ...{ [getPathFromField(field) ?? '']: value } })
+      return conditionResult.pass && conditionResult.newDefaultValue !== undefined
+    }
+    return false
+  })
+
+  console.log('fieldsWithPassingConditionsThatThisFieldAffects', fieldsWithPassingConditionsThatThisFieldAffects)
+
   return formValuesCopyClean
 }
 
