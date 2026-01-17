@@ -9,7 +9,7 @@ import { cleanAndUpdateFormValuesWithFieldValue, cloneObject, createOneOfMultipl
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const SHOW_DEBUG = config.SHOW_DEBUG
 const disabledClassName = ***REMOVED******REMOVED*** // ***REMOVED***opacity-50 pointer-events-none cursor-not-allowed***REMOVED***
@@ -38,21 +38,21 @@ const DeleteMultiple = ({
       {
         confirm
           ? <p className=***REMOVED***flex flex-row gap-2 text-sm***REMOVED***><span className=***REMOVED***text-slate-600***REMOVED***>Deleting: </span> Are you sure?
-              <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***submit***REMOVED***
-                onClick={() => {
-                  doDelete()
-                  setConfirm(false)
-                }}>Yes <CheckIcon className=***REMOVED***inline ml-2***REMOVED*** />
-              </Button>
-              <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***alert***REMOVED***
-                onClick={() => {
-                  setConfirm(false)
-                }}>Cancel <Cross1Icon className=***REMOVED***inline ml-2***REMOVED*** />
-              </Button>
-            </p>
-          : <Button size=***REMOVED***xs***REMOVED*** className={toolButtonClass} onClick={() => { setConfirm(true) }}>
-              Delete <TrashIcon className=***REMOVED***inline ml-2 fill-white***REMOVED*** />
+            <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***submit***REMOVED***
+              onClick={() => {
+                doDelete()
+                setConfirm(false)
+              }}>Yes <CheckIcon className=***REMOVED***inline ml-2***REMOVED*** />
             </Button>
+            <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***alert***REMOVED***
+              onClick={() => {
+                setConfirm(false)
+              }}>Cancel <Cross1Icon className=***REMOVED***inline ml-2***REMOVED*** />
+            </Button>
+          </p>
+          : <Button size=***REMOVED***xs***REMOVED*** className={toolButtonClass} onClick={() => { setConfirm(true) }}>
+            Delete <TrashIcon className=***REMOVED***inline ml-2 fill-white***REMOVED*** />
+          </Button>
       }
     </>
   )
@@ -98,42 +98,42 @@ const OneOfMultiple = ({
 
   return (
     <div className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***} py-2 ${getFieldWrapperClass(field)}`} data-testid={`field-${field.id}-${index}`}>
-          <InputComponent
-          field={field}
-          value={value}
-          disabled={disabled}
-          onChange={(v) => {
-            const newValues = [...values]
-            newValues[index] = v as IValueType
-            onChange(newValues)
-          }}
-        />
-            <div className=***REMOVED***flex flex-row w-full p-2 gap-4***REMOVED***>
+      <InputComponent
+        field={field}
+        value={value}
+        disabled={disabled}
+        onChange={(v) => {
+          const newValues = [...values]
+          newValues[index] = v as IValueType
+          onChange(newValues)
+        }}
+      />
+      <div className=***REMOVED***flex flex-row w-full p-2 gap-4***REMOVED***>
 
-              <div className=***REMOVED***flex gap-2***REMOVED***>
-                <Button
-                size=***REMOVED***xs***REMOVED***
-                className={toolButtonClass}
-                onClick={() => {
-                  addValue(null)
-                }}>Add <PlusIcon className=***REMOVED***inline ml-2***REMOVED*** /></Button>
-                <Button
-                  size=***REMOVED***xs***REMOVED***
-                  className={toolButtonClass}
-                  onClick={() => {
-                    addValue(cloneObject(value))
-                  }}>Duplicate <CopyIcon className=***REMOVED***inline ml-2***REMOVED*** />
-                </Button>
-              </div>
-              {index > 0 && (
-              <DeleteMultiple doDelete={() => {
-                const newValues = [...values]
-                newValues.splice(index, 1)
-                onChange(newValues)
-              }} />
-              )}
-            </div>
+        <div className=***REMOVED***flex gap-2***REMOVED***>
+          <Button
+            size=***REMOVED***xs***REMOVED***
+            className={toolButtonClass}
+            onClick={() => {
+              addValue(null)
+            }}>Add <PlusIcon className=***REMOVED***inline ml-2***REMOVED*** /></Button>
+          <Button
+            size=***REMOVED***xs***REMOVED***
+            className={toolButtonClass}
+            onClick={() => {
+              addValue(cloneObject(value))
+            }}>Duplicate <CopyIcon className=***REMOVED***inline ml-2***REMOVED*** />
+          </Button>
         </div>
+        {index > 0 && (
+          <DeleteMultiple doDelete={() => {
+            const newValues = [...values]
+            newValues.splice(index, 1)
+            onChange(newValues)
+          }} />
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -178,14 +178,14 @@ export const MultipleFieldCreator = ({
         return <div key={`${field.id}-${index}`}>{
           SHOW_DEBUG && <><span className=***REMOVED***text-red-500***REMOVED***>{makeJsonPath(field)}</span><span className=***REMOVED***text-green-500***REMOVED***>{makeJsonPath(createOneOfMultipleField(field, index))}</span></>
         }<OneOfMultiple
-          key={`${field.id}-${index}`}
-          InputComponent={InputComponent}
-          field={createOneOfMultipleField(field, index)}
-          value={va}
-          index={index}
-          onChange={defaultOnChange}
-          values={initialValues}
-          disabled={disabled}
+            key={`${field.id}-${index}`}
+            InputComponent={InputComponent}
+            field={createOneOfMultipleField(field, index)}
+            value={va}
+            index={index}
+            onChange={defaultOnChange}
+            values={initialValues}
+            disabled={disabled}
           /></div>
       })
     }
@@ -215,7 +215,7 @@ const FieldCreator = ({
       formValues
     })
     setFormValues(formValuesCopyClean)
-    if(typeof onChange === ***REMOVED***function***REMOVED***) {
+    if (typeof onChange === ***REMOVED***function***REMOVED***) {
       onChange(v)
     }
   }
@@ -248,9 +248,10 @@ const FieldCreator = ({
   } else if (conditionResult.result === ***REMOVED***enable***REMOVED*** && conditionResult.pass) {
     disabled = false
   }
-  if (conditionResult.pass && conditionResult.newDefaultValue !== undefined) {
+  /* if (conditionResult.pass && conditionResult.newDefaultValue !== undefined) {
     if (value !== conditionResult.newDefaultValue) {
       value = conditionResult.newDefaultValue
+      console.log(***REMOVED***tester: setting newDefaultValue***REMOVED***, field.id, value, getFieldValue(field, formValues))
       return <FieldCreator
         field={field}
         value={value}
@@ -261,41 +262,42 @@ const FieldCreator = ({
         conditionResult={{ ...conditionResult, newDefaultValue: undefined }}
       />
     }
-  }
+  } */
 
-  const initialValue = value !== undefined ? value : getFieldValue(field, formValues)
+  const fieldValue = getFieldValue(field, formValues)
+  const initialValue = value !== undefined ? value : fieldValue
 
   return <>
-  {
-  InputComponent !== undefined
-    ? <div className={utils.makeClassName({
-      className,
-      defaultClassName,
-      extras: [
-        disabled ? disabledClassName : undefined,
-        getFieldWrapperClass(field)
-      ]
-    })}>{
-      field.multiple === true
-        ? <MultipleFieldCreator
-            field={field}
-            disabled={disabled}
-            onChange={onChange}
-          />
-        : <InputComponent
-            field={field}
-            disabled={disabled}
-            onChange={onChangeFn}
-            value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
-          />
+    {
+      InputComponent !== undefined
+        ? <div className={utils.makeClassName({
+          className,
+          defaultClassName,
+          extras: [
+            disabled ? disabledClassName : undefined,
+            getFieldWrapperClass(field)
+          ]
+        })}>{
+            field.multiple === true
+              ? <MultipleFieldCreator
+                field={field}
+                disabled={disabled}
+                onChange={onChange}
+              />
+              : <InputComponent
+                field={field}
+                disabled={disabled}
+                onChange={onChangeFn}
+                value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
+              />
 
-    }</div>
-    : <div>
-        <p className=***REMOVED***font-bold mb-2***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline***REMOVED*** /> {field.label ?? ***REMOVED******REMOVED***}</p>
-        <p className=***REMOVED***p-4 text-sm bg-slate-100***REMOVED***>No component definition for <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>type</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.type}</span> at <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>id</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.id}</span></p>
-      </div>
+          }</div>
+        : <div>
+          <p className=***REMOVED***font-bold mb-2***REMOVED***><ExclamationTriangleIcon className=***REMOVED***inline***REMOVED*** /> {field.label ?? ***REMOVED******REMOVED***}</p>
+          <p className=***REMOVED***p-4 text-sm bg-slate-100***REMOVED***>No component definition for <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>type</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.type}</span> at <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>id</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.id}</span></p>
+        </div>
     }
-    </>
+  </>
 }
 
 export default FieldCreator

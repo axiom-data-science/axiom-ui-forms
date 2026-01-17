@@ -1,4 +1,4 @@
-import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField, type ICheckConditionResult } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { merge, set } from ***REMOVED***lodash-es***REMOVED***
@@ -100,7 +100,7 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
         return value
       })
     }
-    const checkedCondition = field !== undefined
+    const checkedCondition: ICheckConditionResult = field !== undefined
       ? checkCondition(field, formValues)
       : { pass: true, result: ***REMOVED***include***REMOVED*** }
     if (field !== undefined && (
@@ -118,6 +118,8 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
       field?.type === ***REMOVED***object***REMOVED*** || field === undefined
     )) {
       formValuesCopy[key] = cleanFormValuesLevel((formValuesCopy[key] ?? {}) as IFormValues, fields, path)
+      /* } else if (field !== undefined && checkedCondition.pass && checkedCondition.newDefaultValue !== undefined) {
+        formValuesCopy[key] = checkedCondition.newDefaultValue */
     } else if (field === undefined) {
       formValuesCopy[key] = undefined
     }
@@ -138,6 +140,7 @@ export function updateFormValuesWithFieldValueInPlace (field: IFormField, newVal
   if (fieldPath === undefined) {
     merge(formValues, newValue)
   } else {
+    console.log(***REMOVED***fieldPath***REMOVED***, fieldPath, newValue)
     set(formValues, fieldPath ?? ***REMOVED******REMOVED***, newValue)
   }
 }
@@ -172,6 +175,26 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
     value,
     cleanedFormValues
   )
+
+  const path = getPathFromField(field)
+  console.log(***REMOVED***path***REMOVED***, path)
+
+  const fieldsWithPassingConditionsThatThisFieldAffects = getFieldsFromFormSection(form).filter(f => {
+    if (f.conditions !== undefined || f.conditionsSet !== undefined) {
+      const dependsOnFields = f.conditions !== undefined
+        ? [f.conditions.field ?? f.conditions.dependsOn]
+        : f.conditionsSet !== undefined
+          ? f.conditionsSet.conditions.map(c => c.field ?? c.dependsOn)
+          : []
+      console.log(***REMOVED***dependsOnFields***REMOVED***, dependsOnFields)
+      const conditionResult = checkCondition(f, { ...{ [getPathFromField(field) ?? ***REMOVED******REMOVED***]: value } })
+      return conditionResult.pass && conditionResult.newDefaultValue !== undefined
+    }
+    return false
+  })
+
+  console.log(***REMOVED***fieldsWithPassingConditionsThatThisFieldAffects***REMOVED***, fieldsWithPassingConditionsThatThisFieldAffects)
+
   return formValuesCopyClean
 }
 
