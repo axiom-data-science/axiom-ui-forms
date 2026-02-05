@@ -39,6 +39,7 @@ import Metadata from ***REMOVED***@/Binner/Metadata***REMOVED***
 import NestedDataTest from ***REMOVED***@/Form/NestedDataTest***REMOVED***
 import JsonPathTester from ***REMOVED***@/Form/JSONPathTester***REMOVED***
 import PlatformsMetadata from ***REMOVED***@/Platforms/PlatformsMetadata***REMOVED***
+import MODLForm from ***REMOVED***@/Form/MODL/MODLForm***REMOVED***;
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -226,6 +227,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path=***REMOVED***/binner-metadata***REMOVED*** element={<></>}>
               <Route path=***REMOVED*******REMOVED*** element={<></>} />
+            </Route>
+            <Route path=***REMOVED***/modl***REMOVED*** element={<MODLForm />}>
+              <Route path=***REMOVED*******REMOVED*** element={<MODLForm />} />
             </Route>
           </Routes>
         </BrowserRouter>
