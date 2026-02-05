@@ -1,0 +1,35 @@
+Name	Values	Name Definition/Suggested value	Example
+title	CVOW Wave Buoy, Timeseries Data	Unique dataset identifier in ERDDAP e.g., Dominion Wave Buoy, Timeseries Data	South Fork Wind SFW01, Timeseries Data
+acknowledgement	This dataset is part of a MetOcean Cyberinfrastructure supported by the Integrated Ocean Observing System (IOOS) to streamline integration of data from offshore operations. 	Acknowlegment of financial supporting entities or award numbers	This dataset is part of a MetOcean Cyberinfrastructure supported by the Integrated Ocean Observing System (IOOS) to streamline integration of data from offshore operations. 
+comment 	CVOW Wave Rider Buoy developed and deployed by Deme group	Used to describe the buoy/platform and contributor	South Fork Wind Lidar buoy developed and deployed by Woods Hole Group
+contributor_name	DEME	Contributor refers to individuals or institutions that contributed to creation of the data. We use for platform deployment/data provider entity	Woods Hole Group
+contributor_address	 	physical address or city/state/country	107 Waterhouse Rd, Bourne, MA 02532
+contributor_url		Contributor website e.g., https://www.deme-group.com/	https://www.woodsholegroup.com/
+contributor_email		Creator primary contact - e.g. van.dammefrederic@deme-group.com	dwalsh at woodsholegroup.com
+creator_country	USA	Creator refers to owner/operator of platform, used here for owner/operator of deployed platform	USA
+creator_name 		Name of creator entity e.g., Coastal Virginia Offshore Wind or Dominion Energy	South Fork Wind
+creator_address 		mailing address	524 Montauk Hwy, Amagansett, NY 11930
+creator_state		state of operation	New York
+creator_URL 		Creator website e.g., https://coastalvwind.com or https://www.dominionenergy.com	https://southforkwind.com
+creator_email		primary contact at CVOW	info at southforkwind.com
+institution		e.g., Coastal Virginia Offshore Wind - a Dominion Energy project	South Fork Wind - a partnership between Ørsted and Global Infrastructure Partners
+creator_sector	industry	IOOS classifier for sector (e.g., gov_state, nonprofit, industry, acdemic, gov_federal, tribal, etc.)	industry
+geospatial_lat_max		Maximum latitude in decimal degrees	41.0775
+geospatial_lat_min		Minimum latitude in decimal degrees	41.0775
+geospatial_lon_max		Maximum longitude in decimal degrees	-71.1855
+geospatial_lon_min		Minimum longitude in decimal degrees	-71.1855
+id		Unique Platform/Station ID e.g., deme_waverider or deme_waverider1	SFW01
+infoURL		Best website  for information about program e.g, https://coastalvawind.com/	https://southforkwind.com
+license	The data may be used and redistributed for free but is not intended for legal use, since it may contain inaccuracies. Neither the data Contributor, Dominion, NOAA, nor the United States Government, nor any of their employees or contractors, makes any warranty, express or implied, including warranties of merchantability and fitness for a particular purpose, or assumes any legal liability for the accuracy, completeness, or usefulness, of this information.	General license language for re-use/access of data in ERDDAP platform.	The data may be used and redistributed for free but is not intended for legal use, since it may contain inaccuracies. Neither the data Contributor, Orsted, NOAA, nor the United States Government, nor any of their employees or contractors, makes any warranty, express or implied, including warranties of merchantability and fitness for a particular purpose, or assumes any legal liability for the accuracy, completeness, or usefulness, of this information.
+platform_name		Project or individual platform e.g., DVOW Wave Rider 1	South Fork Wind
+processing_level 		Processing level of data (raw, qc, level 1, etc)	raw dataset, no qc provided
+project		Name of wind project - e.g. Coastal Virginia Offshore Wind (CVOW)	South Fork Wind
+publisher_country	USA	Publisher refers to data management at NERACOOS/MARACOOS	Publisher is producer of this data record via ERDDAP
+publisher_email	devops at rpsgroup.com, info at neracoos.org	Publisher refers to data management at NERACOOS/MARACOOS	devops at rpsgroup.com, info at neracoos.org
+publisher_institution	MARACOOS, NERACOOS	Publisher refers to data management at NERACOOS/MARACOOS	MARACOOS, NERACOOS
+publisher_name	MARACOOS, NERACOOS	Publisher refers to data management at NERACOOS/MARACOOS	MARACOOS, NERACOOS
+publisher_phone	(401) 789-6224, (603) 319-1785	Publisher refers to data management at NERACOOS/MARACOOS	(401) 789-6224, (603) 319-1785
+publisher_type	institution	Publisher refers to data management at NERACOOS/MARACOOS	institution
+publisher_url	https://www.maracoos.org, https://www.neracoos.org	Publisher refers to data management at NERACOOS/MARACOOS	https://www.maracoos.org, https://www.neracoos.org
+summary 	This dataset contains observations to support further understanding of metocean conditions off the coast of Virginia. Data is collected from a wave rider buoy and the dataset includes  measurements of wave peak height, wave significant height,  wave peak direction, and wave significant period.	Basic summary of dataset - location, platform, variables collected.	This dataset contains observations to support further understanding of metocean conditions off the coast of New York, Rhode Island and Southeastern Massachusetts. Data is collected from a floating lidar buoy and the dataset includes  measurements of sea temperature (surface and sea floor), current speed, current direction, wave height, wave direction, and wave period, air temperature, atmospheric pressure, relative humidity, visibility, surface wind speed,  surface wind direction, and surface wind gust.
+Instrument 		Instruments used, varies by variable-  see DP metadata - use at attribute level as component (with each variable) or global (separate by comma)	Campbell Scientific MetSENS 500, Campbell Scientific CS120 Visibility Sensor, Garmin GPS16X-HVS, Seaview SVS-603b, Nortek Aquadopp Profiler Z-Cell 600kHz
