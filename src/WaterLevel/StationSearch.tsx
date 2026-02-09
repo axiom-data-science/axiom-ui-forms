@@ -60,7 +60,7 @@ const StationSearch = ({ field, onChange, value, disabled }: IFieldInputProps): 
     </div>
     {
         (isLoading || data !== undefined) && (
-            <div className='absolute left-0 right-0 top-full z-10 bg-white border border-gray-300 shadow-lg h-60 overflow-y-auto'>
+            <div className='absolute left-0 right-0 top-full z-40 bg-white border border-gray-300 shadow-lg h-60 overflow-y-auto'>
             {isLoading && <Loader className='absolute top-10' />}
             {error !== null && <p className='p-4 text-red-600'>Error: {error.message}</p>}
             {
