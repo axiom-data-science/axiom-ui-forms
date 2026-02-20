@@ -1,0 +1,148 @@
+Fields	Definition/description	ERDDAP	Non-ERDDAP form (proj mgmt, data pub, etc)	Response type
+Prepared by	Person completing form	X		Text - short
+Date prepared		x		Date
+Update or new station? 	Conditional question to format next questions. 	x		Multichoice
+Previous site log	Link to old station log, if one exists. Task for pre- or post-field work. 		x	Text - short
+Modified/added section			x	Text - short
+Reason for update			x	Text - short
+Funding source			X	Text - short
+Funding grant			X	Text - short
+Deployment year of proposal			X	Text - short
+Operator POC		X		Text - short
+Telephone (primary)		X		Phone number
+Email		X		Email
+Affiliation		X		Text - short
+Community POC			CO-OPS eSite Report	--
+Community POC name			X	Text - short
+Community POC telephone			X	Phone number
+Community POC email			X	Email
+Community POC Affiliation			X	Text - short
+Data Management				--
+Entity		x		Text - short
+POC		x		Text - short
+Affiliation		x		Text - short
+Telephone (primary)		x		Phone number
+Email		x		Email
+ERDDAP link	Link to ERDDAP station	x		Link
+Portal link	Link to RA-specific station	x		Link
+Data provider	Name of data provider, such as ***REMOVED***Hohonu***REMOVED*** or other company. Not a link	x		Text
+Data provider - additional	Link to outside data sources, such as company***REMOVED***s website (ex. Hohonu)	x		Text
+API link	Optional	x		Link
+Additional information		x		Text - long
+Station Information				--
+State		x		Multichoice
+Station Name		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Station ID	Conditional based on location (RA specific?)	x		
+NWS Location Identifier	can be requested via local WFOs or the IOOS program office can facilitate a mass request directly with NWS.	x		
+Is this a CO-OPS Station? (yes/no)	Filterable question to determine type of station being installed.	x		Multichoice
+CO-OPS ID		x		Multichoice
+Other ID		x		Text
+Water body setting	Ex: Next to coast, Lake coastline, etc	x		Multichoice with ***REMOVED***other***REMOVED*** option
+Approximate position	Ex: On building mounted on scaffolding	x		
+Latitude (DD, N is +)		x		Float
+Longitude (DD, E is +)		x		Float
+Datum projection 	Horizontal datum for the lat/lon (eg: NAD83)	x		Multichoice
+Additional information	Open field for additional text			Text - long
+Sensor Information				--
+If CO-OPS, was there a prior location for this CO-OPs station?				Multichoice with ***REMOVED***other***REMOVED*** option
+If yes to previous question, what is lat/long in DD? 	Work to be done pre- or post-field work			
+Type of CO-OPS approved station				Multichoice
+Instrument brand	Instrument is defined as the overall physical device that houses multiple sensors and components. For example, a Hohonu instrument includes individual WL sensor and a separate telecommunication component.			
+Sensor - type	Sensor is defined as the specific component. In this instance, this is the Water Level Sensor. 	x		Multichoice with ***REMOVED***other***REMOVED*** option
+Sensor - brand/manufacturer	Specific brand of WL sensor components	x		Multichoice with ***REMOVED***other***REMOVED*** option
+Sensor - Model		x		Text - short
+Sensor - Serial number		x		Text - short
+Real time?		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Sample interval (min)		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Sample average window (sec)		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Mounting structure		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Sensor accuracy		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Date installed		x		Date
+Date removed, if applicable		x		Date
+Telemetry method		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Modem/communication - Manufacturer & model		x		Multichoice with ***REMOVED***other***REMOVED*** option
+Serial number		x		Text - short
+Date removed, if applicable				Date
+Sensor vertical control				--
+Sensor survey information / Bench mark info				--
+Is the station surveyed?		x		Multichoice
+Marker information and stamping				
+Marker stamping		x		?
+Marker NGS PID	"NGS = National Geodetic Survey; PID = Permanent Identifier
+Can be completed pre-field work during recon."	x		?
+Marker CO-OPS VM#	Only if PID is not available	x		?
+Marker other identifier		x		?
+Survey method	Survey / measurement method. 	x		Multichoice
+Date (of most recent survey)		x		Date
+Measurement by (at most recent survey)		x		Text - short
+Ortho height (NAVD88 m)		x		Float
+Station datum height (m)		x		Float
+Additional information				
+				
+Ellipsoidal height (m)		x		Float
+Sensor offset (m)		x		Float
+GNSS/RTK Unit 		x		Multichoice
+Processing software		x		Multichoice
+Has there been movement since last survey? 		x		Multichoice
+If so, what is the difference?		x		Float
+Is the difference within 5 cm?		x		Multichoice
+Additional information		x		Text - long
+Station Error Analysis				--
+Total Water level Error (cm):		x		Float
+Sensor Error (cm):		x		Float
+Survey Error (cm):	AKA leveling error	x		Float
+Data Processing Error (cm):		x		Float
+Datum Error (cm):		x		Float
+Local tidal datum establishment				--
+Record Start Date:		x		Date
+Record End Date:		x		Date
+Computational Tool:		x		Multichoice
+Computation method		x		Multichoice
+NWLON Control Station:		x		?
+Control Station Epoch:		x		?
+Datum Type:		x		?
+Computation Date:		x		Date
+Computed by		x		Text - short
+Tidal Datum Offsets relative to station				--
+MHHW (m):		x		Float
+MHW (m):		x		Float
+DTL (m):		x		Float
+MTL (m):		x		Float
+MSL (m):		x		Float
+MLW (m):		x		Float
+MLLW (m):		x		Float
+GT (m)		x		Float
+MN (m)		x		Float
+DHQ (m)		x		Float
+DLQ (m)		x		Float
+HWI (hr)		x		Float
+LWI (hr)		x		Float
+Collocation Information				
+Is this a collocation? (yes/no)	This will be filterable as an ***REMOVED***if applicable***REMOVED*** set of questions if the collocation is marked as ***REMOVED***yes***REMOVED***	x		
+Instrument type		x		
+Manufacturer & model		x		
+Serial number		x		
+Date installed		x		
+Date removed		x		
+Additional information		x		
+ECC			x	
+ECC URL:			x	
+Was Nepa Completed:			x	
+Notes:			x	
+Photos			x	
+Station			x	
+Sensor			x	
+Sensor management			x	
+Sensor survey reference point			x	
+Photo of the two surveyed benchmark***REMOVED***s face stamping			x	
+DCP	data collection platform // data logger		x	
+Underwater components			x	
+Vicinity			x	
+Other / Attachments			x	
+Bench mark diagram			x	
+Sensor test worksheet			x	
+Sensor elevation drawing			x	
+Bench mark descriptions			x	
+Station ***REMOVED***to-reach***REMOVED*** statement			x	
+Disclaimer 	specify uncertainty and limitations of use	x		
+Dissemination flag		x		

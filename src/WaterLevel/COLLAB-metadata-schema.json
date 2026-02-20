@@ -1,0 +1,594 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "COLLAB Water Level Metadata",
+  "type": "object",
+  "properties": {
+    "preparedBy": {
+      "type": "string",
+      "title": "Prepared by",
+      "description": "Person completing form"
+    },
+    "datePrepared": {
+      "type": "string",
+      "title": "Date prepared",
+      "format": "date"
+    },
+    "updateOrNewStation": {
+      "type": "string",
+      "title": "Update or new station?",
+      "description": "Conditional question to format next questions",
+      "enum": ["Update", "New Station"]
+    },
+    "previousSiteLog": {
+      "type": "string",
+      "title": "Previous site log",
+      "description": "Link to old station log, if one exists. Task for pre- or post-field work"
+    },
+    "modifiedAddedSection": {
+      "type": "string",
+      "title": "Modified/added section"
+    },
+    "reasonForUpdate": {
+      "type": "string",
+      "title": "Reason for update"
+    },
+    "fundingSource": {
+      "type": "string",
+      "title": "Funding source"
+    },
+    "fundingGrant": {
+      "type": "string",
+      "title": "Funding grant"
+    },
+    "deploymentYearOfProposal": {
+      "type": "string",
+      "title": "Deployment year of proposal"
+    },
+    "operatorPOC": {
+      "type": "string",
+      "title": "Operator POC"
+    },
+    "telephonePrimary": {
+      "type": "string",
+      "title": "Telephone (primary)",
+      "format": "phone"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email",
+      "format": "email"
+    },
+    "affiliation": {
+      "type": "string",
+      "title": "Affiliation"
+    },
+    "communityPOCName": {
+      "type": "string",
+      "title": "Community POC name"
+    },
+    "communityPOCTelephone": {
+      "type": "string",
+      "title": "Community POC telephone",
+      "format": "phone"
+    },
+    "communityPOCEmail": {
+      "type": "string",
+      "title": "Community POC email",
+      "format": "email"
+    },
+    "communityPOCAffiliation": {
+      "type": "string",
+      "title": "Community POC Affiliation"
+    },
+    "dataManagementEntity": {
+      "type": "string",
+      "title": "Data Management - Entity"
+    },
+    "dataManagementPOC": {
+      "type": "string",
+      "title": "Data Management - POC"
+    },
+    "dataManagementAffiliation": {
+      "type": "string",
+      "title": "Data Management - Affiliation"
+    },
+    "dataManagementTelephone": {
+      "type": "string",
+      "title": "Data Management - Telephone (primary)",
+      "format": "phone"
+    },
+    "dataManagementEmail": {
+      "type": "string",
+      "title": "Data Management - Email",
+      "format": "email"
+    },
+    "erddapLink": {
+      "type": "string",
+      "title": "ERDDAP link",
+      "description": "Link to ERDDAP station",
+      "format": "uri"
+    },
+    "portalLink": {
+      "type": "string",
+      "title": "Portal link",
+      "description": "Link to RA-specific station",
+      "format": "uri"
+    },
+    "dataProvider": {
+      "type": "string",
+      "title": "Data provider",
+      "description": "Name of data provider, such as ***REMOVED***Hohonu***REMOVED*** or other company. Not a link"
+    },
+    "dataProviderAdditional": {
+      "type": "string",
+      "title": "Data provider - additional",
+      "description": "Link to outside data sources, such as company***REMOVED***s website (ex. Hohonu)"
+    },
+    "apiLink": {
+      "type": "string",
+      "title": "API link",
+      "description": "Optional",
+      "format": "uri"
+    },
+    "additionalInformationGeneral": {
+      "type": "string",
+      "title": "Additional information"
+    },
+    "state": {
+      "type": "string",
+      "title": "State"
+    },
+    "stationName": {
+      "type": "string",
+      "title": "Station Name"
+    },
+    "stationID": {
+      "type": "string",
+      "title": "Station ID",
+      "description": "Conditional based on location (RA specific?)"
+    },
+    "nwsLocationIdentifier": {
+      "type": "string",
+      "title": "NWS Location Identifier",
+      "description": "can be requested via local WFOs or the IOOS program office can facilitate a mass request directly with NWS"
+    },
+    "isCOOPSStation": {
+      "type": "string",
+      "title": "Is this a CO-OPS Station? (yes/no)",
+      "description": "Filterable question to determine type of station being installed",
+      "enum": ["Yes", "No"]
+    },
+    "coopsID": {
+      "type": "string",
+      "title": "CO-OPS ID"
+    },
+    "otherID": {
+      "type": "string",
+      "title": "Other ID"
+    },
+    "waterBodySetting": {
+      "type": "string",
+      "title": "Water body setting",
+      "description": "Ex: Next to coast, Lake coastline, etc",
+      "enum": ["Inlet", "River", "Ocean coastline", "Lake", "Other"]
+      
+    },
+    "approximatePosition": {
+      "type": "string",
+      "title": "Approximate position",
+      "description": "Ex: On building mounted on scaffolding"
+    },
+    "latitude": {
+      "type": "number",
+      "title": "Latitude (DD, N is +)"
+    },
+    "longitude": {
+      "type": "number",
+      "title": "Longitude (DD, E is +)"
+    },
+    "datumProjection": {
+      "type": "string",
+      "title": "Datum projection",
+      "description": "Horizontal datum for the lat/lon (eg: NAD83)"
+    },
+    "additionalInformationStation": {
+      "type": "string",
+      "title": "Additional information",
+      "description": "Open field for additional text"
+    },
+    "priorCOOPSLocation": {
+      "type": "string",
+      "title": "If CO-OPS, was there a prior location for this CO-OPs station?"
+    },
+    "priorLocationLatLong": {
+      "type": "string",
+      "title": "If yes to previous question, what is lat/long in DD?",
+      "description": "Work to be done pre- or post-field work"
+    },
+    "typeOfCOOPSApprovedStation": {
+      "type": "string",
+      "title": "Type of CO-OPS approved station"
+    },
+    "instrumentBrand": {
+      "type": "string",
+      "title": "Instrument brand",
+      "description": "Instrument is defined as the overall physical device that houses multiple sensors and components. For example, a Hohonu instrument includes individual WL sensor and a separate telecommunication component",
+      "enum": ["Hohonu", "Greenstream", "Hobo", "Divirod", "Community Sensor", "Other"]
+    },
+    "sensorType": {
+      "type": "string",
+      "title": "Sensor - type",
+      "description": "Sensor is defined as the specific component. In this instance, this is the Water Level Sensor",
+        "enum": ["Radar", "Pressure (vented or non-vented)", "Acoustic", "GNSS-R", "GNSS Buoy", "Ultrasonic"]
+    },
+    "sensorBrandManufacturer": {
+      "type": "string",
+      "title": "Sensor - brand/manufacturer",
+      "description": "Specific brand of WL sensor components",
+      "enum": ["Senix", "Other"]
+    },
+    "sensorModel": {
+      "type": "string",
+      "title": "Sensor - Model",
+      "enum": ["ToughSonic 50", "Other"]
+    },
+    "sensorSerialNumber": {
+      "type": "string",
+      "title": "Sensor - Serial number"
+    },
+    "realTime": {
+      "type": "boolean",
+      "title": "Real time?"
+    },
+    "sampleInterval": {
+      "type": "number",
+      "title": "Sample interval (min)",
+      "enum": ["1 min", "6 min", "15 min", "60 min", "Other"]
+    },
+    "sampleAverageWindow": {
+      "type": "number",
+      "title": "Sample average window (sec)",
+      "enum": ["0 sec", "60 sec", "181 sec", "Other"]
+    },
+    "mountingStructure": {
+      "type": "string",
+      "title": "Mounting structure",
+      "enum": ["Bridge", "Seawall", "Dock", "Bedrock", "Anchor", "Other"]
+    },
+    "sensorAccuracy": {
+      "type": "number",
+      "title": "Sensor accuracy"
+    },
+    "dateInstalled": {
+      "type": "string",
+      "title": "Date installed",
+      "format": "date"
+    },
+    "dateRemoved": {
+      "type": "string",
+      "title": "Date removed, if applicable",
+      "format": "date"
+    },
+    "telemetryMethod": {
+      "type": "string",
+      "title": "Telemetry method",
+      "enum": ["Cellular", "Satellite", "Iridium", "GOES", "Wifi", "Other"]
+    },
+    "modemCommunicationManufacturerModel": {
+      "type": "string",
+      "title": "Modem/communication - Manufacturer & model"
+    },
+    "modemSerialNumber": {
+      "type": "string",
+      "title": "Serial number"
+    },
+    "modemDateRemoved": {
+      "type": "string",
+      "title": "Date removed, if applicable",
+      "format": "date"
+    },
+    "isStationSurveyed": {
+      "type": "string",
+      "title": "Is the station surveyed?",
+      "enum": ["Yes", "No"]
+    },
+    "markerStamping": {
+      "type": "string",
+      "title": "Marker stamping"
+    },
+    "markerNGSPID": {
+      "type": "string",
+      "title": "Marker NGS PID",
+      "description": "NGS = National Geodetic Survey; PID = Permanent Identifier. Can be completed pre-field work during recon"
+    },
+    "markerCOOPSVM": {
+      "type": "string",
+      "title": "Marker CO-OPS VM#",
+      "description": "Only if PID is not available"
+    },
+    "markerOtherIdentifier": {
+      "type": "string",
+      "title": "Marker other identifier"
+    },
+    "surveyMethod": {
+      "type": "string",
+      "title": "Survey method",
+      "description": "Survey / measurement method"
+    },
+    "surveyDate": {
+      "type": "string",
+      "title": "Date (of most recent survey)",
+      "format": "date"
+    },
+    "surveyMeasurementBy": {
+      "type": "string",
+      "title": "Measurement by (at most recent survey)"
+    },
+    "orthoHeight": {
+      "type": "number",
+      "title": "Ortho height (NAVD88 m)"
+    },
+    "stationDatumHeight": {
+      "type": "number",
+      "title": "Station datum height (m)"
+    },
+    "ellipsoidalHeight": {
+      "type": "number",
+      "title": "Ellipsoidal height (m)"
+    },
+    "sensorOffset": {
+      "type": "number",
+      "title": "Sensor offset (m)"
+    },
+    "gnssRTKUnit": {
+      "type": "string",
+      "title": "GNSS/RTK Unit"
+    },
+    "processingSoftware": {
+      "type": "string",
+      "title": "Processing software"
+    },
+    "hasMovementSinceLastSurvey": {
+      "type": "string",
+      "title": "Has there been movement since last survey?",
+      "enum": ["Yes", "No"]
+    },
+    "movementDifference": {
+      "type": "number",
+      "title": "If so, what is the difference?"
+    },
+    "isDifferenceWithin5cm": {
+      "type": "string",
+      "title": "Is the difference within 5 cm?",
+      "enum": ["Yes", "No"]
+    },
+    "additionalInformationSurvey": {
+      "type": "string",
+      "title": "Additional information"
+    },
+    "totalWaterLevelError": {
+      "type": "number",
+      "title": "Total Water level Error (cm)"
+    },
+    "sensorError": {
+      "type": "number",
+      "title": "Sensor Error (cm)"
+    },
+    "surveyError": {
+      "type": "number",
+      "title": "Survey Error (cm)",
+      "description": "AKA leveling error"
+    },
+    "dataProcessingError": {
+      "type": "number",
+      "title": "Data Processing Error (cm)"
+    },
+    "datumError": {
+      "type": "number",
+      "title": "Datum Error (cm)"
+    },
+    "recordStartDate": {
+      "type": "string",
+      "title": "Record Start Date",
+      "format": "date"
+    },
+    "recordEndDate": {
+      "type": "string",
+      "title": "Record End Date",
+      "format": "date"
+    },
+    "computationalTool": {
+      "type": "string",
+      "title": "Computational Tool"
+    },
+    "computationMethod": {
+      "type": "string",
+      "title": "Computation method"
+    },
+    "nwlonControlStation": {
+      "type": "string",
+      "title": "NWLON Control Station"
+    },
+    "controlStationEpoch": {
+      "type": "string",
+      "title": "Control Station Epoch"
+    },
+    "datumType": {
+      "type": "string",
+      "title": "Datum Type"
+    },
+    "computationDate": {
+      "type": "string",
+      "title": "Computation Date",
+      "format": "date"
+    },
+    "computedBy": {
+      "type": "string",
+      "title": "Computed by"
+    },
+    "mhhw": {
+      "type": "number",
+      "title": "MHHW (m)"
+    },
+    "mhw": {
+      "type": "number",
+      "title": "MHW (m)"
+    },
+    "dtl": {
+      "type": "number",
+      "title": "DTL (m)"
+    },
+    "mtl": {
+      "type": "number",
+      "title": "MTL (m)"
+    },
+    "msl": {
+      "type": "number",
+      "title": "MSL (m)"
+    },
+    "mlw": {
+      "type": "number",
+      "title": "MLW (m)"
+    },
+    "mllw": {
+      "type": "number",
+      "title": "MLLW (m)"
+    },
+    "gt": {
+      "type": "number",
+      "title": "GT (m)"
+    },
+    "mn": {
+      "type": "number",
+      "title": "MN (m)"
+    },
+    "dhq": {
+      "type": "number",
+      "title": "DHQ (m)"
+    },
+    "dlq": {
+      "type": "number",
+      "title": "DLQ (m)"
+    },
+    "hwi": {
+      "type": "number",
+      "title": "HWI (hr)"
+    },
+    "lwi": {
+      "type": "number",
+      "title": "LWI (hr)"
+    },
+    "isCollocation": {
+      "type": "string",
+      "title": "Is this a collocation? (yes/no)",
+      "description": "This will be filterable as an ***REMOVED***if applicable***REMOVED*** set of questions if the collocation is marked as ***REMOVED***yes***REMOVED***",
+      "enum": ["Yes", "No"]
+    },
+    "collocationInstrumentType": {
+      "type": "string",
+      "title": "Collocation - Instrument type"
+    },
+    "collocationManufacturerModel": {
+      "type": "string",
+      "title": "Collocation - Manufacturer & model"
+    },
+    "collocationSerialNumber": {
+      "type": "string",
+      "title": "Collocation - Serial number"
+    },
+    "collocationDateInstalled": {
+      "type": "string",
+      "title": "Collocation - Date installed",
+      "format": "date"
+    },
+    "collocationDateRemoved": {
+      "type": "string",
+      "title": "Collocation - Date removed",
+      "format": "date"
+    },
+    "collocationAdditionalInformation": {
+      "type": "string",
+      "title": "Collocation - Additional information"
+    },
+    "eccURL": {
+      "type": "string",
+      "title": "ECC URL",
+      "format": "uri"
+    },
+    "wasNepaCompleted": {
+      "type": "string",
+      "title": "Was Nepa Completed",
+      "enum": ["Yes", "No"]
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "photoStation": {
+      "type": "string",
+      "title": "Photo - Station"
+    },
+    "photoSensor": {
+      "type": "string",
+      "title": "Photo - Sensor"
+    },
+    "photoSensorManagement": {
+      "type": "string",
+      "title": "Photo - Sensor management"
+    },
+    "photoSensorSurveyReferencePoint": {
+      "type": "string",
+      "title": "Photo - Sensor survey reference point"
+    },
+    "photoTwoSurveyedBenchmarks": {
+      "type": "string",
+      "title": "Photo of the two surveyed benchmark***REMOVED***s face stamping"
+    },
+    "photoDCP": {
+      "type": "string",
+      "title": "Photo - DCP",
+      "description": "data collection platform // data logger"
+    },
+    "photoUnderwaterComponents": {
+      "type": "string",
+      "title": "Photo - Underwater components"
+    },
+    "photoVicinity": {
+      "type": "string",
+      "title": "Photo - Vicinity"
+    },
+    "photoOtherAttachments": {
+      "type": "string",
+      "title": "Photo - Other / Attachments"
+    },
+    "benchmarkDiagram": {
+      "type": "string",
+      "title": "Bench mark diagram"
+    },
+    "sensorTestWorksheet": {
+      "type": "string",
+      "title": "Sensor test worksheet"
+    },
+    "sensorElevationDrawing": {
+      "type": "string",
+      "title": "Sensor elevation drawing"
+    },
+    "benchmarkDescriptions": {
+      "type": "string",
+      "title": "Bench mark descriptions"
+    },
+    "stationToReachStatement": {
+      "type": "string",
+      "title": "Station ***REMOVED***to-reach***REMOVED*** statement"
+    },
+    "disclaimer": {
+      "type": "string",
+      "title": "Disclaimer",
+      "description": "specify uncertainty and limitations of use"
+    },
+    "disseminationFlag": {
+      "type": "string",
+      "title": "Dissemination flag"
+    }
+  }
+}
