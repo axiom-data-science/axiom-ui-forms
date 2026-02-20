@@ -40,6 +40,7 @@ import NestedDataTest from '@/Form/NestedDataTest'
 import JsonPathTester from '@/Form/JSONPathTester'
 import PlatformsMetadata from '@/Platforms/PlatformsMetadata'
 import MODLForm from '@/Form/MODL/MODLForm';
+import COLLABWaterLevelForm from '@/WaterLevel/COLLABWaterLevelForm';
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -216,6 +217,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/water-level" element={<WaterLevelForm />}>
               <Route path="*" element={<WaterLevelForm />} />
+            </Route>
+            <Route path="/water-level-collab" element={<COLLABWaterLevelForm />}>
+              <Route path="*" element={<COLLABWaterLevelForm />} />
             </Route>
             <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
               <Route path="*" element={<BinnerMetadataRoute />}/>

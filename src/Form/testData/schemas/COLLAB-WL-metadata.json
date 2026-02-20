@@ -48,7 +48,7 @@
         "Sensor - brand/manufacturer": { "type": "string", "enum": ["Senix"] },
         "Sensor - Model": { "type": "string" },
         "Sensor - Serial number": { "type": "string" },
-        "Real time?": { "type": "string", "enum": ["Yes"] },
+        "Real time?": { "type": "boolean" },
         "Sample interval (min)": { "type": "string", "enum": ["1 min", "6 min", "15 min", "60 min", "Other"] },
         "Sample average window (sec)": { "type": "string", "enum": ["0 sec", "60 sec", "181 sec", "Other"] },
         "Mounting structure": { "type": "string", "enum": ["Bridge", "Seawall", "Dock", "Bedrock", "Anchor", "Other"] },
