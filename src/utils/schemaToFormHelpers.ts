@@ -69,7 +69,7 @@ export const validateAgainstSchema = (schema: JSONSchema6, formValues: IFormValu
 }
 
 const makeRandom = (): string => {
-  return typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : Math.random().toString(36).substring(2)
+  return (crypto !== undefined && typeof crypto.randomUUID === 'function') ? crypto.randomUUID() : Math.random().toString(36).substring(2)
 }
 
 const makeFormFieldId = (options: Array<string | number | undefined | null>): string => {
