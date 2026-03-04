@@ -1,4 +1,6 @@
-@tailwind base;
+@import "tailwindcss";
+@source "../../node_modules/@axdspub";
+
 
 
 /** 
@@ -34,5 +36,4 @@ body *::-webkit-scrollbar-thumb {
   height: calc(100vh);
 }
 
-@tailwind components;
-@tailwind utilities;
+
