@@ -1,19 +1,16 @@
 import { defineConfig as defineViteConfig, mergeConfig } from ***REMOVED***vite***REMOVED***;
 import { defineConfig as defineVitestConfig } from ***REMOVED***vitest/config***REMOVED***
 import react from ***REMOVED***@vitejs/plugin-react***REMOVED***
-import tailwindcss from ***REMOVED***tailwindcss***REMOVED***
+import tailwindcss from "@tailwindcss/vite";
 
 
 // https://vitejs.dev/config/
 const viteonfig = defineViteConfig({
   plugins: [
     react(),
+    tailwindcss()
+
   ],
-  css: {
-    postcss: {
-      plugins: [tailwindcss()],
-    },
-  },
   // Add any CRACO-specific configurations here, adapted for Vite
   resolve: {
     alias: {

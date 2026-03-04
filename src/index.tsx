@@ -1,7 +1,10 @@
 import React from ***REMOVED***react***REMOVED***
 import ReactDOM from ***REMOVED***react-dom/client***REMOVED***
 import App from ***REMOVED***./App***REMOVED***
+import ***REMOVED***@axdspub/axiom-ui-utilities/library/index.css***REMOVED***;
 import ***REMOVED***./index.css***REMOVED***
+
+
 // import reportWebVitals from ***REMOVED***./reportWebVitals***REMOVED***
 
 const root = ReactDOM.createRoot(
