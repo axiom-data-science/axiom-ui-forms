@@ -27,7 +27,7 @@ const PageNav = ({
   return (
     layout.size === 'sm' || layout.size === 'md'
       ? <PageNavMobile sections={sections} level={level} />
-      : <div className='flex flex-col w-[200px]  border-slate-200'>{
+      : <div className='flex flex-col w-50  border-slate-200'>{
         sections?.map(p => {
           return (
             <NavElement
@@ -36,7 +36,7 @@ const PageNav = ({
               id={p.id}
               navigable={urlNavigable ?? true}
               onClick={() => { setActiveId(p.id) }}
-              className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? 'bg-slate-700 text-white' : 'hover:bg-slate-200'}`}
+              className={ `border-none rounded-none bg-slate-100 text-sm font-normal justify-start whitespace-break-spaces py-2 h-auto ${activeId === p.id ? 'bg-slate-700 hover:bg-slate-800 text-white hover:text-white ' : 'hover:bg-slate-200'}`}
             >{p.label}</NavElement>
           )
         })
