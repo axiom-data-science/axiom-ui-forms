@@ -28,19 +28,19 @@ const ClearForm = ({
       {
         confirm
           ? <p className='flex flex-row gap-2 text-sm'><span className='text-slate-600'>Deleting: </span> Are you sure?
-              <Button size='xs' type='submit'
+              <Button size='sm' type='submit'
                 onClick={() => {
                   onConfirm()
                   setConfirm(false)
                 }}>Yes <CheckIcon className='inline ml-2' />
               </Button>
-              <Button size='xs' type='alert'
+              <Button size='sm' type='alert'
                 onClick={() => {
                   setConfirm(false)
                 }}>Cancel <Cross1Icon className='inline ml-2' />
               </Button>
             </p>
-          : <Button size='xs' type='alert' onClick={() => { setConfirm(true) }}>
+          : <Button size='sm' type='alert' onClick={() => { setConfirm(true) }}>
               {message} <TrashIcon className='inline ml-2 fill-white' />
             </Button>
       }

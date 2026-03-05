@@ -51,10 +51,11 @@ export const WizardNavMobile = ({
             className: 'p-2 bg-none border-none text-sm text-slate-400 '
           })}><CaretLeftIcon className='inline w-8 h-8' /></span>
         }
-        <div className='flex-grow'>
+        <div className='grow'>
         <SelectInput
           includePrompt={false}
           id='wizard-step-select'
+          clearable={false}
           testId='wizard-step-select'
           className='shadow-lg'
           value={activeId ?? ''}
@@ -109,12 +110,12 @@ export const WizardNavLargeScreen = ({
 
   return (
       <div className='relative z-0'>
-        <div className='h-[2px] top-8 bg-slate-300 absolute left-0 right-0 z-0' />
+        <div className='h-0.5 top-8 bg-slate-300 absolute left-0 right-0 z-0' />
         <div className='flex flex-row gap-4 py-4  max-w-full overflow-x-auto overflow-y-visible'>
         {
         steps.map((p, i) => {
           return (
-            <div key={p.id} className='flex-grow first:flex-shrink last:flex-shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative'>
+            <div key={p.id} className='grow first:shrink last:shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative'>
               <NavElement
 
                 path={path}
@@ -172,7 +173,7 @@ export const WizardNavSmall = ({
       <div className='flex flex-row gap-4 justify-end  p-4 sticky bottom-0 bg-white/80 z-10'>{
         prevIndex >= 0
           ? <NavElement
-              className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
+              className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white'
               path={path}
               id={steps[prevIndex].id}
               navigable={urlNavigable ?? true}
@@ -190,7 +191,7 @@ export const WizardNavSmall = ({
                 path={path}
                 id={steps[nextIndex].id}
                 navigable={urlNavigable ?? true}
-                className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700'
+                className='px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white'
                 onClick={() => { setActiveId(steps[nextIndex].id) }}
                 >
                   Next <CaretRightIcon className='inline' />
@@ -239,7 +240,7 @@ const WizardLayoutContent = ({
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
-  className = 'flex flex-col gap-4 pt-8 flex-grow h-full',
+  className = 'flex flex-col gap-4 pt-8 grow h-full',
   level,
   SubmitButton
 }: IWizardLayoutProps): ReactElement => {
