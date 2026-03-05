@@ -144,6 +144,8 @@ const FormCreator = ({
     updateLayoutValue()
   }, 200)
 
+  window.addEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
+
   return (
     <FormContext.Provider value={{
       form: activeForm,
