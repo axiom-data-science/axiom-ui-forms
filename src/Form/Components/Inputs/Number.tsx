@@ -67,7 +67,7 @@ const SliderInput = ({
         id={field.id}
         testId={field.id}
         step={step ?? ((max - (min ?? 0)) / 100)} />
-        <div className=***REMOVED***w-[100px] flex flex-row text-right***REMOVED***>
+        <div className=***REMOVED***w-25 flex flex-row text-right***REMOVED***>
         {
           mode === ***REMOVED***slider***REMOVED***
             ? <>
@@ -89,7 +89,7 @@ const SliderInput = ({
               disabled={disabled}
               testId={`slider-text-${field.id}`}
               value={tempTextValue !== undefined && tempTextValue !== null ? String(tempTextValue) : ***REMOVED******REMOVED***}
-              className=***REMOVED***w-[50px] text-xs text-right***REMOVED***
+              className=***REMOVED***w-12.5 text-xs text-right***REMOVED***
               size=***REMOVED***xs***REMOVED***
               label={undefined}
               onChange={(e) => {
@@ -189,7 +189,7 @@ const NumberInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         field={fieldForInput}
         value={initialValue}
         onChange={onChange}
-        className=***REMOVED***max-w-[300px]***REMOVED***
+        className=***REMOVED***max-w-75***REMOVED***
 
         />
       }</>

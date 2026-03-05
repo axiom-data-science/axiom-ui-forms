@@ -51,10 +51,11 @@ export const WizardNavMobile = ({
             className: ***REMOVED***p-2 bg-none border-none text-sm text-slate-400 ***REMOVED***
           })}><CaretLeftIcon className=***REMOVED***inline w-8 h-8***REMOVED*** /></span>
         }
-        <div className=***REMOVED***flex-grow***REMOVED***>
+        <div className=***REMOVED***grow***REMOVED***>
         <SelectInput
           includePrompt={false}
           id=***REMOVED***wizard-step-select***REMOVED***
+          clearable={false}
           testId=***REMOVED***wizard-step-select***REMOVED***
           className=***REMOVED***shadow-lg***REMOVED***
           value={activeId ?? ***REMOVED******REMOVED***}
@@ -109,12 +110,12 @@ export const WizardNavLargeScreen = ({
 
   return (
       <div className=***REMOVED***relative z-0***REMOVED***>
-        <div className=***REMOVED***h-[2px] top-8 bg-slate-300 absolute left-0 right-0 z-0***REMOVED*** />
+        <div className=***REMOVED***h-0.5 top-8 bg-slate-300 absolute left-0 right-0 z-0***REMOVED*** />
         <div className=***REMOVED***flex flex-row gap-4 py-4  max-w-full overflow-x-auto overflow-y-visible***REMOVED***>
         {
         steps.map((p, i) => {
           return (
-            <div key={p.id} className=***REMOVED***flex-grow first:flex-shrink last:flex-shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative***REMOVED***>
+            <div key={p.id} className=***REMOVED***grow first:shrink last:shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative***REMOVED***>
               <NavElement
 
                 path={path}
@@ -172,7 +173,7 @@ export const WizardNavSmall = ({
       <div className=***REMOVED***flex flex-row gap-4 justify-end  p-4 sticky bottom-0 bg-white/80 z-10***REMOVED***>{
         prevIndex >= 0
           ? <NavElement
-              className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700***REMOVED***
+              className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white***REMOVED***
               path={path}
               id={steps[prevIndex].id}
               navigable={urlNavigable ?? true}
@@ -190,7 +191,7 @@ export const WizardNavSmall = ({
                 path={path}
                 id={steps[nextIndex].id}
                 navigable={urlNavigable ?? true}
-                className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700***REMOVED***
+                className=***REMOVED***px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white***REMOVED***
                 onClick={() => { setActiveId(steps[nextIndex].id) }}
                 >
                   Next <CaretRightIcon className=***REMOVED***inline***REMOVED*** />
@@ -239,7 +240,7 @@ const WizardLayoutContent = ({
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
-  className = ***REMOVED***flex flex-col gap-4 pt-8 flex-grow h-full***REMOVED***,
+  className = ***REMOVED***flex flex-col gap-4 pt-8 grow h-full***REMOVED***,
   level,
   SubmitButton
 }: IWizardLayoutProps): ReactElement => {

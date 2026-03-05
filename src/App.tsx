@@ -88,9 +88,9 @@ const CustomElementFormWrap = (): ReactElement => {
               <h2 className=***REMOVED***p-4 text-xl bg-rose-800 text-white***REMOVED***>{labelFromContext}</h2>
               <FieldLabel field={field} />
               <div className=***REMOVED***flex flex-row gap-4***REMOVED***>
-                <p className=***REMOVED***font-bold w-[80px]***REMOVED***>{tempValue}</p>
+                <p className=***REMOVED***font-bold w-20***REMOVED***>{tempValue}</p>
                 <Slider
-                  className=***REMOVED***flex-grow max-w-[400px] mt-1***REMOVED***
+                  className=***REMOVED***grow max-w-100 mt-1***REMOVED***
                   size=***REMOVED***sm***REMOVED***
                   value={tempValue}
                   min={min}
