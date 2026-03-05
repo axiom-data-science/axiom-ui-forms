@@ -73,7 +73,7 @@ const FormEditor = ({
                   <Cross2Icon className='cursor-pointer w-6 h-6 absolute top-4 left-8' onClick={() => {
                     setEditing(false)
                   }} />
-                    <div className='w-[16px] cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center'
+                    <div className='w-4 cursor-ew-resize h-full bg-slate-100 px-1 shadow-md flex flex-col items-center justify-center'
                               onMouseDown={(e) => {
                                 const startX = e.clientX
                                 const startWidth = sidebarWidth
@@ -131,7 +131,7 @@ export const FormWithEditorOverlay = ({
               Header={
                   <FormEditor>
                     <Tabs
-                  className='flex flex-col h-full p-8 flex-grow'
+                  className='flex flex-col h-full p-8 grow'
                   defaultContentClassName='h-full overflow-auto p-4'
                   tabs={[
                     {
@@ -215,7 +215,7 @@ const SchemaFormWithEditorOverlay = ({
                 />
 
                 <Tabs
-                className='flex flex-col h-full p-8 flex-grow'
+                className='flex flex-col h-full p-8 grow'
                 defaultContentClassName='h-full overflow-auto p-4'
                 tabs={[
                   {
