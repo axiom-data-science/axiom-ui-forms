@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@source "../../node_modules/@axdspub";
+@import "../node_modules/@axdspub/axiom-ui-utilities/library/index.css";
+@source "../node_modules/@axdspub";
+
 
 
 
