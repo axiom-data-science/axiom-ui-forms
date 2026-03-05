@@ -6,10 +6,13 @@ import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
 import { getFieldsFromFormSection, getFieldValue } from '@/utils/getters'
 import { cloneObject, copyAndAddPathToFields, updateFormValuesWithFieldValueInPlace } from '@/utils/manipulators'
+import layoutAtom, { getWindowSize } from '@/utils/responsive/layoutState'
 import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { calculateSectionStatus } from '@/utils/validators'
 import { Loader, utils } from '@axdspub/axiom-ui-utilities'
+import { useAtom } from 'jotai'
 import { type JSONSchema6 } from 'json-schema'
+import debounce from 'lodash-es/debounce'
 import React, { type ReactNode, useContext, type ReactElement, useState } from 'react'
 
 export interface IFormCreatorProps {
@@ -128,6 +131,18 @@ const FormCreator = ({
     url_navigable: urlNavigable,
     ...activeForm.settings
   }
+
+    const [layout, setLayout] = useAtom(layoutAtom)
+  const updateLayoutValue = (): void => {
+    const newSize = getWindowSize()
+    if (layout.size !== newSize) {
+      console.log(`${layout.size} !== ${newSize}, updating layout`)
+      setLayout({ size: newSize })
+    }
+  }
+  const debounceUpdateLayout = debounce(function updateSize (): void {
+    updateLayoutValue()
+  }, 200)
 
   return (
     <FormContext.Provider value={{
