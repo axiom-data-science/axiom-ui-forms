@@ -2,7 +2,7 @@
   "id": "collab-water-level-metadata",
   "label": "COLLAB Water Level Metadata Form",
   "description": "Comprehensive water level station metadata collection form",
-  "wizard_steps": [
+  "pages": [
     {
       "id": "step1",
       "label": "Form Preparation",
