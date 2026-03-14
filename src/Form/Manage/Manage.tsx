@@ -28,21 +28,21 @@ const ClearForm = ({
       {
         confirm
           ? <p className=***REMOVED***flex flex-row gap-2 text-sm***REMOVED***><span className=***REMOVED***text-slate-600***REMOVED***>Deleting: </span> Are you sure?
-              <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***submit***REMOVED***
-                onClick={() => {
-                  onConfirm()
-                  setConfirm(false)
-                }}>Yes <CheckIcon className=***REMOVED***inline ml-2***REMOVED*** />
-              </Button>
-              <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***alert***REMOVED***
-                onClick={() => {
-                  setConfirm(false)
-                }}>Cancel <Cross1Icon className=***REMOVED***inline ml-2***REMOVED*** />
-              </Button>
-            </p>
-          : <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***alert***REMOVED*** onClick={() => { setConfirm(true) }}>
-              {message} <TrashIcon className=***REMOVED***inline ml-2 fill-white***REMOVED*** />
+            <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***submit***REMOVED***
+              onClick={() => {
+                onConfirm()
+                setConfirm(false)
+              }}>Yes <CheckIcon className=***REMOVED***inline ml-2***REMOVED*** />
             </Button>
+            <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***alert***REMOVED***
+              onClick={() => {
+                setConfirm(false)
+              }}>Cancel <Cross1Icon className=***REMOVED***inline ml-2***REMOVED*** />
+            </Button>
+          </p>
+          : <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***alert***REMOVED*** onClick={() => { setConfirm(true) }}>
+            {message} <TrashIcon className=***REMOVED***inline ml-2 fill-white***REMOVED*** />
+          </Button>
       }
     </>
   )
@@ -61,10 +61,10 @@ const SelectNewForm = ({
   const formInitParam = url.searchParams.get(fileParam) ?? ***REMOVED******REMOVED***
   return <div className=***REMOVED***text-sm flex flex-row gap-2 items-center***REMOVED***>
     <SelectInput
-      className=***REMOVED***bg-blue-600 text-white hover:bg-blue-900 rounded-md shadow-md***REMOVED***
       id=***REMOVED***select-new-form***REMOVED***
+      variant=***REMOVED***submit***REMOVED***
       testId=***REMOVED***select-new-form***REMOVED***
-      size=***REMOVED***xs***REMOVED***
+      size=***REMOVED***sm***REMOVED***
       placeholder=***REMOVED***Select new form config***REMOVED***
       value={formInitParam}
       options={Object.keys(files).map(k => {
@@ -110,32 +110,32 @@ const FormManager = ({
     }
   }, [form])
   return (
-          <div className=***REMOVED***flex flex-col h-full gap-4***REMOVED***>
-            <div className=***REMOVED***flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4***REMOVED***>
-                <SelectNewForm
-                  files={formConfigs}
-                  onChange={key => {
-                    const form = formConfigs[key]
-                    setForm(cloneObject({
-                      ...form,
-                      description: `From: [${key.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***)}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ***REMOVED******REMOVED***}`
-                    }))
-                    setFormValues(assignDefaultValuesToFormValues(form, {}))
-                  }}
+    <div className=***REMOVED***flex flex-col h-full gap-4***REMOVED***>
+      <div className=***REMOVED***flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4***REMOVED***>
+        <SelectNewForm
+          files={formConfigs}
+          onChange={key => {
+            const form = formConfigs[key]
+            setForm(cloneObject({
+              ...form,
+              description: `From: [${key.replace(***REMOVED***/src/Form/testData/forms/***REMOVED***, ***REMOVED******REMOVED***)}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ***REMOVED******REMOVED***}`
+            }))
+            setFormValues(assignDefaultValuesToFormValues(form, {}))
+          }}
 
-                  />
-                <ClearForm onConfirm={() => {
-                  setFormValues({})
-                }} />
-                <ClearForm message=***REMOVED***Clear form config***REMOVED*** onConfirm={() => {
-                  setForm(cloneObject(testForm))
-                }} />
+        />
+        <ClearForm onConfirm={() => {
+          setFormValues({})
+        }} />
+        <ClearForm message=***REMOVED***Clear form config***REMOVED*** onConfirm={() => {
+          setForm(cloneObject(testForm))
+        }} />
 
-            </div>
-            <div className=***REMOVED***px-20 h-full overflow-auto***REMOVED***>
-             <FormWithEditorOverlay formState={[form, setForm]} />
-             </div>
-          </div>
+      </div>
+      <div className=***REMOVED***px-20 h-full overflow-auto***REMOVED***>
+        <FormWithEditorOverlay formState={[form, setForm]} />
+      </div>
+    </div>
   )
 }
 

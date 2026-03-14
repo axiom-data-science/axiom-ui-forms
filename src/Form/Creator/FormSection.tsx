@@ -1,6 +1,7 @@
 import { IFormValues, type IFieldInputProps, type IFormSection, type IValueChangeFn } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormFields from ***REMOVED***@/Form/Creator/FormFields***REMOVED***
 import PageLayout from ***REMOVED***@/Form/Creator/Page***REMOVED***
+import TabLayout from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
 import WizardLayout from ***REMOVED***@/Form/Creator/Wizard***REMOVED***
 import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -15,7 +16,7 @@ const FormSection = ({
   onChange?: IValueChangeFn
   level?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
+  SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
 
 }): ReactElement => {
   if (formSection === undefined) {
@@ -24,9 +25,11 @@ const FormSection = ({
   const pages = (formSection?.pages ?? []).slice()
   const fields = (formSection?.fields ?? []).slice()
   const wizardSteps = (formSection?.wizard_steps ?? []).slice()
+  const tabs = (formSection?.tabs ?? []).slice()
   const hasPages = pages.length > 0
   const hasFields = fields.length > 0
   const hasWizardSteps = wizardSteps.length > 0
+  const hasTabs = tabs.length > 0
   if (hasPages && hasFields) {
     pages.unshift({
       id: ***REMOVED***default***REMOVED***,
@@ -34,7 +37,7 @@ const FormSection = ({
       fields
     })
   }
-  if ((hasPages || hasFields) && hasWizardSteps) {
+  if ((hasPages || hasFields || hasTabs) && hasWizardSteps) {
     wizardSteps.unshift({
       id: ***REMOVED***default***REMOVED***,
       order: -10,
@@ -44,20 +47,22 @@ const FormSection = ({
     })
   }
   return (
-        <>
-          {
-            hasWizardSteps
-              ? <WizardLayout sections={wizardSteps} onChange={onChange} level={level} SubmitButton={SubmitButton} />
+    <>
+      {
+        hasWizardSteps
+          ? <WizardLayout sections={wizardSteps} onChange={onChange} level={level} SubmitButton={SubmitButton} />
 
-              : hasPages
-                ? <PageLayout sections={pages} onChange={onChange} level={level} />
-                : <FormFields
-                  fields={fields} onChange={onChange}
-                  className={level === 0 ? ***REMOVED***flex flex-col gap-8***REMOVED*** : undefined}
+          : hasPages
+            ? <PageLayout sections={pages} onChange={onChange} level={level} />
+            : hasTabs
+              ? <TabLayout sections={tabs} onChange={onChange} level={level} />
+              : <FormFields
+                fields={fields} onChange={onChange}
+                className={level === 0 ? ***REMOVED***flex flex-col gap-8***REMOVED*** : undefined}
 
-                  />
-          }
-        </>
+              />
+      }
+    </>
   )
 }
 

@@ -268,6 +268,7 @@ export interface IFormSection {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
+  tabs?: ITabOverride[]
 }
 
 export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {
@@ -292,6 +293,7 @@ export interface IForm {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
+  tabs?: ITabOverride[]
   settings?: IFormSettings
 }
 
@@ -302,6 +304,9 @@ export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***s
 
 interface IPageOverride extends Omit<IFormSectionOverride, ***REMOVED***pages***REMOVED***> {
 
+}
+
+interface ITabOverride extends Omit<IFormSectionOverride, ***REMOVED***tabs***REMOVED***> {
 }
 
 interface IWizardStepOverride extends Omit<IFormSectionOverride, ***REMOVED***wizard_steps***REMOVED***> {
@@ -315,6 +320,7 @@ export interface IFormOverride {
   long_description?: string
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
+  tabs?: ITabOverride[]
   fields?: IFormFieldOverride[]
   settings?: IFormSettings
 }

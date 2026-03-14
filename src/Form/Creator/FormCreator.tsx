@@ -27,13 +27,13 @@ export interface IFormCreatorProps {
   defaultClassName?: string
   urlNavigable?: boolean
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-  Header?: React.FC<{formValues: IFormValues}> | ReactNode
-  Footer?: React.FC<{formValues: IFormValues}> | ReactNode
-  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
+  Header?: React.FC<{ formValues: IFormValues }> | ReactNode
+  Footer?: React.FC<{ formValues: IFormValues }> | ReactNode
+  SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
 }
 
 
-const FormComponentWrap = ({Component}: {Component: React.FC<IFormContextValue>}): ReactElement => {
+const FormComponentWrap = ({ Component }: { Component: React.FC<IFormContextValue> }): ReactElement => {
   const formContext = useFormContext()
   return <Component {...formContext} />
 }
@@ -44,8 +44,8 @@ const FormStatus = (): ReactElement => {
 
   return (
     <div className=***REMOVED***flex flex-col gap-2 text-xs***REMOVED***>
-    <p>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
-    <p>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
+      <p>{status[form.id]?.completed} of {status[form.id]?.total} total</p>
+      <p>{status[form.id]?.requiredCompleted} of {status[form.id]?.requiredTotal} required</p>
     </div>
   )
 }
@@ -132,7 +132,7 @@ const FormCreator = ({
     ...activeForm.settings
   }
 
-    const [layout, setLayout] = useAtom(layoutAtom)
+  const [layout, setLayout] = useAtom(layoutAtom)
   const updateLayoutValue = (): void => {
     const newSize = getWindowSize()
     if (layout.size !== newSize) {
@@ -140,7 +140,7 @@ const FormCreator = ({
       setLayout({ size: newSize })
     }
   }
-  const debounceUpdateLayout = debounce(function updateSize (): void {
+  const debounceUpdateLayout = debounce(function updateSize(): void {
     updateLayoutValue()
   }, 200)
 
@@ -161,17 +161,17 @@ const FormCreator = ({
         defaultClassName,
         extras: [className]
       })}>
-          <FormHeader form={activeForm} note={note} error={error} />
-          {
-            activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined
-              ? <FormStatus />
-              : ***REMOVED******REMOVED***
-          }
-          <FormSection
-            formSection={activeForm}
-            onChange={onChange}
-            SubmitButton={SubmitButton}
-            />
+        <FormHeader form={activeForm} note={note} error={error} />
+        {
+          activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined && activeForm.tabs === undefined
+            ? <FormStatus />
+            : ***REMOVED******REMOVED***
+        }
+        <FormSection
+          formSection={activeForm}
+          onChange={onChange}
+          SubmitButton={SubmitButton}
+        />
       </div>
       {typeof Footer === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Footer} /> : Footer ?? ***REMOVED******REMOVED***}
     </FormContext.Provider>
