@@ -41,15 +41,16 @@ import NestedDataTest from '@/Form/NestedDataTest'
 import JsonPathTester from '@/Form/JSONPathTester'
 import PlatformsMetadata from '@/Platforms/PlatformsMetadata'
 import MODLForm from '@/Form/MODL/MODLForm';
-import COLLABWaterLevelForm from '@/WaterLevel/COLLABWaterLevelForm';
+import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm';
+import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet';
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-  <Form form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
-  <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
-  </div>
+      <Form form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
+      <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+    </div>
   )
 }
 
@@ -57,9 +58,9 @@ const WizardFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-        <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
-        <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
-      </div>
+      <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
+      <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+    </div>
   )
 }
 
@@ -71,46 +72,46 @@ const CustomElementFormWrap = (): ReactElement => {
   return (
     <CustomContext.Provider value={{ label: 'Custom Label' }}>
       <div>
-      <Form
-        form={customElementFormJson as IForm}
-        formValueState={formValueState}
-        className='p-20'
-        urlNavigable={false}
-        inputOverrides={{
-          'custom:number': ({ field, value, onChange }: IFieldInputProps) => {
-            const { label: labelFromContext } = useContext(CustomContext)
-            const numberField = field as INumberField
-            const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
-            const min = numberField?.constraints?.min ?? 0
-            const max = numberField?.constraints?.max ?? 100
-            const step = Number(numberField?.settings?.step ?? (max - min) / 100)
-            return (<div>
-              <h2 className='p-4 text-xl bg-rose-800 text-white'>{labelFromContext}</h2>
-              <FieldLabel field={field} />
-              <div className='flex flex-row gap-4'>
-                <p className='font-bold w-20'>{tempValue}</p>
-                <Slider
-                  className='grow max-w-100 mt-1'
-                  size='sm'
-                  value={tempValue}
-                  min={min}
-                  max={max}
-                  onChange={(v: number): void => {
-                    setTempValue(v)
-                  } }
-                  onChangeComplete={(v: number): void => {
-                    setTempValue(v)
-                    onChange(v)
-                  } }
-                  id={field.id}
-                  testId={field.id}
-                  step={step} />
-              </div>
-            </div>)
-          }
-        }} />
-      <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
-    </div>
+        <Form
+          form={customElementFormJson as IForm}
+          formValueState={formValueState}
+          className='p-20'
+          urlNavigable={false}
+          inputOverrides={{
+            'custom:number': ({ field, value, onChange }: IFieldInputProps) => {
+              const { label: labelFromContext } = useContext(CustomContext)
+              const numberField = field as INumberField
+              const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
+              const min = numberField?.constraints?.min ?? 0
+              const max = numberField?.constraints?.max ?? 100
+              const step = Number(numberField?.settings?.step ?? (max - min) / 100)
+              return (<div>
+                <h2 className='p-4 text-xl bg-rose-800 text-white'>{labelFromContext}</h2>
+                <FieldLabel field={field} />
+                <div className='flex flex-row gap-4'>
+                  <p className='font-bold w-20'>{tempValue}</p>
+                  <Slider
+                    className='grow max-w-100 mt-1'
+                    size='sm'
+                    value={tempValue}
+                    min={min}
+                    max={max}
+                    onChange={(v: number): void => {
+                      setTempValue(v)
+                    }}
+                    onChangeComplete={(v: number): void => {
+                      setTempValue(v)
+                      onChange(v)
+                    }}
+                    id={field.id}
+                    testId={field.id}
+                    step={step} />
+                </div>
+              </div>)
+            }
+          }} />
+        <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+      </div>
     </CustomContext.Provider>
   )
 }
@@ -120,13 +121,13 @@ const PTTOilFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>(assignDefaultValuesToFormValues(form, {}))
   return (
     <>
-    <Form className='p-20' formValueState={formValueState} form={form} />
+      <Form className='p-20' formValueState={formValueState} form={form} />
       <CopyableJSONOutput string={JSON.stringify(formValueState[0], null, 2)} />
     </>
   )
 }
 
-function fallbackRender ({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }): ReactElement {
+function fallbackRender({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }): ReactElement {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
@@ -139,7 +140,7 @@ function fallbackRender ({ error, resetErrorBoundary }: { error: Error, resetErr
 
 const queryClient = new QueryClient()
 
-function BinnerMetadataRoute (): ReactElement {
+function BinnerMetadataRoute(): ReactElement {
   const { dataset } = useParams<{ dataset: string }>()
   if (!dataset) {
     return <div>Dataset not specified</div>
@@ -158,15 +159,15 @@ const App = (): ReactElement => {
       setLayout({ size: newSize })
     }
   }
-  const debounceUpdateLayout = debounce(function updateSize (): void {
+  const debounceUpdateLayout = debounce(function updateSize(): void {
     updateLayoutValue()
   }, 200)
 
   window.addEventListener('resize', debounceUpdateLayout)
   return (
     <ErrorBoundary fallbackRender={fallbackRender}>
-    <div className='h-screen flex flex-col gap-4'>
-      <BrowserRouter>
+      <div className='h-screen flex flex-col gap-4'>
+        <BrowserRouter>
           <Routes>
             <Route path='/' element={<FormManager />}>
               <Route path='*' element={<FormManager />} />
@@ -222,8 +223,11 @@ const App = (): ReactElement => {
             <Route path="/water-level-collab" element={<COLLABWaterLevelForm />}>
               <Route path="*" element={<COLLABWaterLevelForm />} />
             </Route>
+            <Route path="/water-level-collab-sheet" element={<COLLABWaterLevelFormSheet />}>
+              <Route path="*" element={<COLLABWaterLevelFormSheet />} />
+            </Route>
             <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
-              <Route path="*" element={<BinnerMetadataRoute />}/>
+              <Route path="*" element={<BinnerMetadataRoute />} />
             </Route>
             <Route path="/nested-data-test" element={<NestedDataTest />} />
             <Route path='/json-path-tester' element={<JsonPathTester />} />
@@ -238,7 +242,7 @@ const App = (): ReactElement => {
             </Route>
           </Routes>
         </BrowserRouter>
-    </div>
+      </div>
     </ErrorBoundary>
 
   )

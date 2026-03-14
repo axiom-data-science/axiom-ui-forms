@@ -28,21 +28,21 @@ const ClearForm = ({
       {
         confirm
           ? <p className='flex flex-row gap-2 text-sm'><span className='text-slate-600'>Deleting: </span> Are you sure?
-              <Button size='sm' type='submit'
-                onClick={() => {
-                  onConfirm()
-                  setConfirm(false)
-                }}>Yes <CheckIcon className='inline ml-2' />
-              </Button>
-              <Button size='sm' type='alert'
-                onClick={() => {
-                  setConfirm(false)
-                }}>Cancel <Cross1Icon className='inline ml-2' />
-              </Button>
-            </p>
-          : <Button size='sm' type='alert' onClick={() => { setConfirm(true) }}>
-              {message} <TrashIcon className='inline ml-2 fill-white' />
+            <Button size='sm' type='submit'
+              onClick={() => {
+                onConfirm()
+                setConfirm(false)
+              }}>Yes <CheckIcon className='inline ml-2' />
             </Button>
+            <Button size='sm' type='alert'
+              onClick={() => {
+                setConfirm(false)
+              }}>Cancel <Cross1Icon className='inline ml-2' />
+            </Button>
+          </p>
+          : <Button size='sm' type='alert' onClick={() => { setConfirm(true) }}>
+            {message} <TrashIcon className='inline ml-2 fill-white' />
+          </Button>
       }
     </>
   )
@@ -61,10 +61,10 @@ const SelectNewForm = ({
   const formInitParam = url.searchParams.get(fileParam) ?? ''
   return <div className='text-sm flex flex-row gap-2 items-center'>
     <SelectInput
-      className='bg-blue-600 text-white hover:bg-blue-900 rounded-md shadow-md'
       id='select-new-form'
+      variant='submit'
       testId='select-new-form'
-      size='xs'
+      size='sm'
       placeholder='Select new form config'
       value={formInitParam}
       options={Object.keys(files).map(k => {
@@ -110,32 +110,32 @@ const FormManager = ({
     }
   }, [form])
   return (
-          <div className='flex flex-col h-full gap-4'>
-            <div className='flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4'>
-                <SelectNewForm
-                  files={formConfigs}
-                  onChange={key => {
-                    const form = formConfigs[key]
-                    setForm(cloneObject({
-                      ...form,
-                      description: `From: [${key.replace('/src/Form/testData/forms/', '')}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ''}`
-                    }))
-                    setFormValues(assignDefaultValuesToFormValues(form, {}))
-                  }}
+    <div className='flex flex-col h-full gap-4'>
+      <div className='flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4'>
+        <SelectNewForm
+          files={formConfigs}
+          onChange={key => {
+            const form = formConfigs[key]
+            setForm(cloneObject({
+              ...form,
+              description: `From: [${key.replace('/src/Form/testData/forms/', '')}](http://git.axiom/axiom/axiom-ui-forms/-/tree/main${key})${form.description !== undefined ? `\n\n${form.description}` : ''}`
+            }))
+            setFormValues(assignDefaultValuesToFormValues(form, {}))
+          }}
 
-                  />
-                <ClearForm onConfirm={() => {
-                  setFormValues({})
-                }} />
-                <ClearForm message='Clear form config' onConfirm={() => {
-                  setForm(cloneObject(testForm))
-                }} />
+        />
+        <ClearForm onConfirm={() => {
+          setFormValues({})
+        }} />
+        <ClearForm message='Clear form config' onConfirm={() => {
+          setForm(cloneObject(testForm))
+        }} />
 
-            </div>
-            <div className='px-20 h-full overflow-auto'>
-             <FormWithEditorOverlay formState={[form, setForm]} />
-             </div>
-          </div>
+      </div>
+      <div className='px-20 h-full overflow-auto'>
+        <FormWithEditorOverlay formState={[form, setForm]} />
+      </div>
+    </div>
   )
 }
 
