@@ -268,16 +268,12 @@ export interface IFormSection {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  tabs?: ITabOverride[]
+  tabs?: IFormLayoutTab[]
 }
 
-export interface IPage extends Omit<IFormSection, 'pages'> {
-
-}
-
-export interface IWizardStep extends Omit<IFormSection, 'wizard_steps'> {
-
-}
+export interface IPage extends Omit<IFormSection, 'pages'> {}
+export interface IWizardStep extends Omit<IFormSection, 'wizard_steps'> {}
+export interface IFormLayoutTab extends Omit<IFormSection, 'tabs'> {}
 
 export interface IFormSettings {
   url_navigable?: boolean
@@ -293,7 +289,7 @@ export interface IForm {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  tabs?: ITabOverride[]
+  tabs?: IFormLayoutTab[]
   settings?: IFormSettings
 }
 
@@ -302,16 +298,9 @@ export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, 'fields'> & {
 
 export interface IFormSectionOverride extends Omit<IFormOverride, 'settings'> {}
 
-interface IPageOverride extends Omit<IFormSectionOverride, 'pages'> {
-
-}
-
-interface ITabOverride extends Omit<IFormSectionOverride, 'tabs'> {
-}
-
-interface IWizardStepOverride extends Omit<IFormSectionOverride, 'wizard_steps'> {
-
-}
+interface IPageOverride extends Omit<IFormSectionOverride, 'pages'> {}
+interface IFormLayoutTabOverride extends Omit<IFormSectionOverride, 'tabs'> {}
+interface IWizardStepOverride extends Omit<IFormSectionOverride, 'wizard_steps'> {}
 
 export interface IFormOverride {
   id?: string
@@ -320,7 +309,7 @@ export interface IFormOverride {
   long_description?: string
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
-  tabs?: ITabOverride[]
+  tabs?: IFormLayoutTabOverride[]
   fields?: IFormFieldOverride[]
   settings?: IFormSettings
 }

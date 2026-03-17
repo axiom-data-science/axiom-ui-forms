@@ -5,7 +5,7 @@ import React, { type ReactElement } from 'react'
 const FormFields = ({
   fields,
   onChange,
-  className = 'flex flex-col gap-8 flex-grow h-full'
+  className = 'flex flex-col gap-8 grow h-full'
 }: {
   fields?: IFormField[]
   onChange?: IValueChangeFn
