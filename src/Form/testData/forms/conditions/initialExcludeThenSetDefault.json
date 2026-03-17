@@ -1,0 +1,49 @@
+{
+  "label": "Form with field that is excluded by default and then should get default value when condition is met",
+  "id": "objectForm",
+  "wizard_steps": [
+    {
+      "label": "Step 1",
+      "id": "step1",
+      "fields": []
+    },
+    {
+      "label": "Step 2",
+      "id": "step2",
+      "fields": [
+    {
+      "id": "triggerField",
+      "label": "Which one?",
+      "type": "radio",
+      "defaultValue": "a",
+      "options": [
+        {
+          "label": "Option A",
+          "value": "a"
+        },
+        {
+          "label": "Option B",
+          "value": "b"
+        }
+      ]
+    },
+    {
+      "id": "conditionalField",
+      "label": "Conditional field",
+      "type": "number",
+      "defaultValue": 4.7,
+      "constraints": {
+        "min": 0,
+        "max": 10
+      },
+      "conditions": {
+        "field": "triggerField",
+        "operator": "=",
+        "value": "b"
+      }
+    }
+  ]
+    }
+
+  ] 
+}
