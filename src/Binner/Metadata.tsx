@@ -44,8 +44,6 @@ const MetadataManagementForm = ({
   units: oikos.IUnit[]
   parameters: oikos.IParameter[]
 }): ReactElement => {
-  console.log(useParams())
-
   const allColumns = {
     ...data.metadata.columns,
     ...data.metadata.dimensions
@@ -81,8 +79,6 @@ const MetadataManagementForm = ({
       value: p.parameterName
     }
   }).sort((a, b) => a.label.localeCompare(b.label))
-
-  console.log('functionOptions', functionOptions)
 
   const getQuery = ({
     id = 'query',
@@ -554,18 +550,16 @@ const MetadataManagementForm = ({
     ]
   }
 
-  console.log('form', form)
-
   const formState = useState<IForm | undefined>(form)
   const formValueState = useState<IFormValues>({})
 
   return (
-        <div className='flex flex-col gap-4'>
-                <FormWithEditorOverlay
-                    formState={formState}
-                    formValueState={formValueState}
-                />
-        </div>
+    <div className='flex flex-col gap-4'>
+      <FormWithEditorOverlay
+        formState={formState}
+        formValueState={formValueState}
+      />
+    </div>
   )
 }
 
@@ -577,15 +571,15 @@ const Metadata = ({ dataset }: { dataset: string }): ReactElement => {
   const error = (binnerError ?? errorOikos) ?? null
 
   return (
-        <div className='flex flex-col gap-4 p-10'>
-            {
-                isLoading
-                  ? <Loader className='pt-20' />
-                  : error
-                    ? <div className='text-red-500'>Error loading metadata: {error.message}</div>
-                    : <MetadataManagementForm data={binnerData} dataset={dataset} units={oikosData.units} parameters={oikosData.parameters} />
-            }
-        </div>
+    <div className='flex flex-col gap-4 p-10'>
+      {
+        isLoading
+          ? <Loader className='pt-20' />
+          : error
+            ? <div className='text-red-500'>Error loading metadata: {error.message}</div>
+            : <MetadataManagementForm data={binnerData} dataset={dataset} units={oikosData.units} parameters={oikosData.parameters} />
+      }
+    </div>
   )
 }
 

@@ -155,7 +155,6 @@ const App = (): ReactElement => {
   const updateLayoutValue = (): void => {
     const newSize = getWindowSize()
     if (layout.size !== newSize) {
-      console.log(`${layout.size} !== ${newSize}, updating layout`)
       setLayout({ size: newSize })
     }
   }

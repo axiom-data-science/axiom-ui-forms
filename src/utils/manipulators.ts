@@ -140,7 +140,6 @@ export function updateFormValuesWithFieldValueInPlace (field: IFormField, newVal
   if (fieldPath === undefined) {
     merge(formValues, newValue)
   } else {
-    console.log('fieldPath', fieldPath, newValue)
     set(formValues, fieldPath ?? '', newValue)
   }
 }
@@ -177,7 +176,6 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
   )
 
   const path = getPathFromField(field)
-  console.log('path', path)
 
   const fieldsWithPassingConditionsThatThisFieldAffects = getFieldsFromFormSection(form).filter(f => {
     if (f.conditions !== undefined || f.conditionsSet !== undefined) {
@@ -186,14 +184,11 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
         : f.conditionsSet !== undefined
           ? f.conditionsSet.conditions.map(c => c.field ?? c.dependsOn)
           : []
-      console.log('dependsOnFields', dependsOnFields)
       const conditionResult = checkCondition(f, { ...{ [getPathFromField(field) ?? '']: value } })
       return conditionResult.pass && conditionResult.newDefaultValue !== undefined
     }
     return false
   })
-
-  console.log('fieldsWithPassingConditionsThatThisFieldAffects', fieldsWithPassingConditionsThatThisFieldAffects)
 
   return formValuesCopyClean
 }

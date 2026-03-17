@@ -26,25 +26,24 @@ const PTTForm = ({
 
   return (
     <>
-    <FormWithEditorOverlay
-      label={label}
-      schemaState={schemaState}
-      fieldOverrideState={fieldOverrideState}
-      formOverrideState={formOverrideState}
-      rootFieldOverrideState={rootFieldOverrideState}
-      initialFormValues={{
-        title: label
-      }}
-      SubmitButton={({formValues}: {formValues: IFormValues}) => (
-        <Button
-          type='submit'
-          onClick={()=>{
-            console.log(formValues)
-          }}
-        >
-          Submit
-        </Button>
-      )}
+      <FormWithEditorOverlay
+        label={label}
+        schemaState={schemaState}
+        fieldOverrideState={fieldOverrideState}
+        formOverrideState={formOverrideState}
+        rootFieldOverrideState={rootFieldOverrideState}
+        initialFormValues={{
+          title: label
+        }}
+        SubmitButton={({ formValues }: { formValues: IFormValues }) => (
+          <Button
+            type='submit'
+            onClick={() => {
+            }}
+          >
+            Submit
+          </Button>
+        )}
       />
     </>
 

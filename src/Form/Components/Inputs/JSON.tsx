@@ -45,11 +45,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
         typeof value === 'object'
           ? JSON.stringify(value, null, 2)
           : (value !== undefined && value !== null
-              ? tryGetFormatted(String(value), format)
-              : allowEmpty
-                ? ''
-                : '{}'
-            )
+            ? tryGetFormatted(String(value), format)
+            : allowEmpty
+              ? ''
+              : '{}'
+          )
       )
     }
   }, [value])
@@ -149,7 +149,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'json' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('json') }}>JSON</Button>
         <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'yaml' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('yaml') }}>YAML</Button>
         <div className="ml-auto">
-        <Button size='xs' className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className='inline w-3 h-3 -mt-1 ml-1' /></Button>
+          <Button size='xs' className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className='inline w-3 h-3 -mt-1 ml-1' /></Button>
         </div>
       </div>
 
@@ -162,31 +162,29 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
               : yamlParser.dump(workingValue)
             : workingValue
         } className='white z-40' />
-        </span>
+      </span>
       <div className='h-full flex-grow overflow-auto min-h-[300px]'>
-      <CodeMirror
-        readOnly={disabled}
-        value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
-        extensions={[
-          format === 'json' ? json() : yaml(),
-          autocompletion(),
-          EditorView.lineWrapping
-        ]}
-        height='100%'
-        className='h-full'
-        onChange={debounced}
-        theme="dark"
-        onFocus={() => {
-          console.log('FOCUS')
-          setHasFocus(true)
-        }}
-        onBlur={() => {
-          console.log('BLUR')
-          setHasFocus(false)
-        }}
-      />
+        <CodeMirror
+          readOnly={disabled}
+          value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
+          extensions={[
+            format === 'json' ? json() : yaml(),
+            autocompletion(),
+            EditorView.lineWrapping
+          ]}
+          height='100%'
+          className='h-full'
+          onChange={debounced}
+          theme="dark"
+          onFocus={() => {
+            setHasFocus(true)
+          }}
+          onBlur={() => {
+            setHasFocus(false)
+          }}
+        />
       </div>
-      </div>
+    </div>
 
   )
 }

@@ -80,9 +80,6 @@ const TabLayout = (props: ITabLayoutProps): ReactElement => {
     ? (params[props.level] && params[props.level] !== '') ? params[props.level] : (props.sections[0]?.id ?? null)
     : props.sections[0]?.id ?? null
 
-  console.log(props)
-  console.log('Form parts:', formParts, 'Level:', props.level, 'Params:', params.join(','))
-
   return (
     <FormSectionContextProvider path={path} id={id}>
       <TabLayoutContent {...props} />
