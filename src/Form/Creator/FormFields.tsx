@@ -5,7 +5,7 @@ import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 const FormFields = ({
   fields,
   onChange,
-  className = ***REMOVED***flex flex-col gap-8 flex-grow h-full***REMOVED***
+  className = ***REMOVED***flex flex-col gap-8 grow h-full***REMOVED***
 }: {
   fields?: IFormField[]
   onChange?: IValueChangeFn

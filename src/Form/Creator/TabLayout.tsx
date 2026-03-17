@@ -1,133 +1,16 @@
-import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
+import { FormSectionContextProvider } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
-import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
-import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { ReactNode, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
-import { useAtom } from ***REMOVED***jotai***REMOVED***
-import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
-import { Button, Tabs } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import FieldLabel, { FieldLabelText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
+import { Tabs } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 
-const PageNav = ({
-  sections,
-  level
-}: {
-  sections?: IFormSection[]
-  level: number
-}): ReactElement => {
-  const [layout] = useAtom(layoutAtom)
-  const { urlNavigable } = useFormContext()
-  const { activeId, setActiveId, path } = useFormSectionContext()
-  return (
-    layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED***
-      ? <PageNavMobile sections={sections} level={level} />
-      : <div className=***REMOVED***flex flex-col w-50  border-slate-200***REMOVED***>{
-        sections?.map(p => {
-          return (
-            <NavElement
-              key={p.id}
-              path={path}
-              id={p.id}
-              navigable={urlNavigable ?? true}
-              onClick={() => { setActiveId(p.id) }}
-              className={`border-none rounded-none bg-slate-100 text-sm font-normal justify-start whitespace-break-spaces py-2 h-auto ${activeId === p.id ? ***REMOVED***bg-slate-700 hover:bg-slate-800 text-white hover:text-white ***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
-            >{p.label}</NavElement>
-          )
-        })
-      }</div>
 
-  )
-}
 
-const PageNavMobile = ({
-  sections,
-  level
-}: {
-  sections?: IFormSection[]
-  level: number
-}): ReactElement => {
-  const [active, setActive] = useState(false)
-  const { activeId, setActiveId, path } = useFormSectionContext()
-  const { urlNavigable } = useFormContext()
-
-  useEffect(() => {
-    setActive(false)
-  }, [activeId])
-
-  return <div className=***REMOVED***relative***REMOVED***><Button
-    type=***REMOVED***default***REMOVED***
-    size=***REMOVED***sm***REMOVED***
-    className=***REMOVED***bg-none  border-none p-2***REMOVED***
-    onClick={() => {
-      setActive(!active)
-    }}
-  >
-    <div className=***REMOVED***-mr-6 -ml-2***REMOVED***>{
-      active
-        ? <Cross2Icon className=***REMOVED***inline***REMOVED*** />
-        : <DropdownMenuIcon className=***REMOVED***inline w-8 h-8 rotate-180***REMOVED*** />
-    }
-    </div>
-  </Button>
-
-    {
-      active
-        ? <><div className=***REMOVED***bg-slate-400 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40***REMOVED*** onClick={() => { setActive(false) }}></div>
-          <div className=***REMOVED***fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[60%] gap-2 p-4 shadow-lg animate-slide-in***REMOVED***>
-            <div>
-              <DropdownMenuIcon className=***REMOVED***float-left cursor-pointer w-8 h-8***REMOVED*** onClick={() => { setActive(false) }} />
-              <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 float-right***REMOVED*** onClick={() => { setActive(false) }} />
-            </div>
-
-            {
-              sections?.map(p => {
-                return (
-                  <NavElement
-                    key={p.id}
-                    path={path}
-                    id={p.id}
-                    navigable={urlNavigable ?? true}
-                    onClick={() => { setActiveId(p.id) }}
-                    className={`border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? ***REMOVED***bg-slate-700 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
-                  >{p.label}</NavElement>
-                )
-              })
-            }
-          </div>
-        </>
-        : <div className=***REMOVED***flex flex-col gap-2 mt-4***REMOVED***>
-          {
-            sections?.map(p => {
-              return (
-                <NavElement
-                  key={p.id}
-                  path={path}
-                  id={p.id}
-                  navigable={urlNavigable ?? true}
-                  onClick={() => { setActiveId(p.id) }}
-                  className={***REMOVED***p-2 text-center border-none***REMOVED***}
-                ><span className={`block w-4 h-4 rounded-full ${activeId === p.id ? ***REMOVED***bg-black***REMOVED*** : ***REMOVED***bg-white border-2 border-slate-400***REMOVED***}`}>&nbsp;</span></NavElement>
-              )
-            })
-          }
-
-        </div>
-    }
-  </div>
-}
-
-export interface INavProps {
-  sections: IFormSection[]
-  sectionStatus: IFormSectionStatus
-  level: number
-  SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
-}
 
 export interface ITabLayoutProps {
   sections?: IFormSection[]
@@ -139,7 +22,6 @@ export interface ITabLayoutProps {
     onChange?: IValueChangeFn
     sectionStatus: IFormSectionStatus
   }>
-  NavComponent?: React.FC<INavProps>
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode

@@ -268,16 +268,12 @@ export interface IFormSection {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  tabs?: ITabOverride[]
+  tabs?: IFormLayoutTab[]
 }
 
-export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {
-
-}
-
-export interface IWizardStep extends Omit<IFormSection, ***REMOVED***wizard_steps***REMOVED***> {
-
-}
+export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {}
+export interface IWizardStep extends Omit<IFormSection, ***REMOVED***wizard_steps***REMOVED***> {}
+export interface IFormLayoutTab extends Omit<IFormSection, ***REMOVED***tabs***REMOVED***> {}
 
 export interface IFormSettings {
   url_navigable?: boolean
@@ -293,7 +289,7 @@ export interface IForm {
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  tabs?: ITabOverride[]
+  tabs?: IFormLayoutTab[]
   settings?: IFormSettings
 }
 
@@ -302,16 +298,9 @@ export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, ***REMOVED***
 
 export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {}
 
-interface IPageOverride extends Omit<IFormSectionOverride, ***REMOVED***pages***REMOVED***> {
-
-}
-
-interface ITabOverride extends Omit<IFormSectionOverride, ***REMOVED***tabs***REMOVED***> {
-}
-
-interface IWizardStepOverride extends Omit<IFormSectionOverride, ***REMOVED***wizard_steps***REMOVED***> {
-
-}
+interface IPageOverride extends Omit<IFormSectionOverride, ***REMOVED***pages***REMOVED***> {}
+interface IFormLayoutTabOverride extends Omit<IFormSectionOverride, ***REMOVED***tabs***REMOVED***> {}
+interface IWizardStepOverride extends Omit<IFormSectionOverride, ***REMOVED***wizard_steps***REMOVED***> {}
 
 export interface IFormOverride {
   id?: string
@@ -320,7 +309,7 @@ export interface IFormOverride {
   long_description?: string
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
-  tabs?: ITabOverride[]
+  tabs?: IFormLayoutTabOverride[]
   fields?: IFormFieldOverride[]
   settings?: IFormSettings
 }
