@@ -13,7 +13,7 @@ import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import debounce from ***REMOVED***lodash-es/debounce***REMOVED***
-import React, { type ReactNode, useContext, type ReactElement, useState } from ***REMOVED***react***REMOVED***
+import React, { type ReactNode, useContext, type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -136,15 +136,19 @@ const FormCreator = ({
   const updateLayoutValue = (): void => {
     const newSize = getWindowSize()
     if (layout.size !== newSize) {
-      console.log(`${layout.size} !== ${newSize}, updating layout`)
       setLayout({ size: newSize })
     }
   }
-  const debounceUpdateLayout = debounce(function updateSize(): void {
-    updateLayoutValue()
-  }, 200)
 
-  window.addEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
+  useEffect(() => {
+    const debounceUpdateLayout = debounce(updateLayoutValue, 200)
+    window.addEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
+
+    return () => {
+      window.removeEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
+      debounceUpdateLayout.cancel()
+    }
+  }, [])
 
   return (
     <FormContext.Provider value={{
