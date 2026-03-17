@@ -45,11 +45,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
         typeof value === ***REMOVED***object***REMOVED***
           ? JSON.stringify(value, null, 2)
           : (value !== undefined && value !== null
-              ? tryGetFormatted(String(value), format)
-              : allowEmpty
-                ? ***REMOVED******REMOVED***
-                : ***REMOVED***{}***REMOVED***
-            )
+            ? tryGetFormatted(String(value), format)
+            : allowEmpty
+              ? ***REMOVED******REMOVED***
+              : ***REMOVED***{}***REMOVED***
+          )
       )
     }
   }, [value])
@@ -149,7 +149,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***json***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***json***REMOVED***) }}>JSON</Button>
         <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***yaml***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***yaml***REMOVED***) }}>YAML</Button>
         <div className="ml-auto">
-        <Button size=***REMOVED***xs***REMOVED*** className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className=***REMOVED***inline w-3 h-3 -mt-1 ml-1***REMOVED*** /></Button>
+          <Button size=***REMOVED***xs***REMOVED*** className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className=***REMOVED***inline w-3 h-3 -mt-1 ml-1***REMOVED*** /></Button>
         </div>
       </div>
 
@@ -162,31 +162,29 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
               : yamlParser.dump(workingValue)
             : workingValue
         } className=***REMOVED***white z-40***REMOVED*** />
-        </span>
+      </span>
       <div className=***REMOVED***h-full flex-grow overflow-auto min-h-[300px]***REMOVED***>
-      <CodeMirror
-        readOnly={disabled}
-        value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
-        extensions={[
-          format === ***REMOVED***json***REMOVED*** ? json() : yaml(),
-          autocompletion(),
-          EditorView.lineWrapping
-        ]}
-        height=***REMOVED***100%***REMOVED***
-        className=***REMOVED***h-full***REMOVED***
-        onChange={debounced}
-        theme="dark"
-        onFocus={() => {
-          console.log(***REMOVED***FOCUS***REMOVED***)
-          setHasFocus(true)
-        }}
-        onBlur={() => {
-          console.log(***REMOVED***BLUR***REMOVED***)
-          setHasFocus(false)
-        }}
-      />
+        <CodeMirror
+          readOnly={disabled}
+          value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
+          extensions={[
+            format === ***REMOVED***json***REMOVED*** ? json() : yaml(),
+            autocompletion(),
+            EditorView.lineWrapping
+          ]}
+          height=***REMOVED***100%***REMOVED***
+          className=***REMOVED***h-full***REMOVED***
+          onChange={debounced}
+          theme="dark"
+          onFocus={() => {
+            setHasFocus(true)
+          }}
+          onBlur={() => {
+            setHasFocus(false)
+          }}
+        />
       </div>
-      </div>
+    </div>
 
   )
 }

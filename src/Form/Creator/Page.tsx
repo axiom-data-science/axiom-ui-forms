@@ -36,7 +36,7 @@ const PageNav = ({
               id={p.id}
               navigable={urlNavigable ?? true}
               onClick={() => { setActiveId(p.id) }}
-              className={ `border-none rounded-none bg-slate-100 text-sm font-normal justify-start whitespace-break-spaces py-2 h-auto ${activeId === p.id ? ***REMOVED***bg-slate-700 hover:bg-slate-800 text-white hover:text-white ***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
+              className={`border-none rounded-none bg-slate-100 text-sm font-normal justify-start whitespace-break-spaces py-2 h-auto ${activeId === p.id ? ***REMOVED***bg-slate-700 hover:bg-slate-800 text-white hover:text-white ***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
             >{p.label}</NavElement>
           )
         })
@@ -61,12 +61,12 @@ const PageNavMobile = ({
   }, [activeId])
 
   return <div className=***REMOVED***relative***REMOVED***><Button
-  type=***REMOVED***default***REMOVED***
-  size=***REMOVED***sm***REMOVED***
-  className=***REMOVED***bg-none  border-none p-2***REMOVED***
-  onClick={() => {
-    setActive(!active)
-  }}
+    type=***REMOVED***default***REMOVED***
+    size=***REMOVED***sm***REMOVED***
+    className=***REMOVED***bg-none  border-none p-2***REMOVED***
+    onClick={() => {
+      setActive(!active)
+    }}
   >
     <div className=***REMOVED***-mr-6 -ml-2***REMOVED***>{
       active
@@ -76,57 +76,57 @@ const PageNavMobile = ({
     </div>
   </Button>
 
-        {
-          active
-            ? <><div className=***REMOVED***bg-slate-400 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40***REMOVED*** onClick={() => { setActive(false) }}></div>
-              <div className=***REMOVED***fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[60%] gap-2 p-4 shadow-lg animate-slide-in***REMOVED***>
-                <div>
-                  <DropdownMenuIcon className=***REMOVED***float-left cursor-pointer w-8 h-8***REMOVED*** onClick={() => { setActive(false) }} />
-                <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 float-right***REMOVED*** onClick={() => { setActive(false) }} />
-                  </div>
+    {
+      active
+        ? <><div className=***REMOVED***bg-slate-400 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 z-40***REMOVED*** onClick={() => { setActive(false) }}></div>
+          <div className=***REMOVED***fixed left-0 top-0 bottom-0 flex flex-col bg-white z-50 w-[60%] gap-2 p-4 shadow-lg animate-slide-in***REMOVED***>
+            <div>
+              <DropdownMenuIcon className=***REMOVED***float-left cursor-pointer w-8 h-8***REMOVED*** onClick={() => { setActive(false) }} />
+              <Cross2Icon className=***REMOVED***cursor-pointer w-6 h-6 float-right***REMOVED*** onClick={() => { setActive(false) }} />
+            </div>
 
-              {
-                sections?.map(p => {
-                  return (
-                    <NavElement
-                      key={p.id}
-                      path={path}
-                      id={p.id}
-                      navigable={urlNavigable ?? true}
-                      onClick={() => { setActiveId(p.id) }}
-                      className={ `border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? ***REMOVED***bg-slate-700 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
-                    >{p.label}</NavElement>
-                  )
-                })
-              }
-              </div>
-              </>
-            : <div className=***REMOVED***flex flex-col gap-2 mt-4***REMOVED***>
-                {
-                  sections?.map(p => {
-                    return (
-                      <NavElement
-                      key={p.id}
-                      path={path}
-                      id={p.id}
-                      navigable={urlNavigable ?? true}
-                      onClick={() => { setActiveId(p.id) }}
-                      className={***REMOVED***p-2 text-center border-none***REMOVED***}
-                    ><span className={`block w-4 h-4 rounded-full ${activeId === p.id ? ***REMOVED***bg-black***REMOVED*** : ***REMOVED***bg-white border-2 border-slate-400***REMOVED***}`}>&nbsp;</span></NavElement>
-                    )
-                  })
-                }
+            {
+              sections?.map(p => {
+                return (
+                  <NavElement
+                    key={p.id}
+                    path={path}
+                    id={p.id}
+                    navigable={urlNavigable ?? true}
+                    onClick={() => { setActiveId(p.id) }}
+                    className={`border-none rounded-none bg-slate-100 text-sm font-normal text-left ${activeId === p.id ? ***REMOVED***bg-slate-700 text-white***REMOVED*** : ***REMOVED***hover:bg-slate-200***REMOVED***}`}
+                  >{p.label}</NavElement>
+                )
+              })
+            }
+          </div>
+        </>
+        : <div className=***REMOVED***flex flex-col gap-2 mt-4***REMOVED***>
+          {
+            sections?.map(p => {
+              return (
+                <NavElement
+                  key={p.id}
+                  path={path}
+                  id={p.id}
+                  navigable={urlNavigable ?? true}
+                  onClick={() => { setActiveId(p.id) }}
+                  className={***REMOVED***p-2 text-center border-none***REMOVED***}
+                ><span className={`block w-4 h-4 rounded-full ${activeId === p.id ? ***REMOVED***bg-black***REMOVED*** : ***REMOVED***bg-white border-2 border-slate-400***REMOVED***}`}>&nbsp;</span></NavElement>
+              )
+            })
+          }
 
-              </div>
-        }
-      </div>
+        </div>
+    }
+  </div>
 }
 
 export interface INavProps {
   sections: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
-  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
+  SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
 }
 
 export interface IPageLayoutProps {
@@ -142,7 +142,7 @@ export interface IPageLayoutProps {
   NavComponent?: React.FC<INavProps>
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-  SubmitButton?: React.FC<{formValues: IFormValues}> | ReactNode
+  SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
 }
 
 export const ActivePage = ({
@@ -157,28 +157,28 @@ export const ActivePage = ({
   level: number
 }): ReactElement => {
   return (
-      <div className={className}>
-              {
-          formSection?.description !== undefined
-            ? <div className=***REMOVED***mb-4***REMOVED***> 
+    <div className={className}>
+      {
+        formSection?.description !== undefined
+          ? <div className=***REMOVED***mb-4***REMOVED***>
             <FieldLabel field={{
-                ...formSection,
-                description: null,
-                label: formSection.description,
-                type: ***REMOVED***text***REMOVED***,
-                settings:{
-                  descriptionPresentation: ***REMOVED***tooltip***REMOVED***
-                }
-              }}
+              ...formSection,
+              description: null,
+              label: formSection.description,
+              type: ***REMOVED***text***REMOVED***,
+              settings: {
+                descriptionPresentation: ***REMOVED***tooltip***REMOVED***
+              }
+            }}
               textClassName=***REMOVED***font-normal***REMOVED***
 
             />
-            
-            </div>
-            : ***REMOVED******REMOVED***
-        }
-        <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
-      </div>
+
+          </div>
+          : ***REMOVED******REMOVED***
+      }
+      <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
+    </div>
   )
 }
 
@@ -197,9 +197,6 @@ const PageLayout = (props: IPageLayoutProps): ReactElement => {
   const id = urlNavigable
     ? (params[props.level] && params[props.level] !== ***REMOVED******REMOVED***) ? params[props.level] : (props.sections[0]?.id ?? null)
     : props.sections[0]?.id ?? null
-
-  console.log(props)
-  console.log(***REMOVED***Form parts:***REMOVED***, formParts, ***REMOVED***Level:***REMOVED***, props.level, ***REMOVED***Params:***REMOVED***, params.join(***REMOVED***,***REMOVED***))
 
   return (
     <FormSectionContextProvider path={path} id={id}>
@@ -229,19 +226,19 @@ const PageLayoutContent = ({
 
   return (
 
-        <div className={className}>
-          <NavComponent
-            sections={sections}
-            sectionStatus={sectionStatus}
-            level={level}
-            />
-          <ContentComponent
-            formSection={formSection}
-            onChange={onChange}
-            sectionStatus={sectionStatus}
-            level={level}
-            />
-        </div>
+    <div className={className}>
+      <NavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+      />
+      <ContentComponent
+        formSection={formSection}
+        onChange={onChange}
+        sectionStatus={sectionStatus}
+        level={level}
+      />
+    </div>
   )
 }
 

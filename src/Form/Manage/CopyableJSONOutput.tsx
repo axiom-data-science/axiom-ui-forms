@@ -65,10 +65,8 @@ export const CopyableJSONOutput = ({ string, label }: { string: string, label?: 
     <div className=***REMOVED***relative***REMOVED*** onClick={() => {
       navigator.clipboard.writeText(string)
         .then(() => {
-          console.log(***REMOVED***Copied!***REMOVED***)
         })
         .catch(e => {
-          console.log(***REMOVED***Error!***REMOVED***)
         })
     }}>
       <CopyButton string={string} className=***REMOVED***text-slate-400 absolute top-4 right-4***REMOVED*** wrapperClassName=***REMOVED***absolute top-0 right-0 bottom-0 left-0***REMOVED*** />

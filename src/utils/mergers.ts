@@ -242,8 +242,6 @@ export const mergeFormSections = ({
     ...form,
     fields: undefined
   })
-  console.log(form?.pages?.[0]?.fields)
-  // console.log(Object.keys(fieldsAlreadyUsed))
 
   const remainingFields = Object.keys(fieldsMap).filter(key => {
     return fieldsAlreadyUsed[key] === undefined

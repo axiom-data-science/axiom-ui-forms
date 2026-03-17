@@ -221,17 +221,7 @@ const FieldCreator = ({
   }
   const onChangeFn = defaultOnChange
 
-  /* useEffect(() => {
-    const fieldValue = getFieldValue(field, formValues)
-    if (
-      !(
-        (value === undefined || value === null) && (fieldValue === undefined || fieldValue === null)
-      ) &&
-        value !== fieldValue
-    ) {
-      onChangeFn(value)
-    }
-  }, [value]) */
+
 
   conditionResult = conditionResult ?? checkCondition(field, formValues)
 
@@ -248,21 +238,7 @@ const FieldCreator = ({
   } else if (conditionResult.result === ***REMOVED***enable***REMOVED*** && conditionResult.pass) {
     disabled = false
   }
-  /* if (conditionResult.pass && conditionResult.newDefaultValue !== undefined) {
-    if (value !== conditionResult.newDefaultValue) {
-      value = conditionResult.newDefaultValue
-      console.log(***REMOVED***tester: setting newDefaultValue***REMOVED***, field.id, value, getFieldValue(field, formValues))
-      return <FieldCreator
-        field={field}
-        value={value}
-        onChange={onChange}
-        className={className}
-        defaultClassName={defaultClassName}
-        disabled={disabled}
-        conditionResult={{ ...conditionResult, newDefaultValue: undefined }}
-      />
-    }
-  } */
+
 
   const fieldValue = getFieldValue(field, formValues)
   const initialValue = value !== undefined ? value : fieldValue
