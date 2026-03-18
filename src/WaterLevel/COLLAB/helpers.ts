@@ -49,53 +49,47 @@ export const getFormSections = async (): Promise<IFormSectionOverride[]> => {
   return parseFormSections(fields, sections)
 }
 
-export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
-  const schema: JSONSchema6 = {
-    type: 'object',
-    $schema: 'http://json-schema.org/draft-06/schema#',
-    title: 'COLLAB Water Level Metadata'
-  }
-  fields.forEach(f => {
-    const options = [f.option1, f.option2, f.option3, f.option4, f.option5, f.option6, f.option7, f.option8].filter(o => o !== null)
-    const optionsToUse = options.length > 0 ? options.filter(o => o !== 'Other') : []
-    const optionsIncludesOther = options.some(o => o && o.toLowerCase() === 'other') || (f.response_type === "Multichoice with 'other' option" && optionsToUse.length > 0)
-    const useAnyOf = optionsIncludesOther && options.length > 0
-    // Ensure type is JSONSchema6TypeName
-    let type: JSONSchema6['type']
-    if (
-      f.response_type === null ||
+const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 => {
+  const options = [f.option1, f.option2, f.option3, f.option4, f.option5, f.option6, f.option7, f.option8].filter(o => o !== null)
+  // const optionsToUse = options.length > 0 ? options.filter(o => o !== 'Other') : []
+  // const optionsIncludesOther = options.some(o => o && o.toLowerCase() === 'other') || (f.response_type === "Multichoice with 'other' option" && optionsToUse.length > 0)
+  // const useAnyOf = optionsIncludesOther && options.length > 0
+  // Ensure type is JSONSchema6TypeName
+  let type: JSONSchema6['type']
+  if (
+    f.response_type === null ||
       /Text/i.test(f.response_type) ||
       /Link/i.test(f.response_type) ||
       /Email/i.test(f.response_type) ||
       /Phone/i.test(f.response_type) ||
       /Date/i.test(f.response_type)
-    ) {
-      type = 'string'
-    } else if (/Number/i.test(f.response_type)) {
-      type = 'number'
-    } else if (/Boolean/i.test(f.response_type)) {
-      type = 'boolean'
-    } else {
-      type = 'string'
-    }
+  ) {
+    type = 'string'
+  } else if (/Number/i.test(f.response_type)) {
+    type = 'number'
+  } else if (/Boolean/i.test(f.response_type)) {
+    type = 'boolean'
+  } else {
+    type = 'string'
+  }
 
-    const prop: JSONSchema6 = {
-      type,
-      format: f.response_type === 'DateTime'
-        ? 'datetime'
-        : f.response_type === 'Date'
-          ? 'date'
-          : f.response_type === 'Email'
-            ? 'email'
-            : f.response_type === 'Phone number'
-              ? 'phone'
-              : f.response_type === 'Link'
-                ? 'uri'
-                : undefined,
-      title: f.label,
-      description: f.description ?? undefined,
-      enum: options.length > 0 ? options : undefined
-      /* anyOf: useAnyOf
+  const prop: JSONSchema6 = {
+    type,
+    format: f.response_type === 'DateTime'
+      ? 'datetime'
+      : f.response_type === 'Date'
+        ? 'date'
+        : f.response_type === 'Email'
+          ? 'email'
+          : f.response_type === 'Phone number'
+            ? 'phone'
+            : f.response_type === 'Link'
+              ? 'uri'
+              : undefined,
+    title: f.label,
+    description: f.description ?? undefined,
+    enum: options.length > 0 ? options : undefined
+    /* anyOf: useAnyOf
         ? [
             {
               type: 'string',
@@ -106,10 +100,104 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
             }
           ]
         : undefined */
+  }
+  return prop
+}
+
+export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
+  const schema: JSONSchema6 = {
+    type: 'object',
+    $schema: 'http://json-schema.org/draft-06/schema#',
+    title: 'COLLAB Water Level Metadata'
+  }
+
+  const byPath: Record<string, IMetadataField[]> = {}
+  fields.forEach(f => {
+    const path = (f.path ?? '').trim()
+    if (!byPath[path]) {
+      byPath[path] = []
     }
-    schema.properties = schema.properties ?? {};
-    (schema.properties as Record<string, JSONSchema6>)[f.id] = prop
+    byPath[path].push(f)
   })
+
+  Object.entries(byPath).forEach(([path, fields]) => {
+    if (path === '') {
+      fields.forEach(f => {
+        const prop = fieldToSchemaProperty(f)
+        schema.properties = schema.properties ?? {}
+        schema.properties[f.id] = prop
+      })
+    } else {
+      const pathParts = path.split('/').filter(p => p)
+      let p = schema.properties as Record<string, JSONSchema6>
+      pathParts.forEach((part, index) => {
+        const isMultiple = part.match(/\[\]$/)
+        const lastIndex = index >= (pathParts.length - 1)
+        const isObject = fields.length > 1
+        const cleanPart = (isMultiple ? part.slice(0, -2) : part).trim()
+
+        if (isMultiple && p[cleanPart] === undefined) {
+          p[cleanPart] = {
+            type: 'array',
+            items: {}
+          }
+        } else if (!isMultiple && p[cleanPart] === undefined) {
+          p[cleanPart] = {
+            type: 'object',
+            properties: {}
+          }
+        }
+
+        if (lastIndex) {
+          /* fields.forEach(f => {
+            const prop = fieldToSchemaProperty(f)
+            propsOb[f.id] = prop
+          }) */
+          const propsOb = p[cleanPart].type === 'array'
+            ? (p[cleanPart].items as Record<string, JSONSchema6>)
+            : (p[cleanPart].properties as Record<string, JSONSchema6>)
+          if (!isObject && isMultiple) {
+            propsOb[fields[0].id] = fieldToSchemaProperty(fields[0])
+          } else {
+            fields.forEach(f => {
+              const prop = fieldToSchemaProperty(f, path)
+              propsOb[f.id] = prop
+            })
+          }
+        } else {
+          p = (p[cleanPart].properties ?? p[cleanPart].items) as Record<string, JSONSchema6>
+        }
+      })
+    }
+  })
+
+  /* fields.forEach(f => {
+    schema.properties = schema.properties ?? {}
+    const prop = fieldToSchemaProperty(f)
+    if (f.path !== null && f.path !== '') {
+      const pathParts = f.path.split('/').filter(p => p)
+      let p = schema.properties as Record<string, JSONSchema6>
+      pathParts.forEach(part => {
+        const isMultiple = part.match(/\[\]$/)
+        const cleanPart = isMultiple ? part.slice(0, -2) : part
+        if (!p[cleanPart]) {
+          p[cleanPart] = isMultiple
+            ? {
+                type: 'array',
+                items: {}
+              }
+            : {
+                type: 'object',
+                properties: {}
+              }
+        }
+        p = isMultiple ? (p[cleanPart].items as Record<string, JSONSchema6>) : (p[cleanPart].properties as Record<string, JSONSchema6>)
+      })
+    } else {
+      (schema.properties as Record<string, JSONSchema6>)[f.id] = prop
+    }
+  }) */
+  console.log('SCHEMA', schema)
   return schema
 }
 
@@ -142,7 +230,7 @@ export const parseFormSections = (fields: IMetadataField[], sections: IMetadataF
         }
         fieldsBySecondarySection[secondarySectionId].push(f)
       })
-      section.wizard_steps = Object.keys(fieldsBySecondarySection)
+      section.tabs = Object.keys(fieldsBySecondarySection)
         .sort((a, b) => {
           const orderA = sectionsById[a]?.order ?? Number.MAX_SAFE_INTEGER
           const orderB = sectionsById[b]?.order ?? Number.MAX_SAFE_INTEGER
@@ -165,5 +253,5 @@ export const parseFormSections = (fields: IMetadataField[], sections: IMetadataF
       }))
     }
     return section
-  })
+  }).filter(s => s.fields?.length ?? s.wizard_steps?.length ?? s.pages?.length ?? s.tabs?.length) // Filter out sections with no fields
 }
