@@ -49,53 +49,47 @@ export const getFormSections = async (): Promise<IFormSectionOverride[]> => {
   return parseFormSections(fields, sections)
 }
 
-export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
-  const schema: JSONSchema6 = {
-    type: ***REMOVED***object***REMOVED***,
-    $schema: ***REMOVED***http://json-schema.org/draft-06/schema#***REMOVED***,
-    title: ***REMOVED***COLLAB Water Level Metadata***REMOVED***
-  }
-  fields.forEach(f => {
-    const options = [f.option1, f.option2, f.option3, f.option4, f.option5, f.option6, f.option7, f.option8].filter(o => o !== null)
-    const optionsToUse = options.length > 0 ? options.filter(o => o !== ***REMOVED***Other***REMOVED***) : []
-    const optionsIncludesOther = options.some(o => o && o.toLowerCase() === ***REMOVED***other***REMOVED***) || (f.response_type === "Multichoice with ***REMOVED***other***REMOVED*** option" && optionsToUse.length > 0)
-    const useAnyOf = optionsIncludesOther && options.length > 0
-    // Ensure type is JSONSchema6TypeName
-    let type: JSONSchema6[***REMOVED***type***REMOVED***]
-    if (
-      f.response_type === null ||
+const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 => {
+  const options = [f.option1, f.option2, f.option3, f.option4, f.option5, f.option6, f.option7, f.option8].filter(o => o !== null)
+  // const optionsToUse = options.length > 0 ? options.filter(o => o !== ***REMOVED***Other***REMOVED***) : []
+  // const optionsIncludesOther = options.some(o => o && o.toLowerCase() === ***REMOVED***other***REMOVED***) || (f.response_type === "Multichoice with ***REMOVED***other***REMOVED*** option" && optionsToUse.length > 0)
+  // const useAnyOf = optionsIncludesOther && options.length > 0
+  // Ensure type is JSONSchema6TypeName
+  let type: JSONSchema6[***REMOVED***type***REMOVED***]
+  if (
+    f.response_type === null ||
       /Text/i.test(f.response_type) ||
       /Link/i.test(f.response_type) ||
       /Email/i.test(f.response_type) ||
       /Phone/i.test(f.response_type) ||
       /Date/i.test(f.response_type)
-    ) {
-      type = ***REMOVED***string***REMOVED***
-    } else if (/Number/i.test(f.response_type)) {
-      type = ***REMOVED***number***REMOVED***
-    } else if (/Boolean/i.test(f.response_type)) {
-      type = ***REMOVED***boolean***REMOVED***
-    } else {
-      type = ***REMOVED***string***REMOVED***
-    }
+  ) {
+    type = ***REMOVED***string***REMOVED***
+  } else if (/Number/i.test(f.response_type)) {
+    type = ***REMOVED***number***REMOVED***
+  } else if (/Boolean/i.test(f.response_type)) {
+    type = ***REMOVED***boolean***REMOVED***
+  } else {
+    type = ***REMOVED***string***REMOVED***
+  }
 
-    const prop: JSONSchema6 = {
-      type,
-      format: f.response_type === ***REMOVED***DateTime***REMOVED***
-        ? ***REMOVED***datetime***REMOVED***
-        : f.response_type === ***REMOVED***Date***REMOVED***
-          ? ***REMOVED***date***REMOVED***
-          : f.response_type === ***REMOVED***Email***REMOVED***
-            ? ***REMOVED***email***REMOVED***
-            : f.response_type === ***REMOVED***Phone number***REMOVED***
-              ? ***REMOVED***phone***REMOVED***
-              : f.response_type === ***REMOVED***Link***REMOVED***
-                ? ***REMOVED***uri***REMOVED***
-                : undefined,
-      title: f.label,
-      description: f.description ?? undefined,
-      enum: options.length > 0 ? options : undefined
-      /* anyOf: useAnyOf
+  const prop: JSONSchema6 = {
+    type,
+    format: f.response_type === ***REMOVED***DateTime***REMOVED***
+      ? ***REMOVED***datetime***REMOVED***
+      : f.response_type === ***REMOVED***Date***REMOVED***
+        ? ***REMOVED***date***REMOVED***
+        : f.response_type === ***REMOVED***Email***REMOVED***
+          ? ***REMOVED***email***REMOVED***
+          : f.response_type === ***REMOVED***Phone number***REMOVED***
+            ? ***REMOVED***phone***REMOVED***
+            : f.response_type === ***REMOVED***Link***REMOVED***
+              ? ***REMOVED***uri***REMOVED***
+              : undefined,
+    title: f.label,
+    description: f.description ?? undefined,
+    enum: options.length > 0 ? options : undefined
+    /* anyOf: useAnyOf
         ? [
             {
               type: ***REMOVED***string***REMOVED***,
@@ -106,10 +100,104 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
             }
           ]
         : undefined */
+  }
+  return prop
+}
+
+export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
+  const schema: JSONSchema6 = {
+    type: ***REMOVED***object***REMOVED***,
+    $schema: ***REMOVED***http://json-schema.org/draft-06/schema#***REMOVED***,
+    title: ***REMOVED***COLLAB Water Level Metadata***REMOVED***
+  }
+
+  const byPath: Record<string, IMetadataField[]> = {}
+  fields.forEach(f => {
+    const path = (f.path ?? ***REMOVED******REMOVED***).trim()
+    if (!byPath[path]) {
+      byPath[path] = []
     }
-    schema.properties = schema.properties ?? {};
-    (schema.properties as Record<string, JSONSchema6>)[f.id] = prop
+    byPath[path].push(f)
   })
+
+  Object.entries(byPath).forEach(([path, fields]) => {
+    if (path === ***REMOVED******REMOVED***) {
+      fields.forEach(f => {
+        const prop = fieldToSchemaProperty(f)
+        schema.properties = schema.properties ?? {}
+        schema.properties[f.id] = prop
+      })
+    } else {
+      const pathParts = path.split(***REMOVED***/***REMOVED***).filter(p => p)
+      let p = schema.properties as Record<string, JSONSchema6>
+      pathParts.forEach((part, index) => {
+        const isMultiple = part.match(/\[\]$/)
+        const lastIndex = index >= (pathParts.length - 1)
+        const isObject = fields.length > 1
+        const cleanPart = (isMultiple ? part.slice(0, -2) : part).trim()
+
+        if (isMultiple && p[cleanPart] === undefined) {
+          p[cleanPart] = {
+            type: ***REMOVED***array***REMOVED***,
+            items: {}
+          }
+        } else if (!isMultiple && p[cleanPart] === undefined) {
+          p[cleanPart] = {
+            type: ***REMOVED***object***REMOVED***,
+            properties: {}
+          }
+        }
+
+        if (lastIndex) {
+          /* fields.forEach(f => {
+            const prop = fieldToSchemaProperty(f)
+            propsOb[f.id] = prop
+          }) */
+          const propsOb = p[cleanPart].type === ***REMOVED***array***REMOVED***
+            ? (p[cleanPart].items as Record<string, JSONSchema6>)
+            : (p[cleanPart].properties as Record<string, JSONSchema6>)
+          if (!isObject && isMultiple) {
+            propsOb[fields[0].id] = fieldToSchemaProperty(fields[0])
+          } else {
+            fields.forEach(f => {
+              const prop = fieldToSchemaProperty(f, path)
+              propsOb[f.id] = prop
+            })
+          }
+        } else {
+          p = (p[cleanPart].properties ?? p[cleanPart].items) as Record<string, JSONSchema6>
+        }
+      })
+    }
+  })
+
+  /* fields.forEach(f => {
+    schema.properties = schema.properties ?? {}
+    const prop = fieldToSchemaProperty(f)
+    if (f.path !== null && f.path !== ***REMOVED******REMOVED***) {
+      const pathParts = f.path.split(***REMOVED***/***REMOVED***).filter(p => p)
+      let p = schema.properties as Record<string, JSONSchema6>
+      pathParts.forEach(part => {
+        const isMultiple = part.match(/\[\]$/)
+        const cleanPart = isMultiple ? part.slice(0, -2) : part
+        if (!p[cleanPart]) {
+          p[cleanPart] = isMultiple
+            ? {
+                type: ***REMOVED***array***REMOVED***,
+                items: {}
+              }
+            : {
+                type: ***REMOVED***object***REMOVED***,
+                properties: {}
+              }
+        }
+        p = isMultiple ? (p[cleanPart].items as Record<string, JSONSchema6>) : (p[cleanPart].properties as Record<string, JSONSchema6>)
+      })
+    } else {
+      (schema.properties as Record<string, JSONSchema6>)[f.id] = prop
+    }
+  }) */
+  console.log(***REMOVED***SCHEMA***REMOVED***, schema)
   return schema
 }
 
@@ -142,7 +230,7 @@ export const parseFormSections = (fields: IMetadataField[], sections: IMetadataF
         }
         fieldsBySecondarySection[secondarySectionId].push(f)
       })
-      section.wizard_steps = Object.keys(fieldsBySecondarySection)
+      section.tabs = Object.keys(fieldsBySecondarySection)
         .sort((a, b) => {
           const orderA = sectionsById[a]?.order ?? Number.MAX_SAFE_INTEGER
           const orderB = sectionsById[b]?.order ?? Number.MAX_SAFE_INTEGER
@@ -165,5 +253,5 @@ export const parseFormSections = (fields: IMetadataField[], sections: IMetadataF
       }))
     }
     return section
-  })
+  }).filter(s => s.fields?.length ?? s.wizard_steps?.length ?? s.pages?.length ?? s.tabs?.length) // Filter out sections with no fields
 }
