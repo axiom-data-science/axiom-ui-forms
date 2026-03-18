@@ -1,4 +1,4 @@
-import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep, type IValueType, type INumberField } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep, type IValueType, type INumberField, type IFormLayoutTab } from '@/Form/Creator/FormCreatorTypes'
 import Ajv, { type ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 
@@ -533,6 +533,13 @@ const mergeFormSections = ({
           schemaForm,
           formFieldsOverrideMap
         })
+        : undefined,
+      tabs: sectionToMerge.tabs !== undefined
+        ? mergeFormSections({
+          sectionOverrides: sectionToMerge.tabs,
+          schemaForm,
+          formFieldsOverrideMap
+        })
         : undefined
     }
   })
@@ -588,6 +595,14 @@ export const overridesAndSchemaToFormObject = ({
       schemaForm,
       formFieldsOverrideMap: formFieldOverridesByProp
     }) as IWizardStep[]
+    : undefined
+
+  form.tabs = mergedFormOverrides.tabs !== undefined
+    ? mergeFormSections({
+      sectionOverrides: mergedFormOverrides.tabs,
+      schemaForm,
+      formFieldsOverrideMap: formFieldOverridesByProp
+    }) as IFormLayoutTab[]
     : undefined
 
   form.fields = mergeFormFields({
