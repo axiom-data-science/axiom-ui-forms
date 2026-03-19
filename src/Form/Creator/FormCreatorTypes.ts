@@ -211,8 +211,12 @@ type EnforceContainerFieldConstraints<T extends IContainerField> = T extends { s
 
 export type IValidContainerField = EnforceContainerFieldConstraints<IContainerField>
 
-export interface IObjectField extends IValidContainerField {
+export interface IObjectField extends Omit<IValidContainerField, ***REMOVED***fields***REMOVED***> {
   type: ***REMOVED***object***REMOVED***
+  tabs?: IFormLayoutTab[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
+  fields?: IFormField[]
 }
 
 export interface IObjectListField extends IValidContainerField {
@@ -294,7 +298,7 @@ export interface IForm {
 }
 
 export type IFormFieldOverride = Partial<IFormField> & { prop: string } | IObjectFormFieldOverride
-export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, ***REMOVED***fields***REMOVED***> & { fields?: IFormFieldOverride[], prop: string }
+export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, ***REMOVED***fields***REMOVED*** | ***REMOVED***tabs***REMOVED*** | ***REMOVED***pages***REMOVED*** | ***REMOVED***wizard_steps***REMOVED***> & { fields?: IFormFieldOverride[], prop: string, tabs?: IFormLayoutTabOverride[], pages?: IPageOverride[], wizard_steps?: IWizardStepOverride[] }
 
 export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {}
 

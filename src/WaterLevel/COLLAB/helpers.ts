@@ -1,4 +1,4 @@
-import { type IFormSectionOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IObjectFormFieldOverride, type IFormSectionOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IMetadataFormSection, type IMetadataField } from ***REMOVED***@/WaterLevel/COLLAB/types***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
@@ -88,7 +88,7 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
               : undefined,
     title: f.label,
     description: f.description ?? undefined,
-    enum: options.length > 0 ? options : undefined
+    enum: options.length > 0 && type === ***REMOVED***string***REMOVED*** ? options : undefined
     /* anyOf: useAnyOf
         ? [
             {
@@ -220,17 +220,23 @@ export const parseFormSections = (fields: IMetadataField[], sections: IMetadataF
       description: s.description ?? undefined
     }
     const fields = fieldsBySection[s.id] ?? []
-    const hasSections = fields.some(f => f.secondary_form_section)
-    if (hasSections) {
+    const hasTabs = fields.some(f => f.secondary_form_section)
+    if (hasTabs) {
       const fieldsBySecondarySection: Record<string, IMetadataField[]> = {}
+      const fieldsByPath: Record<string, IMetadataField[]> = {}
       fields.forEach(f => {
         const secondarySectionId = sectionsByLabel[f.secondary_form_section ?? ***REMOVED***Other***REMOVED***]?.id ?? f.secondary_form_section ?? ***REMOVED***other***REMOVED***
         if (!fieldsBySecondarySection[secondarySectionId]) {
           fieldsBySecondarySection[secondarySectionId] = []
         }
         fieldsBySecondarySection[secondarySectionId].push(f)
+        if (!fieldsByPath[f.path ?? ***REMOVED******REMOVED***]) {
+          fieldsByPath[f.path ?? ***REMOVED******REMOVED***] = []
+        }
+        fieldsByPath[f.path ?? ***REMOVED******REMOVED***].push(f)
       })
-      section.tabs = Object.keys(fieldsBySecondarySection)
+
+      const tabs = Object.keys(fieldsBySecondarySection)
         .sort((a, b) => {
           const orderA = sectionsById[a]?.order ?? Number.MAX_SAFE_INTEGER
           const orderB = sectionsById[b]?.order ?? Number.MAX_SAFE_INTEGER
@@ -247,6 +253,18 @@ export const parseFormSections = (fields: IMetadataField[], sections: IMetadataF
             }))
           } satisfies IFormSectionOverride
         })
+
+      if (Object.keys(fieldsBySecondarySection).length === 1 && Object.keys(fieldsBySecondarySection)[0].match(/\[\]$/)) {
+        const objectFieldWithTabs: IObjectFormFieldOverride = {
+          prop: section.id ?? ***REMOVED***na***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          multiple: true,
+          tabs
+        }
+        section.fields = [objectFieldWithTabs]
+      } else {
+        section.tabs = tabs
+      }
     } else {
       section.fields = fields.map(f => ({
         prop: f.id
