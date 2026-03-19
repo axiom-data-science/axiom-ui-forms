@@ -398,12 +398,14 @@ const mergeFormField = ({
   field,
   fieldOverride,
   formFieldsOverrideMap,
-  schemaFieldMap
+  schemaFieldMap,
+  schemaForm
 }: {
   field: IFormField
   fieldOverride?: IFormFieldOverride
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
   schemaFieldMap: Record<string, IFormField>
+  schemaForm: IForm
 }): IFormField => {
   const path = fieldOverride?.prop ?? makeJsonPath(field)
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[path ?? '']).filter(d => d !== undefined))
@@ -425,11 +427,19 @@ const mergeFormField = ({
   const id = mergedField.id ?? makeFormFieldId([mergedField.id])
   if (mergedField.type === 'object') {
     // attached to the schema field. defaults not overrides
-    const fieldFields = field?.type === 'object' ? field.fields : []
+    const fieldFields = field?.type === 'object' ? field.fields ?? [] : []
     const fieldFieldsMap = Object.fromEntries(fieldFields.map(f => [getPathFromField(f), f]))
+    /* if (fieldPages !== undefined) {
+      mergedField.pages = fieldPages
+    }
+    if (fieldWizardSteps !== undefined) {
+      mergedField.wizard_steps = fieldWizardSteps
+    } */
 
     // attached to the field override. overrides
     const overrideFields = fieldOverride?.type === 'object' ? (fieldOverride.fields ?? []) : []
+    const overrideFieldTabs = fieldOverride?.type === 'object' ? fieldOverride.tabs : undefined
+    // const overrideFieldPages = fieldOverride?.type === 'object' ? fieldOverride.pages : undefined
     const overrideFieldsMap = Object.fromEntries(
       overrideFields
         .filter((f): f is IFormFieldOverride => 'prop' in f)
@@ -461,9 +471,18 @@ const mergeFormField = ({
         field: fieldFieldsMap[key] ?? schemaFieldMap[key],
         fieldOverride,
         formFieldsOverrideMap,
-        schemaFieldMap
+        schemaFieldMap,
+        schemaForm
       })
     })
+
+    mergedField.tabs = overrideFieldTabs !== undefined
+      ? mergeFormSections({
+        sectionOverrides: overrideFieldTabs as IFormSectionOverride[],
+        schemaForm,
+        formFieldsOverrideMap
+      }) as IFormLayoutTab[]
+      : undefined
   }
   return {
     type: mergedField.type ?? 'text',
@@ -490,7 +509,8 @@ const mergeFormFields = ({
       field: schemaField,
       fieldOverride,
       formFieldsOverrideMap,
-      schemaFieldMap
+      schemaFieldMap,
+      schemaForm
     })
   })
 }
@@ -567,7 +587,8 @@ export const overridesAndSchemaToFormObject = ({
       return mergeFormField({
         field,
         formFieldsOverrideMap: formFieldOverridesByProp,
-        schemaFieldMap
+        schemaFieldMap,
+        schemaForm
       })
     })
     return {
