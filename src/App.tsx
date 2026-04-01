@@ -240,7 +240,7 @@ const App = (): ReactElement => {
             <Route path='/modl' element={<MODLForm />}>
               <Route path='*' element={<MODLForm />} />
             </Route>
-            <Route path='/makra' element={<MAKRAForm />}>
+            <Route path='/PAM/makra' element={<MAKRAForm />}>
               <Route path='*' element={<MAKRAForm />} />
             </Route>
           </Routes>
