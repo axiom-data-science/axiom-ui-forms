@@ -1,19 +1,19 @@
 import FormWithEditorOverlay from "@/Form/FormWithEditorOverlay"
 import { ReactElement, useState } from "react"
-import schema from ***REMOVED***./tethisSchema.json***REMOVED***
-import fieldOverrides from ***REMOVED***./tethisFieldOverrides.json***REMOVED***
-import formOverride from ***REMOVED***./tethisFormOverrides.json***REMOVED***
+import schema from ***REMOVED***./makraSchema.json***REMOVED***
+import fieldOverrides from ***REMOVED***./makraFieldOverrides.json***REMOVED***
+import formOverride from ***REMOVED***./makraFormOverrides.json***REMOVED***
 import { JSONSchema6 } from "json-schema"
 import { IFormFieldOverride, IFormOverride } from "@/library"
 
 
-const TethisForm = (): ReactElement => {
+const MAKRAForm = (): ReactElement => {
     const schemaState = useState<JSONSchema6 | undefined>(schema as JSONSchema6)
     const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
     const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
     return (
         <FormWithEditorOverlay
-            label={***REMOVED***TETHIS Form***REMOVED***}
+            label={***REMOVED***MAKRA Form***REMOVED***}
             schemaState={schemaState}
             fieldOverrideState={fieldOverrideState}
             formOverrideState={formOverrideState}
@@ -21,4 +21,4 @@ const TethisForm = (): ReactElement => {
     )
 }
 
-export default TethisForm
+export default MAKRAForm
