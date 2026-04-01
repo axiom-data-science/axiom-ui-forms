@@ -43,6 +43,7 @@ import PlatformsMetadata from '@/Platforms/PlatformsMetadata'
 import MODLForm from '@/Form/MODL/MODLForm';
 import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm';
 import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet';
+import TethisForm from '@/Form/PAM/TethisForm';
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -238,6 +239,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path='/modl' element={<MODLForm />}>
               <Route path='*' element={<MODLForm />} />
+            </Route>
+            <Route path='/tethis' element={<TethisForm />}>
+              <Route path='*' element={<TethisForm />} />
             </Route>
           </Routes>
         </BrowserRouter>
