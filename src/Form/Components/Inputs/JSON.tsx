@@ -163,7 +163,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             : workingValue
         } className=***REMOVED***white z-40***REMOVED*** />
       </span>
-      <div className=***REMOVED***h-full flex-grow overflow-auto min-h-[300px]***REMOVED***>
+      <div className=***REMOVED***h-full grow overflow-auto min-h-[400px]***REMOVED***>
         <CodeMirror
           readOnly={disabled}
           value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
@@ -173,7 +173,8 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             EditorView.lineWrapping
           ]}
           height=***REMOVED***100%***REMOVED***
-          className=***REMOVED***h-full***REMOVED***
+          minHeight=***REMOVED***400px***REMOVED***
+          className=***REMOVED***h-full min-h-100***REMOVED***
           onChange={debounced}
           theme="dark"
           onFocus={() => {
