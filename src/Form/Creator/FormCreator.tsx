@@ -40,6 +40,10 @@ const FormComponentWrap = ({ Component }: { Component: React.FC<IFormContextValu
 
 const FormStatus = (): ReactElement => {
   const { form, formValues } = useContext(FormContext)
+  if (form.settings?.show_progress === false) {
+    return <></>
+  }
+
   const status = calculateSectionStatus([form], formValues)
 
   return (
