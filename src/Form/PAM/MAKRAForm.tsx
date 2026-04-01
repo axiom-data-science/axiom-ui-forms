@@ -13,7 +13,7 @@ const MAKRAForm = (): ReactElement => {
     const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
     return (
         <FormWithEditorOverlay
-            label={***REMOVED***MAKRA Form***REMOVED***}
+            label={***REMOVED***PAM: MAKRA metadata collection form***REMOVED***}
             schemaState={schemaState}
             fieldOverrideState={fieldOverrideState}
             formOverrideState={formOverrideState}
