@@ -145,7 +145,7 @@ describe('mergers.ts', () => {
 
       const objectFieldResult = resultMap?.objectField as IObjectField ?? undefined
       expect(objectFieldResult).not.toBe(undefined)
-      const objectFieldFieldsMap = Object.fromEntries(objectFieldResult.fields?.map(field => [field.id, field]))
+      const objectFieldFieldsMap = Object.fromEntries(objectFieldResult.fields?.map(field => [field.id, field]) ?? [])
       expect(objectFieldFieldsMap?.nestedField1).not.toBe(undefined)
       expect(objectFieldFieldsMap?.nestedField1?.label).toEqual('Updated Field 1')
       expect(objectFieldFieldsMap?.nestedField1?.type).toEqual('number')

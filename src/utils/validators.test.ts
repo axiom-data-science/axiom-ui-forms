@@ -156,7 +156,7 @@ describe('get data and checkCondition on relative paths', () => {
     }
 
     const objectField = formWithPaths.fields?.[0] as IObjectField // innerField2
-    const fieldMap = Object.fromEntries(objectField.fields.map(f => [f.id, f]))
+    const fieldMap = Object.fromEntries((objectField?.fields ?? []).map(f => [f.id, f]))
     const field: IFormField = fieldMap.innerField2
     it('getValueFromRelativePath correctly returns a value of "test"', () => {
       const condition = field?.conditions
@@ -215,7 +215,7 @@ describe('get data and checkCondition on relative paths', () => {
     }
 
     const objectField = formWithPaths.fields?.[0] as IObjectField // innerField2
-    const fieldMap = Object.fromEntries(objectField.fields.map(f => [f.id, f]))
+    const fieldMap = Object.fromEntries((objectField?.fields ?? []).map(f => [f.id, f]))
     const field: IFormField = fieldMap.outerField
     it('checkCondition correctly returns true', () => {
       const result = checkCondition(field, formValues)
@@ -291,10 +291,10 @@ describe('get data and checkCondition on relative paths', () => {
     const multiTopField = createOneOfMultipleField(topField, 2) as IObjectField
     const middleField = multiTopField.fields?.find(f => f.id === 'middleField')
     const multiMiddleField = createOneOfMultipleField(middleField as IFormField, 1) as IObjectField
-    const disabledField = multiMiddleField.fields.find(f => f.id === 'disabledField') as IFormField
-    const nestedField = multiMiddleField.fields.find(f => f.id === 'nestedField') as IObjectField
-    const innerField = multiMiddleField.fields.find(f => f.id === 'innerField') as IFormField
-    const nestedFieldInner = nestedField.fields.find(f => f.id === 'nestedFieldInner') as IFormField
+    const disabledField = multiMiddleField.fields?.find(f => f.id === 'disabledField') as IFormField
+    const nestedField = multiMiddleField.fields?.find(f => f.id === 'nestedField') as IObjectField
+    const innerField = multiMiddleField.fields?.find(f => f.id === 'innerField') as IFormField
+    const nestedFieldInner = nestedField.fields?.find(f => f.id === 'nestedFieldInner') as IFormField
 
     const formValues = {
       topField: [

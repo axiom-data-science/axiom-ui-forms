@@ -77,7 +77,7 @@ export function getValueFromPath (path: string, formValues: IFormValues): IValue
 }
 
 function getObjectFieldValue (field: IObjectField, formValues: IFormValues, index?: number): IValueType | IValueType[] | undefined {
-  const vals = field.fields.map(f => {
+  const vals = (field.fields ?? []).map(f => {
     const p = makeJsonPath(f, index)
     const val = getFieldValue(f, formValues, index)
     return p !== undefined
