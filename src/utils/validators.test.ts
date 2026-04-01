@@ -156,7 +156,7 @@ describe(***REMOVED***get data and checkCondition on relative paths***REMOVED***
     }
 
     const objectField = formWithPaths.fields?.[0] as IObjectField // innerField2
-    const fieldMap = Object.fromEntries(objectField.fields.map(f => [f.id, f]))
+    const fieldMap = Object.fromEntries((objectField?.fields ?? []).map(f => [f.id, f]))
     const field: IFormField = fieldMap.innerField2
     it(***REMOVED***getValueFromRelativePath correctly returns a value of "test"***REMOVED***, () => {
       const condition = field?.conditions
@@ -215,7 +215,7 @@ describe(***REMOVED***get data and checkCondition on relative paths***REMOVED***
     }
 
     const objectField = formWithPaths.fields?.[0] as IObjectField // innerField2
-    const fieldMap = Object.fromEntries(objectField.fields.map(f => [f.id, f]))
+    const fieldMap = Object.fromEntries((objectField?.fields ?? []).map(f => [f.id, f]))
     const field: IFormField = fieldMap.outerField
     it(***REMOVED***checkCondition correctly returns true***REMOVED***, () => {
       const result = checkCondition(field, formValues)
@@ -291,10 +291,10 @@ describe(***REMOVED***get data and checkCondition on relative paths***REMOVED***
     const multiTopField = createOneOfMultipleField(topField, 2) as IObjectField
     const middleField = multiTopField.fields?.find(f => f.id === ***REMOVED***middleField***REMOVED***)
     const multiMiddleField = createOneOfMultipleField(middleField as IFormField, 1) as IObjectField
-    const disabledField = multiMiddleField.fields.find(f => f.id === ***REMOVED***disabledField***REMOVED***) as IFormField
-    const nestedField = multiMiddleField.fields.find(f => f.id === ***REMOVED***nestedField***REMOVED***) as IObjectField
-    const innerField = multiMiddleField.fields.find(f => f.id === ***REMOVED***innerField***REMOVED***) as IFormField
-    const nestedFieldInner = nestedField.fields.find(f => f.id === ***REMOVED***nestedFieldInner***REMOVED***) as IFormField
+    const disabledField = multiMiddleField.fields?.find(f => f.id === ***REMOVED***disabledField***REMOVED***) as IFormField
+    const nestedField = multiMiddleField.fields?.find(f => f.id === ***REMOVED***nestedField***REMOVED***) as IObjectField
+    const innerField = multiMiddleField.fields?.find(f => f.id === ***REMOVED***innerField***REMOVED***) as IFormField
+    const nestedFieldInner = nestedField.fields?.find(f => f.id === ***REMOVED***nestedFieldInner***REMOVED***) as IFormField
 
     const formValues = {
       topField: [

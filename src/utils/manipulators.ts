@@ -175,7 +175,7 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
     cleanedFormValues
   )
 
-  const path = getPathFromField(field)
+  /* const path = getPathFromField(field)
 
   const fieldsWithPassingConditionsThatThisFieldAffects = getFieldsFromFormSection(form).filter(f => {
     if (f.conditions !== undefined || f.conditionsSet !== undefined) {
@@ -188,7 +188,7 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
       return conditionResult.pass && conditionResult.newDefaultValue !== undefined
     }
     return false
-  })
+  }) */
 
   return formValuesCopyClean
 }
@@ -213,7 +213,7 @@ const assignIndexToField = (field: IFormField, index: number): IFormField => {
 }
 
 const assignIndexToFields = (parentField: IObjectField, indexField: IObjectField, index: number, level?: number): IFormField[] => {
-  return parentField.fields.map(f => {
+  return (parentField.fields ?? []).map(f => {
     if (f.path !== undefined && level !== undefined && f.path[level] !== undefined) {
       const newPath = f.path.slice()
       newPath[level] = assignIndexToField(indexField, index)
