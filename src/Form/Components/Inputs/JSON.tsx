@@ -163,7 +163,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             : workingValue
         } className='white z-40' />
       </span>
-      <div className='h-full flex-grow overflow-auto min-h-[300px]'>
+      <div className='h-full grow overflow-auto min-h-[400px]'>
         <CodeMirror
           readOnly={disabled}
           value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
@@ -173,7 +173,8 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             EditorView.lineWrapping
           ]}
           height='100%'
-          className='h-full'
+          minHeight='400px'
+          className='h-full min-h-100'
           onChange={debounced}
           theme="dark"
           onFocus={() => {
