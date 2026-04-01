@@ -43,7 +43,7 @@ import PlatformsMetadata from ***REMOVED***@/Platforms/PlatformsMetadata***REMOV
 import MODLForm from ***REMOVED***@/Form/MODL/MODLForm***REMOVED***;
 import COLLABWaterLevelForm from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelForm***REMOVED***;
 import COLLABWaterLevelFormSheet from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet***REMOVED***;
-import MAKRAForm from ***REMOVED***@/Form/PAM/MAKRAForm***REMOVED***;
+import MakaraForm from ***REMOVED***@/Form/PAM/MakaraForm***REMOVED***;
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -240,8 +240,8 @@ const App = (): ReactElement => {
             <Route path=***REMOVED***/modl***REMOVED*** element={<MODLForm />}>
               <Route path=***REMOVED*******REMOVED*** element={<MODLForm />} />
             </Route>
-            <Route path=***REMOVED***/PAM/makra***REMOVED*** element={<MAKRAForm />}>
-              <Route path=***REMOVED*******REMOVED*** element={<MAKRAForm />} />
+            <Route path=***REMOVED***/PAM/makara***REMOVED*** element={<MakaraForm />}>
+              <Route path=***REMOVED*******REMOVED*** element={<MakaraForm />} />
             </Route>
           </Routes>
         </BrowserRouter>
