@@ -154,16 +154,19 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
       </div>
 
       {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-1***REMOVED*** /> {error}</p>}
-      <span className=***REMOVED***absolute right-6 bottom-4 pointer-events-auto z-40***REMOVED***>
+      <span className=***REMOVED***absolute right-16 top-28 pointer-events-auto z-40***REMOVED***>
         <CopyButton string={
           error === null && workingValue !== ***REMOVED******REMOVED***
             ? format === ***REMOVED***json***REMOVED***
               ? JSON.stringify(JSON.parse(workingValue), null, 2)
               : yamlParser.dump(workingValue)
             : workingValue
-        } className=***REMOVED***white z-40***REMOVED*** />
+        }
+          className=***REMOVED***white z-40***REMOVED***
+          size=***REMOVED***xlg***REMOVED***
+        />
       </span>
-      <div className=***REMOVED***h-full grow overflow-auto min-h-[400px]***REMOVED***>
+      <div className=***REMOVED***h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative***REMOVED***>
         <CodeMirror
           readOnly={disabled}
           value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
@@ -174,7 +177,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
           ]}
           height=***REMOVED***100%***REMOVED***
           minHeight=***REMOVED***400px***REMOVED***
-          className=***REMOVED***h-full min-h-100***REMOVED***
+          className=***REMOVED***h-full grow***REMOVED***
           onChange={debounced}
           theme="dark"
           onFocus={() => {
