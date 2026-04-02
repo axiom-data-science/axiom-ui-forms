@@ -6,7 +6,7 @@ const JSONInput = lazy(async () => await import('./JSON'))
 const JSONInputLoader = (props: IFieldInputProps): ReactElement => {
   return (
     <>
-      <Suspense fallback={<div className='h-[400px]'><Loader className='pt-20' /></div>}>
+      <Suspense fallback={<div className='h-[20vh]'><Loader className='pt-20' /></div>}>
         <JSONInput {...props} />
       </Suspense>
     </>

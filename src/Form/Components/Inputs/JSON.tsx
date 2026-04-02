@@ -154,16 +154,19 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
       </div>
 
       {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
-      <span className='absolute right-6 bottom-4 pointer-events-auto z-40'>
+      <span className='absolute right-16 top-28 pointer-events-auto z-40'>
         <CopyButton string={
           error === null && workingValue !== ''
             ? format === 'json'
               ? JSON.stringify(JSON.parse(workingValue), null, 2)
               : yamlParser.dump(workingValue)
             : workingValue
-        } className='white z-40' />
+        }
+          className='white z-40'
+          size='xlg'
+        />
       </span>
-      <div className='h-full grow overflow-auto min-h-[400px]'>
+      <div className='h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative'>
         <CodeMirror
           readOnly={disabled}
           value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
@@ -174,7 +177,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
           ]}
           height='100%'
           minHeight='400px'
-          className='h-full min-h-100'
+          className='h-full grow'
           onChange={debounced}
           theme="dark"
           onFocus={() => {
