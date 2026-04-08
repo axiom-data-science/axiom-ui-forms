@@ -14,23 +14,25 @@ export const loadSheet = async <T>(url: string, emptyHeaderRows: number = 0): Pr
 export const parseSheet = <T>(sheetData: string, emptyHeaderRows: number = 0): T[] => {
   const rows = sheetData.trim().split('\n').slice(emptyHeaderRows)
   const headers = rows[0].split('\t').map(h => h.trim())
-  const formattedRows: T[] = rows.slice(1).map(r => {
-    const values = r.split('\t')
-    const o: any = {}
-    headers.forEach((header, index) => {
-      const v = values[index]
-      o[header] = v === 'TRUE'
-        ? true
-        : v === 'FALSE'
-          ? false
-          : v === 'null'
-            ? null
-            : v === ''
+  const formattedRows: T[] = rows.slice(1)
+    .filter(r => r.split(/\t/)[0].trim() !== '')
+    .map(r => {
+      const values = r.split('\t')
+      const o: any = {}
+      headers.forEach((header, index) => {
+        const v = values[index]
+        o[header] = v === 'TRUE'
+          ? true
+          : v === 'FALSE'
+            ? false
+            : v === 'null'
               ? null
-              : v
+              : v === ''
+                ? null
+                : v
+      })
+      return o as T
     })
-    return o as T
-  })
   return formattedRows
 }
 
