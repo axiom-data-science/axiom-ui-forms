@@ -14,23 +14,25 @@ export const loadSheet = async <T>(url: string, emptyHeaderRows: number = 0): Pr
 export const parseSheet = <T>(sheetData: string, emptyHeaderRows: number = 0): T[] => {
   const rows = sheetData.trim().split(***REMOVED***\n***REMOVED***).slice(emptyHeaderRows)
   const headers = rows[0].split(***REMOVED***\t***REMOVED***).map(h => h.trim())
-  const formattedRows: T[] = rows.slice(1).map(r => {
-    const values = r.split(***REMOVED***\t***REMOVED***)
-    const o: any = {}
-    headers.forEach((header, index) => {
-      const v = values[index]
-      o[header] = v === ***REMOVED***TRUE***REMOVED***
-        ? true
-        : v === ***REMOVED***FALSE***REMOVED***
-          ? false
-          : v === ***REMOVED***null***REMOVED***
-            ? null
-            : v === ***REMOVED******REMOVED***
+  const formattedRows: T[] = rows.slice(1)
+    .filter(r => r.split(/\t/)[0].trim() !== ***REMOVED******REMOVED***)
+    .map(r => {
+      const values = r.split(***REMOVED***\t***REMOVED***)
+      const o: any = {}
+      headers.forEach((header, index) => {
+        const v = values[index]
+        o[header] = v === ***REMOVED***TRUE***REMOVED***
+          ? true
+          : v === ***REMOVED***FALSE***REMOVED***
+            ? false
+            : v === ***REMOVED***null***REMOVED***
               ? null
-              : v
+              : v === ***REMOVED******REMOVED***
+                ? null
+                : v
+      })
+      return o as T
     })
-    return o as T
-  })
   return formattedRows
 }
 
