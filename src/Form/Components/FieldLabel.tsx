@@ -5,7 +5,7 @@ import { makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import { Tooltip, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { Cross2Icon, InfoCircledIcon, PlusIcon, ReloadIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { isEqual } from ***REMOVED***lodash-es***REMOVED***
-import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { createPortal } from ***REMOVED***react-dom***REMOVED***
 
 const SHOW_DEBUG = config.SHOW_DEBUG
@@ -24,16 +24,24 @@ export const FieldRevertToDefault = ({ field, disabled, value, onChange }: { fie
   )
 }
 
-const LongDescriptionModal = ({field, setShowModal}: { field: IFormField, setShowModal: (show: boolean) => void }): ReactElement => {
+const LongDescriptionModal = ({ field, setShowModal }: { field: IFormField, setShowModal: (show: boolean) => void }): ReactElement => {
   const longDescription = field.long_description ?? ***REMOVED******REMOVED***
+  useEffect(() => {
+    document.body.classList.add(***REMOVED***overflow-hidden***REMOVED***)
+    return () => {
+      document.body.classList.remove(***REMOVED***overflow-hidden***REMOVED***)
+    }
+  }, [])
   return (
     createPortal(
-      <div className=***REMOVED***fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center***REMOVED*** onClick={() => { 
-        setShowModal(false) 
-        }}>
-        <div className=***REMOVED***absolute top-10 right-10 left-10 bg-white shadow-xl p-10***REMOVED*** onClick={(e) => { e.stopPropagation() }}>
-          <Cross2Icon className=***REMOVED***absolute top-4 right-4 cursor-pointer hover:text-slate-500 w-6 h-6***REMOVED*** onClick={() => setShowModal(false)} />
-          <InlineMarkdown>{longDescription}</InlineMarkdown>
+      <div className=***REMOVED***fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center***REMOVED*** onClick={() => {
+        setShowModal(false)
+      }}>
+        <div className=***REMOVED***absolute top-10 right-10 left-10 bg-white shadow-xl***REMOVED*** onClick={(e) => { e.stopPropagation() }}>
+          <Cross2Icon className=***REMOVED***absolute top-2 right-2 cursor-pointer hover:text-slate-500 w-10 h-10 bg-white/50 z-10 p-2***REMOVED*** onClick={() => setShowModal(false)} />
+          <div className=***REMOVED***p-10 max-h-[80vh] overflow-y-auto***REMOVED***>
+            <InlineMarkdown>{longDescription}</InlineMarkdown>
+          </div>
         </div>
       </div>,
       window.document.body
@@ -46,23 +54,23 @@ export const FieldDescriptionTooltip = ({ field, disabled }: { field: IFormField
   const [showModal, setShowModal] = useState(false)
   return (
     <>{
-    field.description !== undefined || hasLongDescription
-      ? <span onClick={() => {
-        if (hasLongDescription) {
-          setShowModal(true)
-        }
-      }}>
-        <Tooltip
-          dark={true}
-          tooltipWrapperClassName=***REMOVED***!z-50***REMOVED***
-          content={<span className=***REMOVED***leading-6***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className=***REMOVED***italic block text-xs my-1***REMOVED***><PlusIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-0***REMOVED*** /> Click for more information</span>}</span>}
-          contentClassName=***REMOVED***max-w-[400px]***REMOVED***
+      field.description !== undefined || hasLongDescription
+        ? <span onClick={() => {
+          if (hasLongDescription) {
+            setShowModal(true)
+          }
+        }}>
+          <Tooltip
+            dark={true}
+            tooltipWrapperClassName=***REMOVED***!z-50***REMOVED***
+            content={<span className=***REMOVED***leading-6***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{hasLongDescription && <span className=***REMOVED***italic block text-xs my-1***REMOVED***><PlusIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-0***REMOVED*** /> Click for more information</span>}</span>}
+            contentClassName=***REMOVED***max-w-[400px]***REMOVED***
 
-        ><InfoCircledIcon className={`${hasLongDescription ? ***REMOVED***-my-1 p-1 rounded-2xl shadow-md w-6 h-6 text-blue-600***REMOVED*** : ***REMOVED***w-4 h-4***REMOVED***}`} /></Tooltip>
+          ><InfoCircledIcon className={`${hasLongDescription ? ***REMOVED***-my-1 p-1 rounded-2xl shadow-md w-6 h-6 text-blue-600***REMOVED*** : ***REMOVED***w-4 h-4***REMOVED***}`} /></Tooltip>
         </span>
-      : <></>
-      }{
-       showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />
+        : <></>
+    }{
+        showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />
       }</>
   )
 }
@@ -87,10 +95,10 @@ export const FieldLabelText = ({ field, disabled, value, onChange, className }: 
       ]
     })}>
       <InlineMarkdown>{field.label}</InlineMarkdown>
-      { SHOW_DEBUG && <span className=***REMOVED***text-xs text-slate-400***REMOVED***>{field.id}</span> }
-      { field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}
-      { field.label !== ***REMOVED******REMOVED*** && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} /> }
-      { SHOW_DEBUG && <span className={SHOW_DEBUG ? ***REMOVED******REMOVED*** : ***REMOVED***hidden***REMOVED***}><br /><span className=***REMOVED***text-xs text-slate-400***REMOVED***>{makeJsonPath(field) ?? ***REMOVED***NA***REMOVED***}</span></span>}
+      {SHOW_DEBUG && <span className=***REMOVED***text-xs text-slate-400***REMOVED***>{field.id}</span>}
+      {field.required === true ? <span className=***REMOVED***text-red-500***REMOVED***>*</span> : ***REMOVED******REMOVED***}
+      {field.label !== ***REMOVED******REMOVED*** && <FieldRevertToDefault field={field} disabled={disabled} value={value} onChange={onChange} />}
+      {SHOW_DEBUG && <span className={SHOW_DEBUG ? ***REMOVED******REMOVED*** : ***REMOVED***hidden***REMOVED***}><br /><span className=***REMOVED***text-xs text-slate-400***REMOVED***>{makeJsonPath(field) ?? ***REMOVED***NA***REMOVED***}</span></span>}
     </span>
   )
 }
@@ -110,10 +118,10 @@ export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, d
     : null
   return (
     <>{
-        (hasDescription || hasLongDescription) && <p className=***REMOVED***text-xs pb-2***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{longDescriptionButton}</p>
+      (hasDescription || hasLongDescription) && <p className=***REMOVED***text-xs pb-2***REMOVED***><InlineMarkdown>{field.description}</InlineMarkdown>{longDescriptionButton}</p>
     }
-    {
-       showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />
+      {
+        showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />
       }
     </>
   )
@@ -121,12 +129,12 @@ export const FieldDescriptionText = ({ field, disabled }: { field: IFormField, d
 
 const FieldLabel = ({ field, disabled, value, onChange, className, textClassName }: { field: IFormField, disabled?: boolean, value?: IValueType, onChange?: IValueChangeFn, className?: string, textClassName?: string }): ReactElement => {
   return <>{
-      field.label !== undefined && field.label !== null && <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} className={textClassName} />{
-        field.settings?.descriptionPresentation === ***REMOVED***tooltip***REMOVED***
-          ? <> <FieldDescriptionTooltip field={field} disabled={disabled} /></>
-          : <></>
-      }</p>
-    }
+    field.label !== undefined && field.label !== null && <p className=***REMOVED***pb-2***REMOVED***><FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} className={textClassName} />{
+      field.settings?.descriptionPresentation === ***REMOVED***tooltip***REMOVED***
+        ? <> <FieldDescriptionTooltip field={field} disabled={disabled} /></>
+        : <></>
+    }</p>
+  }
     {
       field.settings?.descriptionPresentation === ***REMOVED***inline***REMOVED*** || field.settings?.descriptionPresentation === undefined
         ? <FieldDescriptionText field={field} disabled={disabled} />
