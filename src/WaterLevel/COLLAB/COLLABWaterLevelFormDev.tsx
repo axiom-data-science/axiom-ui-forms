@@ -3,9 +3,9 @@ import { type JSONSchema6 } from 'json-schema'
 import { type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
 import FormWithEditorOverlay from '@/Form/FormWithEditorOverlay'
 
-import schema from './COLLAB-metadata-schema.json'
-import fieldOverrides from './collabFieldOverrides.json'
-import formOverride from './collabFormOverrides.json'
+import schema from './collabSchemaDev.json'
+import fieldOverrides from './collabFieldOverridesDev.json'
+import formOverride from './collabFormDev.json'
 
 const COLLABWaterLevelForm = (): ReactElement => {
   const schemaState = useState<JSONSchema6 | undefined>(schema as JSONSchema6)
@@ -18,6 +18,7 @@ const COLLABWaterLevelForm = (): ReactElement => {
       schemaState={schemaState}
       fieldOverrideState={fieldOverrideState}
       formOverrideState={formOverrideState}
+      urlNavigable={false}
     />
 
   )

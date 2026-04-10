@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Test",
+  "properties": {
+    "first": {
+        "title": "First",
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "firsta": {
+                    "title": "First A",
+                    "type": "string"
+                },
+                "firstb": {
+                    "title": "First B",
+                    "type": "string"
+                }
+            }
+        }
+    }
+  }
+
+}

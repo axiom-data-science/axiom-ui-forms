@@ -44,6 +44,8 @@ import MODLForm from '@/Form/MODL/MODLForm';
 import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm';
 import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet';
 import MakaraForm from '@/Form/PAM/MakaraForm';
+import COLLABWaterLevelFormDev from '@/WaterLevel/COLLAB/COLLABWaterLevelFormDev';
+import TestForm from '@/WaterLevel/tester/Form';
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -226,6 +228,9 @@ const App = (): ReactElement => {
             <Route path="/water-level-collab-sheet" element={<COLLABWaterLevelFormSheet />}>
               <Route path="*" element={<COLLABWaterLevelFormSheet />} />
             </Route>
+            <Route path="/water-level-collab-dev" element={<COLLABWaterLevelFormDev />}>
+              <Route path="*" element={<COLLABWaterLevelFormDev />} />
+            </Route>
             <Route path="/binner-metadata/:dataset" element={<BinnerMetadataRoute />}>
               <Route path="*" element={<BinnerMetadataRoute />} />
             </Route>
@@ -242,6 +247,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path='/PAM/makara' element={<MakaraForm />}>
               <Route path='*' element={<MakaraForm />} />
+            </Route>
+            <Route path='/water-level-test' element={<TestForm />}>
+              <Route path='*' element={<TestForm />} />
             </Route>
           </Routes>
         </BrowserRouter>
