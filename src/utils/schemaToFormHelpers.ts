@@ -407,7 +407,7 @@ const mergeFormField = ({
   schemaFieldMap: Record<string, IFormField>
   schemaForm: IForm
 }): IFormField => {
-  const path = fieldOverride?.prop ?? makeJsonPath(field)
+  const path = fieldOverride?.prop ?? makeJsonPath(field ?? fieldOverride)
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[path ?? ***REMOVED******REMOVED***]).filter(d => d !== undefined))
   const mergedField = {
     ...mergeObjects<IFormFieldOverride | IFormField>([
@@ -576,12 +576,13 @@ export const overridesAndSchemaToFormObject = ({
   schema: JSONSchema6
 }): IForm => {
   const schemaForm = schemaToFormObject(schema)
+  const hasFormFieldOverrides = (formFieldOverrides?.filter(f => f.length > 0)?.length ?? 0) > 0
   const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(
     overrides !== undefined && typeof overrides.map === ***REMOVED***function***REMOVED***
       ? overrides.map(override => [override.prop, override])
       : []
   )) ?? []
-  if (formOverrides === undefined && formFieldOverrides !== undefined) {
+  if (formOverrides === undefined && hasFormFieldOverrides) {
     const schemaFieldMap = buildFieldMapFromForm(schemaForm)
     const fields = Object.values(schemaFieldMap).map(field => {
       return mergeFormField({
@@ -595,6 +596,8 @@ export const overridesAndSchemaToFormObject = ({
       ...schemaForm,
       fields
     }
+  } else if (formOverrides === undefined && !hasFormFieldOverrides) {
+    return schemaForm
   }
   const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
   const form: IForm = {
