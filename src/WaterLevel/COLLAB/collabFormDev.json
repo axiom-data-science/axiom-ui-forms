@@ -1,0 +1,532 @@
+{
+  "id": "collab-sheet",
+  "label": "COLLAB Metadata from sheet",
+  "pages": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "fields": [
+        {
+          "prop": "prepared-by"
+        },
+        {
+          "prop": "date-prepared"
+        },
+        {
+          "prop": "update-or-new-station"
+        },
+        {
+          "prop": "previous-site-log"
+        },
+        {
+          "prop": "modified-added-section"
+        },
+        {
+          "prop": "reason-for-update"
+        },
+        {
+          "prop": "funding-source"
+        },
+        {
+          "prop": "funding-grant"
+        },
+        {
+          "prop": "deployment-year-of-proposal"
+        }
+      ]
+    },
+    {
+      "id": "creator",
+      "label": "Creator",
+      "fields": [
+        {
+          "prop": "creator_name"
+        },
+        {
+          "prop": "creator_address"
+        },
+        {
+          "prop": "creator_city"
+        },
+        {
+          "prop": "creator_postalcode"
+        },
+        {
+          "prop": "creator_country"
+        },
+        {
+          "prop": "creator_email"
+        },
+        {
+          "prop": "creator_institution"
+        },
+        {
+          "prop": "creator_institution_url"
+        },
+        {
+          "prop": "creator_phone"
+        },
+        {
+          "prop": "creator_sector"
+        },
+        {
+          "prop": "creator_state"
+        },
+        {
+          "prop": "creator_type"
+        },
+        {
+          "prop": "creator_url"
+        }
+      ]
+    },
+    {
+      "id": "custodian",
+      "label": "Contributor: Custodian",
+      "fields": [
+        {
+          "prop": "contributor_role:custodian"
+        },
+        {
+          "prop": "custodian-telephone-primary"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        },
+        {
+          "prop": "custodian-affliation-or-organization"
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "label": "Community POC",
+      "fields": [
+        {
+          "prop": "community-poc-name"
+        },
+        {
+          "prop": "community-poc-telephone"
+        },
+        {
+          "prop": "community-poc-email"
+        },
+        {
+          "prop": "community-poc-affiliation"
+        }
+      ]
+    },
+    {
+      "id": "data-management",
+      "label": "Data Management",
+      "fields": [
+        {
+          "prop": "entity"
+        },
+        {
+          "prop": "poc"
+        },
+        {
+          "prop": "affiliation"
+        },
+        {
+          "prop": "telephone-primary"
+        },
+        {
+          "prop": "email"
+        },
+        {
+          "prop": "erddap-link"
+        },
+        {
+          "prop": "portal-link"
+        },
+        {
+          "prop": "data-provider"
+        },
+        {
+          "prop": "data-provider---additional"
+        },
+        {
+          "prop": "api-link"
+        },
+        {
+          "prop": "additional-information"
+        }
+      ]
+    },
+    {
+      "id": "owner",
+      "label": "Owner",
+      "fields": [
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ],
+      "description": "Party that owns the resource"
+    },
+    {
+      "id": "data-publisher",
+      "label": "Data Publisher",
+      "fields": [
+        {
+          "prop": "contributor_role:publisher"
+        },
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ],
+      "description": "Party who published the resource"
+    },
+    {
+      "id": "data-processor",
+      "label": "Data Processor",
+      "fields": [
+        {
+          "prop": "contributor_role:processor"
+        },
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ],
+      "description": "Party that has processed the data in a manner such that the resource has been modified"
+    },
+    {
+      "id": "funder",
+      "label": "Funder",
+      "fields": [
+        {
+          "prop": "contributor_role:funder"
+        },
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ],
+      "description": "Party providing monetary support for the resource"
+    },
+    {
+      "id": "station-information",
+      "label": "Station Information",
+      "fields": [
+        {
+          "prop": "state"
+        },
+        {
+          "prop": "platform_name"
+        },
+        {
+          "prop": "station-id"
+        },
+        {
+          "prop": "wmo_platform_code"
+        },
+        {
+          "prop": "is-this-a-co-ops-station?-yes-no"
+        },
+        {
+          "prop": "wmo_platform_code"
+        },
+        {
+          "prop": "other-id"
+        },
+        {
+          "prop": "water-body-setting"
+        },
+        {
+          "prop": "approximate-position"
+        },
+        {
+          "prop": "latitude"
+        },
+        {
+          "prop": "longitude"
+        },
+        {
+          "prop": "horizontal-datum-projection-"
+        },
+        {
+          "prop": "additional-information"
+        }
+      ]
+    },
+    {
+      "id": "sensor-information",
+      "label": "Sensor Information",
+      "description": "Enter one or more sensors",
+      "fields": [
+        {
+          "id": "sensors",
+          "type": "object",
+          "fields": [
+                {
+                  "id": "prior-wmo-id",
+                  "type": "text"
+                },
+                {
+                  "id": "prior-wm-coordinates",
+                  "type": "text"
+                }
+               ],
+          "wizard_stepsNOT": [
+            {
+              "id": "sensor-overview",
+              "label": "Sensor Overview",
+              "fields": [
+                {"prop": "prior-wmo-id"},
+                {"prop": "prior-wm-coordinates"}
+
+              ]
+            },
+            {
+              "id": "two",
+              "label": "Two",
+              "fields": [
+                {"prop": "sensors[].sample-interval-time"}
+              ]
+            }
+        ]
+          
+        }
+
+      ]
+      
+    },
+    {
+      "id": "station-error-analysis",
+      "label": "Station Error Analysis",
+      "fields": [
+        {
+          "prop": "total-water-level-error-cm"
+        },
+        {
+          "prop": "sensor-error-cm"
+        },
+        {
+          "prop": "survey-error-cm"
+        },
+        {
+          "prop": "data-processing-error-cm"
+        },
+        {
+          "prop": "datum-error-cm"
+        }
+      ]
+    },
+    {
+      "id": "local-tidal-datum-establishment",
+      "label": "Local tidal datum establishment",
+      "fields": [
+        {
+          "prop": "record-start-date"
+        },
+        {
+          "prop": "record-end-date"
+        },
+        {
+          "prop": "computational-tool"
+        },
+        {
+          "prop": "computation-method"
+        },
+        {
+          "prop": "nwlon-control-station"
+        },
+        {
+          "prop": "control-station-epoch"
+        },
+        {
+          "prop": "datum-type"
+        },
+        {
+          "prop": "computation-date"
+        },
+        {
+          "prop": "computed-by"
+        }
+      ]
+    },
+    {
+      "id": "tidal-datum-offsets-relative-to-station",
+      "label": "Tidal Datum Offsets relative to station",
+      "fields": [
+        {
+          "prop": "mhhw-m"
+        },
+        {
+          "prop": "mhw-m"
+        },
+        {
+          "prop": "dtl-m"
+        },
+        {
+          "prop": "mtl-m"
+        },
+        {
+          "prop": "msl-m"
+        },
+        {
+          "prop": "mlw-m"
+        },
+        {
+          "prop": "mllw-m"
+        },
+        {
+          "prop": "gt-m"
+        },
+        {
+          "prop": "mn-m"
+        },
+        {
+          "prop": "dhq-m"
+        },
+        {
+          "prop": "dlq-m"
+        },
+        {
+          "prop": "hwi-hr"
+        },
+        {
+          "prop": "lwi-hr"
+        },
+        {
+          "prop": "igld"
+        },
+        {
+          "prop": "lwd"
+        }
+      ]
+    },
+    {
+      "id": "collocation-information",
+      "label": "Collocation Information",
+      "fields": [
+        {
+          "prop": "is-collocation"
+        },
+        {
+          "prop": "additional-information"
+        }
+      ]
+    },
+    {
+      "id": "ecc",
+      "label": "ECC",
+      "fields": [
+        {
+          "prop": "ecc-url"
+        },
+        {
+          "prop": "was-nepa-completed"
+        },
+        {
+          "prop": "notes"
+        }
+      ]
+    },
+    {
+      "id": "photos",
+      "label": "Photos",
+      "fields": [
+        {
+          "prop": "station-photo"
+        },
+        {
+          "prop": "sensor-photo"
+        },
+        {
+          "prop": "sensor-management"
+        },
+        {
+          "prop": "sensor-survey-reference-point"
+        },
+        {
+          "prop": "benchmarks-photo"
+        },
+        {
+          "prop": "dcp"
+        },
+        {
+          "prop": "underwater-components"
+        },
+        {
+          "prop": "vicinity"
+        }
+      ]
+    },
+    {
+      "id": "attachments",
+      "label": "Attachments",
+      "fields": [
+        {
+          "prop": "bench-mark-diagram"
+        },
+        {
+          "prop": "sensor-test-worksheet"
+        },
+        {
+          "prop": "sensor-elevation-drawing"
+        },
+        {
+          "prop": "bench-mark-descriptions"
+        },
+        {
+          "prop": "station-to-reach-statement"
+        },
+        {
+          "prop": "license"
+        },
+        {
+          "prop": "dissemination-flag"
+        }
+      ]
+    },
+    {
+      "id": "qartod-fields",
+      "label": "QARTOD fields",
+      "fields": [
+        {
+          "prop": "gross-range"
+        },
+        {
+          "prop": "spike"
+        },
+        {
+          "prop": "flatline"
+        },
+        {
+          "prop": "rate-of-change"
+        },
+        {
+          "prop": "aggregate"
+        }
+      ]
+    }
+  ]
+}

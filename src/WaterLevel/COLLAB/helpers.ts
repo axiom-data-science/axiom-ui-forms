@@ -163,7 +163,10 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
           } else {
             fields.forEach(f => {
               const prop = fieldToSchemaProperty(f, path)
-              propsOb[f.id] = prop
+              const propsObRecord = propsOb as Record<string, any>
+              propsObRecord.properties = propsObRecord.properties ?? {}
+              propsObRecord.type = ***REMOVED***object***REMOVED***
+              propsObRecord.properties[f.id] = prop
             })
           }
         } else {

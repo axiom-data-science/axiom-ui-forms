@@ -1,0 +1,4 @@
+[
+    {"prop": "sensors[].prior-wmo-id", "type": "boolean"},
+    {"prop": "sensors[].prior-wm-coordinates"}
+]
