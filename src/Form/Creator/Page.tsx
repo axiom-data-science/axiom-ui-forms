@@ -27,7 +27,7 @@ const PageNav = ({
   return (
     layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED***
       ? <PageNavMobile sections={sections} level={level} />
-      : <div className=***REMOVED***flex flex-col w-50  border-slate-200***REMOVED***>{
+      : <div className=***REMOVED***flex flex-col min-w-[20%] w-70 max-w-70 flex-none  border-slate-200***REMOVED***>{
         sections?.map(p => {
           return (
             <NavElement
