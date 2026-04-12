@@ -46,6 +46,7 @@ import COLLABWaterLevelFormSheet from ***REMOVED***@/WaterLevel/COLLAB/COLLABWat
 import MakaraForm from ***REMOVED***@/Form/PAM/MakaraForm***REMOVED***;
 import COLLABWaterLevelFormDev from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelFormDev***REMOVED***;
 import TestForm from ***REMOVED***@/WaterLevel/tester/Form***REMOVED***;
+import AssetForm from ***REMOVED***@/WaterLevel/COLLAB/AssetManager/Form***REMOVED***;
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -250,6 +251,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path=***REMOVED***/water-level-test***REMOVED*** element={<TestForm />}>
               <Route path=***REMOVED*******REMOVED*** element={<TestForm />} />
+            </Route>
+            <Route path=***REMOVED***/water-level-asset***REMOVED*** element={<AssetForm />}>
+              <Route path=***REMOVED*******REMOVED*** element={<AssetForm />} />
             </Route>
           </Routes>
         </BrowserRouter>
