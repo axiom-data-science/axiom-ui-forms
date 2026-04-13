@@ -1,0 +1,963 @@
+{
+  "id": "collab-water level metadata",
+  "label": "COLLAB Water Level Metadata",
+  "wizard_steps": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "fields": [
+        {
+          "id": "overview-intro",
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid2",
+          "fields": [
+            {
+              "id": "prepared-by",
+              "label": "Prepared by",
+              "description": "Person completing form",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "date-prepared",
+              "label": "Date prepared",
+              "description": "Date of form completion",
+              "required": false,
+              "type": "date"
+            }
+          ]
+        },
+        {
+          "id": "update-or-new-station",
+          "label": "Update or new station? ",
+          "description": "Is this an update to an existing station or an entirely new station? ",
+          "required": false,
+          "type": "select",
+          "defaultValue": "New",
+          "options": [
+            {
+              "value": "Update",
+              "label": "Update"
+            },
+            {
+              "value": "New",
+              "label": "New"
+            }
+          ]
+        },
+        {
+          "id": "modified-station-information",
+          "label": "Describe station modifications",
+          "type": "object",
+          "skip_path": true,
+          "conditions": {
+            "field": "update-or-new-station",
+            "value": "Update",
+            "result": "include"
+          },
+          "fields": [
+            {
+              "id": "previous-site-log",
+              "label": "Previous site log",
+              "description": "If this is an update to an existing station, please attach the previous site log if you have access",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "modified-added-section",
+              "label": "Modified/added section",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "reason-for-update",
+              "label": "Reason for update",
+              "description": "If this is an update to an existing station, please provide a brief (1-3 sentences) explaining why this update occurred. ",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "required": false,
+              "type": "long_text"
+            }
+          ]
+        },
+        {
+          "id": "funding",
+          "label": "Funding",
+          "type": "object",
+          "skip_path": true,
+          "fields": [
+            {
+              "id": "funding-source",
+              "label": "Funding source",
+              "description": "If known, please provide the funding source",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "funding-grant",
+              "label": "Funding grant",
+              "description": "If known, please provide the grant",
+              "required": false,
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "id": "deployment-year-of-proposal",
+          "label": "Deployment year of proposal",
+          "required": false,
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "id": "station_information",
+      "label": "Station information",
+      "fields": [
+        {
+          "id": "station-information-intro",
+          "type": "object",
+          "label": "Station overview",
+          "layout": "grid2",
+          "skip_path": true,
+          "fields": [
+            {
+              "id": "platform_name",
+              "label": "Station Name",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "station-id",
+              "label": "Station ID",
+              "description": "Conditional based on location (RA specific?)",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "water-body-setting",
+              "label": "Water body setting",
+              "description": "Ex: Next to coast, Lake coastline, etc",
+              "required": false,
+              "type": "select",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "options": [
+                {
+                  "value": "Inlet",
+                  "label": "Inlet"
+                },
+                {
+                  "value": "River",
+                  "label": "River"
+                },
+                {
+                  "value": "Ocean coastline",
+                  "label": "Ocean coastline"
+                },
+                {
+                  "value": "Lake",
+                  "label": "Lake"
+                },
+                {
+                  "value": "Other",
+                  "label": "Other"
+                }
+              ]
+            },
+            {
+              "id": "state",
+              "label": "State",
+              "description": "State in which the asset is located",
+              "required": false,
+              "type": "select",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "options": [
+                {
+                  "label": "Alabama",
+                  "value": " AL"
+                },
+                {
+                  "label": "Alaska",
+                  "value": " AK"
+                },
+                {
+                  "label": "Arizona",
+                  "value": " AZ"
+                },
+                {
+                  "label": "Arkansas",
+                  "value": " AR"
+                },
+                {
+                  "label": "California",
+                  "value": " CA"
+                },
+                {
+                  "label": "Colorado",
+                  "value": " CO"
+                },
+                {
+                  "label": "Connecticut",
+                  "value": " CT"
+                },
+                {
+                  "label": "Delaware",
+                  "value": " DE"
+                },
+                {
+                  "label": "Florida",
+                  "value": " FL"
+                },
+                {
+                  "label": "Georgia",
+                  "value": " GA"
+                },
+                {
+                  "label": "Hawaii",
+                  "value": " HI"
+                },
+                {
+                  "label": "Idaho",
+                  "value": " ID"
+                },
+                {
+                  "label": "Illinois",
+                  "value": " IL"
+                },
+                {
+                  "label": "Indiana",
+                  "value": " IN"
+                },
+                {
+                  "label": "Iowa",
+                  "value": " IA"
+                },
+                {
+                  "label": "Kansas",
+                  "value": " KS"
+                },
+                {
+                  "label": "Kentucky",
+                  "value": " KY"
+                },
+                {
+                  "label": "Louisiana",
+                  "value": " LA"
+                },
+                {
+                  "label": "Maine",
+                  "value": " ME"
+                },
+                {
+                  "label": "Maryland",
+                  "value": " MD"
+                },
+                {
+                  "label": "Massachusetts",
+                  "value": " MA"
+                },
+                {
+                  "label": "Michigan",
+                  "value": " MI"
+                },
+                {
+                  "label": "Minnesota",
+                  "value": " MN"
+                },
+                {
+                  "label": "Mississippi",
+                  "value": " MS"
+                },
+                {
+                  "label": "Missouri",
+                  "value": " MO"
+                },
+                {
+                  "label": "Montana",
+                  "value": " MT"
+                },
+                {
+                  "label": "Nebraska",
+                  "value": " NE"
+                },
+                {
+                  "label": "Nevada",
+                  "value": " NV"
+                },
+                {
+                  "label": "New Hampshire",
+                  "value": " NH"
+                },
+                {
+                  "label": "New Jersey",
+                  "value": " NJ"
+                },
+                {
+                  "label": "New Mexico",
+                  "value": " NM"
+                },
+                {
+                  "label": "New York",
+                  "value": " NY"
+                },
+                {
+                  "label": "North Carolina",
+                  "value": " NC"
+                },
+                {
+                  "label": "North Dakota",
+                  "value": " ND"
+                },
+                {
+                  "label": "Ohio",
+                  "value": " OH"
+                },
+                {
+                  "label": "Oklahoma",
+                  "value": " OK"
+                },
+                {
+                  "label": "Oregon",
+                  "value": " OR"
+                },
+                {
+                  "label": "Pennsylvania",
+                  "value": " PA"
+                },
+                {
+                  "label": "Rhode Island",
+                  "value": " RI"
+                },
+                {
+                  "label": "South Carolina",
+                  "value": " SC"
+                },
+                {
+                  "label": "South Dakota",
+                  "value": " SD"
+                },
+                {
+                  "label": "Tennessee",
+                  "value": " TN"
+                },
+                {
+                  "label": "Texas",
+                  "value": " TX"
+                },
+                {
+                  "label": "Utah",
+                  "value": " UT"
+                },
+                {
+                  "label": "Vermont",
+                  "value": " VT"
+                },
+                {
+                  "label": "Virginia",
+                  "value": " VA"
+                },
+                {
+                  "label": "Washington",
+                  "value": " WA"
+                },
+                {
+                  "label": "West Virginia",
+                  "value": " WV"
+                },
+                {
+                  "label": "Wisconsin",
+                  "value": " WI"
+                },
+                {
+                  "label": "Wyoming",
+                  "value": " WY "
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "station-id-information",
+          "skip_path": true,
+          "type": "object",
+          "label": "Station identification",
+          "fields": [
+            {
+              "id": "is-this-a-co-ops-station",
+              "label": "Is this a CO-OPS Station?",
+              "type": "boolean",
+              "description": "Filterable question to determine type of station being installed.",
+              "required": false
+            },
+            {
+              "id": "station-id-fields",
+              "type": "object",
+              "skip_path": true,
+              "layout": "grid2",
+              "fields": [
+                {
+                  "id": "wmo_platform_code",
+                  "label": "CO-OPS ID",
+                  "description": "Provided by CO-OPS. Only provide if known/established. Do not create. ",
+                  "required": false,
+                  "type": "text",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  },
+                  "conditions": {
+                    "field": "is-this-a-co-ops-station",
+                    "value": false,
+                    "result": "disable"
+                  }
+                },
+                {
+                  "id": "other-id",
+                  "label": "Other ID",
+                  "description": "ID provided by data provider (Greenstream/Hohonu)",
+                  "required": false,
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  },
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        },
+
+        {
+          "id": "approximate-position",
+          "label": "Approximate position",
+          "description": "Ex: On building mounted on scaffolding",
+          "required": false,
+          "type": "text"
+        },
+        {
+          "id": "location",
+          "label": "Location",
+          "type": "object",
+          "skip_path": true,
+
+          "fields": [
+            {
+              "id": "use-map-location-entry",
+              "label": "Select location on a map?",
+              "type": "boolean",
+              "description": "If no, will provide a text box for manual lat/lon entry. If yes, will provide map interface to select location and auto-populate lat/lon fields."
+            },
+            {
+              "id": "manual-location-entry",
+              "type": "object",
+              "skip_path": "true",
+              "layout": "grid3",
+              "conditions": {
+                "field": "use-map-location-entry",
+                "value": false,
+                "result": "include"
+              },
+              "fields": [
+                {
+                  "id": "latitude",
+                  "label": "Latitude (DD, N is +)",
+                  "required": false,
+                  "type": "text"
+                },
+                {
+                  "id": "longitude",
+                  "label": "Longitude (DD, E is +)",
+                  "required": false,
+                  "type": "text"
+                },
+                {
+                  "id": "horizontal-datum-projection-",
+                  "label": "Horizontal datum projection ",
+                  "description": "Horizontal datum for the lat/lon (eg: NAD83) / projection",
+                  "required": false,
+                  "type": "text",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "station-geometry",
+              "label": "Click on map to select location",
+              "type": "geometry",
+              "conditions": {
+                "field": "use-map-location-entry",
+                "value": true,
+                "result": "include"
+              },
+              "settings": {
+                "drawPointEnabled": true,
+                "drawEnabled": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "local-tidal-datum-establishment",
+      "label": "Local datum",
+      "fields": [
+        {
+          "id": "local-datum-temporal",
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid2",
+          "fields": [
+            {
+              "id": "record-start-date",
+              "label": "Record Start Date:",
+              "required": false,
+              "type": "date"
+            },
+            {
+              "id": "record-end-date",
+              "label": "Record End Date:",
+              "required": false,
+              "type": "date"
+            }
+          ]
+        },
+        {
+          "id": "computational-tool",
+          "label": "Computational Tool:",
+          "required": false,
+          "type": "select",
+          "options": [
+            {
+              "value": "WALI",
+              "label": "WALI"
+            },
+            {
+              "value": "CO-OPS Tidal Datum Analysis Calculator",
+              "label": "CO-OPS Tidal Datum Analysis Calculator"
+            },
+            {
+              "value": "Tidelab",
+              "label": "Tidelab"
+            },
+            {
+              "value": "Manual",
+              "label": "Manual"
+            },
+            {
+              "value": "Other",
+              "label": "Other"
+            }
+          ]
+        },
+        {
+          "id": "computation-method",
+          "label": "Computation method",
+          "required": false,
+          "type": "select",
+          "options": [
+            {
+              "value": "TBYT",
+              "label": "TBYT"
+            },
+            {
+              "value": "MMSC",
+              "label": "MMSC"
+            },
+            {
+              "value": "FRED",
+              "label": "FRED"
+            }
+          ]
+        },
+        {
+          "id": "nwlon-control-station",
+          "label": "NWLON Control Station:",
+          "required": false,
+          "type": "text"
+        },
+        {
+          "id": "control-station-epoch",
+          "label": "Control Station Epoch:",
+          "required": false,
+          "type": "select",
+          "options": [
+            {
+              "value": "Present: 1983-2001",
+              "label": "Present: 1983-2001"
+            },
+            {
+              "value": "Superceded: 1960-1978",
+              "label": "Superceded: 1960-1978"
+            }
+          ]
+        },
+        {
+          "id": "datum-type",
+          "label": "Datum Type:",
+          "required": false,
+          "type": "select",
+          "options": [
+            {
+              "value": "Standard NTDE",
+              "label": "Standard NTDE"
+            },
+            {
+              "value": "Modified Procedure",
+              "label": "Modified Procedure"
+            },
+            {
+              "value": "Direct",
+              "label": "Direct"
+            }
+          ]
+        },
+        {
+          "id": "computation-date",
+          "label": "Computation Date:",
+          "required": false,
+          "type": "date"
+        },
+        {
+          "id": "computed-by",
+          "label": "Computed by",
+          "required": false,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "tidal-datum-offsets-relative-to-station",
+      "label": "Tidal Datums",
+      "fields": [
+        {
+          "id": "tidal-datum-wrap",
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid3",
+          "label": "Enter known tidal datum offsets relative to the station datum.",
+          "fields": [
+            {
+              "id": "mhhw-m",
+              "label": "MHHW (m):",
+              "description": "Offset between station datum and MHHW in meters",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "mhw-m",
+              "label": "MHW (m):",
+              "description": "Offset between station datum and MHW in meters",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "dtl-m",
+              "label": "DTL (m):",
+              "description": "The arithmetic mean of mean higher high water and mean lower low water.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "mtl-m",
+              "label": "MTL (m):",
+              "description": "The arithmetic mean of mean high water and mean low water.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "msl-m",
+              "label": "MSL (m):",
+              "description": "The arithmetic mean of hourly heights observed over the National Tidal Datum Epoch. Shorter series are specified in the name; e.g. monthly mean sea level and yearly mean sea level.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "mlw-m",
+              "label": "MLW (m):",
+              "description": "Offset between station datum and MLW in meters.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "mllw-m",
+              "label": "MLLW (m):",
+              "description": "Offset between station datum and MLLW in meters",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "gt-m",
+              "label": "GT (m)",
+              "description": "The difference in height between mean higher high water and mean lower low water.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "mn-m",
+              "label": "MN (m)",
+              "description": "The difference in height between mean high water and mean low water.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "dhq-m",
+              "label": "DHQ (m)",
+              "description": "One-half the average difference between the two high waters of each tidal day observed over the National Tidal Datum Epoch. It is obtained by subtracting the mean of all the high waters from the mean of the higher high waters.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "dlq-m",
+              "label": "DLQ (m)",
+              "description": "One-half the average difference between the two low waters of each tidal day observed over the National Tidal Datum Epoch. It is obtained by subtracting the mean of the lower low waters from the mean of all the low waters.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "hwi-hr",
+              "label": "HWI (hr)",
+              "description": "The average interval (in hours) between the moon***REMOVED***s transit over the Greenwich meridian and the following high water at a location.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "lwi-hr",
+              "label": "LWI (hr)",
+              "description": "The average interval (in hours) between the moon***REMOVED***s transit over the Greenwich meridian and the following low water at a location.",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "igld",
+              "label": "IGLD",
+              "description": "International Great Lakes Datum",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "id": "lwd",
+              "label": "LWD",
+              "description": "Low water datum",
+              "required": false,
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "photos",
+      "label": "Photos",
+      "fields": [
+        {
+          "id": "station-photo",
+          "label": "Station",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "sensor-photo",
+          "label": "Sensor",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "sensor-management",
+          "label": "Sensor management",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "sensor-survey-reference-point",
+          "label": "Sensor survey reference point",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "benchmarks-photo",
+          "label": "Photo of the two surveyed benchmark***REMOVED***s face stamping",
+          "description": "Suggested: 4 specific views are face (up close showing the stamping of the mark), setting (generally taken from chest height) and 2 directional photos. Ideally, you***REMOVED***d want all 4 directions to help find the mark on future visits and/or to help validate suitability for things such as GPS/GNSS (things that could obstruct a signal: tree, fence, building...etc)",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "dcp",
+          "label": "DCP",
+          "description": "data collection platform // data logger",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "underwater-components",
+          "label": "Underwater components",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "vicinity",
+          "label": "Vicinity",
+          "required": false,
+          "type": "custom:file_upload"
+        }
+      ]
+    },
+    {
+      "id": "attachments",
+      "label": "Attachments",
+      "fields": [
+        {
+          "id": "bench-mark-diagram",
+          "label": "Bench mark diagram",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "sensor-test-worksheet",
+          "label": "Sensor test worksheet",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "sensor-elevation-drawing",
+          "label": "Sensor elevation drawing",
+          "required": false,
+          "type": "custom:file_upload"
+        },
+        {
+          "id": "bench-mark-descriptions",
+          "label": "Bench mark descriptions",
+          "required": false,
+          "type": "long_text"
+        },
+        {
+          "id": "station-to-reach-statement",
+          "label": "Station ***REMOVED***to reach***REMOVED*** statement",
+          "required": false,
+          "type": "long_text"
+        },
+        {
+          "id": "license",
+          "label": "Disclaimer ",
+          "description": "NOAA specific req for NWS ingestion. specify uncertainty and limitations of use",
+          "required": false,
+          "type": "long_text"
+        },
+        {
+          "id": "dissemination-flag",
+          "label": "Dissemination flag",
+          "description": "NOAA specific req for NWS ingestion",
+          "required": false,
+          "type": "long_text"
+        }
+      ]
+    },
+    {
+      "id": "sample-data",
+      "label": "Sample data",
+      "fields": [
+        {
+          "id": "sample_file",
+          "label": "Sample file",
+          "required": false,
+          "type": "object",
+          "fields": [
+            {
+              "id": "file_uri",
+              "label": "File uri",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "headers",
+              "label": "Headers",
+              "multiple": true,
+              "required": false,
+              "type": "object",
+              "fields": [
+                {
+                  "id": "cell_header",
+                  "label": "Cell header",
+                  "required": false,
+                  "type": "text"
+                },
+                {
+                  "id": "cell_parameter",
+                  "label": "Cell parameter",
+                  "required": false,
+                  "type": "text"
+                },
+                {
+                  "id": "cell_units",
+                  "label": "Cell units",
+                  "required": false,
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "url_navigable": true
+  }
+}

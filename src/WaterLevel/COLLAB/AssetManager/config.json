@@ -89,7 +89,7 @@
           "id": "funding",
           "label": "Funding",
           "type": "object",
-          "layout": "grid2",
+          "skip_path": true,
           "fields": [
             {
               "id": "funding-source",
@@ -690,6 +690,9 @@
                   "description": "Provided by CO-OPS. Only provide if known/established. Do not create. ",
                   "required": false,
                   "type": "text",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  },
                   "conditions": {
                     "field": "is-this-a-co-ops-station",
                     "value": false,
@@ -700,6 +703,9 @@
                   "id": "other-id",
                   "label": "Other ID",
                   "description": "ID provided by data provider (Greenstream/Hohonu)",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  },
                   "required": false,
                   "type": "text"
                 }
@@ -1734,51 +1740,51 @@
           "id": "station-photo",
           "label": "Station",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "sensor-photo",
           "label": "Sensor",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "sensor-management",
           "label": "Sensor management",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "sensor-survey-reference-point",
           "label": "Sensor survey reference point",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "benchmarks-photo",
           "label": "Photo of the two surveyed benchmark***REMOVED***s face stamping",
           "description": "Suggested: 4 specific views are face (up close showing the stamping of the mark), setting (generally taken from chest height) and 2 directional photos. Ideally, you***REMOVED***d want all 4 directions to help find the mark on future visits and/or to help validate suitability for things such as GPS/GNSS (things that could obstruct a signal: tree, fence, building...etc)",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "dcp",
           "label": "DCP",
           "description": "data collection platform // data logger",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "underwater-components",
           "label": "Underwater components",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "vicinity",
           "label": "Vicinity",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         }
       ]
     },
@@ -1790,45 +1796,45 @@
           "id": "bench-mark-diagram",
           "label": "Bench mark diagram",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "sensor-test-worksheet",
           "label": "Sensor test worksheet",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "sensor-elevation-drawing",
           "label": "Sensor elevation drawing",
           "required": false,
-          "type": "text"
+          "type": "custom:file_upload"
         },
         {
           "id": "bench-mark-descriptions",
           "label": "Bench mark descriptions",
           "required": false,
-          "type": "text"
+          "type": "long_text"
         },
         {
           "id": "station-to-reach-statement",
           "label": "Station ***REMOVED***to reach***REMOVED*** statement",
           "required": false,
-          "type": "text"
+          "type": "long_text"
         },
         {
           "id": "license",
           "label": "Disclaimer ",
           "description": "NOAA specific req for NWS ingestion. specify uncertainty and limitations of use",
           "required": false,
-          "type": "text"
+          "type": "long_text"
         },
         {
           "id": "dissemination-flag",
           "label": "Dissemination flag",
           "description": "NOAA specific req for NWS ingestion",
           "required": false,
-          "type": "text"
+          "type": "long_text"
         }
       ]
     },
