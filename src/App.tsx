@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import FormManager from '@/Form/Manage/Manage'
 import React, { createContext, useContext, useState, type ReactElement } from 'react'
@@ -10,7 +10,12 @@ import pagedFormJson from '@/Form/testData/forms/pagedForm.json'
 import wizardFormJson from '@/Form/testData/forms/wizardForm.json'
 import pttOilSpillForm from '@/Form/testData/forms/pttFormConfigOpenOilModel.json'
 import customElementFormJson from '@/Form/testData/forms/customElementForm.json'
-import { type INumberField, type IForm, type IFormValues, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import {
+  type INumberField,
+  type IForm,
+  type IFormValues,
+  type IFieldInputProps,
+} from '@/Form/Creator/FormCreatorTypes'
 import Form from '@/Form/Creator/FormCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { Slider } from '@axdspub/axiom-ui-utilities'
@@ -40,20 +45,25 @@ import Metadata from '@/Binner/Metadata'
 import NestedDataTest from '@/Form/NestedDataTest'
 import JsonPathTester from '@/Form/JSONPathTester'
 import PlatformsMetadata from '@/Platforms/PlatformsMetadata'
-import MODLForm from '@/Form/MODL/MODLForm';
-import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm';
-import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet';
-import MakaraForm from '@/Form/PAM/MakaraForm';
-import COLLABWaterLevelFormDev from '@/WaterLevel/COLLAB/COLLABWaterLevelFormDev';
-import TestForm from '@/WaterLevel/tester/Form';
-import AssetForm from '@/WaterLevel/COLLAB/AssetManager/Form';
+import MODLForm from '@/Form/MODL/MODLForm'
+import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm'
+import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet'
+import MakaraForm from '@/Form/PAM/MakaraForm'
+import COLLABWaterLevelFormDev from '@/WaterLevel/COLLAB/COLLABWaterLevelFormDev'
+import TestForm from '@/WaterLevel/tester/Form'
+import AssetForm from '@/WaterLevel/COLLAB/AssetManager/Form'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-      <Form form={pagedFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
-      <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+      <Form
+        form={pagedFormJson as IForm}
+        formValueState={formValueState}
+        className="p-20"
+        urlNavigable={true}
+      />
+      <pre className="p-20 bg-slate-200 text-xs">{JSON.stringify(formValueState[0], null, 2)}</pre>
     </div>
   )
 }
@@ -62,13 +72,20 @@ const WizardFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
   return (
     <div>
-      <Form form={wizardFormJson as IForm} formValueState={formValueState} className='p-20' urlNavigable={true} />
-      <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+      <Form
+        form={wizardFormJson as IForm}
+        formValueState={formValueState}
+        className="p-20"
+        urlNavigable={true}
+      />
+      <pre className="p-20 bg-slate-200 text-xs">{JSON.stringify(formValueState[0], null, 2)}</pre>
     </div>
   )
 }
 
-interface ICustomFormProp { label: string }
+interface ICustomFormProp {
+  label: string
+}
 const CustomContext = createContext<ICustomFormProp>({ label: '' })
 
 const CustomElementFormWrap = (): ReactElement => {
@@ -79,42 +96,50 @@ const CustomElementFormWrap = (): ReactElement => {
         <Form
           form={customElementFormJson as IForm}
           formValueState={formValueState}
-          className='p-20'
+          className="p-20"
           urlNavigable={false}
           inputOverrides={{
             'custom:number': ({ field, value, onChange }: IFieldInputProps) => {
               const { label: labelFromContext } = useContext(CustomContext)
               const numberField = field as INumberField
-              const [tempValue, setTempValue] = useState<number>(value !== undefined && value !== null ? +value : 0)
+              const [tempValue, setTempValue] = useState<number>(
+                value !== undefined && value !== null ? +value : 0
+              )
               const min = numberField?.constraints?.min ?? 0
               const max = numberField?.constraints?.max ?? 100
               const step = Number(numberField?.settings?.step ?? (max - min) / 100)
-              return (<div>
-                <h2 className='p-4 text-xl bg-rose-800 text-white'>{labelFromContext}</h2>
-                <FieldLabel field={field} />
-                <div className='flex flex-row gap-4'>
-                  <p className='font-bold w-20'>{tempValue}</p>
-                  <Slider
-                    className='grow max-w-100 mt-1'
-                    size='sm'
-                    value={tempValue}
-                    min={min}
-                    max={max}
-                    onChange={(v: number): void => {
-                      setTempValue(v)
-                    }}
-                    onChangeComplete={(v: number): void => {
-                      setTempValue(v)
-                      onChange(v)
-                    }}
-                    id={field.id}
-                    testId={field.id}
-                    step={step} />
+              return (
+                <div>
+                  <h2 className="p-4 text-xl bg-rose-800 text-white">{labelFromContext}</h2>
+                  <FieldLabel field={field} />
+                  <div className="flex flex-row gap-4">
+                    <p className="font-bold w-20">{tempValue}</p>
+                    <Slider
+                      className="grow max-w-100 mt-1"
+                      size="sm"
+                      value={tempValue}
+                      min={min}
+                      max={max}
+                      onChange={(v: number): void => {
+                        setTempValue(v)
+                      }}
+                      onChangeComplete={(v: number): void => {
+                        setTempValue(v)
+                        onChange(v)
+                      }}
+                      id={field.id}
+                      testId={field.id}
+                      step={step}
+                    />
+                  </div>
                 </div>
-              </div>)
-            }
-          }} />
-        <pre className='p-20 bg-slate-200 text-xs'>{JSON.stringify(formValueState[0], null, 2)}</pre>
+              )
+            },
+          }}
+        />
+        <pre className="p-20 bg-slate-200 text-xs">
+          {JSON.stringify(formValueState[0], null, 2)}
+        </pre>
       </div>
     </CustomContext.Provider>
   )
@@ -125,17 +150,23 @@ const PTTOilFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>(assignDefaultValuesToFormValues(form, {}))
   return (
     <>
-      <Form className='p-20' formValueState={formValueState} form={form} />
+      <Form className="p-20" formValueState={formValueState} form={form} />
       <CopyableJSONOutput string={JSON.stringify(formValueState[0], null, 2)} />
     </>
   )
 }
 
-function fallbackRender({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }): ReactElement {
+function fallbackRender({
+  error,
+  resetErrorBoundary,
+}: {
+  error: Error
+  resetErrorBoundary: () => void
+}): ReactElement {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
-    <div role="alert" className='p-20'>
+    <div role="alert" className="p-20">
       <p>Something went wrong:</p>
       <pre style={{ color: 'red' }}>{error.message}</pre>
     </div>
@@ -149,9 +180,11 @@ function BinnerMetadataRoute(): ReactElement {
   if (!dataset) {
     return <div>Dataset not specified</div>
   }
-  return <QueryClientProvider client={queryClient}>
-    <Metadata dataset={dataset} />
-  </QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Metadata dataset={dataset} />
+    </QueryClientProvider>
+  )
 }
 
 const App = (): ReactElement => {
@@ -169,26 +202,26 @@ const App = (): ReactElement => {
   window.addEventListener('resize', debounceUpdateLayout)
   return (
     <ErrorBoundary fallbackRender={fallbackRender}>
-      <div className='h-screen flex flex-col gap-4'>
+      <div className="h-screen flex flex-col gap-4">
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<FormManager />}>
-              <Route path='*' element={<FormManager />} />
+            <Route path="/" element={<FormManager />}>
+              <Route path="*" element={<FormManager />} />
             </Route>
-            <Route path='/schema-to-form' element={<SchemaToForm />} />
+            <Route path="/schema-to-form" element={<SchemaToForm />} />
             <Route path="/set-tester" element={<SetTester />} />
             <Route path="/map-tester" element={<MapTester />} />
             <Route path="/page-form/" element={<PagedFormWrap />}>
-              <Route path='*' element={<PagedFormWrap />} />
+              <Route path="*" element={<PagedFormWrap />} />
             </Route>
-            <Route path='/wizard-form' element={<WizardFormWrap />}>
-              <Route path='*' element={<WizardFormWrap />} />
+            <Route path="/wizard-form" element={<WizardFormWrap />}>
+              <Route path="*" element={<WizardFormWrap />} />
             </Route>
             <Route path="/custom-form-element" element={<CustomElementFormWrap />}>
-              <Route path='*' element={<CustomElementFormWrap />} />
+              <Route path="*" element={<CustomElementFormWrap />} />
             </Route>
-            <Route path='/custom-element-context' element={<ExternalMetadataExample />} />
-            <Route path='/form-with-defaults' element={<FormWithDefaults />} />
+            <Route path="/custom-element-context" element={<ExternalMetadataExample />} />
+            <Route path="/form-with-defaults" element={<FormWithDefaults />} />
             <Route path="/ptt-oil" element={<PTTOilFormWrap />}>
               <Route path="*" element={<PTTOilFormWrap />} />
             </Route>
@@ -216,9 +249,9 @@ const App = (): ReactElement => {
             <Route path="/all-ptt/:scenario" element={<AllPTT />}>
               <Route path="*" element={<AllPTT />} />
             </Route>
-            <Route path='/resizer' element={<ResizableSidebar />} />
-            <Route path='/meditor' element={<MeditorForm />}>
-              <Route path='*' element={<MeditorForm />} />
+            <Route path="/resizer" element={<ResizableSidebar />} />
+            <Route path="/meditor" element={<MeditorForm />}>
+              <Route path="*" element={<MeditorForm />} />
             </Route>
             <Route path="/water-level" element={<WaterLevelForm />}>
               <Route path="*" element={<WaterLevelForm />} />
@@ -236,30 +269,32 @@ const App = (): ReactElement => {
               <Route path="*" element={<BinnerMetadataRoute />} />
             </Route>
             <Route path="/nested-data-test" element={<NestedDataTest />} />
-            <Route path='/json-path-tester' element={<JsonPathTester />} />
-            <Route path='/platform-metadata' element={<PlatformsMetadata />}>
-              <Route path='*' element={<PlatformsMetadata />} />
+            <Route path="/json-path-tester" element={<JsonPathTester />} />
+            <Route path="/platform-metadata" element={<PlatformsMetadata />}>
+              <Route path="*" element={<PlatformsMetadata />} />
             </Route>
-            <Route path='/binner-metadata' element={<></>}>
-              <Route path='*' element={<></>} />
+            <Route path="/binner-metadata" element={<></>}>
+              <Route path="*" element={<></>} />
             </Route>
-            <Route path='/modl' element={<MODLForm />}>
-              <Route path='*' element={<MODLForm />} />
+            <Route path="/modl" element={<MODLForm />}>
+              <Route path="*" element={<MODLForm />} />
             </Route>
-            <Route path='/PAM/makara' element={<MakaraForm />}>
-              <Route path='*' element={<MakaraForm />} />
+            <Route path="/PAM/makara" element={<MakaraForm />}>
+              <Route path="*" element={<MakaraForm />} />
             </Route>
-            <Route path='/water-level-test' element={<TestForm />}>
-              <Route path='*' element={<TestForm />} />
+            <Route path="/water-level-test" element={<TestForm />}>
+              <Route path="*" element={<TestForm />} />
             </Route>
-            <Route path='/water-level-asset' element={<AssetForm />}>
-              <Route path='*' element={<AssetForm />} />
+            <Route path="/water-level-asset" element={<AssetForm />}>
+              <Route path="*" element={<AssetForm />} />
+            </Route>
+            <Route path="/water-level-asset-wizard" element={<AssetForm configKey="wizard" />}>
+              <Route path="*" element={<AssetForm configKey="wizard" />} />
             </Route>
           </Routes>
         </BrowserRouter>
       </div>
     </ErrorBoundary>
-
   )
 }
 
