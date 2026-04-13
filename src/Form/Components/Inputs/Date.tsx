@@ -58,7 +58,7 @@ const DateInput = ({ field, onChange, value, disabled }: IFieldInputProps): Reac
         const validationError = validateDate(newValue)
         setError(validationError)
         if (!validationError) {
-          onChange(date.toISOString())
+          onChange(date.toISOString().split(***REMOVED***T***REMOVED***)[0])
         }
       }
     } else {
@@ -84,9 +84,7 @@ const DateInput = ({ field, onChange, value, disabled }: IFieldInputProps): Reac
           <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
         </label>
         {constraintMessage && (
-          <span className="text-sm text-slate-500 italic">
-            {constraintMessage}
-          </span>
+          <span className="text-sm text-slate-500 italic">{constraintMessage}</span>
         )}
       </div>
       <input
