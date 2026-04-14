@@ -44,12 +44,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
       setWorkingValue(
         typeof value === 'object'
           ? JSON.stringify(value, null, 2)
-          : (value !== undefined && value !== null
+          : value !== undefined && value !== null
             ? tryGetFormatted(String(value), format)
             : allowEmpty
               ? ''
               : '{}'
-          )
       )
     }
   }, [value])
@@ -97,7 +96,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
       }
     } else if (format === 'yaml') {
       if (validateYaml(val)) {
-        const json = JSON.stringify(val === '' && !allowEmpty ? '{}' : yamlParser.load(val), null, 2)
+        const json = JSON.stringify(
+          val === '' && !allowEmpty ? '{}' : yamlParser.load(val),
+          null,
+          2
+        )
         if (validateJson(json)) {
           onChange(exportAsString ? json : JSON.parse(json))
         }
@@ -143,41 +146,72 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
   const btnClass = 'border-0 rounded-none'
 
   return (
-    <div className='flex flex-col h-full relative'>
+    <div className="flex flex-col h-full relative">
       <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
-      <div className='flex flex-row'>
-        <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'json' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('json') }}>JSON</Button>
-        <Button size='xs' disabled={error !== null} className={`${btnClass} ${format !== 'yaml' ? 'font-normal' : 'text-white bg-[#282c34]'}`} onClick={() => { updateFormat('yaml') }}>YAML</Button>
+      <div className="flex flex-row">
+        <Button
+          size="xs"
+          disabled={error !== null}
+          className={`${btnClass} ${format !== 'json' ? 'font-normal' : 'text-white bg-[#282c34]'}`}
+          onClick={() => {
+            updateFormat('json')
+          }}
+        >
+          JSON
+        </Button>
+        <Button
+          size="xs"
+          disabled={error !== null}
+          className={`${btnClass} ${format !== 'yaml' ? 'font-normal' : 'text-white bg-[#282c34]'}`}
+          onClick={() => {
+            updateFormat('yaml')
+          }}
+        >
+          YAML
+        </Button>
         <div className="ml-auto">
-          <Button size='xs' className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className='inline w-3 h-3 -mt-1 ml-1' /></Button>
+          <Button
+            size="xs"
+            className={btnClass}
+            onClick={() => {
+              handleFormat()
+            }}
+          >
+            Format <UpdateIcon className="inline w-3 h-3 -mt-1 ml-1" />
+          </Button>
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className='inline w-3 h-3 -mt-1 mr-1' /> {error}</p>}
-      <span className='absolute right-16 top-28 pointer-events-auto z-40'>
-        <CopyButton string={
-          error === null && workingValue !== ''
-            ? format === 'json'
-              ? JSON.stringify(JSON.parse(workingValue), null, 2)
-              : yamlParser.dump(workingValue)
-            : workingValue
-        }
-          className='white z-40'
-          size='xlg'
+      {error && (
+        <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40">
+          <ExclamationTriangleIcon className="inline w-3 h-3 -mt-1 mr-1" /> {error}
+        </p>
+      )}
+      <span className="absolute right-16 top-28 pointer-events-auto z-40">
+        <CopyButton
+          string={
+            error === null && workingValue !== ''
+              ? format === 'json'
+                ? JSON.stringify(JSON.parse(workingValue), null, 2)
+                : yamlParser.dump(workingValue)
+              : workingValue
+          }
+          className="white z-40"
+          size="xlg"
         />
       </span>
-      <div className='h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative'>
+      <div className="h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative">
         <CodeMirror
           readOnly={disabled}
           value={format === 'yaml' && workingValue === '{}' ? '' : workingValue}
           extensions={[
             format === 'json' ? json() : yaml(),
             autocompletion(),
-            EditorView.lineWrapping
+            EditorView.lineWrapping,
           ]}
-          height='100%'
-          minHeight='400px'
-          className='h-full grow'
+          height="100%"
+          minHeight="400px"
+          className="h-full grow"
           onChange={debounced}
           theme="dark"
           onFocus={() => {
@@ -187,9 +221,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             setHasFocus(false)
           }}
         />
+        {disabled && (
+          <div className="absolute top-0 left-0 w-full h-full bg-white/40 z-20 cursor-not-allowed" />
+        )}
       </div>
     </div>
-
   )
 }
 
