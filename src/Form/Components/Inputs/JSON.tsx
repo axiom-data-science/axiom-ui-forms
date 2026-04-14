@@ -44,12 +44,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
       setWorkingValue(
         typeof value === ***REMOVED***object***REMOVED***
           ? JSON.stringify(value, null, 2)
-          : (value !== undefined && value !== null
+          : value !== undefined && value !== null
             ? tryGetFormatted(String(value), format)
             : allowEmpty
               ? ***REMOVED******REMOVED***
               : ***REMOVED***{}***REMOVED***
-          )
       )
     }
   }, [value])
@@ -97,7 +96,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
       }
     } else if (format === ***REMOVED***yaml***REMOVED***) {
       if (validateYaml(val)) {
-        const json = JSON.stringify(val === ***REMOVED******REMOVED*** && !allowEmpty ? ***REMOVED***{}***REMOVED*** : yamlParser.load(val), null, 2)
+        const json = JSON.stringify(
+          val === ***REMOVED******REMOVED*** && !allowEmpty ? ***REMOVED***{}***REMOVED*** : yamlParser.load(val),
+          null,
+          2
+        )
         if (validateJson(json)) {
           onChange(exportAsString ? json : JSON.parse(json))
         }
@@ -143,41 +146,72 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
   const btnClass = ***REMOVED***border-0 rounded-none***REMOVED***
 
   return (
-    <div className=***REMOVED***flex flex-col h-full relative***REMOVED***>
+    <div className="flex flex-col h-full relative">
       <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
-      <div className=***REMOVED***flex flex-row***REMOVED***>
-        <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***json***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***json***REMOVED***) }}>JSON</Button>
-        <Button size=***REMOVED***xs***REMOVED*** disabled={error !== null} className={`${btnClass} ${format !== ***REMOVED***yaml***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`} onClick={() => { updateFormat(***REMOVED***yaml***REMOVED***) }}>YAML</Button>
+      <div className="flex flex-row">
+        <Button
+          size="xs"
+          disabled={error !== null}
+          className={`${btnClass} ${format !== ***REMOVED***json***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`}
+          onClick={() => {
+            updateFormat(***REMOVED***json***REMOVED***)
+          }}
+        >
+          JSON
+        </Button>
+        <Button
+          size="xs"
+          disabled={error !== null}
+          className={`${btnClass} ${format !== ***REMOVED***yaml***REMOVED*** ? ***REMOVED***font-normal***REMOVED*** : ***REMOVED***text-white bg-[#282c34]***REMOVED***}`}
+          onClick={() => {
+            updateFormat(***REMOVED***yaml***REMOVED***)
+          }}
+        >
+          YAML
+        </Button>
         <div className="ml-auto">
-          <Button size=***REMOVED***xs***REMOVED*** className={btnClass} onClick={() => { handleFormat() }}>Format <UpdateIcon className=***REMOVED***inline w-3 h-3 -mt-1 ml-1***REMOVED*** /></Button>
+          <Button
+            size="xs"
+            className={btnClass}
+            onClick={() => {
+              handleFormat()
+            }}
+          >
+            Format <UpdateIcon className="inline w-3 h-3 -mt-1 ml-1" />
+          </Button>
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40"><ExclamationTriangleIcon className=***REMOVED***inline w-3 h-3 -mt-1 mr-1***REMOVED*** /> {error}</p>}
-      <span className=***REMOVED***absolute right-16 top-28 pointer-events-auto z-40***REMOVED***>
-        <CopyButton string={
-          error === null && workingValue !== ***REMOVED******REMOVED***
-            ? format === ***REMOVED***json***REMOVED***
-              ? JSON.stringify(JSON.parse(workingValue), null, 2)
-              : yamlParser.dump(workingValue)
-            : workingValue
-        }
-          className=***REMOVED***white z-40***REMOVED***
-          size=***REMOVED***xlg***REMOVED***
+      {error && (
+        <p className="text-red-500 text-xs mb-2 absolute bg-white bg-opacity-90 max-w-[50%] p-2 right-0 z-40">
+          <ExclamationTriangleIcon className="inline w-3 h-3 -mt-1 mr-1" /> {error}
+        </p>
+      )}
+      <span className="absolute right-16 top-28 pointer-events-auto z-40">
+        <CopyButton
+          string={
+            error === null && workingValue !== ***REMOVED******REMOVED***
+              ? format === ***REMOVED***json***REMOVED***
+                ? JSON.stringify(JSON.parse(workingValue), null, 2)
+                : yamlParser.dump(workingValue)
+              : workingValue
+          }
+          className="white z-40"
+          size="xlg"
         />
       </span>
-      <div className=***REMOVED***h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative***REMOVED***>
+      <div className="h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative">
         <CodeMirror
           readOnly={disabled}
           value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
           extensions={[
             format === ***REMOVED***json***REMOVED*** ? json() : yaml(),
             autocompletion(),
-            EditorView.lineWrapping
+            EditorView.lineWrapping,
           ]}
-          height=***REMOVED***100%***REMOVED***
-          minHeight=***REMOVED***400px***REMOVED***
-          className=***REMOVED***h-full grow***REMOVED***
+          height="100%"
+          minHeight="400px"
+          className="h-full grow"
           onChange={debounced}
           theme="dark"
           onFocus={() => {
@@ -187,9 +221,11 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             setHasFocus(false)
           }}
         />
+        {disabled && (
+          <div className="absolute top-0 left-0 w-full h-full bg-white/40 z-20 cursor-not-allowed" />
+        )}
       </div>
     </div>
-
   )
 }
 
