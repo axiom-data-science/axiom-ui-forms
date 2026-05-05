@@ -16,8 +16,8 @@ const TestForm = (): ReactElement => {
         <FormWithEditorOverlay
             label="Water Level Form (COLLAB schema)"
             schemaState={schemaState}
-            //fieldOverrideState={fieldOverrideState}
-            //formOverrideState={formOverrideState}
+            fieldOverrideState={fieldOverrideState}
+            formOverrideState={formOverrideState}
             urlNavigable={false}
         />
 

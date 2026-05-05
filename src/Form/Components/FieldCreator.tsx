@@ -4,12 +4,15 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import inputMap from '@/Form/Components/Inputs/inputMap'
 import { useFormContext } from '@/Form/Creator/FormContextProvider'
 import { type ICheckConditionResult, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from '@/Form/Creator/FormCreatorTypes'
+import errorRenderer from '@/utils/errorRenderer';
 import { getFieldValue, makeJsonPath } from '@/utils/getters'
 import { cleanAndUpdateFormValuesWithFieldValue, cloneObject, createOneOfMultipleField } from '@/utils/manipulators'
 import { checkCondition } from '@/utils/validators'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
+import { error } from 'ajv/dist/vocabularies/applicator/dependencies';
 import React, { useEffect, useState, type ReactElement } from 'react'
+import { ErrorBoundary } from 'react-error-boundary';
 
 const SHOW_DEBUG = config.SHOW_DEBUG
 const disabledClassName = '' // 'opacity-50 pointer-events-none cursor-not-allowed'
@@ -243,7 +246,16 @@ const FieldCreator = ({
   const fieldValue = getFieldValue(field, formValues)
   const initialValue = value !== undefined ? value : fieldValue
 
-  return <>
+  return <ErrorBoundary fallbackRender={({error}: {error: Error}) => {
+    const err = errorRenderer({error, resetErrorBoundary: () => {}})
+    return (
+      <div>
+        <p>{field.label ?? field.id}</p>      
+      {err}
+      </div>
+      
+    )
+   }}>
     {
       InputComponent !== undefined
         ? <div className={utils.makeClassName({
@@ -273,7 +285,7 @@ const FieldCreator = ({
           <p className='p-4 text-sm bg-slate-100'>No component definition for <span className='text-rose-800 font-mono text-xs bg-slate-300 p-2'>type</span><span className='p-2 bg-slate-700 text-white font-mono text-xs'>{field.type}</span> at <span className='text-rose-800 font-mono text-xs bg-slate-300 p-2'>id</span><span className='p-2 bg-slate-700 text-white font-mono text-xs'>{field.id}</span></p>
         </div>
     }
-  </>
+  </ErrorBoundary>
 }
 
 export default FieldCreator

@@ -9,11 +9,14 @@ import { cloneObject, copyAndAddPathToFields, updateFormValuesWithFieldValueInPl
 import layoutAtom, { getWindowSize } from '@/utils/responsive/layoutState'
 import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { calculateSectionStatus } from '@/utils/validators'
+import { seedNestedDefaults } from '@/utils/formEngine'
 import { Loader, utils } from '@axdspub/axiom-ui-utilities'
+import { ErrorBoundary } from 'react-error-boundary'
 import { useAtom } from 'jotai'
 import { type JSONSchema6 } from 'json-schema'
 import debounce from 'lodash-es/debounce'
 import React, { type ReactNode, useContext, type ReactElement, useState, useEffect } from 'react'
+import errorRenderer from '@/utils/errorRenderer'
 
 export interface IFormCreatorProps {
   form: IForm
@@ -95,11 +98,20 @@ export const SchemaFormCreator = ({
 
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
-  getFieldsFromFormSection(form).forEach(field => {
-    if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
-      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValues)
-    }
+  
+  // Get all fields from the form (including nested ones)
+  const fields = getFieldsFromFormSection(form)
+  
+  // Use the formEngine's seedNestedDefaults for comprehensive default handling
+  // This handles:
+  // - Top-level field defaults
+  // - Nested object field defaults
+  // - Array element (multiple=true) defaults
+  // - Condition-driven defaults
+  seedNestedDefaults(fields, formValues, {
+    rootFormValues: formValues
   })
+  
   return formValues
 }
 
@@ -155,6 +167,7 @@ const FormCreator = ({
   }, [])
 
   return (
+    <ErrorBoundary fallbackRender={errorRenderer}>
     <FormContext.Provider value={{
       form: activeForm,
       formValues,
@@ -183,6 +196,7 @@ const FormCreator = ({
       </div>
       {typeof Footer === 'function' ? <FormComponentWrap Component={Footer} /> : Footer ?? ''}
     </FormContext.Provider>
+    </ErrorBoundary>
   )
 }
 
