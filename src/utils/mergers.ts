@@ -1,8 +1,6 @@
 import { type IFormFieldOverride, type IFormField, type IForm, type IFormSection, type IFormSectionOverride, type IPage, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getPathFromField } from '@/utils/getters'
 import { cloneObject, copyAndAddPathToFields } from '@/utils/manipulators'
-import { schemaToFormObject } from '@/utils/schemaToFormHelpers'
-import { type JSONSchema6 } from 'json-schema'
 
 /**
  * Groups field overrides by their `prop` property.
@@ -326,32 +324,4 @@ export const applyOverridesToSchemaFields = ({
   }).filter(f => f !== undefined && f !== null)
 }
 
-export const mergeSchemaFormWithFormOverridesAndFieldOverrides = ({
-  schema,
-  fieldOverrides,
-  formOverrides
-}: {
-  schema: JSONSchema6
-  fieldOverrides: IFormFieldOverride[][]
-  formOverrides: IFormSectionOverride[]
-}): IForm => {
-  const schemaForm = schemaToFormObject(schema)
-  const form: IForm = {
-    id: schemaForm.id,
-    label: schemaForm.label,
-    description: schemaForm.description
-  }
-  const fieldsMap = buildFieldMapFromForm(schemaForm)
-  const formSection = mergeFormSections({
-    formFieldsMap: fieldsMap,
-    formSection: schemaForm,
-    formOverrides,
-    fieldOverrides: groupOverrideFieldsByProp(fieldOverrides)
-  })
 
-  form.pages = formSection.pages
-  form.wizard_steps = formSection.wizard_steps
-  form.fields = formSection.fields
-
-  return form
-}
