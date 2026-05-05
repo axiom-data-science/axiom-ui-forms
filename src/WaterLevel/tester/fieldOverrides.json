@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "prop": "first", 
+        "label": "CHANGED LABEL FOR FIRST", 
+        "layout": "grid3"
+    },
+    {"prop": "first.firstA", "label": "First A (OVERRIDE)"},
+    {"prop": "first.firstB", "label": "First B (OVERRIDE)"}
+]

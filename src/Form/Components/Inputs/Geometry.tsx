@@ -127,7 +127,29 @@ export const GeometryInput = ({ field, onChange, value, disabled }: IFieldInputP
     return undefined
   }
 
-  const [geojson, setGeojson] = useState<Feature | undefined>(convertToGeoJSON(value))
+    const geomField = field as IGeometryField
+
+  const drawEnabled = geomField.settings?.drawEnabled !== false
+  const drawPointEnabled = geomField.settings?.drawPointEnabled === true && drawEnabled
+  const drawPathEnabled = geomField.settings?.drawPathEnabled === true && drawEnabled
+  const drawPolygonEnabled = geomField.settings?.drawPolygonEnabled === true && drawEnabled
+  const showCoordinateInput = geomField.settings?.showCoordinateInput !== false
+
+  const initialGeoJSON = convertToGeoJSON(value)
+  const initialGeoJSONValue = initialGeoJSON?.geometry !== undefined
+    ? initialGeoJSON.geometry.type === ***REMOVED***Point***REMOVED*** && !drawPointEnabled
+      ? undefined
+      : initialGeoJSON.geometry.type === ***REMOVED***LineString***REMOVED*** && !drawPathEnabled
+        ? undefined
+        : initialGeoJSON.geometry.type === ***REMOVED***Polygon***REMOVED*** && !drawPolygonEnabled
+          ? undefined
+          : initialGeoJSON
+    : undefined
+
+
+
+
+  const [geojson, setGeojson] = useState<Feature | undefined>(initialGeoJSONValue)
 
   useEffect(() => {
     if (!isEqual(geojson, convertToGeoJSON(value))) {
@@ -136,13 +158,6 @@ export const GeometryInput = ({ field, onChange, value, disabled }: IFieldInputP
     }
   }, [value])
 
-  const geomField = field as IGeometryField
-
-  const drawEnabled = geomField.settings?.drawEnabled !== false
-  const drawPointEnabled = geomField.settings?.drawPointEnabled === true && drawEnabled
-  const drawPathEnabled = geomField.settings?.drawPathEnabled === true && drawEnabled
-  const drawPolygonEnabled = geomField.settings?.drawPolygonEnabled === true && drawEnabled
-  const showCoordinateInput = geomField.settings?.showCoordinateInput !== false
 
   const [currentDrawType, setCurrentDrawType] = useState<EMapShape>(() => getInitialDrawType(field))
   const [isDrawing, setIsDrawing] = useState<boolean>(!geojson && drawEnabled)

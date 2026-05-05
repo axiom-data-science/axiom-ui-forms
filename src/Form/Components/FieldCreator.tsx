@@ -4,12 +4,15 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type ICheckConditionResult, type IFieldInputProps, type IFormField, type IValueChangeFn, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***;
 import { getFieldValue, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import { cleanAndUpdateFormValuesWithFieldValue, cloneObject, createOneOfMultipleField } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { Button, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CheckIcon, CopyIcon, Cross1Icon, ExclamationTriangleIcon, PlusIcon, TrashIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { error } from ***REMOVED***ajv/dist/vocabularies/applicator/dependencies***REMOVED***;
 import React, { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***;
 
 const SHOW_DEBUG = config.SHOW_DEBUG
 const disabledClassName = ***REMOVED******REMOVED*** // ***REMOVED***opacity-50 pointer-events-none cursor-not-allowed***REMOVED***
@@ -243,7 +246,16 @@ const FieldCreator = ({
   const fieldValue = getFieldValue(field, formValues)
   const initialValue = value !== undefined ? value : fieldValue
 
-  return <>
+  return <ErrorBoundary fallbackRender={({error}: {error: Error}) => {
+    const err = errorRenderer({error, resetErrorBoundary: () => {}})
+    return (
+      <div>
+        <p>{field.label ?? field.id}</p>      
+      {err}
+      </div>
+      
+    )
+   }}>
     {
       InputComponent !== undefined
         ? <div className={utils.makeClassName({
@@ -273,7 +285,7 @@ const FieldCreator = ({
           <p className=***REMOVED***p-4 text-sm bg-slate-100***REMOVED***>No component definition for <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>type</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.type}</span> at <span className=***REMOVED***text-rose-800 font-mono text-xs bg-slate-300 p-2***REMOVED***>id</span><span className=***REMOVED***p-2 bg-slate-700 text-white font-mono text-xs***REMOVED***>{field.id}</span></p>
         </div>
     }
-  </>
+  </ErrorBoundary>
 }
 
 export default FieldCreator

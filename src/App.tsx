@@ -52,6 +52,7 @@ import MakaraForm from ***REMOVED***@/Form/PAM/MakaraForm***REMOVED***
 import COLLABWaterLevelFormDev from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelFormDev***REMOVED***
 import TestForm from ***REMOVED***@/WaterLevel/tester/Form***REMOVED***
 import AssetForm from ***REMOVED***@/WaterLevel/COLLAB/AssetManager/Form***REMOVED***
+import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -156,22 +157,7 @@ const PTTOilFormWrap = (): ReactElement => {
   )
 }
 
-function fallbackRender({
-  error,
-  resetErrorBoundary,
-}: {
-  error: Error
-  resetErrorBoundary: () => void
-}): ReactElement {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
-  return (
-    <div role="alert" className="p-20">
-      <p>Something went wrong:</p>
-      <pre style={{ color: ***REMOVED***red***REMOVED*** }}>{error.message}</pre>
-    </div>
-  )
-}
 
 const queryClient = new QueryClient()
 
@@ -201,7 +187,7 @@ const App = (): ReactElement => {
 
   window.addEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
   return (
-    <ErrorBoundary fallbackRender={fallbackRender}>
+    <ErrorBoundary fallbackRender={errorRenderer}>
       <div className="h-screen flex flex-col gap-4">
         <BrowserRouter>
           <Routes>

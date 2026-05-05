@@ -90,7 +90,11 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
   const formValuesCopy = cloneObject(formValues)
   Object.keys(formValues).forEach(key => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
-    const field = fields?.find(f => getPathFromField(f) === path)
+    const field = fields?.find(f => {
+        const ff = getPathFromField(f) === path
+        const cc = ff ? checkCondition(f, formValues).pass : false
+        return ff && cc
+  })
     if (field?.type === ***REMOVED***object***REMOVED*** && field?.multiple === true && Array.isArray(formValuesCopy[key])) {
       return formValuesCopy[key].map((value, index) => {
         const checkedOneOfMultiple = checkCondition(field, value as IFormValues)

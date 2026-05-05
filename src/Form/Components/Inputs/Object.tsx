@@ -1,15 +1,18 @@
 import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type ICompositeValueType, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import Page from ***REMOVED***@/Form/Creator/Page***REMOVED***
 import TabLayout from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
 import WizardLayout from ***REMOVED***@/Form/Creator/Wizard***REMOVED***
+import { evaluateFieldLogicState, type FieldEvaluationContext } from ***REMOVED***@/utils/formEngine***REMOVED***
 import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
-import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
+  const { formValues } = useFormContext()
+
   const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
   const objectField = field.type === ***REMOVED***object***REMOVED*** ? field : undefined
   if (objectField?.tabs !== undefined && objectField.tabs.length) {
@@ -32,6 +35,14 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
     const fc = field.layout === ***REMOVED***horizontal***REMOVED***
       ? ***REMOVED***flex-1***REMOVED***
       : ***REMOVED******REMOVED***
+
+    // Use formEngine for consistent condition evaluation
+    // Always pass ROOT formValues context, not the nested object
+    const evaluationContext: FieldEvaluationContext = {
+      rootFormValues: formValues,
+      fieldPath: field.path
+    }
+
     return (
       <div>
         {
@@ -43,14 +54,16 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
           {
             field.fields.map((childField) => {
               const key = (field.path ?? [field.id]).concat(childField.id).join(***REMOVED***.***REMOVED***)
-              const conditionResult = field.multiple
-                ? checkCondition(childField, initialValue)
-                : undefined
+
+              // Evaluate field logic using ROOT context (not nested object)
+              // This fixes the bug where conditions were only checked for multiple=true
+              // and used the wrong context
+              const fieldLogicState = evaluateFieldLogicState(childField, evaluationContext)
 
               return (
                 <FieldCreator
-                  disabled={disabled}
-                  conditionResult={conditionResult}
+                  disabled={disabled || fieldLogicState.isDisabled}
+                  conditionResult={fieldLogicState.conditionResult}
                   onChange={(e) => {
                     if (childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true) {
                       onChange(e)
@@ -60,7 +73,6 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
                       onChange(newValue)
                     }
                   }}
-                  // conditionResult={conditionResult}
                   className={utils.makeClassName({
                     className: fc
                   })}

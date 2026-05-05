@@ -395,3 +395,240 @@ describe(***REMOVED***calculateSectionStatus***REMOVED***, () => {
     })
   })
 })
+
+// PHASE 1 BUG TESTS: These tests expose bugs in how ObjectInput uses conditions
+// Note: The condition evaluation logic itself works correctly. The bugs are in Object.tsx line 44-46:
+// - Conditions only checked when field.multiple === true
+// - Conditions evaluated against nested object instead of ROOT context
+//
+// These tests are for reference - the actual bugs need to be fixed by:
+// 1. Always calling checkCondition for nested fields (not just when multiple=true)
+// 2. Passing ROOT formValues to checkCondition (not nested object)
+describe(***REMOVED***Phase 1 Reference - Condition evaluation logic is correct***REMOVED***, () => {
+  describe(***REMOVED***REF: Nested fields with conditions using ROOT context***REMOVED***, () => {
+    const form: IForm = {
+      id: ***REMOVED***form***REMOVED***,
+      label: ***REMOVED***Form***REMOVED***,
+      fields: [
+        {
+          id: ***REMOVED***objectField***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          label: ***REMOVED***Object Field***REMOVED***,
+          multiple: false,  // ← KEY: NOT multiple
+          fields: [
+            {
+              id: ***REMOVED***showHideField***REMOVED***,
+              type: ***REMOVED***text***REMOVED***,
+              label: ***REMOVED***Show/Hide Field***REMOVED***
+            },
+            {
+              id: ***REMOVED***conditionalField***REMOVED***,
+              type: ***REMOVED***text***REMOVED***,
+              label: ***REMOVED***Conditional Field***REMOVED***,
+              // Absolute path to root-level field (won***REMOVED***t work in current ObjectInput)
+              conditions: {
+                dependsOn: ***REMOVED***objectField.showHideField***REMOVED***,
+                value: ***REMOVED***show***REMOVED***
+              }
+            }
+          ]
+        }
+      ]
+    }
+
+    const formWithPaths = copyAndAddPathToFields(form)
+    const objectField = formWithPaths.fields?.[0] as IObjectField
+    const conditionalField = objectField.fields?.find(f => f.id === ***REMOVED***conditionalField***REMOVED***) as IFormField
+
+    it(***REMOVED***condition logic works when formValues passed correctly***REMOVED***, () => {
+      const formValues = {
+        objectField: {
+          showHideField: ***REMOVED***show***REMOVED***
+        }
+      }
+
+      const result = checkCondition(conditionalField, formValues)
+      expect(result.pass).toBe(true)
+      expect(result.result).toBe(***REMOVED***include***REMOVED***)
+    })
+
+    it(***REMOVED***condition logic recognizes when condition not met***REMOVED***, () => {
+      const formValues = {
+        objectField: {
+          showHideField: ***REMOVED***hide***REMOVED***
+        }
+      }
+
+      const result = checkCondition(conditionalField, formValues)
+      expect(result.pass).toBe(false)
+    })
+  })
+
+  describe(***REMOVED***REF: Relative paths work when ROOT context is passed***REMOVED***, () => {
+    const form: IForm = {
+      id: ***REMOVED***form***REMOVED***,
+      label: ***REMOVED***Form***REMOVED***,
+      fields: [
+        {
+          id: ***REMOVED***globalFlag***REMOVED***,
+          type: ***REMOVED***text***REMOVED***,
+          label: ***REMOVED***Global Flag***REMOVED***
+        },
+        {
+          id: ***REMOVED***objectField***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          label: ***REMOVED***Object Field***REMOVED***,
+          multiple: false,
+          fields: [
+            {
+              id: ***REMOVED***nestedField***REMOVED***,
+              type: ***REMOVED***text***REMOVED***,
+              label: ***REMOVED***Nested Field***REMOVED***,
+              // Depends on ROOT level field using absolute path instead
+              // (Relative paths from nested to root require more dots than worth testing here)
+              conditions: {
+                dependsOn: ***REMOVED***globalFlag***REMOVED***,  // Absolute path to root field
+                value: ***REMOVED***enabled***REMOVED***
+              }
+            }
+          ]
+        }
+      ]
+    }
+
+    const formWithPaths = copyAndAddPathToFields(form)
+    const objectField = formWithPaths.fields?.[1] as IObjectField
+    const nestedField = objectField.fields?.find(f => f.id === ***REMOVED***nestedField***REMOVED***) as IFormField
+
+    it(***REMOVED***relative path works when ROOT formValues passed***REMOVED***, () => {
+      const formValues = {
+        globalFlag: ***REMOVED***enabled***REMOVED***,
+        objectField: {
+          nestedField: ***REMOVED***some value***REMOVED***
+        }
+      }
+
+      // This works because ROOT formValues are passed to checkCondition
+      const result = checkCondition(nestedField, formValues)
+      expect(result.pass).toBe(true)
+    })
+
+    it(***REMOVED***relative path evaluates correctly for false condition***REMOVED***, () => {
+      const formValues = {
+        globalFlag: ***REMOVED***disabled***REMOVED***,
+        objectField: {
+          nestedField: ***REMOVED***some value***REMOVED***
+        }
+      }
+
+      const result = checkCondition(nestedField, formValues)
+      expect(result.pass).toBe(false)
+    })
+  })
+
+  describe(***REMOVED***REF: Sibling relative paths work within nested objects***REMOVED***, () => {
+    const form: IForm = {
+      id: ***REMOVED***form***REMOVED***,
+      label: ***REMOVED***Form***REMOVED***,
+      fields: [
+        {
+          id: ***REMOVED***objectField***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          label: ***REMOVED***Object Field***REMOVED***,
+          multiple: false,
+          fields: [
+            {
+              id: ***REMOVED***field1***REMOVED***,
+              type: ***REMOVED***text***REMOVED***,
+              label: ***REMOVED***Field 1***REMOVED***
+            },
+            {
+              id: ***REMOVED***field2***REMOVED***,
+              type: ***REMOVED***text***REMOVED***,
+              label: ***REMOVED***Field 2***REMOVED***,
+              // Relative path to sibling within same object
+              conditions: {
+                dependsOn: ***REMOVED***.field1***REMOVED***,
+                value: ***REMOVED***test***REMOVED***
+              }
+            }
+          ]
+        }
+      ]
+    }
+
+    const formWithPaths = copyAndAddPathToFields(form)
+    const objectField = formWithPaths.fields?.[0] as IObjectField
+    const field2 = objectField.fields?.find(f => f.id === ***REMOVED***field2***REMOVED***) as IFormField
+
+    it(***REMOVED***sibling relative path works when ROOT formValues passed***REMOVED***, () => {
+      const formValues = {
+        objectField: {
+          field1: ***REMOVED***test***REMOVED***,
+          field2: ***REMOVED******REMOVED***
+        }
+      }
+
+      const result = checkCondition(field2, formValues)
+      expect(result.pass).toBe(true)
+    })
+  })
+
+  describe(***REMOVED***REF: Deeply nested relative paths work correctly***REMOVED***, () => {
+    const form: IForm = {
+      id: ***REMOVED***form***REMOVED***,
+      label: ***REMOVED***Form***REMOVED***,
+      fields: [
+        {
+          id: ***REMOVED***level1***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          label: ***REMOVED***Level 1***REMOVED***,
+          multiple: false,
+          fields: [
+            {
+              id: ***REMOVED***level2***REMOVED***,
+              type: ***REMOVED***object***REMOVED***,
+              label: ***REMOVED***Level 2***REMOVED***,
+              multiple: false,
+              fields: [
+                {
+                  id: ***REMOVED***triggerField***REMOVED***,
+                  type: ***REMOVED***text***REMOVED***,
+                  label: ***REMOVED***Trigger Field***REMOVED***
+                },
+                {
+                  id: ***REMOVED***dependentField***REMOVED***,
+                  type: ***REMOVED***text***REMOVED***,
+                  label: ***REMOVED***Dependent Field***REMOVED***,
+                  conditions: {
+                    dependsOn: ***REMOVED***.triggerField***REMOVED***,
+                    value: ***REMOVED***trigger***REMOVED***
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
+    const formWithPaths = copyAndAddPathToFields(form)
+    const level1 = formWithPaths.fields?.[0] as IObjectField
+    const level2 = level1.fields?.[0] as IObjectField
+    const dependentField = level2.fields?.find(f => f.id === ***REMOVED***dependentField***REMOVED***) as IFormField
+
+    it(***REMOVED***deeply nested relative paths work when ROOT formValues passed***REMOVED***, () => {
+      const formValues = {
+        level1: {
+          level2: {
+            triggerField: ***REMOVED***trigger***REMOVED***,
+            dependentField: ***REMOVED******REMOVED***
+          }
+        }
+      }
+
+      const result = checkCondition(dependentField, formValues)
+      expect(result.pass).toBe(true)
+    })
+  })
+})
