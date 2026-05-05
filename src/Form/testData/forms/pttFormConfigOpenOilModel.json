@@ -14,10 +14,10 @@
                     "type": "geometry",
                     "settings": {
                         "drawEnabled": true,
-                        "drawPolygonEnabled": false,
-                        "drawPathEnabled": false,
+                        "drawPolygonEnabled": true,
+                        "drawPathEnabled": true,
                         "drawPointEnable": true,
-                        "showCoordinateInput": false
+                        "showCoordinateInput": true
                     }
                   },
                   {

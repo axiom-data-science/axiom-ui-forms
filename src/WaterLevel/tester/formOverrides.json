@@ -1,1 +1,9 @@
-{}
+{
+    "fields": [
+        {"prop": "first", "label": "HI"},
+        {"prop": "first.firsta", "label": "HI"},
+        {"prop": "first.firstb", "label": "HI"}
+    ]
+        
+    
+}

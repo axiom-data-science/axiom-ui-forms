@@ -1,6 +1,10 @@
 import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep, type IValueType, type INumberField, type IFormLayoutTab } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Ajv, { type ValidateFunction } from ***REMOVED***ajv***REMOVED***
 import addFormats from ***REMOVED***ajv-formats***REMOVED***
+// mergeObjects is defined in mergers.ts; imported for internal use and
+// re-exported for backwards compatibility with existing consumers
+import { mergeObjects } from ***REMOVED***@/utils/mergers***REMOVED***
+export { mergeObjects }
 
 import { type JSONSchema6Type, type JSONSchema6Definition, type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
@@ -389,11 +393,17 @@ const schemaToFormField = ({
   }
 }
 
-export function mergeObjects<T extends Record<string, any>> (objects: T[]): T {
-  const initialValue: T = {} as unknown as T
-  return objects.reduce<T>((acc, obj) => ({ ...acc, ...obj }), initialValue)
-}
-
+/**
+ * Merges an individual form field with its applicable overrides.
+ *
+ * Merge precedence (lowest → highest priority):
+ * 1. Schema field  — base field generated from JSON schema
+ * 2. formFieldsOverrideMap — global IFormFieldOverride[][] passed to overridesAndSchemaToFormObject
+ * 3. fieldOverride  — local override from the current form/page/wizard section definition
+ *
+ * For ***REMOVED***object***REMOVED*** fields, child fields are resolved by union of keys across all three
+ * sources, then each child is recursively merged with the same precedence rules.
+ */
 const mergeFormField = ({
   field,
   fieldOverride,
@@ -566,6 +576,22 @@ const mergeFormSections = ({
   return sections as IFormSection[]
 }
 
+/**
+ * Convert a JSON Schema + optional overrides into a renderable IForm.
+ *
+ * Override pipeline:
+ * 1. Schema is converted to a base IForm via schemaToFormObject()
+ * 2. If only formFieldOverrides are provided (no formOverrides), every field in
+ *    the schema is merged with matching formFieldOverrides entries.
+ * 3. If formOverrides are provided, the form structure (pages / wizard_steps /
+ *    tabs / fields) is rebuilt from the override definitions. Each section***REMOVED***s
+ *    fields are merged via mergeFormField() using the 3-level precedence:
+ *    schema field → formFieldOverrides → local section field override.
+ *
+ * @param formOverrides   - Top-level structural overrides (label, pages, wizard_steps…)
+ * @param formFieldOverrides - Per-field property overrides, keyed by ***REMOVED***prop***REMOVED*** path
+ * @param schema          - JSON Schema to convert
+ */
 export const overridesAndSchemaToFormObject = ({
   formOverrides,
   formFieldOverrides,

@@ -9,11 +9,14 @@ import { cloneObject, copyAndAddPathToFields, updateFormValuesWithFieldValueInPl
 import layoutAtom, { getWindowSize } from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
+import { seedNestedDefaults } from ***REMOVED***@/utils/formEngine***REMOVED***
 import { Loader, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import debounce from ***REMOVED***lodash-es/debounce***REMOVED***
 import React, { type ReactNode, useContext, type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
+import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
 
 export interface IFormCreatorProps {
   form: IForm
@@ -95,11 +98,20 @@ export const SchemaFormCreator = ({
 
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
-  getFieldsFromFormSection(form).forEach(field => {
-    if (field.defaultValue !== undefined && getFieldValue(field, formValues) === undefined) {
-      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValues)
-    }
+  
+  // Get all fields from the form (including nested ones)
+  const fields = getFieldsFromFormSection(form)
+  
+  // Use the formEngine***REMOVED***s seedNestedDefaults for comprehensive default handling
+  // This handles:
+  // - Top-level field defaults
+  // - Nested object field defaults
+  // - Array element (multiple=true) defaults
+  // - Condition-driven defaults
+  seedNestedDefaults(fields, formValues, {
+    rootFormValues: formValues
   })
+  
   return formValues
 }
 
@@ -155,6 +167,7 @@ const FormCreator = ({
   }, [])
 
   return (
+    <ErrorBoundary fallbackRender={errorRenderer}>
     <FormContext.Provider value={{
       form: activeForm,
       formValues,
@@ -183,6 +196,7 @@ const FormCreator = ({
       </div>
       {typeof Footer === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Footer} /> : Footer ?? ***REMOVED******REMOVED***}
     </FormContext.Provider>
+    </ErrorBoundary>
   )
 }
 
