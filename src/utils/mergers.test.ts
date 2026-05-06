@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { applyOverridesToSchemaField, buildFieldMapFromForm, groupOverrideFieldsByProp, mergeFields, mergeFormSections } from './mergers'
-import { type IFormField, type IForm, type IFormFieldOverride, type IObjectField } from '@/Form/Creator/FormCreatorTypes'
+import { seedNestedDefaults, type FieldEvaluationContext } from './formEngine'
+import { type IFormField, type IForm, type IFormFieldOverride, type IObjectField, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 
 const mockForm: IForm = {
   id: 'testForm',
@@ -201,6 +202,76 @@ describe('mergers.ts', () => {
       })
 
       expect(result).toEqual([])
+    })
+
+    it('should apply a defaultValue override to a nested field inside a multiple:true object', () => {
+      // Arrange — form has multiple:true object with two nested fields, one has a defaultValue
+      const form: IForm = {
+        ...mockForm,
+        fields: [
+          {
+            id: 'entries',
+            type: 'object',
+            label: 'Entries',
+            multiple: true,
+            fields: [
+              { id: 'title', type: 'text', label: 'Title' },
+              { id: 'priority', type: 'number', label: 'Priority', defaultValue: 1 }
+            ]
+          } as IObjectField
+        ]
+      }
+
+      // Override: change the defaultValue of the nested field via IFormFieldOverride
+      const fieldOverrides = groupOverrideFieldsByProp([
+        [{ prop: 'entries.priority', defaultValue: 99 }]
+      ])
+
+      // Act — apply the override to the form
+      const mergedFields = mergeFields({ form, fieldOverrides })
+      const entriesField = mergedFields.find(f => f.id === 'entries') as IObjectField
+
+      // Assert — override applied correctly
+      const priorityField = entriesField?.fields?.find(f => f.id === 'priority')
+      expect(priorityField?.defaultValue).toBe(99)
+
+      // Also verify seedNestedDefaults seeds the overridden default into a new element
+      const newElement: IFormValues = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+      seedNestedDefaults(entriesField.fields, newElement, context)
+
+      expect(newElement.title).toBeUndefined()   // no default
+      expect(newElement.priority).toBe(99)        // overridden default applied
+    })
+
+    it('should preserve multiple:true flag and nested fields through mergeFields', () => {
+      const form: IForm = {
+        ...mockForm,
+        fields: [
+          {
+            id: 'tags',
+            type: 'object',
+            label: 'Tags',
+            multiple: true,
+            fields: [
+              { id: 'name', type: 'text', label: 'Name', defaultValue: 'tag' }
+            ]
+          } as IObjectField
+        ]
+      }
+
+      // Override only the label — multiple and fields should be untouched
+      const fieldOverrides = groupOverrideFieldsByProp([
+        [{ prop: 'tags', label: 'Tag List' }]
+      ])
+
+      const mergedFields = mergeFields({ form, fieldOverrides })
+      const tagsField = mergedFields.find(f => f.id === 'tags') as IObjectField
+
+      expect(tagsField.label).toBe('Tag List')
+      expect((tagsField as any).multiple).toBe(true)
+      expect(tagsField.fields?.length).toBe(1)
+      expect(tagsField.fields?.[0].defaultValue).toBe('tag')
     })
   })
   describe('applyOverridesToSchemaField', () => {
