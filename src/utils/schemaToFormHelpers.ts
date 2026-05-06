@@ -502,9 +502,10 @@ const mergeFormField = ({
     mergedField.id ??
     (path !== undefined ? path.split('.').pop() : (fieldOverride?.prop ?? field.id))
   const id = mergedField.id ?? makeFormFieldId([mergedField.id])
-  if (mergedField.type === 'object') {
+  if (mergedField.type === 'object' || mergedField.type === 'objectWrapper') {
     // attached to the schema field. defaults not overrides
-    const fieldFields = field?.type === 'object' ? (field.fields ?? []) : []
+    const fieldFields =
+      field?.type === 'object' || field?.type === 'objectWrapper' ? (field.fields ?? []) : []
     const fieldFieldsMap = Object.fromEntries(fieldFields.map((f) => [getPathFromField(f), f]))
     /* if (fieldPages !== undefined) {
       mergedField.pages = fieldPages
@@ -514,8 +515,14 @@ const mergeFormField = ({
     } */
 
     // attached to the field override. overrides
-    const overrideFields = fieldOverride?.type === 'object' ? (fieldOverride.fields ?? []) : []
-    const overrideFieldTabs = fieldOverride?.type === 'object' ? fieldOverride.tabs : undefined
+    const overrideFields =
+      fieldOverride?.type === 'object' || fieldOverride?.type === 'objectWrapper'
+        ? (fieldOverride.fields ?? [])
+        : []
+    const overrideFieldTabs =
+      fieldOverride?.type === 'object' || fieldOverride?.type === 'objectWrapper'
+        ? fieldOverride.tabs
+        : undefined
     // const overrideFieldPages = fieldOverride?.type === 'object' ? fieldOverride.pages : undefined
     const overrideFieldsMap = Object.fromEntries(
       overrideFields.filter((f): f is IFormFieldOverride => 'prop' in f).map((f) => [f.prop, f])
@@ -523,7 +530,9 @@ const mergeFormField = ({
 
     // attached to the form override. overrides
     const formOverrideFields =
-      formFieldOverrides.type === 'object' ? (formFieldOverrides.fields ?? []) : []
+      formFieldOverrides.type === 'object' || formFieldOverrides.type === 'objectWrapper'
+        ? (formFieldOverrides.fields ?? [])
+        : []
     const formOverrideFieldsMap = Object.fromEntries(
       formOverrideFields.filter((f): f is IFormFieldOverride => 'prop' in f).map((f) => [f.prop, f])
     )
