@@ -8,7 +8,7 @@ import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
-import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { useAtomValue } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 
@@ -85,7 +85,7 @@ export const WizardNavMobile = ({
             })}><CaretRightIcon className=***REMOVED***inline w-8 h-8***REMOVED*** /></span>
         }
       </div>
-      {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
+      {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormValues()} /> : SubmitButton}
     </>
   )
 }
@@ -201,7 +201,7 @@ export const WizardNavSmall = ({
             })}>Next</span>
            
         }
-         {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
+         {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? <SubmitButton formValues={useFormValues()} /> : SubmitButton}
       </div>
   )
 }
@@ -236,7 +236,6 @@ const WizardLayout = (props: IPageLayoutProps): ReactElement => {
 
 const WizardLayoutContent = ({
   sections,
-  onChange,
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
@@ -247,7 +246,7 @@ const WizardLayoutContent = ({
   if (sections === undefined) {
     return <></>
   }
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
   const sectionStatus = calculateSectionStatus(sections, formValues)
@@ -264,7 +263,6 @@ const WizardLayoutContent = ({
         <ContentComponent
             formSection={formSection}
             sectionStatus={sectionStatus}
-            onChange={onChange}
             level={level}
             />
         <SmallNavComponent

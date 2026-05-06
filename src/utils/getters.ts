@@ -219,8 +219,46 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
     
     // Handle object fields with nested children
     if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.fields) {
-      if (field.type === ***REMOVED***object***REMOVED*** && !field.skip_path) {
-        // For non-skip_path objects, build nested payload from children
+      // Check for multiple object first (array of objects with nested structure)
+      if (getFieldMultiple(field) && Array.isArray(value)) {
+        const arrayPayload = (value as IFormValues[]).map((item) => {
+          const itemPayload: IFormValues = {}
+          if (field.fields) {
+            field.fields.forEach((childField) => {
+              if (childField.excludeFromPayload !== true) {
+                // For nested objects, recurse to handle them properly
+                if ((childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) && childField.fields) {
+                  const nestedPayload: IFormValues = {}
+                  childField.fields.forEach(grandchildField => {
+                    if (grandchildField.excludeFromPayload !== true) {
+                      const grandchildId = grandchildField.id
+                      if (item[childField.id]?.[grandchildId] !== undefined) {
+                        nestedPayload[grandchildId] = item[childField.id][grandchildId]
+                      }
+                    }
+                  })
+                  if (Object.keys(nestedPayload).length > 0) {
+                    itemPayload[childField.id] = nestedPayload
+                  }
+                } else {
+                  const childFieldId = childField.id
+                  if (item[childFieldId] !== undefined) {
+                    itemPayload[childFieldId] = item[childFieldId]
+                  }
+                }
+              }
+            })
+          }
+          return itemPayload
+        })
+        set(payload, path, arrayPayload)
+      } else if (field.skip_path) {
+        // For skip_path objects, process children at current level
+        field.fields.forEach(childField => {
+          processField(childField, parentPath)
+        })
+      } else if (!getFieldMultiple(field)) {
+        // For non-skip_path, non-multiple objects, build nested payload from children
         const nestedPayload: IFormValues = {}
         field.fields.forEach(childField => {
           const childPath = makeJsonPath(childField)
@@ -235,29 +273,7 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
         if (Object.keys(nestedPayload).length > 0) {
           set(payload, path, nestedPayload)
         }
-      } else if (field.skip_path) {
-        // For skip_path objects, process children at current level
-        field.fields.forEach(childField => {
-          processField(childField, parentPath)
-        })
       }
-    } else if (field.type === ***REMOVED***object***REMOVED*** && getFieldMultiple(field) && field.fields && Array.isArray(value)) {
-      // Handle multiple object fields (arrays with nested structure)
-      const arrayPayload = (value as IFormValues[]).map((item) => {
-        const itemPayload: IFormValues = {}
-        if (field.fields) {
-          field.fields.forEach((childField) => {
-            if (childField.excludeFromPayload !== true) {
-              const childFieldId = childField.id
-              if (item[childFieldId] !== undefined) {
-                itemPayload[childFieldId] = item[childFieldId]
-              }
-            }
-          })
-        }
-        return itemPayload
-      })
-      set(payload, path, arrayPayload)
     } else if (value !== undefined) {
       // Simple scalar or non-nested value
       set(payload, path, value)
