@@ -7,7 +7,8 @@ const SingleSelectInput = ({ field, onChange, value, disabled }: IFieldInputProp
   const initialValue = value !== undefined ? value : ***REMOVED******REMOVED***
 
   if (field.type === ***REMOVED***select***REMOVED*** && field.options !== undefined) {
-    return <SelectInput
+    return <>
+    <SelectInput
         id={field.id}
         label={<FieldLabel
           field={field}
@@ -23,6 +24,7 @@ const SingleSelectInput = ({ field, onChange, value, disabled }: IFieldInputProp
           onChange(e?.value)
         }}
       />
+      </>
   }
   return <p>Field config for {field.id} is missing &apos;options&apos;</p>
 }

@@ -783,5 +783,92 @@ describe(***REMOVED***formEngine - Field Logic Evaluation***REMOVED***, () => {
       // new null slot gets the default
       expect(formValues.items[1].label).toBe(***REMOVED***Default Label***REMOVED***)
     })
+
+    it(***REMOVED***BUG FIX: multiple=true object field initializes as [] not {}***REMOVED***, () => {
+      // Before fix: formValues[field.id] = {} → Array.isArray check failed → defaults never seeded
+      const fields: IFormField[] = [
+        {
+          id: ***REMOVED***contacts***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          label: ***REMOVED***Contacts***REMOVED***,
+          multiple: true,
+          fields: [{ id: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED***, defaultValue: ***REMOVED***Unknown***REMOVED*** }],
+        },
+      ]
+
+      const formValues: any = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      // Should be an empty array (no items yet), not {}
+      expect(Array.isArray(formValues.contacts)).toBe(true)
+      expect(formValues.contacts).toHaveLength(0)
+    })
+
+    it(***REMOVED***BUG FIX: flat field list does not write nested defaults at root level***REMOVED***, () => {
+      // Simulates the old bug in seedFormValuesWithDefaults where getFieldsFromFormSection
+      // returned a flat list [parentObject, nestedChild] and the nestedChild would be
+      // processed at root level, creating formValues[***REMOVED***city***REMOVED***] instead of formValues[***REMOVED***address***REMOVED***][***REMOVED***city***REMOVED***]
+      const parentField: IFormField = {
+        id: ***REMOVED***address***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        label: ***REMOVED***Address***REMOVED***,
+        fields: [{ id: ***REMOVED***city***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***City***REMOVED***, defaultValue: ***REMOVED***Boston***REMOVED*** }],
+      }
+      const nestedField: IFormField = {
+        id: ***REMOVED***city***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        label: ***REMOVED***City***REMOVED***,
+        defaultValue: ***REMOVED***Boston***REMOVED***,
+      }
+
+      // Passing the correct hierarchical list (only the parent)
+      const formValuesCorrect: any = {}
+      seedNestedDefaults([parentField], formValuesCorrect, { rootFormValues: {} })
+
+      expect(formValuesCorrect.address.city).toBe(***REMOVED***Boston***REMOVED***)   // correct
+      expect(formValuesCorrect.city).toBeUndefined()          // no root-level leak
+
+      // Passing the flattened list (the old bug) would create formValues.city at root
+      const formValuesBuggy: any = {}
+      seedNestedDefaults([parentField, nestedField], formValuesBuggy, { rootFormValues: {} })
+
+      expect(formValuesBuggy.address.city).toBe(***REMOVED***Boston***REMOVED***)  // still set correctly by parent
+      expect(formValuesBuggy.city).toBe(***REMOVED***Boston***REMOVED***)          // ← leaked to root (the old bug)
+    })
+
+    it(***REMOVED***override-only field with defaultValue gets seeded into formValues***REMOVED***, () => {
+      // This tests the case where a field is added via override (not in schema)
+      // e.g., shape_type: control field not in schema but declared in fields.json
+      const fields: IFormField[] = [
+        {
+          id: ***REMOVED***shape_type***REMOVED***,
+          type: ***REMOVED***select***REMOVED***,
+          label: ***REMOVED***Shape***REMOVED***,
+          defaultValue: ***REMOVED***point***REMOVED***,
+          options: [
+            { label: ***REMOVED***Point***REMOVED***, value: ***REMOVED***point***REMOVED*** },
+            { label: ***REMOVED***Polygon***REMOVED***, value: ***REMOVED***polygon***REMOVED*** },
+          ],
+          excludeFromPayload: true,
+        },
+        {
+          id: ***REMOVED***geojson***REMOVED***,
+          type: ***REMOVED***text***REMOVED***,
+          label: ***REMOVED***GeoJSON***REMOVED***,
+          defaultValue: null,
+        },
+      ]
+
+      const formValues: any = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      // Both fields should have their defaults applied
+      expect(formValues.shape_type).toBe(***REMOVED***point***REMOVED***)
+      expect(formValues.geojson).toBe(null)
+    })
   })
 })

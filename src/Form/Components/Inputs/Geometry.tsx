@@ -778,7 +778,7 @@ export const GeometryInput = ({
             <TextArea
               error={error}
               disabled={disabled}
-              className="min-h-[100px] bg-slate-50 rounded-lg shadow-inner font-mono text-sm"
+              className="min-h-25 bg-slate-50 rounded-lg shadow-inner font-mono text-sm"
               id={`${field.id}-coordinates`}
               testId={`${field.id}-coordinates`}
               value={coordinates}

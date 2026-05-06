@@ -1,8 +1,16 @@
-import { type IFormSection, type IFormValues, type IValueType, type IFormField, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { get } from ***REMOVED***lodash-es***REMOVED***
+import { type IFormSection, type IFormValues, type IValueType, type IFormField, type IObjectField, type IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { get, set } from ***REMOVED***lodash-es***REMOVED***
+
+/**
+ * Safely gets the `multiple` property from a form field
+ */
+const getFieldMultiple = (field: IFormField | { multiple?: boolean }): boolean => {
+  return (field as { multiple?: boolean }).multiple ?? false
+}
 
 const getFieldExtra = (field: IFormField, index?: number): string => {
-  return field.multiple && (field.index !== undefined || index !== undefined)
+  const multiple = getFieldMultiple(field)
+  return multiple && (field.index !== undefined || index !== undefined)
     ? `[${index ?? field.index}]`
     : ***REMOVED******REMOVED***
 }
@@ -26,7 +34,8 @@ export const makeJsonPath = (field: IFormField, index?: number): string | undefi
     const path = field.path
     const pathLen = path.length
     return field.path.map((f, i) => {
-      const defaultMultipleIndex = f.multiple && f.index === undefined && i < (pathLen - 1) ? 0 : undefined
+      const fMultiple = getFieldMultiple(f)
+      const defaultMultipleIndex = fMultiple && f.index === undefined && i < (pathLen - 1) ? 0 : undefined
       return `${f.id}${`${getFieldExtra(f, i >= pathLen - 1 ? index : defaultMultipleIndex)}`}`
     }).join(***REMOVED***.***REMOVED***)
   }
@@ -95,13 +104,14 @@ export function getValueFromRelativePath (field: IFormField, path: string, formV
   const offset = field.type === ***REMOVED***object***REMOVED*** && field.skip_path ? 0 : 1
   if (backPath > 0 && (fieldPathFields.length - offset) >= backPath) {
     const targetField = fieldPathFields[fieldPathFields.length - backPath - offset]
+    const targetMultiple = getFieldMultiple(targetField)
     const valueAtRoot = getFieldValue(
       {
         ...targetField,
         path: targetField.path ?? fieldPathFields.slice(0, fieldPathFields.length - backPath - offset + 1)
       },
       formValues,
-      targetField.multiple ? targetField.index : undefined
+      targetMultiple ? targetField.index : undefined
     )
 
     if (valueAtRoot === undefined || valueAtRoot === null) {
@@ -159,7 +169,7 @@ export function getPathFromField (field: IFormField): string | undefined {
 }
 
 /**
- * Returns all fields and child from a given form section. A form can be a form section or a wizard step or a page. This will recursively find child fields in pages, wizard steps and object fields
+ * Returns all fields and child from a given form section. A form can be a form section or a wizard step or a page. This will recursively find child fields in pages, wizard steps, tabs and object fields
  *
  * @param formSection - The form section to get the fields from
  * @returns An array of fields from the given form section
@@ -167,6 +177,95 @@ export function getPathFromField (field: IFormField): string | undefined {
 export function getFieldsFromFormSection (formSection: IFormSection): IFormField[] {
   const pageFields = formSection?.pages?.map(p => getFieldsFromFormSection(p)).flat(1)
   const wizardFields = formSection?.wizard_steps?.map(p => getFieldsFromFormSection(p)).flat(1)
-  const fields = getFields((formSection?.fields ?? [])).concat(pageFields ?? []).concat(wizardFields ?? [])
+  const tabFields = formSection?.tabs?.map(t => getFieldsFromFormSection(t)).flat(1)
+  const fields = getFields((formSection?.fields ?? [])).concat(pageFields ?? []).concat(wizardFields ?? []).concat(tabFields ?? [])
   return fields
+}
+
+/**
+ * Extracts form payload, excluding fields marked with excludeFromPayload=true.
+ * 
+ * Fields artificially added via overrides (not in schema) are auto-marked for exclusion,
+ * but can be forced back into payload with excludeFromPayload=false.
+ * 
+ * Gathers fields from all form sections (top-level fields, pages, wizard_steps, tabs).
+ * 
+ * @param formValues - The complete form values object
+ * @param form - The form containing all fields (top-level, in pages, wizard_steps, or tabs)
+ * @returns Clean payload object with excluded fields removed
+ */
+export function getFormPayload(formValues: IFormValues, form: IForm): IFormValues {
+  // Gather all fields from the form (including those nested in pages, wizard_steps, tabs)
+  const allFields = getFieldsFromFormSection(form)
+
+  if (allFields.length === 0) {
+    return {}
+  }
+
+  const payload: IFormValues = {}
+
+  const processField = (field: IFormField, parentPath?: string[]): void => {
+    // Skip fields marked for exclusion
+    if (field.excludeFromPayload === true) {
+      return
+    }
+
+    const path = makeJsonPath(field)
+    if (!path) {
+      return
+    }
+
+    const value = getValueFromPath(path, formValues)
+    
+    // Handle object fields with nested children
+    if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.fields) {
+      if (field.type === ***REMOVED***object***REMOVED*** && !field.skip_path) {
+        // For non-skip_path objects, build nested payload from children
+        const nestedPayload: IFormValues = {}
+        field.fields.forEach(childField => {
+          const childPath = makeJsonPath(childField)
+          if (childPath && childField.excludeFromPayload !== true) {
+            const childValue = getValueFromPath(childPath, formValues)
+            if (childValue !== undefined) {
+              set(nestedPayload, childPath, childValue)
+            }
+          }
+        })
+        
+        if (Object.keys(nestedPayload).length > 0) {
+          set(payload, path, nestedPayload)
+        }
+      } else if (field.skip_path) {
+        // For skip_path objects, process children at current level
+        field.fields.forEach(childField => {
+          processField(childField, parentPath)
+        })
+      }
+    } else if (field.type === ***REMOVED***object***REMOVED*** && getFieldMultiple(field) && field.fields && Array.isArray(value)) {
+      // Handle multiple object fields (arrays with nested structure)
+      const arrayPayload = (value as IFormValues[]).map((item) => {
+        const itemPayload: IFormValues = {}
+        if (field.fields) {
+          field.fields.forEach((childField) => {
+            if (childField.excludeFromPayload !== true) {
+              const childFieldId = childField.id
+              if (item[childFieldId] !== undefined) {
+                itemPayload[childFieldId] = item[childFieldId]
+              }
+            }
+          })
+        }
+        return itemPayload
+      })
+      set(payload, path, arrayPayload)
+    } else if (value !== undefined) {
+      // Simple scalar or non-nested value
+      set(payload, path, value)
+    }
+  }
+
+  allFields.forEach((field) => {
+    processField(field)
+  })
+  return payload
 }

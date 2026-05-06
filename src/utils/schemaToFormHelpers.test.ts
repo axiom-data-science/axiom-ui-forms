@@ -11,6 +11,7 @@ import {
   getSchemaPathDescriptors,
   mergeObjects
 } from ***REMOVED***./schemaToFormHelpers***REMOVED***
+import type { IFormFieldOverride, IFormOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
 describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
   describe(***REMOVED***validateSchema***REMOVED***, () => {
@@ -155,6 +156,49 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       })
       expect(form.label).toBe(***REMOVED***Overridden***REMOVED***)
       expect(form?.fields?.[0]?.label).toBe(***REMOVED***Bar***REMOVED***)
+    })
+
+    it(***REMOVED***preserves defaultValue for override-only fields***REMOVED***, () => {
+      // This is the DefaultValue test case: shape_type is not in schema but added via override
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          geojson: { type: ***REMOVED***object***REMOVED***, title: ***REMOVED***Geojson***REMOVED*** }
+        }
+      }
+
+      // Field override adds shape_type with defaultValue: "point"
+      const fieldOverrides: IFormFieldOverride[] = [
+        {
+          prop: ***REMOVED***shape_type***REMOVED***,
+          type: ***REMOVED***select***REMOVED***,
+          label: ***REMOVED***Shape***REMOVED***,
+          defaultValue: ***REMOVED***point***REMOVED***,
+          options: [
+            { label: ***REMOVED***Point***REMOVED***, value: ***REMOVED***point***REMOVED*** },
+            { label: ***REMOVED***Polygon***REMOVED***, value: ***REMOVED***polygon***REMOVED*** }
+          ]
+        }
+      ]
+
+      // Form override specifies shape_type in fields
+      const formOverride: IFormOverride = {
+        label: ***REMOVED***GeoJSON Form***REMOVED***,
+        fields: [{ prop: ***REMOVED***shape_type***REMOVED*** }]
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [formOverride],
+        formFieldOverrides: [fieldOverrides]
+      })
+
+      // shape_type should be in form.fields with all its properties from the override
+      const shapeTypeField = form.fields?.find(f => f.id === ***REMOVED***shape_type***REMOVED***)
+      expect(shapeTypeField).toBeDefined()
+      expect(shapeTypeField?.type).toBe(***REMOVED***select***REMOVED***)
+      expect(shapeTypeField?.defaultValue).toBe(***REMOVED***point***REMOVED***)
+      expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion
     })
   })
 
