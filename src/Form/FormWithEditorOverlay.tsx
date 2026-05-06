@@ -1,4 +1,4 @@
-import React, { type ReactNode, useContext, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactNode, useContext, useState, type ReactElement, useEffect } from ***REMOVED***react***REMOVED***
 import FormCreator, { IFormCreatorProps, SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
@@ -11,6 +11,8 @@ import { useAtom } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { ObjectToSchemaButton } from ***REMOVED***@/Form/Creator/ObjectToSchema***REMOVED***
 import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
+import { getFormPayload } from ***REMOVED***@/utils/getters***REMOVED***
+import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 
 const Footer = ({ formValues }: { formValues?: IFormValues }): ReactElement => {
   return (
@@ -32,11 +34,15 @@ const fixOverLayWidth = (width: number): number => {
   )
 }
 
-const FormOutput = (): ReactElement => {
+const FormOutput = ({ form }: { form: IForm }): ReactElement => {
   const { formValues } = useFormContext()
+  const [formOutput, setFormOutput] = useState<string>(JSON.stringify(getFormPayload(formValues, form), null, 2))
+  useEffect(() => {
+    setFormOutput(JSON.stringify(getFormPayload(formValues, form), null, 2))
+  }, [formValues, form])
   return (
     <pre className=***REMOVED***h-full whitespace-pre-wrap overflow-auto p-4 bg-slate-100 text-xs***REMOVED***>
-      {JSON.stringify(formValues, null, 2)}
+      {formOutput}
     </pre>
   )
 }
@@ -152,7 +158,7 @@ export const FormWithEditorOverlay = ({
                       {
                         id: ***REMOVED***form-output***REMOVED***,
                         label: ***REMOVED***Form output***REMOVED***,
-                        content: <FormOutput />
+                        content: <FormOutput form={formInput} />
                       }
 
                     ].filter(t => t !== undefined)}
@@ -190,6 +196,9 @@ const SchemaFormWithEditorOverlay = ({
   const [formOverrideInput, setFormOverrideInput] = formOverrideState ?? useState<IFormOverride | undefined>(undefined)
   const [layout] = useAtom(layoutAtom)
 
+  const formOverrides = formOverrideInput !== undefined ? [formOverrideInput] : undefined
+  const formFieldOverrides = [rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)
+
   return (
 
     <div className={`${layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED*** ? ***REMOVED***m-4***REMOVED*** : ***REMOVED***m-10 mt-4***REMOVED***} relative`}>
@@ -201,8 +210,8 @@ const SchemaFormWithEditorOverlay = ({
             label={label}
             inputOverrides={inputOverrides}
             schema={schemaInput}
-            formOverrides={formOverrideInput !== undefined ? [formOverrideInput] : undefined}
-            formFieldOverrides={[rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)}
+            formOverrides={formOverrides}
+            formFieldOverrides={formFieldOverrides}
             Footer={Footer}
             Header={<FormEditor>
               <>
@@ -287,7 +296,13 @@ const SchemaFormWithEditorOverlay = ({
                     {
                       id: ***REMOVED***form-output***REMOVED***,
                       label: ***REMOVED***Form output***REMOVED***,
-                      content: <FormOutput />
+                      content: <FormOutput form={formOverrides === undefined && formFieldOverrides === undefined
+                          ? schemaToFormObject(schemaInput)
+                          : overridesAndSchemaToFormObject({
+                            formOverrides,
+                            formFieldOverrides,
+                            schema: schemaInput
+                          }) } />
                     }
 
                   ].filter(t => t !== undefined)}

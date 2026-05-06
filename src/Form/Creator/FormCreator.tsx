@@ -1,11 +1,10 @@
 ***REMOVED***use client***REMOVED***
 
 import { FormContext, IFormContextValue, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { type IFormValues, type IForm, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormValues, type IForm, type IFormSection, type IFormField, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
-import { getFieldsFromFormSection, getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
-import { cloneObject, copyAndAddPathToFields, updateFormValuesWithFieldValueInPlace } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
 import layoutAtom, { getWindowSize } from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
@@ -98,20 +97,22 @@ export const SchemaFormCreator = ({
 
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
-  
-  // Get all fields from the form (including nested ones)
-  const fields = getFieldsFromFormSection(form)
-  
-  // Use the formEngine***REMOVED***s seedNestedDefaults for comprehensive default handling
-  // This handles:
-  // - Top-level field defaults
-  // - Nested object field defaults
-  // - Array element (multiple=true) defaults
-  // - Condition-driven defaults
-  seedNestedDefaults(fields, formValues, {
-    rootFormValues: formValues
-  })
-  
+
+  // Gather only the *direct* fields of each section level — do NOT recurse into
+  // object field children here. seedNestedDefaults handles that recursion itself.
+  // Passing a pre-flattened list (e.g. from getFieldsFromFormSection) would cause
+  // nested children to be processed a second time at root level, incorrectly writing
+  // defaults like formValues[***REMOVED***child***REMOVED***] instead of formValues[***REMOVED***parent***REMOVED***][***REMOVED***child***REMOVED***].
+  const gatherSectionFields = (section: IFormSection): IFormField[] => {
+    const direct = section.fields ?? []
+    const fromPages = (section.pages ?? []).flatMap(p => gatherSectionFields(p))
+    const fromWizard = (section.wizard_steps ?? []).flatMap(ws => gatherSectionFields(ws))
+    const fromTabs = (section.tabs ?? []).flatMap(t => gatherSectionFields(t))
+    return [...direct, ...fromPages, ...fromWizard, ...fromTabs]
+  }
+
+  seedNestedDefaults(gatherSectionFields(form), formValues, { rootFormValues: formValues })
+
   return formValues
 }
 
@@ -132,12 +133,6 @@ const FormCreator = ({
   initialFormValues
 }: IFormCreatorProps): ReactElement => {
   const activeForm = copyAndAddPathToFields(form)
-  const activeFormValues = cloneObject(formValueState?.[0] ?? {})
-  getFieldsFromFormSection(activeForm).forEach(field => {
-    if (field.defaultValue !== undefined && getFieldValue(field, activeFormValues) === undefined) {
-      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, activeFormValues)
-    }
-  })
   const [formValues, setFormValues] = formValueState ?? useState<IFormValues>({
     ...seedFormValuesWithDefaults(activeForm),
     ...initialFormValues

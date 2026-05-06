@@ -6,7 +6,8 @@ import {
   getValueFromPath,
   getFieldValue,
   getPathFromField,
-  getFieldsFromFormSection
+  getFieldsFromFormSection,
+  getFormPayload
 } from ***REMOVED***./getters***REMOVED***
 import { type IFormSection, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
@@ -188,6 +189,81 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const formSection = { id: ***REMOVED***section2***REMOVED***, label: ***REMOVED***Section 2***REMOVED*** }
       const result = getFieldsFromFormSection(formSection)
       expect(result).toEqual([])
+    })
+  })
+
+  describe(***REMOVED***getFormPayload***REMOVED***, () => {
+    it(***REMOVED***should exclude fields marked with excludeFromPayload=true***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          { id: ***REMOVED***shape_type***REMOVED***, type: ***REMOVED***select***REMOVED***, excludeFromPayload: true } as any,
+          { id: ***REMOVED***geojson***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any
+        ]
+      } as any
+      const formValues = {
+        shape_type: ***REMOVED***point***REMOVED***,
+        geojson: { type: ***REMOVED***Point***REMOVED***, coordinates: [0, 0] }
+      }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({ geojson: { type: ***REMOVED***Point***REMOVED***, coordinates: [0, 0] } })
+      expect(result).not.toHaveProperty(***REMOVED***shape_type***REMOVED***)
+    })
+
+    it(***REMOVED***should include fields with excludeFromPayload=false even if marked***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          { id: ***REMOVED***control_field***REMOVED***, type: ***REMOVED***select***REMOVED***, excludeFromPayload: false } as any,
+          { id: ***REMOVED***data_field***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any
+        ]
+      } as any
+      const formValues = {
+        control_field: ***REMOVED***value1***REMOVED***,
+        data_field: ***REMOVED***value2***REMOVED***
+      }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({ control_field: ***REMOVED***value1***REMOVED***, data_field: ***REMOVED***value2***REMOVED*** })
+    })
+
+    it(***REMOVED***should return empty payload when no fields or all excluded***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          { id: ***REMOVED***excluded1***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any,
+          { id: ***REMOVED***excluded2***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any
+        ]
+      } as any
+      const formValues = { excluded1: ***REMOVED***val1***REMOVED***, excluded2: ***REMOVED***val2***REMOVED*** }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({})
+    })
+
+    it(***REMOVED***should gather fields from pages when top-level fields are empty***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        pages: [
+          {
+            id: ***REMOVED***page1***REMOVED***,
+            label: ***REMOVED***Page 1***REMOVED***,
+            fields: [
+              { id: ***REMOVED***field1***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any,
+              { id: ***REMOVED***field2***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any
+            ]
+          }
+        ]
+      } as any
+      const formValues = {
+        field1: ***REMOVED***value1***REMOVED***,
+        field2: ***REMOVED***excluded_value***REMOVED***
+      }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({ field1: ***REMOVED***value1***REMOVED*** })
+      expect(result).not.toHaveProperty(***REMOVED***field2***REMOVED***)
     })
   })
 })

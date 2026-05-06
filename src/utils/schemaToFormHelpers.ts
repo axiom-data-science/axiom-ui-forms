@@ -10,7 +10,6 @@ import {
   type IFormSection,
   type IWizardStep,
   type IValueType,
-  type INumberField,
   type IFormLayoutTab,
 } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Ajv, { type ValidateFunction } from ***REMOVED***ajv***REMOVED***
@@ -290,14 +289,10 @@ const schemaToFormField = ({
   ])
   const label = makeLabel([schemaField.title, property])
   const schemaRequired = schema.required ?? []
-  const ob: Pick<
-    IFormField,
-    ***REMOVED***id***REMOVED*** | ***REMOVED***label***REMOVED*** | ***REMOVED***description***REMOVED*** | ***REMOVED***multiple***REMOVED*** | ***REMOVED***required***REMOVED*** | ***REMOVED***defaultValue***REMOVED***
-  > = {
+  const baseFieldProps = {
     id,
     label,
     description: schemaField.description,
-    multiple,
     defaultValue:
       schemaField.default !== undefined ? (schemaField.default as IValueType) : undefined,
     required: schemaRequired.includes(property) ?? false,
@@ -315,21 +310,21 @@ const schemaToFormField = ({
       type === ***REMOVED***number***REMOVED*** &&
       (schemaField.minimum !== undefined || schemaField.maximum !== undefined)
     ) {
-      const numberOb = ob as INumberField
-      numberOb.constraints = numberOb.constraints ?? {}
+      const constraints: Record<string, number> = {}
       if (schemaField.minimum !== undefined) {
-        numberOb.constraints.min = schemaField.minimum
+        constraints.min = schemaField.minimum
       }
       if (schemaField.maximum !== undefined) {
-        numberOb.constraints.max = schemaField.maximum
+        constraints.max = schemaField.maximum
       }
       return {
-        ...numberOb,
+        ...baseFieldProps,
         type,
+        constraints,
       }
     }
     return {
-      ...ob,
+      ...baseFieldProps,
       type,
     }
   }
@@ -354,7 +349,7 @@ const schemaToFormField = ({
       })
       .filter((d) => d !== null)
     return {
-      ...ob,
+      ...baseFieldProps,
       type: options.find((d) => d.description !== undefined) ? ***REMOVED***radio***REMOVED*** : type,
       options,
     }
@@ -446,7 +441,7 @@ const schemaToFormField = ({
     })
 
     return {
-      ...ob,
+      ...baseFieldProps,
       type,
       fields,
       multiple,
@@ -454,7 +449,7 @@ const schemaToFormField = ({
   }
 
   return {
-    id,
+    ...baseFieldProps,
     type: ***REMOVED***text***REMOVED***,
     multiple,
   }
@@ -478,30 +473,42 @@ const mergeFormField = ({
   schemaFieldMap,
   schemaForm,
 }: {
-  field: IFormField
+  field?: IFormField
   fieldOverride?: IFormFieldOverride
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
   schemaFieldMap: Record<string, IFormField>
   schemaForm: IForm
 }): IFormField => {
-  const path = fieldOverride?.prop ?? makeJsonPath(field ?? fieldOverride)
+  const path = fieldOverride?.prop ?? (field ? makeJsonPath(field) : undefined)
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(
     formFieldsOverrideMap.map((overrides) => overrides[path ?? ***REMOVED******REMOVED***]).filter((d) => d !== undefined)
   )
+  
+  // Auto-exclude artificially added fields (not in schema) from payload
+  // unless explicitly set to includeInPayload (excludeFromPayload: false)
+  // Exception: if destPath is EXPLICITLY set in override to a schema location, include it
+  const isFromOverrideOnly = field === undefined && fieldOverride !== undefined
+  const hasExplicitExcludeOverride = fieldOverride?.excludeFromPayload !== undefined || formFieldOverrides.excludeFromPayload !== undefined
+  const hasExplicitDestPath = fieldOverride?.destPath !== undefined || formFieldOverrides?.destPath !== undefined
+  
   const mergedField = {
     ...mergeObjects<IFormFieldOverride | IFormField>([
-      {
-        ...field,
-        destPath: path,
-      },
+      field ? { ...field, destPath: path } : ({ destPath: path } as any),
       formFieldOverrides,
       (fieldOverride ?? {}) as IFormFieldOverride,
     ]),
   }
+  
+  // Auto-set excludeFromPayload for artificially added fields
+  // If the override-only field has an EXPLICIT destPath, it***REMOVED***s writing to schema, so include it
+  // If no explicit destPath, it***REMOVED***s UI-only, so exclude it
+  if (isFromOverrideOnly && !hasExplicitExcludeOverride) {
+    mergedField.excludeFromPayload = !hasExplicitDestPath
+  }
   const labelProp =
     mergedField.id ??
-    (path !== undefined ? path.split(***REMOVED***.***REMOVED***).pop() : (fieldOverride?.prop ?? field.id))
-  const id = mergedField.id ?? makeFormFieldId([mergedField.id])
+    (path !== undefined ? path.split(***REMOVED***.***REMOVED***).pop() : (fieldOverride?.prop ?? field?.id))
+  const id = mergedField.id ?? fieldOverride?.prop ?? makeFormFieldId([path?.split(***REMOVED***.***REMOVED***)[0]])
   if (mergedField.type === ***REMOVED***object***REMOVED*** || mergedField.type === ***REMOVED***objectWrapper***REMOVED***) {
     // attached to the schema field. defaults not overrides
     const fieldFields =

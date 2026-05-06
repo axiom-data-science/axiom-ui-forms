@@ -96,7 +96,7 @@ const getFieldWrapperClass = (field: IFormField): string => {
   const cl = []
   const level = field.level ?? 0
   const type = field.type
-  const multiple = field.multiple ?? false
+  const multiple = field.type === ***REMOVED***object***REMOVED*** ? (field.multiple ?? false) : false
   if (((type === ***REMOVED***object***REMOVED*** || type === ***REMOVED***objectWrapper***REMOVED***) && level > 1) || multiple) {
     cl.push(***REMOVED***p-4***REMOVED***)
     if (level > 0) {
@@ -217,7 +217,7 @@ export const MultipleFieldCreator = ({
   const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
 
   if (
-    (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) &&
+    field.type === ***REMOVED***object***REMOVED*** &&
     field.skip_path === true &&
     field.multiple === true
   ) {
@@ -226,8 +226,8 @@ export const MultipleFieldCreator = ({
         <FieldLabel field={field} disabled={disabled} />
         <p className="text-rose-700">
           <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error with field{***REMOVED*** ***REMOVED***}
-          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> Object and wrapper
-          fields with multiple true and skip_path true are not supported.
+          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> Object fields
+          with multiple true and skip_path true are not supported.
         </p>
       </div>
     )
@@ -337,7 +337,7 @@ const FieldCreator = ({
             extras: [disabled ? disabledClassName : undefined, getFieldWrapperClass(field)],
           })}
         >
-          {field.multiple === true ? (
+          {field.type === ***REMOVED***object***REMOVED*** && field.multiple === true ? (
             <MultipleFieldCreator field={field} disabled={disabled} onChange={onChange} />
           ) : (
             <InputComponent

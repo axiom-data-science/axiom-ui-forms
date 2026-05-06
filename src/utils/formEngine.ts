@@ -218,9 +218,9 @@ export function seedNestedDefaults(
 
   for (const field of fields) {
     if (field.type === ***REMOVED***object***REMOVED*** && field.fields) {
-      // For object fields, ensure container exists and seed nested fields
+      // For multiple=true object fields the container is an array; for single objects it***REMOVED***s {}
       if (!formValues[field.id]) {
-        formValues[field.id] = {}
+        formValues[field.id] = field.multiple ? [] : {}
       }
 
       if (field.multiple) {
@@ -248,6 +248,10 @@ export function seedNestedDefaults(
         }
       }
     } else {
+      // objectWrapper fields are UI-only containers (skip_path: true, no value storage)
+      // — they have no defaultValue to apply and TypeScript omits ***REMOVED***multiple***REMOVED*** from their type
+      if (field.type === ***REMOVED***objectWrapper***REMOVED***) continue
+
       // For non-object fields, check and apply defaults
       // Use the raw field.id for direct access (not destPath)
       const currentValue = formValues[field.id]

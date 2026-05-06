@@ -1,0 +1,19 @@
+    {
+    "properties": {
+        "geojson": {
+        "anyOf": [
+            {
+            "additionalProperties": true,
+            "type": "object"
+            },
+            {
+            "type": "null"
+            }
+        ],
+        "default": null,
+        "description": "GeoJSON describing a polygon within which to seed drifters; must contain \"geometry\". If this is set, `lon` and `lat` should be None.",
+        "ptm_level": 1,
+        "title": "Geojson"
+        }
+    }
+}
