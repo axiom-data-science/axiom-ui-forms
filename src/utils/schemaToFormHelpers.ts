@@ -486,8 +486,10 @@ const mergeFormField = ({
   
   // Auto-exclude artificially added fields (not in schema) from payload
   // unless explicitly set to includeInPayload (excludeFromPayload: false)
-  // Exception: if destPath is EXPLICITLY set in override to a schema location, include it
+  // Exception 1: if destPath is EXPLICITLY set in override to a schema location, include it
+  // Exception 2: if the schema has no properties at all, nothing is "override-only" — include all
   const isFromOverrideOnly = field === undefined && fieldOverride !== undefined
+  const schemaHasProperties = Object.keys(schemaFieldMap).length > 0
   const hasExplicitExcludeOverride = fieldOverride?.excludeFromPayload !== undefined || formFieldOverrides.excludeFromPayload !== undefined
   const hasExplicitDestPath = fieldOverride?.destPath !== undefined || formFieldOverrides?.destPath !== undefined
   
@@ -500,10 +502,11 @@ const mergeFormField = ({
   }
   
   // Auto-set excludeFromPayload for artificially added fields
+  // If the schema has no properties, all fields are intentional — include them
   // If the override-only field has an EXPLICIT destPath, it***REMOVED***s writing to schema, so include it
-  // If no explicit destPath, it***REMOVED***s UI-only, so exclude it
+  // If no explicit destPath and schema exists, it***REMOVED***s UI-only, so exclude it
   if (isFromOverrideOnly && !hasExplicitExcludeOverride) {
-    mergedField.excludeFromPayload = !hasExplicitDestPath
+    mergedField.excludeFromPayload = schemaHasProperties ? !hasExplicitDestPath : false
   }
   const labelProp =
     mergedField.id ??

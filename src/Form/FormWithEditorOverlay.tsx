@@ -2,7 +2,7 @@ import React, { type ReactNode, useContext, useState, type ReactElement, useEffe
 import FormCreator, { IFormCreatorProps, SchemaFormCreator } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import { CopyButton } from ***REMOVED***@/Form/Manage/CopyableJSONOutput***REMOVED***
-import { FormContext, IFormContextValue, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { FormContext, IFormContextValue, useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { CheckIcon, CopyIcon, Cross2Icon, DragHandleDots2Icon, Pencil2Icon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { type IFormOverride, type IFormFieldOverride, type IFieldInputProps, type IForm, type IFormValueState, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { Tabs, Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
@@ -35,7 +35,7 @@ const fixOverLayWidth = (width: number): number => {
 }
 
 const FormOutput = ({ form }: { form: IForm }): ReactElement => {
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
   const [formOutput, setFormOutput] = useState<string>(JSON.stringify(getFormPayload(formValues, form), null, 2))
   useEffect(() => {
     setFormOutput(JSON.stringify(getFormPayload(formValues, form), null, 2))

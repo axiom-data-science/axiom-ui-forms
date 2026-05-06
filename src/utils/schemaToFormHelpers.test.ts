@@ -198,7 +198,32 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(shapeTypeField).toBeDefined()
       expect(shapeTypeField?.type).toBe(***REMOVED***select***REMOVED***)
       expect(shapeTypeField?.defaultValue).toBe(***REMOVED***point***REMOVED***)
-      expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion
+      expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion (schema has properties)
+    })
+
+    it(***REMOVED***does not auto-exclude override-only fields when schema has no properties***REMOVED***, () => {
+      const schema: JSONSchema6 = { type: ***REMOVED***object***REMOVED*** } // no properties
+
+      const fieldOverrides: IFormFieldOverride[] = [
+        { prop: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED*** },
+        { prop: ***REMOVED***age***REMOVED***, type: ***REMOVED***number***REMOVED***, label: ***REMOVED***Age***REMOVED*** }
+      ]
+
+      const formOverride: IFormOverride = {
+        label: ***REMOVED***No-Schema Form***REMOVED***,
+        fields: [{ prop: ***REMOVED***name***REMOVED*** }, { prop: ***REMOVED***age***REMOVED*** }]
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [formOverride],
+        formFieldOverrides: [fieldOverrides]
+      })
+
+      const nameField = form.fields?.find(f => f.id === ***REMOVED***name***REMOVED***)
+      const ageField = form.fields?.find(f => f.id === ***REMOVED***age***REMOVED***)
+      expect(nameField?.excludeFromPayload).not.toBe(true)
+      expect(ageField?.excludeFromPayload).not.toBe(true)
     })
   })
 

@@ -3,9 +3,9 @@ import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator*
 import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
-import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { memo, ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
-import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { Tabs } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 
@@ -14,12 +14,10 @@ import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 
 export interface ITabLayoutProps {
   sections?: IFormSection[]
-  onChange?: IValueChangeFn
   level: number
   ContentComponent?: React.FC<{
     level: number
     formSection?: IFormSection
-    onChange?: IValueChangeFn
     sectionStatus: IFormSectionStatus
   }>
   className?: string
@@ -29,12 +27,10 @@ export interface ITabLayoutProps {
 
 export const ActiveTab = ({
   formSection,
-  onChange,
   className = ***REMOVED***flex flex-col gap-2 grow h-full***REMOVED***,
   level
 }: {
   formSection?: IFormSection
-  onChange?: IValueChangeFn
   className?: string
   level: number
 }): ReactElement => {
@@ -59,7 +55,7 @@ export const ActiveTab = ({
           </div>
           : ***REMOVED******REMOVED***
       }
-      <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
+      <FormSection formSection={formSection} level={level + 1} />
     </div>
   )
 }
@@ -90,7 +86,6 @@ const TabLayout = (props: ITabLayoutProps): ReactElement => {
 const TabLayoutContent = ({
 
   sections,
-  onChange,
   inputOverrides,
   ContentComponent = ActiveTab,
   className = ***REMOVED***flex flex-row gap-8 grow***REMOVED***,
@@ -100,7 +95,7 @@ const TabLayoutContent = ({
     return <></>
   }
 
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
   const sectionStatus = calculateSectionStatus(sections, formValues)
 
   return (
@@ -113,7 +108,6 @@ const TabLayoutContent = ({
             label: s.label ?? s.id,
             content: <ContentComponent
               formSection={s}
-              onChange={onChange}
               sectionStatus={sectionStatus}
               level={level}
             />
@@ -125,4 +119,4 @@ const TabLayoutContent = ({
   )
 }
 
-export default TabLayout
+export default memo(TabLayout)

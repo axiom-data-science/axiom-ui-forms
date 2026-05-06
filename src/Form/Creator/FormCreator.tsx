@@ -1,6 +1,6 @@
 ***REMOVED***use client***REMOVED***
 
-import { FormContext, IFormContextValue, useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { FormStableContext, FormValuesContext, IFormContextValue, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IFormValues, type IForm, type IFormSection, type IFormField, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormHeader from ***REMOVED***@/Form/Creator/FormHeader***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
@@ -14,7 +14,7 @@ import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import debounce from ***REMOVED***lodash-es/debounce***REMOVED***
-import React, { type ReactNode, useContext, type ReactElement, useState, useEffect } from ***REMOVED***react***REMOVED***
+import React, { type ReactNode, useContext, type ReactElement, useState, useEffect, useMemo, useCallback } from ***REMOVED***react***REMOVED***
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
 
 export interface IFormCreatorProps {
@@ -36,12 +36,14 @@ export interface IFormCreatorProps {
 
 
 const FormComponentWrap = ({ Component }: { Component: React.FC<IFormContextValue> }): ReactElement => {
-  const formContext = useFormContext()
-  return <Component {...formContext} />
+  const stableCtx = useContext(FormStableContext)
+  const formValues = useFormValues()
+  return <Component {...stableCtx} formValues={formValues} />
 }
 
 const FormStatus = (): ReactElement => {
-  const { form, formValues } = useContext(FormContext)
+  const { form } = useContext(FormStableContext)
+  const formValues = useFormValues()
   if (form.settings?.show_progress === false) {
     return <></>
   }
@@ -71,38 +73,27 @@ export const SchemaFormCreator = ({
   formOverrides?: IFormOverride[]
   formFieldOverrides?: IFormFieldOverride[][]
 }): ReactElement => {
-  const form = formOverrides === undefined && formFieldOverrides === undefined
-    ? schemaToFormObject(schema)
-    : overridesAndSchemaToFormObject({
-      formOverrides,
-      formFieldOverrides,
-      schema
-    }) // Convert the JSON schema to a form object
-  if (id !== undefined) {
-    form.id = id
-  }
-  if (label !== undefined) {
-    form.label = label
-  }
+  const form = useMemo(() => {
+    const f = formOverrides === undefined && formFieldOverrides === undefined
+      ? schemaToFormObject(schema)
+      : overridesAndSchemaToFormObject({ formOverrides, formFieldOverrides, schema })
+    if (id !== undefined) f.id = id
+    if (label !== undefined) f.label = label
+    return f
+  }, [schema, formOverrides, formFieldOverrides, id, label])
 
   return (
-    <>{
+    <>{  
       form !== undefined
         ? <FormCreator form={form} {...props} />
         : <div className=***REMOVED***p-5 bg-slate-200 text-xs***REMOVED***><Loader className=***REMOVED***pt-20***REMOVED*** /></div>
     }</>
-
   )
 }
 
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
 
-  // Gather only the *direct* fields of each section level — do NOT recurse into
-  // object field children here. seedNestedDefaults handles that recursion itself.
-  // Passing a pre-flattened list (e.g. from getFieldsFromFormSection) would cause
-  // nested children to be processed a second time at root level, incorrectly writing
-  // defaults like formValues[***REMOVED***child***REMOVED***] instead of formValues[***REMOVED***parent***REMOVED***][***REMOVED***child***REMOVED***].
   const gatherSectionFields = (section: IFormSection): IFormField[] => {
     const direct = section.fields ?? []
     const fromPages = (section.pages ?? []).flatMap(p => gatherSectionFields(p))
@@ -132,24 +123,24 @@ const FormCreator = ({
   SubmitButton,
   initialFormValues
 }: IFormCreatorProps): ReactElement => {
-  const activeForm = copyAndAddPathToFields(form)
-  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>({
+  const activeForm = useMemo(() => {
+    const af = copyAndAddPathToFields(form)
+    af.settings = { url_navigable: urlNavigable, ...af.settings }
+    return af
+  }, [form, urlNavigable])
+
+  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>(() => ({
     ...seedFormValuesWithDefaults(activeForm),
     ...initialFormValues
-  })
-
-  activeForm.settings = {
-    url_navigable: urlNavigable,
-    ...activeForm.settings
-  }
+  }))
 
   const [layout, setLayout] = useAtom(layoutAtom)
-  const updateLayoutValue = (): void => {
+  const updateLayoutValue = useCallback((): void => {
     const newSize = getWindowSize()
     if (layout.size !== newSize) {
       setLayout({ size: newSize })
     }
-  }
+  }, [layout.size, setLayout])
 
   useEffect(() => {
     const debounceUpdateLayout = debounce(updateLayoutValue, 200)
@@ -159,38 +150,42 @@ const FormCreator = ({
       window.removeEventListener(***REMOVED***resize***REMOVED***, debounceUpdateLayout)
       debounceUpdateLayout.cancel()
     }
-  }, [])
+  }, [updateLayoutValue])
+
+  // Stable context value — only changes when form definition or config changes, not on keystroke
+  const stableCtxValue = useMemo(() => ({
+    form: activeForm,
+    setFormValues,
+    onChange,
+    inputOverrides,
+    schema,
+    urlNavigable: activeForm.settings?.url_navigable
+  }), [activeForm, setFormValues, onChange, inputOverrides, schema])
 
   return (
     <ErrorBoundary fallbackRender={errorRenderer}>
-    <FormContext.Provider value={{
-      form: activeForm,
-      formValues,
-      setFormValues,
-      inputOverrides,
-      schema,
-      urlNavigable: activeForm.settings.url_navigable
-    }}>
-      {typeof Header === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Header} /> : Header ?? ***REMOVED******REMOVED***}
-      <div className={utils.makeClassName({
-        className: activeForm?.settings?.class_name,
-        defaultClassName,
-        extras: [className]
-      })}>
-        <FormHeader form={activeForm} note={note} error={error} />
-        {
-          activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined && activeForm.tabs === undefined
-            ? <FormStatus />
-            : ***REMOVED******REMOVED***
-        }
-        <FormSection
-          formSection={activeForm}
-          onChange={onChange}
-          SubmitButton={SubmitButton}
-        />
-      </div>
-      {typeof Footer === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Footer} /> : Footer ?? ***REMOVED******REMOVED***}
-    </FormContext.Provider>
+    <FormStableContext.Provider value={stableCtxValue}>
+      <FormValuesContext.Provider value={formValues}>
+        {typeof Header === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Header} /> : Header ?? ***REMOVED******REMOVED***}
+        <div className={utils.makeClassName({
+          className: activeForm?.settings?.class_name,
+          defaultClassName,
+          extras: [className]
+        })}>
+          <FormHeader form={activeForm} note={note} error={error} />
+          {
+            activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined && activeForm.tabs === undefined
+              ? <FormStatus />
+              : ***REMOVED******REMOVED***
+          }
+          <FormSection
+            formSection={activeForm}
+            SubmitButton={SubmitButton}
+          />
+        </div>
+        {typeof Footer === ***REMOVED***function***REMOVED*** ? <FormComponentWrap Component={Footer} /> : Footer ?? ***REMOVED******REMOVED***}
+      </FormValuesContext.Provider>
+    </FormStableContext.Provider>
     </ErrorBoundary>
   )
 }

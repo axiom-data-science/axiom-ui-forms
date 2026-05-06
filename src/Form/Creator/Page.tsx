@@ -5,9 +5,9 @@ import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { ReactNode, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { memo, ReactNode, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
-import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
@@ -131,12 +131,10 @@ export interface INavProps {
 
 export interface IPageLayoutProps {
   sections?: IFormSection[]
-  onChange?: IValueChangeFn
   level: number
   ContentComponent?: React.FC<{
     level: number
     formSection?: IFormSection
-    onChange?: IValueChangeFn
     sectionStatus: IFormSectionStatus
   }>
   NavComponent?: React.FC<INavProps>
@@ -147,12 +145,10 @@ export interface IPageLayoutProps {
 
 export const ActivePage = ({
   formSection,
-  onChange,
   className = ***REMOVED***flex flex-col gap-2 grow h-full***REMOVED***,
   level
 }: {
   formSection?: IFormSection
-  onChange?: IValueChangeFn
   className?: string
   level: number
 }): ReactElement => {
@@ -177,7 +173,7 @@ export const ActivePage = ({
           </div>
           : ***REMOVED******REMOVED***
       }
-      <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
+      <FormSection formSection={formSection} level={level + 1} />
     </div>
   )
 }
@@ -208,7 +204,6 @@ const PageLayout = (props: IPageLayoutProps): ReactElement => {
 const PageLayoutContent = ({
 
   sections,
-  onChange,
   inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
@@ -219,7 +214,7 @@ const PageLayoutContent = ({
     return <></>
   }
 
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
   const sectionStatus = calculateSectionStatus(sections, formValues)
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
@@ -234,7 +229,6 @@ const PageLayoutContent = ({
       />
       <ContentComponent
         formSection={formSection}
-        onChange={onChange}
         sectionStatus={sectionStatus}
         level={level}
       />
@@ -242,4 +236,4 @@ const PageLayoutContent = ({
   )
 }
 
-export default PageLayout
+export default memo(PageLayout)
