@@ -362,7 +362,6 @@ export interface IFormSection {
   label?: string
   description?: string
   order?: number
-  layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
   fields?: IFormField[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]

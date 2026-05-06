@@ -229,14 +229,17 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
                 // For nested objects, recurse to handle them properly
                 if ((childField.type === 'object' || childField.type === 'objectWrapper') && childField.fields) {
                   const nestedPayload: IFormValues = {}
-                  childField.fields.forEach(grandchildField => {
-                    if (grandchildField.excludeFromPayload !== true) {
-                      const grandchildId = grandchildField.id
-                      if (item[childField.id]?.[grandchildId] !== undefined) {
-                        nestedPayload[grandchildId] = item[childField.id][grandchildId]
+                  const childItem = item[childField.id]
+                  if (typeof childItem === 'object' && childItem !== null && !Array.isArray(childItem)) {
+                    childField.fields.forEach(grandchildField => {
+                      if (grandchildField.excludeFromPayload !== true) {
+                        const grandchildId = grandchildField.id
+                        if ((childItem as IFormValues)[grandchildId] !== undefined) {
+                          nestedPayload[grandchildId] = (childItem as IFormValues)[grandchildId]
+                        }
                       }
-                    }
-                  })
+                    })
+                  }
                   if (Object.keys(nestedPayload).length > 0) {
                     itemPayload[childField.id] = nestedPayload
                   }
@@ -273,6 +276,31 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
         if (Object.keys(nestedPayload).length > 0) {
           set(payload, path, nestedPayload)
         }
+      }
+    } else if (field.type === 'objectList' && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      // Handle objectList fields (keyed objects)
+      const objectListValue = value as IFormValues
+      const objectListPayload: IFormValues = {}
+      
+      Object.entries(objectListValue).forEach(([key, item]) => {
+        if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+          const itemPayload: IFormValues = {}
+          ;(field.fields ?? []).forEach((childField: IFormField) => {
+            if (childField.excludeFromPayload !== true) {
+              const childFieldId = childField.id
+              if ((item as IFormValues)[childFieldId] !== undefined) {
+                itemPayload[childFieldId] = (item as IFormValues)[childFieldId]
+              }
+            }
+          })
+          if (Object.keys(itemPayload).length > 0) {
+            objectListPayload[key] = itemPayload
+          }
+        }
+      })
+      
+      if (Object.keys(objectListPayload).length > 0) {
+        set(payload, path, objectListPayload)
       }
     } else if (value !== undefined) {
       // Simple scalar or non-nested value
