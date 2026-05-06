@@ -1,6 +1,7 @@
 import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 import { applyOverridesToSchemaField, buildFieldMapFromForm, groupOverrideFieldsByProp, mergeFields, mergeFormSections } from ***REMOVED***./mergers***REMOVED***
-import { type IFormField, type IForm, type IFormFieldOverride, type IObjectField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { seedNestedDefaults, type FieldEvaluationContext } from ***REMOVED***./formEngine***REMOVED***
+import { type IFormField, type IForm, type IFormFieldOverride, type IObjectField, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
 const mockForm: IForm = {
   id: ***REMOVED***testForm***REMOVED***,
@@ -201,6 +202,76 @@ describe(***REMOVED***mergers.ts***REMOVED***, () => {
       })
 
       expect(result).toEqual([])
+    })
+
+    it(***REMOVED***should apply a defaultValue override to a nested field inside a multiple:true object***REMOVED***, () => {
+      // Arrange — form has multiple:true object with two nested fields, one has a defaultValue
+      const form: IForm = {
+        ...mockForm,
+        fields: [
+          {
+            id: ***REMOVED***entries***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            label: ***REMOVED***Entries***REMOVED***,
+            multiple: true,
+            fields: [
+              { id: ***REMOVED***title***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Title***REMOVED*** },
+              { id: ***REMOVED***priority***REMOVED***, type: ***REMOVED***number***REMOVED***, label: ***REMOVED***Priority***REMOVED***, defaultValue: 1 }
+            ]
+          } as IObjectField
+        ]
+      }
+
+      // Override: change the defaultValue of the nested field via IFormFieldOverride
+      const fieldOverrides = groupOverrideFieldsByProp([
+        [{ prop: ***REMOVED***entries.priority***REMOVED***, defaultValue: 99 }]
+      ])
+
+      // Act — apply the override to the form
+      const mergedFields = mergeFields({ form, fieldOverrides })
+      const entriesField = mergedFields.find(f => f.id === ***REMOVED***entries***REMOVED***) as IObjectField
+
+      // Assert — override applied correctly
+      const priorityField = entriesField?.fields?.find(f => f.id === ***REMOVED***priority***REMOVED***)
+      expect(priorityField?.defaultValue).toBe(99)
+
+      // Also verify seedNestedDefaults seeds the overridden default into a new element
+      const newElement: IFormValues = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+      seedNestedDefaults(entriesField.fields, newElement, context)
+
+      expect(newElement.title).toBeUndefined()   // no default
+      expect(newElement.priority).toBe(99)        // overridden default applied
+    })
+
+    it(***REMOVED***should preserve multiple:true flag and nested fields through mergeFields***REMOVED***, () => {
+      const form: IForm = {
+        ...mockForm,
+        fields: [
+          {
+            id: ***REMOVED***tags***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            label: ***REMOVED***Tags***REMOVED***,
+            multiple: true,
+            fields: [
+              { id: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED***, defaultValue: ***REMOVED***tag***REMOVED*** }
+            ]
+          } as IObjectField
+        ]
+      }
+
+      // Override only the label — multiple and fields should be untouched
+      const fieldOverrides = groupOverrideFieldsByProp([
+        [{ prop: ***REMOVED***tags***REMOVED***, label: ***REMOVED***Tag List***REMOVED*** }]
+      ])
+
+      const mergedFields = mergeFields({ form, fieldOverrides })
+      const tagsField = mergedFields.find(f => f.id === ***REMOVED***tags***REMOVED***) as IObjectField
+
+      expect(tagsField.label).toBe(***REMOVED***Tag List***REMOVED***)
+      expect((tagsField as any).multiple).toBe(true)
+      expect(tagsField.fields?.length).toBe(1)
+      expect(tagsField.fields?.[0].defaultValue).toBe(***REMOVED***tag***REMOVED***)
     })
   })
   describe(***REMOVED***applyOverridesToSchemaField***REMOVED***, () => {
