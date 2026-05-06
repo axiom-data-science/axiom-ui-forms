@@ -24,13 +24,14 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   select: SingleSelect,
   radio: Radio,
   object: ObjectInput,
+  objectWrapper: ObjectInput,
   oneOf: OneOfInput,
   geojson: GeoJSONInput,
   geometry: GeometryInput,
   datetime: DateTimeInput,
   date: DateInput,
   time: TimeInput,
-  constant: ConstantInput
+  constant: ConstantInput,
 }
 
 export default inputMap
