@@ -16,17 +16,22 @@ import {
   evaluateDefaultValue,
   evaluateNestedFieldStates,
   seedNestedDefaults,
-  type FieldEvaluationContext
+  type FieldEvaluationContext,
 } from './formEngine'
 import { copyAndAddPathToFields } from '@/utils/manipulators'
-import { type IForm, type IObjectField, type IFormField, IFormValues } from '@/Form/Creator/FormCreatorTypes'
+import {
+  type IForm,
+  type IObjectField,
+  type IFormField,
+  type IFormValues,
+} from '@/Form/Creator/FormCreatorTypes'
 
 describe('formEngine - Field Logic Evaluation', () => {
   describe('evaluateFieldVisibility', () => {
     it('hides field when result=exclude and condition passes', () => {
       const result = evaluateFieldVisibility({
         pass: true,
-        result: 'exclude'
+        result: 'exclude',
       })
       expect(result).toBe(false)
     })
@@ -34,7 +39,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('hides field when result=include and condition fails', () => {
       const result = evaluateFieldVisibility({
         pass: false,
-        result: 'include'
+        result: 'include',
       })
       expect(result).toBe(false)
     })
@@ -42,7 +47,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('shows field when result=exclude and condition fails', () => {
       const result = evaluateFieldVisibility({
         pass: false,
-        result: 'exclude'
+        result: 'exclude',
       })
       expect(result).toBe(true)
     })
@@ -50,7 +55,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('shows field when result=include and condition passes', () => {
       const result = evaluateFieldVisibility({
         pass: true,
-        result: 'include'
+        result: 'include',
       })
       expect(result).toBe(true)
     })
@@ -60,7 +65,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('disables field when result=disable and condition passes', () => {
       const result = evaluateFieldDisabled({
         pass: true,
-        result: 'disable'
+        result: 'disable',
       })
       expect(result).toBe(true)
     })
@@ -68,7 +73,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('disables field when result=enable and condition fails', () => {
       const result = evaluateFieldDisabled({
         pass: false,
-        result: 'enable'
+        result: 'enable',
       })
       expect(result).toBe(true)
     })
@@ -76,7 +81,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('enables field when result=disable and condition fails', () => {
       const result = evaluateFieldDisabled({
         pass: false,
-        result: 'disable'
+        result: 'disable',
       })
       expect(result).toBe(false)
     })
@@ -84,7 +89,7 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('enables field when result=enable and condition passes', () => {
       const result = evaluateFieldDisabled({
         pass: true,
-        result: 'enable'
+        result: 'enable',
       })
       expect(result).toBe(false)
     })
@@ -95,12 +100,12 @@ describe('formEngine - Field Logic Evaluation', () => {
       const field: IFormField = {
         id: 'test',
         type: 'text',
-        defaultValue: 'field-default'
+        defaultValue: 'field-default',
       }
       const conditionResult = {
         pass: true,
         result: 'include' as const,
-        newDefaultValue: 'condition-default'
+        newDefaultValue: 'condition-default',
       }
 
       const result = evaluateDefaultValue(field, conditionResult)
@@ -111,11 +116,11 @@ describe('formEngine - Field Logic Evaluation', () => {
       const field: IFormField = {
         id: 'test',
         type: 'text',
-        defaultValue: 'field-default'
+        defaultValue: 'field-default',
       }
       const conditionResult = {
         pass: true,
-        result: 'include' as const
+        result: 'include' as const,
       }
 
       const result = evaluateDefaultValue(field, conditionResult)
@@ -125,11 +130,11 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('returns undefined when no defaults exist', () => {
       const field: IFormField = {
         id: 'test',
-        type: 'text'
+        type: 'text',
       }
       const conditionResult = {
         pass: true,
-        result: 'include' as const
+        result: 'include' as const,
       }
 
       const result = evaluateDefaultValue(field, conditionResult)
@@ -141,10 +146,10 @@ describe('formEngine - Field Logic Evaluation', () => {
     it('correctly evaluates simple field with no conditions', () => {
       const field: IFormField = {
         id: 'test',
-        type: 'text'
+        type: 'text',
       }
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       const state = evaluateFieldLogicState(field, context)
@@ -160,14 +165,14 @@ describe('formEngine - Field Logic Evaluation', () => {
         type: 'text',
         conditions: {
           dependsOn: 'trigger',
-          value: 'show'
+          value: 'show',
           // result defaults to 'include' when not specified
-        }
+        },
       }
       const context: FieldEvaluationContext = {
         rootFormValues: {
-          trigger: 'hide'  // Condition not met
-        }
+          trigger: 'hide', // Condition not met
+        },
       }
 
       const state = evaluateFieldLogicState(field, context)
@@ -184,13 +189,13 @@ describe('formEngine - Field Logic Evaluation', () => {
         conditions: {
           dependsOn: 'trigger',
           value: 'enable',
-          result: 'disable'
-        }
+          result: 'disable',
+        },
       }
       const context: FieldEvaluationContext = {
         rootFormValues: {
-          trigger: 'enable'  // Condition met, so field is disabled
-        }
+          trigger: 'enable', // Condition met, so field is disabled
+        },
       }
 
       const state = evaluateFieldLogicState(field, context)
@@ -203,12 +208,12 @@ describe('formEngine - Field Logic Evaluation', () => {
       const field: IFormField = {
         id: 'conditionalField',
         type: 'text',
-        defaultValue: 'static-default'
+        defaultValue: 'static-default',
       }
       const context: FieldEvaluationContext = {
         rootFormValues: {
-          trigger: 'enable'
-        }
+          trigger: 'enable',
+        },
       }
 
       // Manually construct a condition that would have newDefaultValue
@@ -237,7 +242,7 @@ describe('formEngine - Field Logic Evaluation', () => {
               {
                 id: 'showHideField',
                 type: 'text',
-                label: 'Show/Hide Field'
+                label: 'Show/Hide Field',
               },
               {
                 id: 'conditionalField',
@@ -245,27 +250,29 @@ describe('formEngine - Field Logic Evaluation', () => {
                 label: 'Conditional Field',
                 conditions: {
                   dependsOn: 'objectField.showHideField',
-                  value: 'show'
-                }
-              }
-            ]
-          }
-        ]
+                  value: 'show',
+                },
+              },
+            ],
+          },
+        ],
       }
 
       const formWithPaths = copyAndAddPathToFields(form)
       const objectField = formWithPaths.fields?.[0] as IObjectField
-      const conditionalField = objectField.fields?.find(f => f.id === 'conditionalField') as IFormField
+      const conditionalField = objectField.fields?.find(
+        (f) => f.id === 'conditionalField'
+      ) as IFormField
 
       it('should evaluate condition as true when root context provided', () => {
         const formValues = {
           objectField: {
-            showHideField: 'show'
-          }
+            showHideField: 'show',
+          },
         }
 
         const context: FieldEvaluationContext = {
-          rootFormValues: formValues
+          rootFormValues: formValues,
         }
 
         const state = evaluateFieldLogicState(conditionalField, context)
@@ -277,12 +284,12 @@ describe('formEngine - Field Logic Evaluation', () => {
       it('should evaluate condition as false when condition not met', () => {
         const formValues = {
           objectField: {
-            showHideField: 'hide'
-          }
+            showHideField: 'hide',
+          },
         }
 
         const context: FieldEvaluationContext = {
-          rootFormValues: formValues
+          rootFormValues: formValues,
         }
 
         const state = evaluateFieldLogicState(conditionalField, context)
@@ -307,7 +314,7 @@ describe('formEngine - Field Logic Evaluation', () => {
               {
                 id: 'field1',
                 type: 'text',
-                label: 'Field 1'
+                label: 'Field 1',
               },
               {
                 id: 'field2',
@@ -315,28 +322,28 @@ describe('formEngine - Field Logic Evaluation', () => {
                 label: 'Field 2',
                 conditions: {
                   dependsOn: '.field1',
-                  value: 'test'
-                }
-              }
-            ]
-          }
-        ]
+                  value: 'test',
+                },
+              },
+            ],
+          },
+        ],
       }
 
       const formWithPaths = copyAndAddPathToFields(form)
       const objectField = formWithPaths.fields?.[0] as IObjectField
-      const field2 = objectField.fields?.find(f => f.id === 'field2') as IFormField
+      const field2 = objectField.fields?.find((f) => f.id === 'field2') as IFormField
 
       it('should resolve relative path to sibling with root context', () => {
         const formValues = {
           objectField: {
             field1: 'test',
-            field2: ''
-          }
+            field2: '',
+          },
         }
 
         const context: FieldEvaluationContext = {
-          rootFormValues: formValues
+          rootFormValues: formValues,
         }
 
         const state = evaluateFieldLogicState(field2, context)
@@ -354,7 +361,7 @@ describe('formEngine - Field Logic Evaluation', () => {
           {
             id: 'globalFlag',
             type: 'text',
-            label: 'Global Flag'
+            label: 'Global Flag',
           },
           {
             id: 'objectField',
@@ -368,28 +375,28 @@ describe('formEngine - Field Logic Evaluation', () => {
                 label: 'Nested Field',
                 conditions: {
                   dependsOn: 'globalFlag',
-                  value: 'enabled'
-                }
-              }
-            ]
-          }
-        ]
+                  value: 'enabled',
+                },
+              },
+            ],
+          },
+        ],
       }
 
       const formWithPaths = copyAndAddPathToFields(form)
       const objectField = formWithPaths.fields?.[1] as IObjectField
-      const nestedField = objectField.fields?.find(f => f.id === 'nestedField') as IFormField
+      const nestedField = objectField.fields?.find((f) => f.id === 'nestedField') as IFormField
 
       it('should check condition against root-level field with root context', () => {
         const formValues = {
           globalFlag: 'enabled',
           objectField: {
-            nestedField: 'some value'
-          }
+            nestedField: 'some value',
+          },
         }
 
         const context: FieldEvaluationContext = {
-          rootFormValues: formValues
+          rootFormValues: formValues,
         }
 
         const state = evaluateFieldLogicState(nestedField, context)
@@ -402,12 +409,12 @@ describe('formEngine - Field Logic Evaluation', () => {
         const formValues = {
           globalFlag: 'disabled',
           objectField: {
-            nestedField: 'some value'
-          }
+            nestedField: 'some value',
+          },
         }
 
         const context: FieldEvaluationContext = {
-          rootFormValues: formValues
+          rootFormValues: formValues,
         }
 
         const state = evaluateFieldLogicState(nestedField, context)
@@ -438,7 +445,7 @@ describe('formEngine - Field Logic Evaluation', () => {
                   {
                     id: 'triggerField',
                     type: 'text',
-                    label: 'Trigger Field'
+                    label: 'Trigger Field',
                   },
                   {
                     id: 'dependentField',
@@ -446,33 +453,33 @@ describe('formEngine - Field Logic Evaluation', () => {
                     label: 'Dependent Field',
                     conditions: {
                       dependsOn: '.triggerField',
-                      value: 'trigger'
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+                      value: 'trigger',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       }
 
       const formWithPaths = copyAndAddPathToFields(form)
       const level1 = formWithPaths.fields?.[0] as IObjectField
       const level2 = level1.fields?.[0] as IObjectField
-      const dependentField = level2.fields?.find(f => f.id === 'dependentField') as IFormField
+      const dependentField = level2.fields?.find((f) => f.id === 'dependentField') as IFormField
 
       it('should resolve deep relative path with root context', () => {
         const formValues = {
           level1: {
             level2: {
               triggerField: 'trigger',
-              dependentField: ''
-            }
-          }
+              dependentField: '',
+            },
+          },
         }
 
         const context: FieldEvaluationContext = {
-          rootFormValues: formValues
+          rootFormValues: formValues,
         }
 
         const state = evaluateFieldLogicState(dependentField, context)
@@ -488,7 +495,7 @@ describe('formEngine - Field Logic Evaluation', () => {
       const parentField: IFormField = {
         id: 'objectField',
         type: 'object',
-        multiple: false
+        multiple: false,
       }
 
       const childFields: IFormField[] = [
@@ -498,15 +505,15 @@ describe('formEngine - Field Logic Evaluation', () => {
           type: 'text',
           conditions: {
             dependsOn: 'trigger',
-            value: 'show'
-          }
-        }
+            value: 'show',
+          },
+        },
       ]
 
       const context: FieldEvaluationContext = {
         rootFormValues: {
-          trigger: 'show'
-        }
+          trigger: 'show',
+        },
       }
 
       const states = evaluateNestedFieldStates(parentField, childFields, context)
@@ -525,13 +532,13 @@ describe('formEngine - Field Logic Evaluation', () => {
           id: 'field1',
           type: 'text',
           label: 'Field 1',
-          defaultValue: 'default-value'
-        }
+          defaultValue: 'default-value',
+        },
       ]
 
       const formValues: IFormValues = {}
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
@@ -550,21 +557,21 @@ describe('formEngine - Field Logic Evaluation', () => {
               id: 'street',
               type: 'text',
               label: 'Street',
-              defaultValue: '123 Main St'
+              defaultValue: '123 Main St',
             },
             {
               id: 'city',
               type: 'text',
               label: 'City',
-              defaultValue: 'Springfield'
-            }
-          ]
-        }
+              defaultValue: 'Springfield',
+            },
+          ],
+        },
       ]
 
       const formValues: any = {}
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
@@ -586,23 +593,23 @@ describe('formEngine - Field Logic Evaluation', () => {
               id: 'street',
               type: 'text',
               label: 'Street',
-              defaultValue: 'Main St'
+              defaultValue: 'Main St',
             },
             {
               id: 'city',
               type: 'text',
               label: 'City',
-              defaultValue: 'NY'
-            }
-          ]
-        }
+              defaultValue: 'NY',
+            },
+          ],
+        },
       ]
 
       const formValues: any = {
-        addresses: [{}, null, undefined]
+        addresses: [{}, null, undefined],
       }
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
@@ -619,15 +626,15 @@ describe('formEngine - Field Logic Evaluation', () => {
           id: 'name',
           type: 'text',
           label: 'Name',
-          defaultValue: 'Default Name'
-        }
+          defaultValue: 'Default Name',
+        },
       ]
 
       const formValues = {
-        name: 'Existing Name'
+        name: 'Existing Name',
       }
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
@@ -641,7 +648,7 @@ describe('formEngine - Field Logic Evaluation', () => {
           id: 'name',
           type: 'text',
           label: 'Name',
-          defaultValue: 'John'
+          defaultValue: 'John',
         },
         {
           id: 'person',
@@ -652,15 +659,15 @@ describe('formEngine - Field Logic Evaluation', () => {
               id: 'age',
               type: 'number',
               label: 'Age',
-              defaultValue: 30
-            }
-          ]
-        }
+              defaultValue: 30,
+            },
+          ],
+        },
       ]
 
       const formValues: any = {}
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
@@ -685,17 +692,17 @@ describe('formEngine - Field Logic Evaluation', () => {
                   id: 'street',
                   type: 'text',
                   label: 'Street',
-                  defaultValue: '123 Tech Blvd'
-                }
-              ]
-            }
-          ]
-        }
+                  defaultValue: '123 Tech Blvd',
+                },
+              ],
+            },
+          ],
+        },
       ]
 
       const formValues: any = {}
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
@@ -714,23 +721,67 @@ describe('formEngine - Field Logic Evaluation', () => {
               id: 'city',
               type: 'text',
               label: 'City',
-              defaultValue: 'Boston'
-            }
-          ]
-        }
+              defaultValue: 'Boston',
+            },
+          ],
+        },
       ]
 
       const formValues: any = {
-        address: null
+        address: null,
       }
       const context: FieldEvaluationContext = {
-        rootFormValues: {}
+        rootFormValues: {},
       }
 
       seedNestedDefaults(fields, formValues, context)
 
       expect(formValues.address).toBeDefined()
       expect(formValues.address.city).toBe('Boston')
+    })
+
+    it('seeds defaults into a brand-new empty element (simulates add-new-item flow in MultipleFieldCreator)', () => {
+      // This mirrors the getNewDefaultElement() function in MultipleFieldCreator:
+      // When the user clicks Add, a {} is created and seedNestedDefaults runs on it
+      const objFields: IFormField[] = [
+        { id: 'name', type: 'text', label: 'Name', defaultValue: 'New Item' },
+        { id: 'count', type: 'number', label: 'Count', defaultValue: 0 },
+        { id: 'active', type: 'boolean', label: 'Active', defaultValue: true },
+      ]
+
+      const newElement: IFormValues = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(objFields, newElement, context)
+
+      expect(newElement.name).toBe('New Item')
+      expect(newElement.count).toBe(0)
+      expect(newElement.active).toBe(true)
+    })
+
+    it('seeds defaults for a new element without overwriting an existing one in the same array', () => {
+      // existing[0] has user data; null at [1] simulates a newly added slot
+      const fields: IFormField[] = [
+        {
+          id: 'items',
+          type: 'object',
+          label: 'Items',
+          multiple: true,
+          fields: [{ id: 'label', type: 'text', label: 'Label', defaultValue: 'Default Label' }],
+        },
+      ]
+
+      const formValues: any = {
+        items: [{ label: 'User Value' }, null],
+      }
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      // existing element is untouched
+      expect(formValues.items[0].label).toBe('User Value')
+      // new null slot gets the default
+      expect(formValues.items[1].label).toBe('Default Label')
     })
   })
 })
