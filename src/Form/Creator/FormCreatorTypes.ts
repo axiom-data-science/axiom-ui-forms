@@ -24,9 +24,45 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | IConstantField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IObjectListField | IOneOfField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomField
+export type IFormField =
+  | ITextField
+  | IConstantField
+  | INumberField
+  | ILongTextField
+  | IJSONField
+  | ISelectField
+  | IRadioField
+  | ICheckboxField
+  | IDateField
+  | ITimeField
+  | IDateTimeField
+  | IBooleanField
+  | IObjectField
+  | IObjectListField
+  | IOneOfField
+  | IGeoJSONField
+  | IGeometryField
+  | IFormFieldSection
+  | ICustomField
 
-export type IFormFieldType = ***REMOVED***text***REMOVED*** | ***REMOVED***long_text***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***json***REMOVED*** | ***REMOVED***select***REMOVED*** | ***REMOVED***radio***REMOVED*** | ***REMOVED***checkbox***REMOVED*** | ***REMOVED***date***REMOVED*** | ***REMOVED***time***REMOVED*** | ***REMOVED***datetime***REMOVED*** | ***REMOVED***boolean***REMOVED*** | ***REMOVED***object***REMOVED*** | ***REMOVED***objectList***REMOVED*** | ***REMOVED***oneOf***REMOVED*** | ***REMOVED***geojson***REMOVED*** | ***REMOVED***geometry***REMOVED*** | `custom:${string}`
+export type IFormFieldType =
+  | ***REMOVED***text***REMOVED***
+  | ***REMOVED***long_text***REMOVED***
+  | ***REMOVED***number***REMOVED***
+  | ***REMOVED***json***REMOVED***
+  | ***REMOVED***select***REMOVED***
+  | ***REMOVED***radio***REMOVED***
+  | ***REMOVED***checkbox***REMOVED***
+  | ***REMOVED***date***REMOVED***
+  | ***REMOVED***time***REMOVED***
+  | ***REMOVED***datetime***REMOVED***
+  | ***REMOVED***boolean***REMOVED***
+  | ***REMOVED***object***REMOVED***
+  | ***REMOVED***objectList***REMOVED***
+  | ***REMOVED***oneOf***REMOVED***
+  | ***REMOVED***geojson***REMOVED***
+  | ***REMOVED***geometry***REMOVED***
+  | `custom:${string}`
 export type ISectionFormFieldType = ***REMOVED***section***REMOVED*** | ***REMOVED***page***REMOVED***
 
 export type IFieldConditionResult = ***REMOVED***exclude***REMOVED*** | ***REMOVED***include***REMOVED*** | ***REMOVED***disable***REMOVED*** | ***REMOVED***enable***REMOVED***
@@ -43,7 +79,19 @@ export interface IFieldConditionsSet {
   newDefaultValue?: IValueType | IValueType[]
 }
 
-export type IFieldConditionOperator = ***REMOVED***=***REMOVED*** | ***REMOVED***eq***REMOVED*** | ***REMOVED***>***REMOVED*** | ***REMOVED***gt***REMOVED*** | ***REMOVED***>=***REMOVED*** | ***REMOVED***gte***REMOVED*** | ***REMOVED***<***REMOVED*** | ***REMOVED***lt***REMOVED*** | ***REMOVED***<=***REMOVED*** | ***REMOVED***lte***REMOVED*** | ***REMOVED***!=***REMOVED*** | ***REMOVED***!eq***REMOVED***
+export type IFieldConditionOperator =
+  | ***REMOVED***=***REMOVED***
+  | ***REMOVED***eq***REMOVED***
+  | ***REMOVED***>***REMOVED***
+  | ***REMOVED***gt***REMOVED***
+  | ***REMOVED***>=***REMOVED***
+  | ***REMOVED***gte***REMOVED***
+  | ***REMOVED***<***REMOVED***
+  | ***REMOVED***lt***REMOVED***
+  | ***REMOVED***<=***REMOVED***
+  | ***REMOVED***lte***REMOVED***
+  | ***REMOVED***!=***REMOVED***
+  | ***REMOVED***!eq***REMOVED***
 export interface IFieldCondition {
   dependsOn?: string | string[]
   field?: string | string[]
@@ -94,7 +142,6 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
   }
-
 }
 
 export interface INumberField extends INumberValueInput {
@@ -144,8 +191,7 @@ interface ICustomField extends IFormFieldRoot, ISelectableInput {
   type: `custom:${string}`
 }
 
-interface ISingleSelectableInput extends ISelectableInput {
-}
+interface ISingleSelectableInput extends ISelectableInput {}
 
 interface IMultiSelectableInput extends ISelectableInput {
   defaultValues?: Array<string | number>
@@ -261,6 +307,18 @@ export interface IGeometryField extends IFormFieldRoot {
       lon: number
       zoom: number
     }
+    /**
+     * Path to a form field that controls which shape types are enabled.
+     * Field value should be a comma-separated string or array of shape type names.
+     * E.g., ***REMOVED***point,polygon***REMOVED*** or [***REMOVED***point***REMOVED***, ***REMOVED***linestring***REMOVED***]
+     * Merged with static settings (static settings take precedence).
+     */
+    enabledShapesField?: string
+    /**
+     * Maximum number of points allowed in a LineString geometry.
+     * Validation enforced on coordinate parsing and geometry updates.
+     */
+    maxLineStringPoints?: number
   }
 }
 
@@ -297,8 +355,17 @@ export interface IForm {
   settings?: IFormSettings
 }
 
-export type IFormFieldOverride = Partial<IFormField> & { prop: string } | IObjectFormFieldOverride
-export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, ***REMOVED***fields***REMOVED*** | ***REMOVED***tabs***REMOVED*** | ***REMOVED***pages***REMOVED*** | ***REMOVED***wizard_steps***REMOVED***> & { fields?: IFormFieldOverride[], prop: string, tabs?: IFormLayoutTabOverride[], pages?: IPageOverride[], wizard_steps?: IWizardStepOverride[] }
+export type IFormFieldOverride = (Partial<IFormField> & { prop: string }) | IObjectFormFieldOverride
+export type IObjectFormFieldOverride = Omit<
+  Partial<IObjectField>,
+  ***REMOVED***fields***REMOVED*** | ***REMOVED***tabs***REMOVED*** | ***REMOVED***pages***REMOVED*** | ***REMOVED***wizard_steps***REMOVED***
+> & {
+  fields?: IFormFieldOverride[]
+  prop: string
+  tabs?: IFormLayoutTabOverride[]
+  pages?: IPageOverride[]
+  wizard_steps?: IWizardStepOverride[]
+}
 
 export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {}
 

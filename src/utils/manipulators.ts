@@ -154,6 +154,30 @@ export function updateFormValuesWithFieldValue (field: IFormField, newValue: IVa
   return formValuesCopy
 }
 
+/**
+ * Update form values with a new field value and clean up excluded fields.
+ *
+ * This function performs a three-step update:
+ * 1. Apply the new field value to formValues
+ * 2. Clean up any fields that are now excluded by condition changes
+ * 3. Re-apply the changed field value (essential for destPath collisions)
+ *
+ * **Why step 3 matters** — If multiple fields share a `destPath` but have mutually
+ * exclusive conditions, cleaning (step 2) may remove the new value. Re-applying
+ * it (step 3) ensures the active field***REMOVED***s value persists.
+ *
+ * Example: Two geometry fields (geom_point, geom_polygon) both use destPath=***REMOVED***geometry***REMOVED***,
+ * with conditions on a ***REMOVED***draw_type***REMOVED*** field:
+ * - User changes draw_type=***REMOVED***polygon***REMOVED***, geom_point becomes excluded
+ * - Clean removes geom_point***REMOVED***s value from path ***REMOVED***geometry***REMOVED***
+ * - Re-apply ensures geom_polygon***REMOVED***s value is restored to ***REMOVED***geometry***REMOVED***
+ *
+ * @param field - The form field being changed
+ * @param form - The form containing all fields and their conditions
+ * @param value - The new value for the field
+ * @param formValues - Current form values
+ * @returns Updated and cleaned form values
+ */
 export function cleanAndUpdateFormValuesWithFieldValue ({
   field,
   form,
@@ -165,34 +189,23 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
   value: IValueType | IValueType[]
   formValues: IFormValues
 }): IFormValues {
+  // Step 1: Apply the new field value
   const updatedFormValuesCopyPreClean = updateFormValuesWithFieldValue(
     field,
     value,
     formValues
   )
+
+  // Step 2: Clean up excluded fields (those whose conditions no longer pass)
   const cleanedFormValues = cleanUnusedDependenciesFromFormValues(form, updatedFormValuesCopyPreClean)
-  // re-assigning the form values lets it be cleaned above, and re-assigned below if the value is uses the same path as a removed value
-  // initial use case: multiple geometry fields with each shape type as pre-set draw type and a second field that determines the draw type
+
+  // Step 3: Re-apply the changed field to handle destPath collisions
+  // (critical when multiple fields share a destPath with mutually exclusive conditions)
   const formValuesCopyClean = updateFormValuesWithFieldValue(
     field,
     value,
     cleanedFormValues
   )
-
-  /* const path = getPathFromField(field)
-
-  const fieldsWithPassingConditionsThatThisFieldAffects = getFieldsFromFormSection(form).filter(f => {
-    if (f.conditions !== undefined || f.conditionsSet !== undefined) {
-      const dependsOnFields = f.conditions !== undefined
-        ? [f.conditions.field ?? f.conditions.dependsOn]
-        : f.conditionsSet !== undefined
-          ? f.conditionsSet.conditions.map(c => c.field ?? c.dependsOn)
-          : []
-      const conditionResult = checkCondition(f, { ...{ [getPathFromField(field) ?? ***REMOVED******REMOVED***]: value } })
-      return conditionResult.pass && conditionResult.newDefaultValue !== undefined
-    }
-    return false
-  }) */
 
   return formValuesCopyClean
 }
