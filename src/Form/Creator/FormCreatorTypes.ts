@@ -24,9 +24,45 @@ export interface ICompositeValueType {
 export type IValueType = undefined | null | ValueOf<IValueTypes> // | Array<ValueOf<IValueTypes>> | { [key: string]: IValueType } | Array<Record<string, IValueTypes>>
 // export type IValueType2 = string | string[] | number | number[] | boolean | boolean[] | ICompositeValueType | ICompositeValueType[]
 
-export type IFormField = ITextField | IConstantField | INumberField | ILongTextField | IJSONField | ISelectField | IRadioField | ICheckboxField | IDateField | ITimeField | IDateTimeField | IBooleanField | IObjectField | IObjectListField | IOneOfField | IGeoJSONField | IGeometryField | IFormFieldSection | ICustomField
+export type IFormField =
+  | ITextField
+  | IConstantField
+  | INumberField
+  | ILongTextField
+  | IJSONField
+  | ISelectField
+  | IRadioField
+  | ICheckboxField
+  | IDateField
+  | ITimeField
+  | IDateTimeField
+  | IBooleanField
+  | IObjectField
+  | IObjectListField
+  | IOneOfField
+  | IGeoJSONField
+  | IGeometryField
+  | IFormFieldSection
+  | ICustomField
 
-export type IFormFieldType = 'text' | 'long_text' | 'number' | 'json' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'boolean' | 'object' | 'objectList' | 'oneOf' | 'geojson' | 'geometry' | `custom:${string}`
+export type IFormFieldType =
+  | 'text'
+  | 'long_text'
+  | 'number'
+  | 'json'
+  | 'select'
+  | 'radio'
+  | 'checkbox'
+  | 'date'
+  | 'time'
+  | 'datetime'
+  | 'boolean'
+  | 'object'
+  | 'objectList'
+  | 'oneOf'
+  | 'geojson'
+  | 'geometry'
+  | `custom:${string}`
 export type ISectionFormFieldType = 'section' | 'page'
 
 export type IFieldConditionResult = 'exclude' | 'include' | 'disable' | 'enable'
@@ -43,7 +79,19 @@ export interface IFieldConditionsSet {
   newDefaultValue?: IValueType | IValueType[]
 }
 
-export type IFieldConditionOperator = '=' | 'eq' | '>' | 'gt' | '>=' | 'gte' | '<' | 'lt' | '<=' | 'lte' | '!=' | '!eq'
+export type IFieldConditionOperator =
+  | '='
+  | 'eq'
+  | '>'
+  | 'gt'
+  | '>='
+  | 'gte'
+  | '<'
+  | 'lt'
+  | '<='
+  | 'lte'
+  | '!='
+  | '!eq'
 export interface IFieldCondition {
   dependsOn?: string | string[]
   field?: string | string[]
@@ -94,7 +142,6 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
   }
-
 }
 
 export interface INumberField extends INumberValueInput {
@@ -144,8 +191,7 @@ interface ICustomField extends IFormFieldRoot, ISelectableInput {
   type: `custom:${string}`
 }
 
-interface ISingleSelectableInput extends ISelectableInput {
-}
+interface ISingleSelectableInput extends ISelectableInput {}
 
 interface IMultiSelectableInput extends ISelectableInput {
   defaultValues?: Array<string | number>
@@ -261,6 +307,18 @@ export interface IGeometryField extends IFormFieldRoot {
       lon: number
       zoom: number
     }
+    /**
+     * Path to a form field that controls which shape types are enabled.
+     * Field value should be a comma-separated string or array of shape type names.
+     * E.g., 'point,polygon' or ['point', 'linestring']
+     * Merged with static settings (static settings take precedence).
+     */
+    enabledShapesField?: string
+    /**
+     * Maximum number of points allowed in a LineString geometry.
+     * Validation enforced on coordinate parsing and geometry updates.
+     */
+    maxLineStringPoints?: number
   }
 }
 
@@ -297,8 +355,17 @@ export interface IForm {
   settings?: IFormSettings
 }
 
-export type IFormFieldOverride = Partial<IFormField> & { prop: string } | IObjectFormFieldOverride
-export type IObjectFormFieldOverride = Omit<Partial<IObjectField>, 'fields' | 'tabs' | 'pages' | 'wizard_steps'> & { fields?: IFormFieldOverride[], prop: string, tabs?: IFormLayoutTabOverride[], pages?: IPageOverride[], wizard_steps?: IWizardStepOverride[] }
+export type IFormFieldOverride = (Partial<IFormField> & { prop: string }) | IObjectFormFieldOverride
+export type IObjectFormFieldOverride = Omit<
+  Partial<IObjectField>,
+  'fields' | 'tabs' | 'pages' | 'wizard_steps'
+> & {
+  fields?: IFormFieldOverride[]
+  prop: string
+  tabs?: IFormLayoutTabOverride[]
+  pages?: IPageOverride[]
+  wizard_steps?: IWizardStepOverride[]
+}
 
 export interface IFormSectionOverride extends Omit<IFormOverride, 'settings'> {}
 
