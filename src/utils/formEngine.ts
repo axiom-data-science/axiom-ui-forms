@@ -10,9 +10,13 @@
  * All functions are pure and testable without React.
  */
 
-import { type IFormField, type IFormValues, type IValueType, type ICheckConditionResult } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import {
+  type IFormField,
+  type IFormValues,
+  type IValueType,
+  type ICheckConditionResult,
+} from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
-import { getFieldValue } from ***REMOVED***@/utils/getters***REMOVED***
 
 /**
  * Context information for evaluating nested fields
@@ -86,7 +90,7 @@ export function evaluateFieldLogicState(
     isVisible,
     isDisabled,
     defaultValue,
-    conditionResult
+    conditionResult,
   }
 }
 
@@ -213,17 +217,8 @@ export function seedNestedDefaults(
   if (!fields) return
 
   for (const field of fields) {
-    // Get the path where this field will be stored
-    const fieldPath = field.destPath ?? 
-      (parentPath ? `${parentPath}.${field.id}` : field.id)
-
-    // Only skip if field is of type object with skip_path=true
-    const shouldSkipPath = field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true
-
     if (field.type === ***REMOVED***object***REMOVED*** && field.fields) {
       // For object fields, ensure container exists and seed nested fields
-      const objectPath = shouldSkipPath ? parentPath : fieldPath
-      
       if (!formValues[field.id]) {
         formValues[field.id] = {}
       }
@@ -237,15 +232,19 @@ export function seedNestedDefaults(
               arrayValue[i] = {}
             }
             // Recursively seed defaults for each array element
-            seedNestedDefaults(field.fields, arrayValue[i], context, ***REMOVED******REMOVED***)
+            seedNestedDefaults(field.fields, arrayValue[i] as IFormValues, context, ***REMOVED******REMOVED***)
           }
         }
       } else {
         // Single object
         const objectValue = formValues[field.id]
-        if (typeof objectValue === ***REMOVED***object***REMOVED*** && objectValue !== null && !Array.isArray(objectValue)) {
+        if (
+          typeof objectValue === ***REMOVED***object***REMOVED*** &&
+          objectValue !== null &&
+          !Array.isArray(objectValue)
+        ) {
           // Recursively seed defaults for nested fields
-          seedNestedDefaults(field.fields, objectValue, context, ***REMOVED******REMOVED***)
+          seedNestedDefaults(field.fields, objectValue as IFormValues, context, ***REMOVED******REMOVED***)
         }
       }
     } else {
