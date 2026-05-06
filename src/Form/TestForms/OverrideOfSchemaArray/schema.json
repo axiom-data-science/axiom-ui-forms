@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Makara Data Schema",
+  "description": "Schema for marine bioacoustic data including deployments, recordings, analyses, and detections",
+  "type": "object",
+  "properties": {
+    "test": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "testObject": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field1": { "type": "string" },
+          "field2": { "type": "number" }
+        }
+      }
+    }
+  }
+}

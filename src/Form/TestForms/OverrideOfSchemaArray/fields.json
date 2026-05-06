@@ -1,0 +1,11 @@
+[
+  {
+    "prop": "testObject",
+    "layout": "grid2",
+    "fields": [
+      {
+        "prop": "testObject.field1"
+      }
+    ]
+  }
+]
