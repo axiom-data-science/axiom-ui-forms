@@ -783,5 +783,92 @@ describe('formEngine - Field Logic Evaluation', () => {
       // new null slot gets the default
       expect(formValues.items[1].label).toBe('Default Label')
     })
+
+    it('BUG FIX: multiple=true object field initializes as [] not {}', () => {
+      // Before fix: formValues[field.id] = {} → Array.isArray check failed → defaults never seeded
+      const fields: IFormField[] = [
+        {
+          id: 'contacts',
+          type: 'object',
+          label: 'Contacts',
+          multiple: true,
+          fields: [{ id: 'name', type: 'text', label: 'Name', defaultValue: 'Unknown' }],
+        },
+      ]
+
+      const formValues: any = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      // Should be an empty array (no items yet), not {}
+      expect(Array.isArray(formValues.contacts)).toBe(true)
+      expect(formValues.contacts).toHaveLength(0)
+    })
+
+    it('BUG FIX: flat field list does not write nested defaults at root level', () => {
+      // Simulates the old bug in seedFormValuesWithDefaults where getFieldsFromFormSection
+      // returned a flat list [parentObject, nestedChild] and the nestedChild would be
+      // processed at root level, creating formValues['city'] instead of formValues['address']['city']
+      const parentField: IFormField = {
+        id: 'address',
+        type: 'object',
+        label: 'Address',
+        fields: [{ id: 'city', type: 'text', label: 'City', defaultValue: 'Boston' }],
+      }
+      const nestedField: IFormField = {
+        id: 'city',
+        type: 'text',
+        label: 'City',
+        defaultValue: 'Boston',
+      }
+
+      // Passing the correct hierarchical list (only the parent)
+      const formValuesCorrect: any = {}
+      seedNestedDefaults([parentField], formValuesCorrect, { rootFormValues: {} })
+
+      expect(formValuesCorrect.address.city).toBe('Boston')   // correct
+      expect(formValuesCorrect.city).toBeUndefined()          // no root-level leak
+
+      // Passing the flattened list (the old bug) would create formValues.city at root
+      const formValuesBuggy: any = {}
+      seedNestedDefaults([parentField, nestedField], formValuesBuggy, { rootFormValues: {} })
+
+      expect(formValuesBuggy.address.city).toBe('Boston')  // still set correctly by parent
+      expect(formValuesBuggy.city).toBe('Boston')          // ← leaked to root (the old bug)
+    })
+
+    it('override-only field with defaultValue gets seeded into formValues', () => {
+      // This tests the case where a field is added via override (not in schema)
+      // e.g., shape_type: control field not in schema but declared in fields.json
+      const fields: IFormField[] = [
+        {
+          id: 'shape_type',
+          type: 'select',
+          label: 'Shape',
+          defaultValue: 'point',
+          options: [
+            { label: 'Point', value: 'point' },
+            { label: 'Polygon', value: 'polygon' },
+          ],
+          excludeFromPayload: true,
+        },
+        {
+          id: 'geojson',
+          type: 'text',
+          label: 'GeoJSON',
+          defaultValue: null,
+        },
+      ]
+
+      const formValues: any = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      // Both fields should have their defaults applied
+      expect(formValues.shape_type).toBe('point')
+      expect(formValues.geojson).toBe(null)
+    })
   })
 })
