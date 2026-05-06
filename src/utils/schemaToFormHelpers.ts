@@ -502,9 +502,10 @@ const mergeFormField = ({
     mergedField.id ??
     (path !== undefined ? path.split(***REMOVED***.***REMOVED***).pop() : (fieldOverride?.prop ?? field.id))
   const id = mergedField.id ?? makeFormFieldId([mergedField.id])
-  if (mergedField.type === ***REMOVED***object***REMOVED***) {
+  if (mergedField.type === ***REMOVED***object***REMOVED*** || mergedField.type === ***REMOVED***objectWrapper***REMOVED***) {
     // attached to the schema field. defaults not overrides
-    const fieldFields = field?.type === ***REMOVED***object***REMOVED*** ? (field.fields ?? []) : []
+    const fieldFields =
+      field?.type === ***REMOVED***object***REMOVED*** || field?.type === ***REMOVED***objectWrapper***REMOVED*** ? (field.fields ?? []) : []
     const fieldFieldsMap = Object.fromEntries(fieldFields.map((f) => [getPathFromField(f), f]))
     /* if (fieldPages !== undefined) {
       mergedField.pages = fieldPages
@@ -514,8 +515,14 @@ const mergeFormField = ({
     } */
 
     // attached to the field override. overrides
-    const overrideFields = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? (fieldOverride.fields ?? []) : []
-    const overrideFieldTabs = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.tabs : undefined
+    const overrideFields =
+      fieldOverride?.type === ***REMOVED***object***REMOVED*** || fieldOverride?.type === ***REMOVED***objectWrapper***REMOVED***
+        ? (fieldOverride.fields ?? [])
+        : []
+    const overrideFieldTabs =
+      fieldOverride?.type === ***REMOVED***object***REMOVED*** || fieldOverride?.type === ***REMOVED***objectWrapper***REMOVED***
+        ? fieldOverride.tabs
+        : undefined
     // const overrideFieldPages = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.pages : undefined
     const overrideFieldsMap = Object.fromEntries(
       overrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
@@ -523,7 +530,9 @@ const mergeFormField = ({
 
     // attached to the form override. overrides
     const formOverrideFields =
-      formFieldOverrides.type === ***REMOVED***object***REMOVED*** ? (formFieldOverrides.fields ?? []) : []
+      formFieldOverrides.type === ***REMOVED***object***REMOVED*** || formFieldOverrides.type === ***REMOVED***objectWrapper***REMOVED***
+        ? (formFieldOverrides.fields ?? [])
+        : []
     const formOverrideFieldsMap = Object.fromEntries(
       formOverrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
     )

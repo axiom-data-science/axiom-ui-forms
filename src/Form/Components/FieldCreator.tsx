@@ -97,7 +97,7 @@ const getFieldWrapperClass = (field: IFormField): string => {
   const level = field.level ?? 0
   const type = field.type
   const multiple = field.multiple ?? false
-  if ((type === ***REMOVED***object***REMOVED*** && level > 1) || multiple) {
+  if (((type === ***REMOVED***object***REMOVED*** || type === ***REMOVED***objectWrapper***REMOVED***) && level > 1) || multiple) {
     cl.push(***REMOVED***p-4***REMOVED***)
     if (level > 0) {
       cl.push(level % 2 ? ***REMOVED***bg-slate-200***REMOVED*** : ***REMOVED***bg-slate-100***REMOVED***)
@@ -190,7 +190,7 @@ export const MultipleFieldCreator = ({
   const { formValues, setFormValues, inputOverrides, form } = useFormContext()
 
   const getNewDefaultElement = (): IValueType | null => {
-    if (field.type === ***REMOVED***object***REMOVED***) {
+    if (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) {
       const objField = field as IObjectField
       const newElement: IFormValues = {}
       if (objField.fields) {
@@ -216,14 +216,18 @@ export const MultipleFieldCreator = ({
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
   const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
 
-  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true && field.multiple === true) {
+  if (
+    (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) &&
+    field.skip_path === true &&
+    field.multiple === true
+  ) {
     return (
       <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
         <FieldLabel field={field} disabled={disabled} />
         <p className="text-rose-700">
           <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error with field{***REMOVED*** ***REMOVED***}
-          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> Object fields with
-          multiple true and skip_path true are not supported.
+          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> Object and wrapper
+          fields with multiple true and skip_path true are not supported.
         </p>
       </div>
     )

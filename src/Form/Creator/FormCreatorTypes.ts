@@ -38,6 +38,7 @@ export type IFormField =
   | IDateTimeField
   | IBooleanField
   | IObjectField
+  | IObjectWrapperField
   | IObjectListField
   | IOneOfField
   | IGeoJSONField
@@ -58,6 +59,7 @@ export type IFormFieldType =
   | ***REMOVED***datetime***REMOVED***
   | ***REMOVED***boolean***REMOVED***
   | ***REMOVED***object***REMOVED***
+  | ***REMOVED***objectWrapper***REMOVED***
   | ***REMOVED***objectList***REMOVED***
   | ***REMOVED***oneOf***REMOVED***
   | ***REMOVED***geojson***REMOVED***
@@ -265,8 +267,32 @@ export interface IObjectField extends Omit<IValidContainerField, ***REMOVED***fi
   fields?: IFormField[]
 }
 
-export interface IObjectListField extends IValidContainerField {
-  type: ***REMOVED***objectList***REMOVED***
+/**
+ * IObjectWrapperField - A UI-only container for organizing nested fields with layout options
+ *
+ * Use this to group related fields into tabs, pages, or wizard steps without adding a data nesting level.
+ * The wrapper itself doesn***REMOVED***t add data to the form values (skip_path: true is enforced).
+ *
+ * Example use case: Organize multiple object fields or array items with tabs for better UX
+ *
+ * Example schema override:
+ * {
+ *   type: ***REMOVED***objectWrapper***REMOVED***,
+ *   id: ***REMOVED***personal_info_wrapper***REMOVED***,
+ *   tabs: [
+ *     { id: ***REMOVED***basic***REMOVED***, label: ***REMOVED***Basic Info***REMOVED***, fields: [...] },
+ *     { id: ***REMOVED***contact***REMOVED***, label: ***REMOVED***Contact***REMOVED***, fields: [...] }
+ *   ]
+ * }
+ */
+export interface IObjectWrapperField extends Omit<IValidContainerField, ***REMOVED***fields***REMOVED*** | ***REMOVED***multiple***REMOVED***> {
+  type: ***REMOVED***objectWrapper***REMOVED***
+  tabs?: IFormLayoutTab[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
+  fields?: IFormField[]
+  // Enforce skip_path: true for wrapper fields via type constraint
+  skip_path: true
 }
 
 export interface IOneOfField extends IValidContainerField {
