@@ -11,6 +11,7 @@ import {
   type IFormValues,
   type IValueChangeFn,
   type IValueType,
+  type ICompositeValueType,
 } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { seedNestedDefaults } from ***REMOVED***@/utils/formEngine***REMOVED***
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
@@ -278,6 +279,163 @@ export const MultipleFieldCreator = ({
   )
 }
 
+export const ObjectListCreator = ({
+  field,
+  onChange,
+  disabled = false,
+  value,
+}: IFieldCreator): ReactElement => {
+  const { setFormValues, inputOverrides, form, onChange: contextOnChange } = useFormContext()
+  const formValues = useFormValues()
+  const formValuesRef = useRef(formValues)
+  formValuesRef.current = formValues
+
+  const objListField = field as any // IObjectListField
+  const keyField = objListField.settings?.keyField
+
+  if (!keyField) {
+    return (
+      <div className="p-4 bg-slate-100">
+        <FieldLabel field={field} disabled={disabled} />
+        <p className="text-rose-700">
+          <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error: objectList field{***REMOVED*** ***REMOVED***}
+          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> requires settings.keyField
+        </p>
+      </div>
+    )
+  }
+
+  const getNewDefaultElement = (): IValueType | null => {
+    const newElement: IFormValues = {}
+    if (objListField.fields) {
+      seedNestedDefaults(objListField.fields, newElement, { rootFormValues: formValues })
+    }
+    return newElement as IValueType
+  }
+
+  const defaultOnChange = useCallback((updatedObj: ICompositeValueType): void => {
+    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
+      form,
+      field,
+      value: updatedObj,
+      formValues: formValuesRef.current,
+    })
+    setFormValues(formValuesCopyClean)
+    const notifyFn = onChange ?? contextOnChange
+    if (typeof notifyFn === ***REMOVED***function***REMOVED***) {
+      notifyFn(updatedObj)
+    }
+  }, [form, field, setFormValues, onChange, contextOnChange])
+
+  const objValue = (typeof value === ***REMOVED***object***REMOVED*** && value !== null && !Array.isArray(value)) ? value as ICompositeValueType : {}
+
+  const InputComponent = {
+    ...inputMap,
+    ...(inputOverrides ?? {}),
+  }[field.type]
+
+  return (
+    <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
+      <FieldLabel field={field} disabled={disabled} />
+      <div className="flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed">
+        {Object.entries(objValue).map(([currentKey, itemValue]) => (
+          <div key={currentKey} className={`flex flex-col gap-2 py-2 ${getFieldWrapperClass(field)}`}>
+            <div className="flex flex-col gap-4">
+              {objListField.fields?.map((childField: IFormField) => {
+                const key = `${field.id}-${currentKey}-${childField.id}`
+                const childValue = typeof itemValue === ***REMOVED***object***REMOVED*** && itemValue !== null && !Array.isArray(itemValue)
+                  ? (itemValue as ICompositeValueType)[childField.id]
+                  : null
+
+                return (
+                  <FieldCreator
+                    key={key}
+                    field={childField}
+                    disabled={disabled}
+                    value={childValue ?? null}
+                    onChange={(newChildValue) => {
+                      const newItemValue = cloneObject(itemValue ?? {})
+                      newItemValue[childField.id] = newChildValue
+
+                      // If this is the key field, update the key if it changed
+                      if (childField.id === keyField) {
+                        const newKey = String(newChildValue ?? ***REMOVED******REMOVED***)
+                        if (newKey !== currentKey) {
+                          const newObjValue = cloneObject(objValue)
+                          delete newObjValue[currentKey]
+                          newObjValue[newKey] = newItemValue
+                          defaultOnChange(newObjValue)
+                          return
+                        }
+                      }
+
+                      // Otherwise just update the value
+                      const newObjValue = cloneObject(objValue)
+                      newObjValue[currentKey] = newItemValue
+                      defaultOnChange(newObjValue)
+                    }}
+                  />
+                )
+              })}
+            </div>
+            <div className="flex flex-row w-full p-2 gap-4">
+              <div className="flex gap-2">
+                <Button
+                  size="xs"
+                  className={toolButtonClass}
+                  onClick={() => {
+                    const newKey = String(new Date().getTime())
+                    const newObjValue = cloneObject(objValue)
+                    newObjValue[newKey] = getNewDefaultElement()
+                    defaultOnChange(newObjValue)
+                  }}
+                >
+                  Add <PlusIcon className="inline ml-2" />
+                </Button>
+                <Button
+                  size="xs"
+                  className={toolButtonClass}
+                  onClick={() => {
+                    const newKey = String(new Date().getTime())
+                    const newObjValue = cloneObject(objValue)
+                    newObjValue[newKey] = cloneObject(itemValue)
+                    defaultOnChange(newObjValue)
+                  }}
+                >
+                  Duplicate <CopyIcon className="inline ml-2" />
+                </Button>
+              </div>
+              {Object.keys(objValue).length > 1 && (
+                <DeleteMultiple
+                  doDelete={() => {
+                    const newObjValue = cloneObject(objValue)
+                    delete newObjValue[currentKey]
+                    defaultOnChange(newObjValue)
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      {Object.keys(objValue).length === 0 && (
+        <Button
+          size="sm"
+          onClick={() => {
+            const newKey = String(new Date().getTime())
+            const newObjValue: ICompositeValueType = {}
+            newObjValue[newKey] = getNewDefaultElement()
+            defaultOnChange(newObjValue)
+          }}
+          className="mt-4"
+        >
+          Add First Item <PlusIcon className="inline ml-2" />
+        </Button>
+      )}
+    </div>
+  )
+}
+
 const FieldCreator = ({
   field,
   value,
@@ -350,8 +508,10 @@ const FieldCreator = ({
             extras: [disabled ? disabledClassName : undefined, getFieldWrapperClass(field)],
           })}
         >
-          {field.type === ***REMOVED***object***REMOVED*** && field.multiple === true ? (
+          {(field as any).multiple === true ? (
             <MultipleFieldCreator field={field} disabled={disabled} onChange={onChange} />
+          ) : field.type === ***REMOVED***objectList***REMOVED*** ? (
+            <ObjectListCreator field={field} disabled={disabled} onChange={onChange} />
           ) : (
             <InputComponent
               field={field}
