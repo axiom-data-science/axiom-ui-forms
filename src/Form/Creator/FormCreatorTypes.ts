@@ -267,6 +267,14 @@ export interface IObjectField extends Omit<IValidContainerField, 'fields'> {
   fields?: IFormField[]
 }
 
+export interface IObjectListField extends Omit<IValidContainerField, 'fields'> {
+  type: 'objectList'
+  settings: {
+    keyField: string
+  }
+  fields?: IFormField[]
+}
+
 /**
  * IObjectWrapperField - A UI-only container for organizing nested fields with layout options
  *
