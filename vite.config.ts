@@ -17,7 +17,9 @@ const viteonfig = defineViteConfig({
       '@': '/src/',
       '@Components': '/src/Components/',
       '@State': '/src/State/'
-    }
+    },
+    // Prefer module field over main field; some @axdspub packages have broken main fields
+    mainFields: ['module', 'jsnext:main', 'jsnext', 'main']
   },
   server: {
     port: 3080,
