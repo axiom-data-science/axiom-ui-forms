@@ -17,7 +17,9 @@ const viteonfig = defineViteConfig({
       ***REMOVED***@***REMOVED***: ***REMOVED***/src/***REMOVED***,
       ***REMOVED***@Components***REMOVED***: ***REMOVED***/src/Components/***REMOVED***,
       ***REMOVED***@State***REMOVED***: ***REMOVED***/src/State/***REMOVED***
-    }
+    },
+    // Prefer module field over main field; some @axdspub packages have broken main fields
+    mainFields: [***REMOVED***module***REMOVED***, ***REMOVED***jsnext:main***REMOVED***, ***REMOVED***jsnext***REMOVED***, ***REMOVED***main***REMOVED***]
   },
   server: {
     port: 3080,

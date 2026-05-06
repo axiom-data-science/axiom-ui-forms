@@ -1,10 +1,23 @@
-import { type IFormOverride, type IForm, type IFormField, type IFormFieldType, type IFormValues, type IFormFieldOverride, type IFormSectionOverride, type IPage, type IFormSection, type IWizardStep, type IValueType, type INumberField, type IFormLayoutTab } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import {
+  type IFormOverride,
+  type IForm,
+  type IFormField,
+  type IFormFieldType,
+  type IFormValues,
+  type IFormFieldOverride,
+  type IFormSectionOverride,
+  type IPage,
+  type IFormSection,
+  type IWizardStep,
+  type IValueType,
+  type INumberField,
+  type IFormLayoutTab,
+} from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Ajv, { type ValidateFunction } from ***REMOVED***ajv***REMOVED***
 import addFormats from ***REMOVED***ajv-formats***REMOVED***
 // mergeObjects is defined in mergers.ts; imported for internal use and
 // re-exported for backwards compatibility with existing consumers
 import { mergeObjects } from ***REMOVED***@/utils/mergers***REMOVED***
-export { mergeObjects }
 
 import { type JSONSchema6Type, type JSONSchema6Definition, type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
@@ -19,9 +32,11 @@ import { type ISelectOptionProps } from ***REMOVED***@axdspub/axiom-ui-utilities
 import { getFieldsFromFormSection, getPathFromField, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import { cloneObject, copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
 
+export { mergeObjects }
+
 const getValidator = (schema: number): ValidateFunction => {
   const ajv = new Ajv({
-    strict: false
+    strict: false,
   })
   addFormats(ajv)
   switch (schema) {
@@ -38,7 +53,10 @@ const getValidator = (schema: number): ValidateFunction => {
   }
 }
 
-export const validateSchema = (schemaOb: unknown, version: number = 6): { schema?: JSONSchema6, error?: string, unrefed?: JSONSchema6 } => {
+export const validateSchema = (
+  schemaOb: unknown,
+  version: number = 6
+): { schema?: JSONSchema6; error?: string; unrefed?: JSONSchema6 } => {
   const ajv = new Ajv({ strict: false })
   addFormats(ajv)
   const validator = getValidator(version)
@@ -55,7 +73,10 @@ export const validateSchema = (schemaOb: unknown, version: number = 6): { schema
   return { schema: resolved, unrefed: schemaOb as JSONSchema6 }
 }
 
-export const validateAgainstSchema = (schema: JSONSchema6, formValues: IFormValues): string[] | undefined => {
+export const validateAgainstSchema = (
+  schema: JSONSchema6,
+  formValues: IFormValues
+): string[] | undefined => {
   const validSchema = validateSchema(schema)
   if (validSchema.error !== undefined) {
     return [validSchema.error]
@@ -65,7 +86,7 @@ export const validateAgainstSchema = (schema: JSONSchema6, formValues: IFormValu
   const validator = ajv.compile(schema)
   const valid = validator(formValues)
   if (validator.errors !== null && validator.errors !== undefined && !valid) {
-    return validator.errors.map(e => {
+    return validator.errors.map((e) => {
       return `${e.instancePath} ${e.message}`
     })
   }
@@ -73,7 +94,9 @@ export const validateAgainstSchema = (schema: JSONSchema6, formValues: IFormValu
 }
 
 const makeRandom = (): string => {
-  return (crypto !== undefined && typeof crypto.randomUUID === ***REMOVED***function***REMOVED***) ? crypto.randomUUID() : Math.random().toString(36).substring(2)
+  return crypto !== undefined && typeof crypto.randomUUID === ***REMOVED***function***REMOVED***
+    ? crypto.randomUUID()
+    : Math.random().toString(36).substring(2)
 }
 
 const makeFormFieldId = (options: Array<string | number | undefined | null>): string => {
@@ -94,7 +117,8 @@ const makeLabel = (options: Array<string | number | undefined | null>): string |
     .split(***REMOVED*** ***REMOVED***)
     .map((s, i) => {
       return i === 0 ? `${s.charAt(0).toUpperCase()}${s.slice(1)}` : s
-    }).join(***REMOVED*** ***REMOVED***)
+    })
+    .join(***REMOVED*** ***REMOVED***)
 }
 
 const getFieldType = (schema: JSONSchema6): IFormFieldType => {
@@ -104,7 +128,11 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
       return ***REMOVED***select***REMOVED***
     } else if (schema.anyOf !== undefined) {
       return ***REMOVED***checkbox***REMOVED***
-    } else if (schemaType === ***REMOVED***string***REMOVED*** && (schema.maxLength !== undefined && schema.maxLength > 150)) {
+    } else if (
+      schemaType === ***REMOVED***string***REMOVED*** &&
+      schema.maxLength !== undefined &&
+      schema.maxLength > 150
+    ) {
       return ***REMOVED***text***REMOVED***
     } else if (schemaType === ***REMOVED***number***REMOVED*** || schemaType === ***REMOVED***integer***REMOVED***) {
       return ***REMOVED***number***REMOVED***
@@ -118,7 +146,11 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
     return ***REMOVED***text***REMOVED***
   } else if (schemaType === ***REMOVED***boolean***REMOVED***) {
     return ***REMOVED***boolean***REMOVED***
-  } else if (schemaType === ***REMOVED***object***REMOVED*** || (schemaType === undefined && (schema.oneOf !== undefined || schema.anyOf !== undefined || schema.allOf !== undefined))) {
+  } else if (
+    schemaType === ***REMOVED***object***REMOVED*** ||
+    (schemaType === undefined &&
+      (schema.oneOf !== undefined || schema.anyOf !== undefined || schema.allOf !== undefined))
+  ) {
     return ***REMOVED***object***REMOVED***
   }
   if (!schemaType && (schema.anyOf !== undefined || schema.enum !== undefined)) {
@@ -128,7 +160,9 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
   return ***REMOVED***text***REMOVED***
 }
 
-export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definition | undefined): string | number | boolean | undefined => {
+export const getValueFromSchema = (
+  schema: JSONSchema6Type | JSONSchema6Definition | undefined
+): string | number | boolean | undefined => {
   if (schema === undefined || schema === null) {
     return undefined
   }
@@ -154,12 +188,16 @@ export const getValueFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
     return getValueFromSchema(schema.$id)
   }
   if (Array.isArray(schema) && schema.length === 2) {
-    return typeof schema[0] === ***REMOVED***object***REMOVED*** && schema[0] !== null ? getValueFromSchema(schema[0]) : schema[0]
+    return typeof schema[0] === ***REMOVED***object***REMOVED*** && schema[0] !== null
+      ? getValueFromSchema(schema[0])
+      : schema[0]
   }
   return undefined
 }
 
-export const getLabelFromSchema = (schema: JSONSchema6Type | JSONSchema6Definition | undefined): string | undefined => {
+export const getLabelFromSchema = (
+  schema: JSONSchema6Type | JSONSchema6Definition | undefined
+): string | undefined => {
   if (schema === undefined || schema === null) {
     return undefined
   }
@@ -179,7 +217,9 @@ export const getLabelFromSchema = (schema: JSONSchema6Type | JSONSchema6Definiti
     return getLabelFromSchema(schema.title)
   }
   if (Array.isArray(schema) && schema.length === 2) {
-    return typeof schema[1] === ***REMOVED***object***REMOVED*** && schema[1] !== null ? getLabelFromSchema(schema[1]) : schema[1]
+    return typeof schema[1] === ***REMOVED***object***REMOVED*** && schema[1] !== null
+      ? getLabelFromSchema(schema[1])
+      : schema[1]
   }
   return String(getValueFromSchema(schema))
 }
@@ -197,7 +237,7 @@ const schemaToFormField = ({
   property,
   schemaField,
   multiple,
-  path = []
+  path = [],
 }: ISchemaToFormFieldProps): IFormField => {
   path.push(property)
   if (schemaField === undefined) {
@@ -205,7 +245,7 @@ const schemaToFormField = ({
       id: makeFormFieldId([schema.$id, property]),
       label: property,
       type: ***REMOVED***text***REMOVED***,
-      multiple
+      multiple,
     }
   }
   if (typeof schemaField === ***REMOVED***boolean***REMOVED***) {
@@ -213,7 +253,7 @@ const schemaToFormField = ({
       id: makeFormFieldId([schema.$id, property]),
       label: property,
       type: ***REMOVED***boolean***REMOVED***,
-      multiple
+      multiple,
     }
   }
   if (schemaField.type === ***REMOVED***array***REMOVED*** && schemaField.items !== undefined) {
@@ -222,40 +262,59 @@ const schemaToFormField = ({
       property,
       schemaField: schemaField.items as JSONSchema6,
       multiple: true,
-      path: path.slice()
+      path: path.slice(),
     })
   }
-  if (schemaField.anyOf !== undefined && schemaField.anyOf.length === 2 && schemaField.anyOf.filter(d => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type === ***REMOVED***null***REMOVED***).length === 1) {
-    const notNull = schemaField.anyOf.filter(d => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type !== ***REMOVED***null***REMOVED***)[0]
+  if (
+    schemaField.anyOf !== undefined &&
+    schemaField.anyOf.length === 2 &&
+    schemaField.anyOf.filter((d) => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type === ***REMOVED***null***REMOVED***).length === 1
+  ) {
+    const notNull = schemaField.anyOf.filter((d) => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type !== ***REMOVED***null***REMOVED***)[0]
     return schemaToFormField({
       schema: schemaField,
       property,
-      schemaField: { ...omit(schemaField, ***REMOVED***anyOf***REMOVED***), ...(typeof notNull !== ***REMOVED***boolean***REMOVED*** ? notNull : {}) },
+      schemaField: {
+        ...omit(schemaField, ***REMOVED***anyOf***REMOVED***),
+        ...(typeof notNull !== ***REMOVED***boolean***REMOVED*** ? notNull : {}),
+      },
       multiple,
-      path: path.slice()
+      path: path.slice(),
     })
   }
   const type = getFieldType(schemaField)
   const id = makeFormFieldId([
     schemaField.$id,
     property,
-    schemaField.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***)
+    schemaField.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***),
   ])
-  const label = makeLabel([
-    schemaField.title,
-    property
-  ])
+  const label = makeLabel([schemaField.title, property])
   const schemaRequired = schema.required ?? []
-  const ob: Pick<IFormField, ***REMOVED***id***REMOVED*** | ***REMOVED***label***REMOVED*** | ***REMOVED***description***REMOVED*** | ***REMOVED***multiple***REMOVED*** | ***REMOVED***required***REMOVED*** | ***REMOVED***defaultValue***REMOVED***> = {
+  const ob: Pick<
+    IFormField,
+    ***REMOVED***id***REMOVED*** | ***REMOVED***label***REMOVED*** | ***REMOVED***description***REMOVED*** | ***REMOVED***multiple***REMOVED*** | ***REMOVED***required***REMOVED*** | ***REMOVED***defaultValue***REMOVED***
+  > = {
     id,
     label,
     description: schemaField.description,
     multiple,
-    defaultValue: schemaField.default !== undefined ? schemaField.default as IValueType : undefined,
-    required: schemaRequired.includes(property) ?? false
+    defaultValue:
+      schemaField.default !== undefined ? (schemaField.default as IValueType) : undefined,
+    required: schemaRequired.includes(property) ?? false,
   }
-  if (type === ***REMOVED***text***REMOVED*** || type === ***REMOVED***number***REMOVED*** || type === ***REMOVED***long_text***REMOVED*** || type === ***REMOVED***boolean***REMOVED*** || type === ***REMOVED***datetime***REMOVED*** || type === ***REMOVED***date***REMOVED*** || type === ***REMOVED***time***REMOVED***) {
-    if (type === ***REMOVED***number***REMOVED*** && (schemaField.minimum !== undefined || schemaField.maximum !== undefined)) {
+  if (
+    type === ***REMOVED***text***REMOVED*** ||
+    type === ***REMOVED***number***REMOVED*** ||
+    type === ***REMOVED***long_text***REMOVED*** ||
+    type === ***REMOVED***boolean***REMOVED*** ||
+    type === ***REMOVED***datetime***REMOVED*** ||
+    type === ***REMOVED***date***REMOVED*** ||
+    type === ***REMOVED***time***REMOVED***
+  ) {
+    if (
+      type === ***REMOVED***number***REMOVED*** &&
+      (schemaField.minimum !== undefined || schemaField.maximum !== undefined)
+    ) {
       const numberOb = ob as INumberField
       numberOb.constraints = numberOb.constraints ?? {}
       if (schemaField.minimum !== undefined) {
@@ -266,35 +325,38 @@ const schemaToFormField = ({
       }
       return {
         ...numberOb,
-        type
+        type,
       }
     }
     return {
       ...ob,
-      type
+      type,
     }
   }
 
   if (type === ***REMOVED***select***REMOVED*** || type === ***REMOVED***checkbox***REMOVED*** || type === ***REMOVED***radio***REMOVED***) {
     const schemaOptions = schemaField.oneOf ?? schemaField.anyOf ?? schemaField.enum ?? []
-    const options: ISelectOptionProps[] = schemaOptions.map(e => {
-      const value = getValueFromSchema(e)
-      const label = getLabelFromSchema(e)
-      const description: string | undefined = typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) ? String(e.description) : undefined
-      return value !== undefined
-        ? {
-            value: String(value),
-            label: label ?? String(value),
-            ...(
-              description !== undefined ? { description } : {}
-            )
-          }
-        : null
-    }).filter((d) => d !== null)
+    const options: ISelectOptionProps[] = schemaOptions
+      .map((e) => {
+        const value = getValueFromSchema(e)
+        const label = getLabelFromSchema(e)
+        const description: string | undefined =
+          typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e)
+            ? String(e.description)
+            : undefined
+        return value !== undefined
+          ? {
+              value: String(value),
+              label: label ?? String(value),
+              ...(description !== undefined ? { description } : {}),
+            }
+          : null
+      })
+      .filter((d) => d !== null)
     return {
       ...ob,
-      type: options.find(d => d.description !== undefined) ? ***REMOVED***radio***REMOVED*** : type,
-      options
+      type: options.find((d) => d.description !== undefined) ? ***REMOVED***radio***REMOVED*** : type,
+      options,
     }
   }
   if (type === ***REMOVED***object***REMOVED***) {
@@ -303,12 +365,14 @@ const schemaToFormField = ({
     const fields: IFormField[] = []
     for (const key in properties) {
       if (properties[key] !== undefined && typeof properties[key] !== ***REMOVED***boolean***REMOVED***) {
-        fields.push(schemaToFormField({
-          schema: schemaField,
-          property: key,
-          schemaField: properties[key],
-          path: path.slice()
-        }))
+        fields.push(
+          schemaToFormField({
+            schema: schemaField,
+            property: key,
+            schemaField: properties[key],
+            path: path.slice(),
+          })
+        )
       }
     }
 
@@ -320,7 +384,9 @@ const schemaToFormField = ({
         if (typeof f !== ***REMOVED***boolean***REMOVED***) {
           let value = f.$id ?? f.title
           if ((schemaField as any).discriminator?.propertyName !== undefined) {
-            const v = getValueFromSchema(f?.properties?.[(schemaField as any).discriminator?.propertyName])
+            const v = getValueFromSchema(
+              f?.properties?.[(schemaField as any).discriminator?.propertyName]
+            )
             if (v !== null && v !== undefined && typeof v !== ***REMOVED***boolean***REMOVED***) {
               value = String(v)
             }
@@ -330,17 +396,17 @@ const schemaToFormField = ({
           }
           options.push({
             label: f.title ?? f.$id ?? `${property} option ${String(i + 1)}`,
-            value
+            value,
           })
           const oneOfield = schemaToFormField({
             schema: schemaField,
             property: value,
             schemaField: f,
-            path: path.slice()
+            path: path.slice(),
           })
           oneOfield.conditions = {
             dependsOn: `${path.join(***REMOVED***.***REMOVED***)}.${selectorField}`,
-            value
+            value,
           }
           oneOfFields.push(oneOfield)
         }
@@ -349,9 +415,9 @@ const schemaToFormField = ({
         id: selectorField,
         type: ***REMOVED***select***REMOVED***,
         label: schemaField.title,
-        options
+        options,
       })
-      oneOfFields.forEach(f => {
+      oneOfFields.forEach((f) => {
         fields.push(f)
       })
     }
@@ -363,13 +429,14 @@ const schemaToFormField = ({
         const field = schemaToFormField({
           schema: schemaField,
           property: anyOfId ?? makeRandom(),
-          schemaField: typeof anyOf === ***REMOVED***boolean***REMOVED***
-            ? anyOf
-            : {
-                title: anyOf.title ?? ***REMOVED******REMOVED***,
-                ...anyOf
-              },
-          path: path.slice()
+          schemaField:
+            typeof anyOf === ***REMOVED***boolean***REMOVED***
+              ? anyOf
+              : {
+                  title: anyOf.title ?? ***REMOVED******REMOVED***,
+                  ...anyOf,
+                },
+          path: path.slice(),
         })
         if (anyOfId === undefined && field.type === ***REMOVED***object***REMOVED***) {
           field.skip_path = true
@@ -382,14 +449,14 @@ const schemaToFormField = ({
       ...ob,
       type,
       fields,
-      multiple
+      multiple,
     }
   }
 
   return {
     id,
     type: ***REMOVED***text***REMOVED***,
-    multiple
+    multiple,
   }
 }
 
@@ -409,7 +476,7 @@ const mergeFormField = ({
   fieldOverride,
   formFieldsOverrideMap,
   schemaFieldMap,
-  schemaForm
+  schemaForm,
 }: {
   field: IFormField
   fieldOverride?: IFormFieldOverride
@@ -418,27 +485,27 @@ const mergeFormField = ({
   schemaForm: IForm
 }): IFormField => {
   const path = fieldOverride?.prop ?? makeJsonPath(field ?? fieldOverride)
-  const formFieldOverrides = mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[path ?? ***REMOVED******REMOVED***]).filter(d => d !== undefined))
+  const formFieldOverrides = mergeObjects<IFormFieldOverride>(
+    formFieldsOverrideMap.map((overrides) => overrides[path ?? ***REMOVED******REMOVED***]).filter((d) => d !== undefined)
+  )
   const mergedField = {
     ...mergeObjects<IFormFieldOverride | IFormField>([
       {
         ...field,
-        destPath: path
+        destPath: path,
       },
       formFieldOverrides,
-      (fieldOverride ?? {}) as IFormFieldOverride
-    ])
+      (fieldOverride ?? {}) as IFormFieldOverride,
+    ]),
   }
-  const labelProp = mergedField.id ?? (
-    path !== undefined
-      ? path.split(***REMOVED***.***REMOVED***).pop()
-      : fieldOverride?.prop ?? field.id
-  )
+  const labelProp =
+    mergedField.id ??
+    (path !== undefined ? path.split(***REMOVED***.***REMOVED***).pop() : (fieldOverride?.prop ?? field.id))
   const id = mergedField.id ?? makeFormFieldId([mergedField.id])
   if (mergedField.type === ***REMOVED***object***REMOVED***) {
     // attached to the schema field. defaults not overrides
-    const fieldFields = field?.type === ***REMOVED***object***REMOVED*** ? field.fields ?? [] : []
-    const fieldFieldsMap = Object.fromEntries(fieldFields.map(f => [getPathFromField(f), f]))
+    const fieldFields = field?.type === ***REMOVED***object***REMOVED*** ? (field.fields ?? []) : []
+    const fieldFieldsMap = Object.fromEntries(fieldFields.map((f) => [getPathFromField(f), f]))
     /* if (fieldPages !== undefined) {
       mergedField.pages = fieldPages
     }
@@ -451,61 +518,61 @@ const mergeFormField = ({
     const overrideFieldTabs = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.tabs : undefined
     // const overrideFieldPages = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.pages : undefined
     const overrideFieldsMap = Object.fromEntries(
-      overrideFields
-        .filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f)
-        .map(f => [f.prop, f])
+      overrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
     )
 
     // attached to the form override. overrides
-    const formOverrideFields = formFieldOverrides.type === ***REMOVED***object***REMOVED*** ? formFieldOverrides.fields ?? [] : []
+    const formOverrideFields =
+      formFieldOverrides.type === ***REMOVED***object***REMOVED*** ? (formFieldOverrides.fields ?? []) : []
     const formOverrideFieldsMap = Object.fromEntries(
-      formOverrideFields
-        .filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f)
-        .map(f => [f.prop, f])
+      formOverrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
     )
 
     const allKeys = Object.keys({
       ...fieldFieldsMap,
       ...overrideFieldsMap,
-      ...formOverrideFieldsMap
+      ...formOverrideFieldsMap,
     })
 
-    mergedField.fields = allKeys.map(key => {
+    mergedField.fields = allKeys.map((key) => {
       // const fieldOverride = overrideFieldsMap[key] ?? { prop: key }
       const fieldOverride = mergeObjects<IFormFieldOverride>([
         overrideFieldsMap[key],
         formOverrideFieldsMap[key],
-        mergeObjects<IFormFieldOverride>(formFieldsOverrideMap.map(overrides => overrides[key]).filter(d => d !== undefined))
+        mergeObjects<IFormFieldOverride>(
+          formFieldsOverrideMap.map((overrides) => overrides[key]).filter((d) => d !== undefined)
+        ),
       ])
       return mergeFormField({
         field: fieldFieldsMap[key] ?? schemaFieldMap[key],
         fieldOverride,
         formFieldsOverrideMap,
         schemaFieldMap,
-        schemaForm
+        schemaForm,
       })
     })
 
-    mergedField.tabs = overrideFieldTabs !== undefined
-      ? mergeFormSections({
-        sectionOverrides: overrideFieldTabs as IFormSectionOverride[],
-        schemaForm,
-        formFieldsOverrideMap
-      }) as IFormLayoutTab[]
-      : undefined
+    mergedField.tabs =
+      overrideFieldTabs !== undefined
+        ? (mergeFormSections({
+            sectionOverrides: overrideFieldTabs as IFormSectionOverride[],
+            schemaForm,
+            formFieldsOverrideMap,
+          }) as IFormLayoutTab[])
+        : undefined
   }
   return {
     type: mergedField.type ?? ***REMOVED***text***REMOVED***,
     id,
     label: mergedField.label ?? makeLabel([labelProp]) ?? ***REMOVED***Default***REMOVED***,
-    ...mergedField
+    ...mergedField,
   } as unknown as IFormField
 }
 
 const mergeFormFields = ({
   fieldOverrides,
   schemaForm,
-  formFieldsOverrideMap
+  formFieldsOverrideMap,
 }: {
   fieldOverrides?: IFormFieldOverride[]
   schemaForm: IForm
@@ -513,14 +580,14 @@ const mergeFormFields = ({
 }): IFormField[] => {
   const schemaFieldMap = buildFieldMapFromForm(schemaForm)
 
-  return (fieldOverrides ?? []).map(fieldOverride => {
+  return (fieldOverrides ?? []).map((fieldOverride) => {
     const schemaField = schemaFieldMap[fieldOverride.prop]
     return mergeFormField({
       field: schemaField,
       fieldOverride,
       formFieldsOverrideMap,
       schemaFieldMap,
-      schemaForm
+      schemaForm,
     })
   })
 }
@@ -528,49 +595,48 @@ const mergeFormFields = ({
 const mergeFormSections = ({
   sectionOverrides,
   schemaForm,
-  formFieldsOverrideMap
-
+  formFieldsOverrideMap,
 }: {
   sectionOverrides?: IFormSectionOverride[]
   schemaForm: IForm
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
-
 }): IFormSection[] => {
   const sections = (sectionOverrides ?? []).map((sectionToMerge, index) => {
     const sectionFields = mergeFormFields({
       fieldOverrides: sectionToMerge.fields,
       schemaForm,
-      formFieldsOverrideMap
+      formFieldsOverrideMap,
     })
     const sectionId = sectionToMerge.id ?? makeFormFieldId([sectionToMerge.id, index])
     return {
       id: sectionId ?? makeFormFieldId([sectionId, index]),
       label: sectionToMerge.label ?? makeLabel([sectionId]),
       ...sectionToMerge,
-      fields: sectionToMerge.fields !== undefined
-        ? sectionFields
-        : undefined,
-      wizard_steps: sectionToMerge.wizard_steps !== undefined
-        ? mergeFormSections({
-          sectionOverrides: sectionToMerge.wizard_steps,
-          schemaForm,
-          formFieldsOverrideMap
-        })
-        : undefined,
-      pages: sectionToMerge.pages !== undefined
-        ? mergeFormSections({
-          sectionOverrides: sectionToMerge.pages,
-          schemaForm,
-          formFieldsOverrideMap
-        })
-        : undefined,
-      tabs: sectionToMerge.tabs !== undefined
-        ? mergeFormSections({
-          sectionOverrides: sectionToMerge.tabs,
-          schemaForm,
-          formFieldsOverrideMap
-        })
-        : undefined
+      fields: sectionToMerge.fields !== undefined ? sectionFields : undefined,
+      wizard_steps:
+        sectionToMerge.wizard_steps !== undefined
+          ? mergeFormSections({
+              sectionOverrides: sectionToMerge.wizard_steps,
+              schemaForm,
+              formFieldsOverrideMap,
+            })
+          : undefined,
+      pages:
+        sectionToMerge.pages !== undefined
+          ? mergeFormSections({
+              sectionOverrides: sectionToMerge.pages,
+              schemaForm,
+              formFieldsOverrideMap,
+            })
+          : undefined,
+      tabs:
+        sectionToMerge.tabs !== undefined
+          ? mergeFormSections({
+              sectionOverrides: sectionToMerge.tabs,
+              schemaForm,
+              formFieldsOverrideMap,
+            })
+          : undefined,
     }
   })
   return sections as IFormSection[]
@@ -595,32 +661,35 @@ const mergeFormSections = ({
 export const overridesAndSchemaToFormObject = ({
   formOverrides,
   formFieldOverrides,
-  schema
+  schema,
 }: {
   formOverrides?: IFormOverride[]
   formFieldOverrides?: IFormFieldOverride[][]
   schema: JSONSchema6
 }): IForm => {
   const schemaForm = schemaToFormObject(schema)
-  const hasFormFieldOverrides = (formFieldOverrides?.filter(f => f.length > 0)?.length ?? 0) > 0
-  const formFieldOverridesByProp = formFieldOverrides?.map(overrides => Object.fromEntries(
-    overrides !== undefined && typeof overrides.map === ***REMOVED***function***REMOVED***
-      ? overrides.map(override => [override.prop, override])
-      : []
-  )) ?? []
+  const hasFormFieldOverrides = (formFieldOverrides?.filter((f) => f.length > 0)?.length ?? 0) > 0
+  const formFieldOverridesByProp =
+    formFieldOverrides?.map((overrides) =>
+      Object.fromEntries(
+        overrides !== undefined && typeof overrides.map === ***REMOVED***function***REMOVED***
+          ? overrides.map((override) => [override.prop, override])
+          : []
+      )
+    ) ?? []
   if (formOverrides === undefined && hasFormFieldOverrides) {
     const schemaFieldMap = buildFieldMapFromForm(schemaForm)
-    const fields = Object.values(schemaFieldMap).map(field => {
+    const fields = Object.values(schemaFieldMap).map((field) => {
       return mergeFormField({
         field,
         formFieldsOverrideMap: formFieldOverridesByProp,
         schemaFieldMap,
-        schemaForm
+        schemaForm,
       })
     })
     return {
       ...schemaForm,
-      fields
+      fields,
     }
   } else if (formOverrides === undefined && !hasFormFieldOverrides) {
     return schemaForm
@@ -629,36 +698,39 @@ export const overridesAndSchemaToFormObject = ({
   const form: IForm = {
     id: schemaForm.id,
     label: mergedFormOverrides?.label ?? schemaForm.label,
-    settings: mergedFormOverrides?.settings
+    settings: mergedFormOverrides?.settings,
   }
 
-  form.pages = mergedFormOverrides.pages !== undefined
-    ? mergeFormSections({
-      sectionOverrides: mergedFormOverrides.pages,
-      schemaForm,
-      formFieldsOverrideMap: formFieldOverridesByProp
-    }) as IPage[]
-    : undefined
-  form.wizard_steps = mergedFormOverrides.wizard_steps !== undefined
-    ? mergeFormSections({
-      sectionOverrides: mergedFormOverrides.wizard_steps,
-      schemaForm,
-      formFieldsOverrideMap: formFieldOverridesByProp
-    }) as IWizardStep[]
-    : undefined
+  form.pages =
+    mergedFormOverrides.pages !== undefined
+      ? (mergeFormSections({
+          sectionOverrides: mergedFormOverrides.pages,
+          schemaForm,
+          formFieldsOverrideMap: formFieldOverridesByProp,
+        }) as IPage[])
+      : undefined
+  form.wizard_steps =
+    mergedFormOverrides.wizard_steps !== undefined
+      ? (mergeFormSections({
+          sectionOverrides: mergedFormOverrides.wizard_steps,
+          schemaForm,
+          formFieldsOverrideMap: formFieldOverridesByProp,
+        }) as IWizardStep[])
+      : undefined
 
-  form.tabs = mergedFormOverrides.tabs !== undefined
-    ? mergeFormSections({
-      sectionOverrides: mergedFormOverrides.tabs,
-      schemaForm,
-      formFieldsOverrideMap: formFieldOverridesByProp
-    }) as IFormLayoutTab[]
-    : undefined
+  form.tabs =
+    mergedFormOverrides.tabs !== undefined
+      ? (mergeFormSections({
+          sectionOverrides: mergedFormOverrides.tabs,
+          schemaForm,
+          formFieldsOverrideMap: formFieldOverridesByProp,
+        }) as IFormLayoutTab[])
+      : undefined
 
   form.fields = mergeFormFields({
     fieldOverrides: mergedFormOverrides.fields,
     schemaForm,
-    formFieldsOverrideMap: formFieldOverridesByProp
+    formFieldsOverrideMap: formFieldOverridesByProp,
   })
 
   return form
@@ -668,26 +740,34 @@ export const schemaToFormObject = (schema: JSONSchema6): IForm => {
   const resolvedSchema = resolveRefs(schema)
   const formFields: IFormField[] = []
   for (const key in resolvedSchema.properties) {
-    if (resolvedSchema.properties[key] !== undefined && typeof resolvedSchema.properties[key] !== ***REMOVED***boolean***REMOVED***) {
-      formFields.push(schemaToFormField({
-        schema: resolvedSchema,
-        property: key,
-        schemaField: resolvedSchema.properties[key],
-        path: []
-      }))
+    if (
+      resolvedSchema.properties[key] !== undefined &&
+      typeof resolvedSchema.properties[key] !== ***REMOVED***boolean***REMOVED***
+    ) {
+      formFields.push(
+        schemaToFormField({
+          schema: resolvedSchema,
+          property: key,
+          schemaField: resolvedSchema.properties[key],
+          path: [],
+        })
+      )
     }
   }
   return {
-    id: makeFormFieldId([resolvedSchema.$id, resolvedSchema.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***)]),
+    id: makeFormFieldId([
+      resolvedSchema.$id,
+      resolvedSchema.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***),
+    ]),
     label: schema.title ?? ***REMOVED***Untitled***REMOVED***,
-    fields: formFields
+    fields: formFields,
   }
 }
 
 export const buildFieldMapFromForm = (form: IForm): Record<string, IFormField> => {
   const formCopy = copyAndAddPathToFields(form)
   const fields = getFieldsFromFormSection(formCopy)
-  return Object.fromEntries(fields.map(field => [getPathFromField(field), field]))
+  return Object.fromEntries(fields.map((field) => [getPathFromField(field), field]))
 }
 
 export const getSchemaPaths = (schema: any, prefix = ***REMOVED******REMOVED***): string[] => {
@@ -714,8 +794,11 @@ export const getSchemaPaths = (schema: any, prefix = ***REMOVED******REMOVED***)
   return paths
 }
 
-export const getSchemaPathDescriptors = (schema: any, prefix = ***REMOVED******REMOVED***): Array<{ path: string, type: string, required: boolean }> => {
-  let pathDescriptors: Array<{ path: string, type: string, required: boolean }> = []
+export const getSchemaPathDescriptors = (
+  schema: any,
+  prefix = ***REMOVED******REMOVED***
+): Array<{ path: string; type: string; required: boolean }> => {
+  let pathDescriptors: Array<{ path: string; type: string; required: boolean }> = []
 
   if (schema.type === ***REMOVED***object***REMOVED*** && schema.properties) {
     for (const key of Object.keys(schema.properties)) {
@@ -723,16 +806,18 @@ export const getSchemaPathDescriptors = (schema: any, prefix = ***REMOVED******R
       pathDescriptors.push({
         path: newPrefix,
         type: schema.properties[key].type ?? ***REMOVED***object***REMOVED***,
-        required: schema.required ? schema.required.includes(key) : false
+        required: schema.required ? schema.required.includes(key) : false,
       })
-      pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(schema.properties[key], newPrefix))
+      pathDescriptors = pathDescriptors.concat(
+        getSchemaPathDescriptors(schema.properties[key], newPrefix)
+      )
     }
   } else if (schema.type === ***REMOVED***array***REMOVED*** && schema.items) {
     const arrayPrefix = `${prefix}[]`
     pathDescriptors.push({
       path: arrayPrefix,
       type: schema.type,
-      required: schema.required ? schema.required.includes(prefix) : false
+      required: schema.required ? schema.required.includes(prefix) : false,
     })
     pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(schema.items, arrayPrefix))
   } else if (schema.oneOf || schema.anyOf || schema.allOf) {
