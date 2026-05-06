@@ -1,14 +1,12 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
-import { type IFormField, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
-import React, { type ReactElement } from 'react'
+import { type IFormField } from '@/Form/Creator/FormCreatorTypes'
+import React, { memo, type ReactElement } from 'react'
 
 const FormFields = ({
   fields,
-  onChange,
   className = 'flex flex-col gap-8 grow h-full'
 }: {
   fields?: IFormField[]
-  onChange?: IValueChangeFn
   className?: string
 }): ReactElement => {
   return (
@@ -20,7 +18,7 @@ const FormFields = ({
             {
               fields?.map((field) => {
                 return (
-                  <FieldCreator onChange={onChange} field={field} key={field.id} />
+                  <FieldCreator field={field} key={field.id} />
                 )
               })
             }
@@ -30,4 +28,4 @@ const FormFields = ({
   )
 }
 
-export default FormFields
+export default memo(FormFields)

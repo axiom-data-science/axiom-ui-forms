@@ -1,6 +1,6 @@
 'use client'
 
-import { FormContext, IFormContextValue, useFormContext } from '@/Form/Creator/FormContextProvider'
+import { FormStableContext, FormValuesContext, IFormContextValue, useFormValues } from '@/Form/Creator/FormContextProvider'
 import { type IFormValues, type IForm, type IFormSection, type IFormField, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
 import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
@@ -14,7 +14,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { useAtom } from 'jotai'
 import { type JSONSchema6 } from 'json-schema'
 import debounce from 'lodash-es/debounce'
-import React, { type ReactNode, useContext, type ReactElement, useState, useEffect } from 'react'
+import React, { type ReactNode, useContext, type ReactElement, useState, useEffect, useMemo, useCallback } from 'react'
 import errorRenderer from '@/utils/errorRenderer'
 
 export interface IFormCreatorProps {
@@ -36,12 +36,14 @@ export interface IFormCreatorProps {
 
 
 const FormComponentWrap = ({ Component }: { Component: React.FC<IFormContextValue> }): ReactElement => {
-  const formContext = useFormContext()
-  return <Component {...formContext} />
+  const stableCtx = useContext(FormStableContext)
+  const formValues = useFormValues()
+  return <Component {...stableCtx} formValues={formValues} />
 }
 
 const FormStatus = (): ReactElement => {
-  const { form, formValues } = useContext(FormContext)
+  const { form } = useContext(FormStableContext)
+  const formValues = useFormValues()
   if (form.settings?.show_progress === false) {
     return <></>
   }
@@ -71,38 +73,27 @@ export const SchemaFormCreator = ({
   formOverrides?: IFormOverride[]
   formFieldOverrides?: IFormFieldOverride[][]
 }): ReactElement => {
-  const form = formOverrides === undefined && formFieldOverrides === undefined
-    ? schemaToFormObject(schema)
-    : overridesAndSchemaToFormObject({
-      formOverrides,
-      formFieldOverrides,
-      schema
-    }) // Convert the JSON schema to a form object
-  if (id !== undefined) {
-    form.id = id
-  }
-  if (label !== undefined) {
-    form.label = label
-  }
+  const form = useMemo(() => {
+    const f = formOverrides === undefined && formFieldOverrides === undefined
+      ? schemaToFormObject(schema)
+      : overridesAndSchemaToFormObject({ formOverrides, formFieldOverrides, schema })
+    if (id !== undefined) f.id = id
+    if (label !== undefined) f.label = label
+    return f
+  }, [schema, formOverrides, formFieldOverrides, id, label])
 
   return (
-    <>{
+    <>{  
       form !== undefined
         ? <FormCreator form={form} {...props} />
         : <div className='p-5 bg-slate-200 text-xs'><Loader className='pt-20' /></div>
     }</>
-
   )
 }
 
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
 
-  // Gather only the *direct* fields of each section level — do NOT recurse into
-  // object field children here. seedNestedDefaults handles that recursion itself.
-  // Passing a pre-flattened list (e.g. from getFieldsFromFormSection) would cause
-  // nested children to be processed a second time at root level, incorrectly writing
-  // defaults like formValues['child'] instead of formValues['parent']['child'].
   const gatherSectionFields = (section: IFormSection): IFormField[] => {
     const direct = section.fields ?? []
     const fromPages = (section.pages ?? []).flatMap(p => gatherSectionFields(p))
@@ -132,24 +123,24 @@ const FormCreator = ({
   SubmitButton,
   initialFormValues
 }: IFormCreatorProps): ReactElement => {
-  const activeForm = copyAndAddPathToFields(form)
-  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>({
+  const activeForm = useMemo(() => {
+    const af = copyAndAddPathToFields(form)
+    af.settings = { url_navigable: urlNavigable, ...af.settings }
+    return af
+  }, [form, urlNavigable])
+
+  const [formValues, setFormValues] = formValueState ?? useState<IFormValues>(() => ({
     ...seedFormValuesWithDefaults(activeForm),
     ...initialFormValues
-  })
-
-  activeForm.settings = {
-    url_navigable: urlNavigable,
-    ...activeForm.settings
-  }
+  }))
 
   const [layout, setLayout] = useAtom(layoutAtom)
-  const updateLayoutValue = (): void => {
+  const updateLayoutValue = useCallback((): void => {
     const newSize = getWindowSize()
     if (layout.size !== newSize) {
       setLayout({ size: newSize })
     }
-  }
+  }, [layout.size, setLayout])
 
   useEffect(() => {
     const debounceUpdateLayout = debounce(updateLayoutValue, 200)
@@ -159,38 +150,42 @@ const FormCreator = ({
       window.removeEventListener('resize', debounceUpdateLayout)
       debounceUpdateLayout.cancel()
     }
-  }, [])
+  }, [updateLayoutValue])
+
+  // Stable context value — only changes when form definition or config changes, not on keystroke
+  const stableCtxValue = useMemo(() => ({
+    form: activeForm,
+    setFormValues,
+    onChange,
+    inputOverrides,
+    schema,
+    urlNavigable: activeForm.settings?.url_navigable
+  }), [activeForm, setFormValues, onChange, inputOverrides, schema])
 
   return (
     <ErrorBoundary fallbackRender={errorRenderer}>
-    <FormContext.Provider value={{
-      form: activeForm,
-      formValues,
-      setFormValues,
-      inputOverrides,
-      schema,
-      urlNavigable: activeForm.settings.url_navigable
-    }}>
-      {typeof Header === 'function' ? <FormComponentWrap Component={Header} /> : Header ?? ''}
-      <div className={utils.makeClassName({
-        className: activeForm?.settings?.class_name,
-        defaultClassName,
-        extras: [className]
-      })}>
-        <FormHeader form={activeForm} note={note} error={error} />
-        {
-          activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined && activeForm.tabs === undefined
-            ? <FormStatus />
-            : ''
-        }
-        <FormSection
-          formSection={activeForm}
-          onChange={onChange}
-          SubmitButton={SubmitButton}
-        />
-      </div>
-      {typeof Footer === 'function' ? <FormComponentWrap Component={Footer} /> : Footer ?? ''}
-    </FormContext.Provider>
+    <FormStableContext.Provider value={stableCtxValue}>
+      <FormValuesContext.Provider value={formValues}>
+        {typeof Header === 'function' ? <FormComponentWrap Component={Header} /> : Header ?? ''}
+        <div className={utils.makeClassName({
+          className: activeForm?.settings?.class_name,
+          defaultClassName,
+          extras: [className]
+        })}>
+          <FormHeader form={activeForm} note={note} error={error} />
+          {
+            activeForm?.fields !== undefined && activeForm.fields.length > 0 && activeForm.pages === undefined && activeForm.wizard_steps === undefined && activeForm.tabs === undefined
+              ? <FormStatus />
+              : ''
+          }
+          <FormSection
+            formSection={activeForm}
+            SubmitButton={SubmitButton}
+          />
+        </div>
+        {typeof Footer === 'function' ? <FormComponentWrap Component={Footer} /> : Footer ?? ''}
+      </FormValuesContext.Provider>
+    </FormStableContext.Provider>
     </ErrorBoundary>
   )
 }

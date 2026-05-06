@@ -198,7 +198,32 @@ describe('schemaToFormHelpers', () => {
       expect(shapeTypeField).toBeDefined()
       expect(shapeTypeField?.type).toBe('select')
       expect(shapeTypeField?.defaultValue).toBe('point')
-      expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion
+      expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion (schema has properties)
+    })
+
+    it('does not auto-exclude override-only fields when schema has no properties', () => {
+      const schema: JSONSchema6 = { type: 'object' } // no properties
+
+      const fieldOverrides: IFormFieldOverride[] = [
+        { prop: 'name', type: 'text', label: 'Name' },
+        { prop: 'age', type: 'number', label: 'Age' }
+      ]
+
+      const formOverride: IFormOverride = {
+        label: 'No-Schema Form',
+        fields: [{ prop: 'name' }, { prop: 'age' }]
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [formOverride],
+        formFieldOverrides: [fieldOverrides]
+      })
+
+      const nameField = form.fields?.find(f => f.id === 'name')
+      const ageField = form.fields?.find(f => f.id === 'age')
+      expect(nameField?.excludeFromPayload).not.toBe(true)
+      expect(ageField?.excludeFromPayload).not.toBe(true)
     })
   })
 

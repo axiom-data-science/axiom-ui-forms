@@ -8,7 +8,7 @@ import React, { ReactNode, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
-import { useFormContext } from '@/Form/Creator/FormContextProvider'
+import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import { useAtomValue } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 
@@ -85,7 +85,7 @@ export const WizardNavMobile = ({
             })}><CaretRightIcon className='inline w-8 h-8' /></span>
         }
       </div>
-      {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
+      {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormValues()} /> : SubmitButton}
     </>
   )
 }
@@ -201,7 +201,7 @@ export const WizardNavSmall = ({
             })}>Next</span>
            
         }
-         {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormContext().formValues} /> : SubmitButton}
+         {typeof SubmitButton === 'function' ? <SubmitButton formValues={useFormValues()} /> : SubmitButton}
       </div>
   )
 }
@@ -236,7 +236,6 @@ const WizardLayout = (props: IPageLayoutProps): ReactElement => {
 
 const WizardLayoutContent = ({
   sections,
-  onChange,
   ContentComponent = ActivePage,
   NavComponent = WizardNav,
   SmallNavComponent = WizardNavSmall,
@@ -247,7 +246,7 @@ const WizardLayoutContent = ({
   if (sections === undefined) {
     return <></>
   }
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
   const sectionStatus = calculateSectionStatus(sections, formValues)
@@ -264,7 +263,6 @@ const WizardLayoutContent = ({
         <ContentComponent
             formSection={formSection}
             sectionStatus={sectionStatus}
-            onChange={onChange}
             level={level}
             />
         <SmallNavComponent
