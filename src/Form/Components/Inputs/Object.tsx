@@ -1,26 +1,78 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { type ICompositeValueType, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
-import { useFormContext } from '@/Form/Creator/FormContextProvider'
+import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import Page from '@/Form/Creator/Page'
 import TabLayout from '@/Form/Creator/TabLayout'
 import WizardLayout from '@/Form/Creator/Wizard'
 import { evaluateFieldLogicState, type FieldEvaluationContext } from '@/utils/formEngine'
 import { cloneObject } from '@/utils/manipulators'
-import { utils } from '@axdspub/axiom-ui-utilities'
+import { utils, Tabs } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement } from 'react'
 
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
 
   const initialValue = (typeof value === 'object' ? value ?? {} : {}) as ICompositeValueType
-  const objectField = field.type === 'object' ? field : undefined
+  const objectField = (field.type === 'object' || field.type === 'objectWrapper') ? field : undefined
   if (objectField?.tabs !== undefined && objectField.tabs.length) {
-    return <TabLayout sections={objectField.tabs} level={0} onChange={onChange} />
+    if (field.skip_path === true) {
+      return <TabLayout sections={objectField.tabs} level={0} />
+    }
+    // For non-skip_path object fields (including multiple), render tabs locally with
+    // scoped value/onChange so each array element manages its own tab-field values.
+    const tabEvalContext: FieldEvaluationContext = { rootFormValues: formValues, fieldPath: field.path }
+    return (
+      <div>
+        {field.label !== undefined
+          ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
+          : null}
+        <Tabs
+          tabs={objectField.tabs.map(tab => ({
+            id: tab.id,
+            label: tab.label ?? tab.id,
+            content: (
+              <div className={
+                tab.layout === 'horizontal'
+                  ? 'flex md:flex-row sm:flex-col gap-4 sm:gap-2'
+                  : tab.layout === 'grid4'
+                    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
+                    : tab.layout === 'grid3'
+                      ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+                      : tab.layout === 'grid2'
+                        ? 'grid grid-cols-1 md:grid-cols-2 gap-4'
+                        : 'flex flex-col gap-4'
+              }>
+                {(tab.fields ?? []).map(childField => {
+                  const key = `${field.id}-${tab.id}-${childField.id}`
+                  const fieldLogicState = evaluateFieldLogicState(childField, tabEvalContext)
+                  return (
+                    <>
+                    <FieldCreator
+                      key={key}
+                      field={childField}
+                      disabled={disabled || fieldLogicState.isDisabled}
+                      conditionResult={fieldLogicState.conditionResult}
+                      value={initialValue[childField.id] ?? null}
+                      onChange={(e) => {
+                        const newValue = cloneObject(initialValue)
+                        newValue[childField.id] = e
+                        onChange(newValue)
+                      }}
+                    />
+                    </>
+                  )
+                })}
+              </div>
+            )
+          }))}
+        />
+      </div>
+    )
   } else if (objectField?.pages !== undefined && objectField.pages.length) {
-    return <Page sections={objectField.pages} level={0} onChange={onChange} />
+    return <Page sections={objectField.pages} level={0} />
   } else if (objectField?.wizard_steps !== undefined && objectField.wizard_steps.length) {
-    return <WizardLayout sections={objectField.wizard_steps} level={0} onChange={onChange} />
+    return <WizardLayout sections={objectField.wizard_steps} level={0} />
   } else if (field.type === 'object' && field.fields !== undefined) {
     const cl = `${field.layout === 'horizontal'
       ? 'flex md:flex-row sm:flex-col gap-4 sm:gap-2'

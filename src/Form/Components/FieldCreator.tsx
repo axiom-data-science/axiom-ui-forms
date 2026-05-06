@@ -2,7 +2,7 @@
 import config from '@/config/environment'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import inputMap from '@/Form/Components/Inputs/inputMap'
-import { useFormContext } from '@/Form/Creator/FormContextProvider'
+import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import {
   type ICheckConditionResult,
   type IFieldInputProps,
@@ -31,7 +31,7 @@ import {
   TrashIcon,
 } from '@radix-ui/react-icons'
 import { error } from 'ajv/dist/vocabularies/applicator/dependencies'
-import React, { useEffect, useState, type ReactElement } from 'react'
+import React, { useCallback, useEffect, useRef, useState, type ReactElement } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
 const SHOW_DEBUG = config.SHOW_DEBUG
@@ -187,7 +187,10 @@ export const MultipleFieldCreator = ({
   disabled = false,
   value,
 }: IFieldCreator): ReactElement => {
-  const { formValues, setFormValues, inputOverrides, form } = useFormContext()
+  const { setFormValues, inputOverrides, form, onChange: contextOnChange } = useFormContext()
+  const formValues = useFormValues()
+  const formValuesRef = useRef(formValues)
+  formValuesRef.current = formValues
 
   const getNewDefaultElement = (): IValueType | null => {
     if (field.type === 'object' || field.type === 'objectWrapper') {
@@ -196,22 +199,28 @@ export const MultipleFieldCreator = ({
       if (objField.fields) {
         seedNestedDefaults(objField.fields, newElement, { rootFormValues: formValues })
       }
+      objField.tabs?.forEach(tab => {
+        if (tab.fields) {
+          seedNestedDefaults(tab.fields, newElement, { rootFormValues: formValues })
+        }
+      })
       return newElement as IValueType
     }
     return null
   }
-  const defaultOnChange = (v: IValueType[] | undefined): void => {
+  const defaultOnChange = useCallback((v: IValueType[] | undefined): void => {
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
       form,
       field,
       value: v,
-      formValues,
+      formValues: formValuesRef.current,
     })
     setFormValues(formValuesCopyClean)
-    if (typeof onChange === 'function') {
-      onChange(v)
+    const notifyFn = onChange ?? contextOnChange
+    if (typeof notifyFn === 'function') {
+      notifyFn(v)
     }
-  }
+  }, [form, field, setFormValues, onChange, contextOnChange])
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
   const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
@@ -278,24 +287,28 @@ const FieldCreator = ({
   defaultClassName = 'flex flex-col gap-8 flex-grow h-full',
   conditionResult,
 }: IFieldCreator): ReactElement | null => {
-  const { form, inputOverrides, setFormValues, formValues } = useFormContext()
+  const { form, inputOverrides, setFormValues, onChange: contextOnChange } = useFormContext()
+  const formValues = useFormValues()
+  const formValuesRef = useRef(formValues)
+  formValuesRef.current = formValues
   const InputComponent = {
     ...inputMap,
     ...(inputOverrides ?? {}),
   }[field.type]
 
-  const defaultOnChange = (v: IValueType | IValueType[] | undefined): void => {
+  const defaultOnChange = useCallback((v: IValueType | IValueType[] | undefined): void => {
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
       form,
       field,
       value: v,
-      formValues,
+      formValues: formValuesRef.current,
     })
     setFormValues(formValuesCopyClean)
-    if (typeof onChange === 'function') {
-      onChange(v)
+    const notifyFn = onChange ?? contextOnChange
+    if (typeof notifyFn === 'function') {
+      notifyFn(v)
     }
-  }
+  }, [form, field, setFormValues, onChange, contextOnChange])
   const onChangeFn = defaultOnChange
 
   conditionResult = conditionResult ?? checkCondition(field, formValues)

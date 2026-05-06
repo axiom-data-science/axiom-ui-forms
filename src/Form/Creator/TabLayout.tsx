@@ -3,9 +3,9 @@ import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import { calculateSectionStatus } from '@/utils/validators'
-import React, { ReactNode, type ReactElement } from 'react'
+import React, { memo, ReactNode, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
-import { useFormContext } from '@/Form/Creator/FormContextProvider'
+import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import { Tabs } from '@axdspub/axiom-ui-utilities'
 import FieldLabel from '@/Form/Components/FieldLabel'
 
@@ -14,12 +14,10 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 
 export interface ITabLayoutProps {
   sections?: IFormSection[]
-  onChange?: IValueChangeFn
   level: number
   ContentComponent?: React.FC<{
     level: number
     formSection?: IFormSection
-    onChange?: IValueChangeFn
     sectionStatus: IFormSectionStatus
   }>
   className?: string
@@ -29,12 +27,10 @@ export interface ITabLayoutProps {
 
 export const ActiveTab = ({
   formSection,
-  onChange,
   className = 'flex flex-col gap-2 grow h-full',
   level
 }: {
   formSection?: IFormSection
-  onChange?: IValueChangeFn
   className?: string
   level: number
 }): ReactElement => {
@@ -59,7 +55,7 @@ export const ActiveTab = ({
           </div>
           : ''
       }
-      <FormSection formSection={formSection} onChange={onChange} level={level + 1} />
+      <FormSection formSection={formSection} level={level + 1} />
     </div>
   )
 }
@@ -90,7 +86,6 @@ const TabLayout = (props: ITabLayoutProps): ReactElement => {
 const TabLayoutContent = ({
 
   sections,
-  onChange,
   inputOverrides,
   ContentComponent = ActiveTab,
   className = 'flex flex-row gap-8 grow',
@@ -100,7 +95,7 @@ const TabLayoutContent = ({
     return <></>
   }
 
-  const { formValues } = useFormContext()
+  const formValues = useFormValues()
   const sectionStatus = calculateSectionStatus(sections, formValues)
 
   return (
@@ -113,7 +108,6 @@ const TabLayoutContent = ({
             label: s.label ?? s.id,
             content: <ContentComponent
               formSection={s}
-              onChange={onChange}
               sectionStatus={sectionStatus}
               level={level}
             />
@@ -125,4 +119,4 @@ const TabLayoutContent = ({
   )
 }
 
-export default TabLayout
+export default memo(TabLayout)

@@ -1,19 +1,17 @@
-import { IFormValues, type IFieldInputProps, type IFormSection, type IValueChangeFn } from '@/Form/Creator/FormCreatorTypes'
+import { IFormValues, type IFieldInputProps, type IFormSection } from '@/Form/Creator/FormCreatorTypes'
 import FormFields from '@/Form/Creator/FormFields'
 import PageLayout from '@/Form/Creator/Page'
 import TabLayout from '@/Form/Creator/TabLayout'
 import WizardLayout from '@/Form/Creator/Wizard'
-import React, { ReactNode, type ReactElement } from 'react'
+import React, { memo, ReactNode, type ReactElement } from 'react'
 
 const FormSection = ({
   formSection,
-  onChange,
   level = 0,
   inputOverrides,
   SubmitButton
 }: {
   formSection?: IFormSection
-  onChange?: IValueChangeFn
   level?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
@@ -50,14 +48,14 @@ const FormSection = ({
     <>
       {
         hasWizardSteps
-          ? <WizardLayout sections={wizardSteps} onChange={onChange} level={level} SubmitButton={SubmitButton} />
+          ? <WizardLayout sections={wizardSteps} level={level} SubmitButton={SubmitButton} />
 
           : hasPages
-            ? <PageLayout sections={pages} onChange={onChange} level={level} />
+            ? <PageLayout sections={pages} level={level} />
             : hasTabs
-              ? <TabLayout sections={tabs} onChange={onChange} level={level} />
+              ? <TabLayout sections={tabs} level={level} />
               : <FormFields
-                fields={fields} onChange={onChange}
+                fields={fields}
                 className={level === 0 ? 'flex flex-col gap-8' : undefined}
 
               />
@@ -66,4 +64,4 @@ const FormSection = ({
   )
 }
 
-export default FormSection
+export default memo(FormSection)
