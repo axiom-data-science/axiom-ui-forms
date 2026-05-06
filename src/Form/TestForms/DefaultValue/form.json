@@ -1,0 +1,14 @@
+{
+    "fields": [
+        {"prop": "shape_type"},
+        {
+            "prop": "point"
+        },
+        {
+            "prop": "polygon"
+        },
+        {
+            "prop": "linestring"
+        }
+    ]
+}

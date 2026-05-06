@@ -11,6 +11,7 @@ import {
   getSchemaPathDescriptors,
   mergeObjects
 } from './schemaToFormHelpers'
+import type { IFormFieldOverride, IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 
 describe('schemaToFormHelpers', () => {
   describe('validateSchema', () => {
@@ -155,6 +156,49 @@ describe('schemaToFormHelpers', () => {
       })
       expect(form.label).toBe('Overridden')
       expect(form?.fields?.[0]?.label).toBe('Bar')
+    })
+
+    it('preserves defaultValue for override-only fields', () => {
+      // This is the DefaultValue test case: shape_type is not in schema but added via override
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          geojson: { type: 'object', title: 'Geojson' }
+        }
+      }
+
+      // Field override adds shape_type with defaultValue: "point"
+      const fieldOverrides: IFormFieldOverride[] = [
+        {
+          prop: 'shape_type',
+          type: 'select',
+          label: 'Shape',
+          defaultValue: 'point',
+          options: [
+            { label: 'Point', value: 'point' },
+            { label: 'Polygon', value: 'polygon' }
+          ]
+        }
+      ]
+
+      // Form override specifies shape_type in fields
+      const formOverride: IFormOverride = {
+        label: 'GeoJSON Form',
+        fields: [{ prop: 'shape_type' }]
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [formOverride],
+        formFieldOverrides: [fieldOverrides]
+      })
+
+      // shape_type should be in form.fields with all its properties from the override
+      const shapeTypeField = form.fields?.find(f => f.id === 'shape_type')
+      expect(shapeTypeField).toBeDefined()
+      expect(shapeTypeField?.type).toBe('select')
+      expect(shapeTypeField?.defaultValue).toBe('point')
+      expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion
     })
   })
 

@@ -6,7 +6,8 @@ import {
   getValueFromPath,
   getFieldValue,
   getPathFromField,
-  getFieldsFromFormSection
+  getFieldsFromFormSection,
+  getFormPayload
 } from './getters'
 import { type IFormSection, type IFormField } from '@/Form/Creator/FormCreatorTypes'
 
@@ -188,6 +189,81 @@ describe('getters.ts', () => {
       const formSection = { id: 'section2', label: 'Section 2' }
       const result = getFieldsFromFormSection(formSection)
       expect(result).toEqual([])
+    })
+  })
+
+  describe('getFormPayload', () => {
+    it('should exclude fields marked with excludeFromPayload=true', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          { id: 'shape_type', type: 'select', excludeFromPayload: true } as any,
+          { id: 'geojson', type: 'text' } as any
+        ]
+      } as any
+      const formValues = {
+        shape_type: 'point',
+        geojson: { type: 'Point', coordinates: [0, 0] }
+      }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({ geojson: { type: 'Point', coordinates: [0, 0] } })
+      expect(result).not.toHaveProperty('shape_type')
+    })
+
+    it('should include fields with excludeFromPayload=false even if marked', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          { id: 'control_field', type: 'select', excludeFromPayload: false } as any,
+          { id: 'data_field', type: 'text' } as any
+        ]
+      } as any
+      const formValues = {
+        control_field: 'value1',
+        data_field: 'value2'
+      }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({ control_field: 'value1', data_field: 'value2' })
+    })
+
+    it('should return empty payload when no fields or all excluded', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          { id: 'excluded1', type: 'text', excludeFromPayload: true } as any,
+          { id: 'excluded2', type: 'text', excludeFromPayload: true } as any
+        ]
+      } as any
+      const formValues = { excluded1: 'val1', excluded2: 'val2' }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({})
+    })
+
+    it('should gather fields from pages when top-level fields are empty', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        pages: [
+          {
+            id: 'page1',
+            label: 'Page 1',
+            fields: [
+              { id: 'field1', type: 'text' } as any,
+              { id: 'field2', type: 'text', excludeFromPayload: true } as any
+            ]
+          }
+        ]
+      } as any
+      const formValues = {
+        field1: 'value1',
+        field2: 'excluded_value'
+      }
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({ field1: 'value1' })
+      expect(result).not.toHaveProperty('field2')
     })
   })
 })

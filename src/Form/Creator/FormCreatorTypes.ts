@@ -128,6 +128,7 @@ interface IFormFieldRoot {
   constraints?: IFieldConstraints
   settings?: IFormFieldSettingsBase
   parent?: IFormField
+  excludeFromPayload?: boolean
 }
 
 export interface IConstantField extends IFormFieldRoot {

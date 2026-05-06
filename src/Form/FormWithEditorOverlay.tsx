@@ -1,4 +1,4 @@
-import React, { type ReactNode, useContext, useState, type ReactElement } from 'react'
+import React, { type ReactNode, useContext, useState, type ReactElement, useEffect } from 'react'
 import FormCreator, { IFormCreatorProps, SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
@@ -11,6 +11,8 @@ import { useAtom } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 import { ObjectToSchemaButton } from '@/Form/Creator/ObjectToSchema'
 import formValuesAtom from '@/state/formValuesAtom'
+import { getFormPayload } from '@/utils/getters'
+import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 
 const Footer = ({ formValues }: { formValues?: IFormValues }): ReactElement => {
   return (
@@ -32,11 +34,15 @@ const fixOverLayWidth = (width: number): number => {
   )
 }
 
-const FormOutput = (): ReactElement => {
+const FormOutput = ({ form }: { form: IForm }): ReactElement => {
   const { formValues } = useFormContext()
+  const [formOutput, setFormOutput] = useState<string>(JSON.stringify(getFormPayload(formValues, form), null, 2))
+  useEffect(() => {
+    setFormOutput(JSON.stringify(getFormPayload(formValues, form), null, 2))
+  }, [formValues, form])
   return (
     <pre className='h-full whitespace-pre-wrap overflow-auto p-4 bg-slate-100 text-xs'>
-      {JSON.stringify(formValues, null, 2)}
+      {formOutput}
     </pre>
   )
 }
@@ -152,7 +158,7 @@ export const FormWithEditorOverlay = ({
                       {
                         id: 'form-output',
                         label: 'Form output',
-                        content: <FormOutput />
+                        content: <FormOutput form={formInput} />
                       }
 
                     ].filter(t => t !== undefined)}
@@ -190,6 +196,9 @@ const SchemaFormWithEditorOverlay = ({
   const [formOverrideInput, setFormOverrideInput] = formOverrideState ?? useState<IFormOverride | undefined>(undefined)
   const [layout] = useAtom(layoutAtom)
 
+  const formOverrides = formOverrideInput !== undefined ? [formOverrideInput] : undefined
+  const formFieldOverrides = [rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)
+
   return (
 
     <div className={`${layout.size === 'sm' || layout.size === 'md' ? 'm-4' : 'm-10 mt-4'} relative`}>
@@ -201,8 +210,8 @@ const SchemaFormWithEditorOverlay = ({
             label={label}
             inputOverrides={inputOverrides}
             schema={schemaInput}
-            formOverrides={formOverrideInput !== undefined ? [formOverrideInput] : undefined}
-            formFieldOverrides={[rootFieldOverridesInput, fieldOverridesInput].filter(o => o !== undefined)}
+            formOverrides={formOverrides}
+            formFieldOverrides={formFieldOverrides}
             Footer={Footer}
             Header={<FormEditor>
               <>
@@ -287,7 +296,13 @@ const SchemaFormWithEditorOverlay = ({
                     {
                       id: 'form-output',
                       label: 'Form output',
-                      content: <FormOutput />
+                      content: <FormOutput form={formOverrides === undefined && formFieldOverrides === undefined
+                          ? schemaToFormObject(schemaInput)
+                          : overridesAndSchemaToFormObject({
+                            formOverrides,
+                            formFieldOverrides,
+                            schema: schemaInput
+                          }) } />
                     }
 
                   ].filter(t => t !== undefined)}

@@ -54,6 +54,7 @@ import TestForm from '@/WaterLevel/tester/Form'
 import AssetForm from '@/WaterLevel/COLLAB/AssetManager/Form'
 import errorRenderer from '@/utils/errorRenderer'
 import OverrideOfSchemaArray from '@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray'
+import DefaultValueThatIsDependent from '@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -278,6 +279,7 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/test">
               <Route path="override-of-schema-array" element={<OverrideOfSchemaArray />} />
+              <Route path="default-value" element={<DefaultValueThatIsDependent />} />
             </Route>
           </Routes>
         </BrowserRouter>
