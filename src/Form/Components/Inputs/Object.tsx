@@ -167,7 +167,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
                 <ObjectFieldItem
                   key={key}
                   childField={childField}
-                  disabled={disabled}
+                  disabled={disabled ?? false}
                   isParentSkipPath={isParentSkipPath}
                   initialValue={initialValue}
                   onChange={onChange}
