@@ -1,6 +1,6 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
 import FieldLabel from '@/Form/Components/FieldLabel'
-import { type ICompositeValueType, type IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { type ICompositeValueType, type IFieldInputProps, type IFormField } from '@/Form/Creator/FormCreatorTypes'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import Page from '@/Form/Creator/Page'
 import TabLayout from '@/Form/Creator/TabLayout'
@@ -8,7 +8,66 @@ import WizardLayout from '@/Form/Creator/Wizard'
 import { evaluateFieldLogicState, type FieldEvaluationContext } from '@/utils/formEngine'
 import { cloneObject } from '@/utils/manipulators'
 import { utils } from '@axdspub/axiom-ui-utilities'
-import React, { type ReactElement, useMemo } from 'react'
+import React, { type ReactElement, useMemo, useCallback, memo } from 'react'
+
+interface IObjectFieldItemProps {
+  childField: IFormField
+  disabled: boolean
+  isParentSkipPath: boolean
+  initialValue: ICompositeValueType
+  onChange: (value: ICompositeValueType) => void
+  fieldLogicState: any
+  fc: string
+  evaluationContext: FieldEvaluationContext
+}
+
+const ObjectFieldItem = memo(({ childField, disabled = false, isParentSkipPath, initialValue, onChange, fieldLogicState, fc }: IObjectFieldItemProps) => {
+  const key = childField.id
+  
+  if (isParentSkipPath) {
+    return (
+      <FieldCreator
+        disabled={disabled || fieldLogicState.isDisabled}
+        conditionResult={fieldLogicState.conditionResult}
+        className={utils.makeClassName({
+          className: fc
+        })}
+        field={childField}
+        key={key}
+      />
+    )
+  } else {
+    const handleChange = useCallback((e: any) => {
+      if ((childField.type === 'object' || childField.type === 'objectWrapper') && childField.skip_path === true) {
+        onChange(e)
+      } else {
+        const newValue = cloneObject(initialValue)
+        newValue[childField.id] = e
+        onChange(newValue)
+      }
+    }, [childField, initialValue, onChange])
+
+    return (
+      <FieldCreator
+        disabled={disabled || fieldLogicState.isDisabled}
+        conditionResult={fieldLogicState.conditionResult}
+        onChange={handleChange}
+        className={utils.makeClassName({
+          className: fc
+        })}
+        value={(
+          (childField.type === 'object' || childField.type === 'objectWrapper') && childField.skip_path === true
+            ? initialValue
+            : initialValue[childField.id]
+        ) ?? null
+        }
+        field={childField}
+        key={key}
+      />
+    )
+  }
+})
+ObjectFieldItem.displayName = 'ObjectFieldItem'
 
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const formValues = useFormValues()
@@ -22,9 +81,13 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
   const objectField = (field.type === 'object' || field.type === 'objectWrapper') ? (field as any) : undefined
 
   // objectWrapper enforces skip_path: true — its children live in the parent scope.
-  // Use unscoped rendering (global FormSection) so fields read/write at the root level.
-  // Regular object fields (skip_path: false) use scoped rendering to nest under their own path.
+  // However, when objectWrapper is nested in an objectList, we need scoped rendering
+  // to keep field values within the list item scope.
+  // Detect this by checking if we have both value and onChange (indicating scoped context).
   const isSkipPath = field.type === 'objectWrapper' || objectField?.skip_path === true
+  const hasEffectiveOnChange = typeof onChange === 'function'
+  const hasMeaningfulValue = value !== null && value !== undefined && Object.keys(value as object).length > 0
+  const shouldUseScopedRenderingDespiteSkipPath = hasEffectiveOnChange && hasMeaningfulValue
 
   if (objectField?.tabs !== undefined && objectField.tabs.length) {
     return (
@@ -32,7 +95,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         {field.label !== undefined
           ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
           : null}
-        {isSkipPath
+        {isSkipPath && !shouldUseScopedRenderingDespiteSkipPath
           ? <TabLayout sections={objectField.tabs} level={0} />
           : <TabLayout sections={objectField.tabs} level={0} scopedValue={initialValue} scopedOnChange={onChange} />}
       </div>
@@ -43,7 +106,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         {field.label !== undefined
           ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
           : null}
-        {isSkipPath
+        {isSkipPath && !shouldUseScopedRenderingDespiteSkipPath
           ? <Page sections={objectField.pages} level={0} />
           : <Page sections={objectField.pages} level={0} scopedValue={initialValue} scopedOnChange={onChange} />}
       </div>
@@ -54,7 +117,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         {field.label !== undefined
           ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
           : null}
-        {isSkipPath
+        {isSkipPath && !shouldUseScopedRenderingDespiteSkipPath
           ? <WizardLayout sections={objectField.wizard_steps} level={0} />
           : <WizardLayout sections={objectField.wizard_steps} level={0} scopedValue={initialValue} scopedOnChange={onChange} />}
       </div>
@@ -100,51 +163,19 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
               // and used the wrong context
               const fieldLogicState = evaluateFieldLogicState(childField, evaluationContext)
 
-              // For skip-path parents (objectWrapper, or object with skip_path=true),
-              // children are independent and write directly to formValues.
-              // For normal parents, children nest under the parent object.
-              if (isParentSkipPath) {
-                return (
-                  <FieldCreator
-                    disabled={disabled || fieldLogicState.isDisabled}
-                    conditionResult={fieldLogicState.conditionResult}
-                    // No onChange wrapper - children write independently to formValues
-                    className={utils.makeClassName({
-                      className: fc
-                    })}
-                    // No value prop - FieldCreator reads from formValues independently
-                    field={childField}
-                    key={key}
-                  />
-                )
-              } else {
-                return (
-                  <FieldCreator
-                    disabled={disabled || fieldLogicState.isDisabled}
-                    conditionResult={fieldLogicState.conditionResult}
-                    onChange={(e) => {
-                      if ((childField.type === 'object' || childField.type === 'objectWrapper') && childField.skip_path === true) {
-                        onChange(e)
-                      } else {
-                        const newValue = cloneObject(initialValue)
-                        newValue[childField.id] = e
-                        onChange(newValue)
-                      }
-                    }}
-                    className={utils.makeClassName({
-                      className: fc
-                    })}
-                    value={(
-                      (childField.type === 'object' || childField.type === 'objectWrapper') && childField.skip_path === true
-                        ? initialValue
-                        : initialValue[childField.id]
-                    ) ?? null
-                    }
-                    field={childField}
-                    key={key}
-                  />
-                )
-              }
+              return (
+                <ObjectFieldItem
+                  key={key}
+                  childField={childField}
+                  disabled={disabled}
+                  isParentSkipPath={isParentSkipPath}
+                  initialValue={initialValue}
+                  onChange={onChange}
+                  fieldLogicState={fieldLogicState}
+                  fc={fc}
+                  evaluationContext={evaluationContext}
+                />
+              )
             })
           }
         </div>
