@@ -3,6 +3,7 @@ import config from ***REMOVED***@/config/environment***REMOVED***
 import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import inputMap from ***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***
 import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { ScopedFormContextProvider, useScopedFormContext } from ***REMOVED***@/Form/Creator/ScopedFormContext***REMOVED***
 import {
   type ICheckConditionResult,
   type IFieldInputProps,
@@ -356,7 +357,7 @@ export const ObjectListCreator = ({
                     ? itemValue
                     : null
 
-                return (
+                const fieldElement = (
                   <FieldCreator
                     key={key}
                     field={childField}
@@ -375,8 +376,12 @@ export const ObjectListCreator = ({
                         newItemValue[childField.id] = newChildValue
                       }
 
-                      // If this is the key field, update the key if it changed
-                      if (childField.id === keyField) {
+                      // Check if the keyField value has changed
+                      const hasKeyFieldChange = keyField !== undefined && 
+                        (newItemValue[keyField] !== (itemValue as ICompositeValueType)?.[keyField])
+                      
+                      if (hasKeyFieldChange) {
+                        // Key field changed - update the key in the object
                         const newKey = String(newItemValue[keyField] ?? ***REMOVED******REMOVED***)
                         if (newKey !== currentKey) {
                           const newObjValue = cloneObject(objValue)
@@ -394,6 +399,44 @@ export const ObjectListCreator = ({
                     }}
                   />
                 )
+
+                // For skip_path fields, wrap with scoped context to pass itemValue down
+                if (isSkipPath) {
+                  return (
+                    <ScopedFormContextProvider
+                      key={key}
+                      value={{
+                        scopedValue: childValue as ICompositeValueType,
+                        scopedOnChange: (newValue: ICompositeValueType) => {
+                          // Check if the keyField value has changed in the scoped value
+                          const oldKeyValue = (childValue as ICompositeValueType)?.[keyField]
+                          const newKeyValue = newValue[keyField]
+                          
+                          if (keyField !== undefined && newKeyValue !== oldKeyValue) {
+                            // Key field changed - update the key in the object
+                            const keyString = String(newKeyValue ?? ***REMOVED******REMOVED***)
+                            if (keyString !== currentKey) {
+                              const newObjValue = cloneObject(objValue)
+                              delete newObjValue[currentKey]
+                              newObjValue[keyString] = newValue
+                              defaultOnChange(newObjValue)
+                              return
+                            }
+                          }
+                          
+                          // Otherwise just update the value
+                          const newObjValue = cloneObject(objValue)
+                          newObjValue[currentKey] = newValue
+                          defaultOnChange(newObjValue)
+                        }
+                      }}
+                    >
+                      {fieldElement}
+                    </ScopedFormContextProvider>
+                  )
+                }
+
+                return fieldElement
               })}
             </div>
             <div className="flex flex-row w-full p-2 gap-4">
@@ -468,6 +511,9 @@ const FieldCreator = ({
   const formValuesRef = useRef(formValues)
   formValuesRef.current = formValues
   
+  // Check if we***REMOVED***re in a scoped rendering context
+  const scopedContext = useScopedFormContext()
+  
   // Check for special field types before looking up in inputMap
   const isObjectList = field.type === ***REMOVED***objectList***REMOVED***
   const isMultiple = (field as any).multiple === true
@@ -478,13 +524,22 @@ const FieldCreator = ({
   }[field.type] : undefined
 
   const defaultOnChange = useCallback((v: IValueType | IValueType[] | undefined): void => {
-    const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
-      form,
-      field,
-      value: v,
-      formValues: formValuesRef.current,
-    })
-    setFormValues(formValuesCopyClean)
+    // If we***REMOVED***re in a scoped context, update the scoped value instead of global formValues
+    if (scopedContext) {
+      const newScopedValue = cloneObject(scopedContext.scopedValue)
+      newScopedValue[field.id] = v
+      scopedContext.scopedOnChange(newScopedValue)
+    } else {
+      // Otherwise, update global formValues
+      const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
+        form,
+        field,
+        value: v,
+        formValues: formValuesRef.current,
+      })
+      setFormValues(formValuesCopyClean)
+    }
+    
     const notifyFn = onChange ?? contextOnChange
     if (typeof notifyFn === ***REMOVED***function***REMOVED***) {
       notifyFn(v)
