@@ -58,6 +58,7 @@ import DefaultValueThatIsDependent from '@/Form/TestForms/DefaultValue/DefaultVa
 import ObjectListExample from '@/Form/TestForms/ObjectListExample/ObjectListExample'
 import ObjectWrapperWithSchema from '@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema'
 import TabsInPagesWithWrapper from '@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper'
+import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -284,6 +285,7 @@ const App = (): ReactElement => {
               <Route path="override-of-schema-array" element={<OverrideOfSchemaArray />} />
               <Route path="default-value" element={<DefaultValueThatIsDependent />} />
               <Route path="object-list" element={<ObjectListExample />} />
+              <Route path="object-list-select-field" element={<ObjectListExampleWithSelectAsKeyField />} />
               <Route path="object-wrapper" element={<ObjectWrapperWithSchema />}>
                 <Route path="*" element={<ObjectWrapperWithSchema />} />
               </Route>
