@@ -300,11 +300,17 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
       // Handle objectList fields (keyed objects)
       const objectListValue = value as IFormValues
       const objectListPayload: IFormValues = {}
+      const keyField = (field as any).settings?.keyField
       
       Object.entries(objectListValue).forEach(([key, item]) => {
         if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
           const itemPayload: IFormValues = {}
           ;(field.fields ?? []).forEach((childField: IFormField) => {
+            // Skip the keyField value by default
+            if (keyField && childField.id === keyField) {
+              return
+            }
+            
             if (childField.excludeFromPayload !== true) {
               // For skip_path fields (like objectWrapper), the data is stored flat in the item
               if ((childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) && childField.skip_path === true) {
