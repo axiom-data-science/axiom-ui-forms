@@ -204,14 +204,14 @@ export function getFieldsFromFormSection (formSection: IFormSection): IFormField
 export function getFormPayload(formValues: IFormValues, form: IForm): IFormValues {
   // Gather all fields from the form (including those nested in pages, wizard_steps, tabs)
   const allFields = getFieldsFromFormSection(form)
-
-  if (allFields.length === 0) {
+  
+  if (!allFields || allFields.length === 0) {
     return {}
   }
 
   const payload: IFormValues = {}
 
-  const processField = (field: IFormField, parentPath?: string[]): void => {
+  allFields.forEach((field) => {
     // Skip fields marked for exclusion
     if (field.excludeFromPayload === true) {
       return
@@ -277,10 +277,8 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
         })
         set(payload, path, arrayPayload)
       } else if (field.skip_path) {
-        // For skip_path objects, process children at current level
-        field.fields.forEach(childField => {
-          processField(childField, parentPath)
-        })
+        // For skip_path objects, process children at current level (no-op in this function)
+        // Children are processed independently at root level
       } else if (!getFieldMultiple(field)) {
         // For non-skip_path, non-multiple objects, build nested payload from children
         const nestedPayload: IFormValues = {}
@@ -308,9 +306,25 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
           const itemPayload: IFormValues = {}
           ;(field.fields ?? []).forEach((childField: IFormField) => {
             if (childField.excludeFromPayload !== true) {
-              const childFieldId = childField.id
-              if ((item as IFormValues)[childFieldId] !== undefined) {
-                itemPayload[childFieldId] = (item as IFormValues)[childFieldId]
+              // For skip_path fields (like objectWrapper), the data is stored flat in the item
+              if ((childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) && childField.skip_path === true) {
+                // Get all grandchild fields (from fields, tabs, pages, wizard_steps)
+                const childFields = getChildFields(childField)
+                // Extract fields flat from the item  
+                childFields.forEach(grandchildField => {
+                  if (grandchildField.excludeFromPayload !== true) {
+                    const grandchildId = grandchildField.id
+                    if ((item as IFormValues)[grandchildId] !== undefined) {
+                      itemPayload[grandchildId] = (item as IFormValues)[grandchildId]
+                    }
+                  }
+                })
+              } else {
+                // For non-skip_path fields, extract normally
+                const childFieldId = childField.id
+                if ((item as IFormValues)[childFieldId] !== undefined) {
+                  itemPayload[childFieldId] = (item as IFormValues)[childFieldId]
+                }
               }
             }
           })
@@ -327,10 +341,7 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
       // Simple scalar or non-nested value
       set(payload, path, value)
     }
-  }
-
-  allFields.forEach((field) => {
-    processField(field)
   })
+  
   return payload
 }
