@@ -213,11 +213,36 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
 export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormValues): IFormValues => {
   const formValuesCopy = cloneObject(formValues)
   const formWithPaths = copyAndAddPathToFields(form)
-  getFieldsFromFormSection(formWithPaths).forEach(field => {
-    if (field.defaultValue !== undefined && getFieldValue(field, formValuesCopy) === undefined) {
-      updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
-    }
-  })
+
+  // Recursively process fields, but skip fields nested inside objectList
+  const processFields = (fields: IFormField[] | undefined): void => {
+    if (!fields) return
+    
+    fields.forEach(field => {
+      // Skip objectList fields - their children should not get defaults at root level
+      if (field.type === ***REMOVED***objectList***REMOVED***) {
+        return
+      }
+      
+      // Apply default if not already set
+      if (field.defaultValue !== undefined && getFieldValue(field, formValuesCopy) === undefined) {
+        updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
+      }
+      
+      // Recursively process nested object fields (but not objectList)
+      if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.fields) {
+        processFields(field.fields)
+      }
+      // Also process fields in tabs, pages, wizard_steps for wrapper/object fields
+      if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***)) {
+        ;(field as any).tabs?.forEach((tab: any) => { processFields(tab.fields); })
+        ;(field as any).pages?.forEach((page: any) => { processFields(page.fields); })
+        ;(field as any).wizard_steps?.forEach((step: any) => { processFields(step.fields); })
+      }
+    })
+  }
+  
+  processFields(formWithPaths.fields)
   return formValuesCopy
 }
 
