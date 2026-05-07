@@ -343,9 +343,18 @@ export const ObjectListCreator = ({
             <div className="flex flex-col gap-4">
               {objListField.fields?.map((childField: IFormField) => {
                 const key = `${field.id}-${currentKey}-${childField.id}`
+                
+                // For skip_path fields (objectWrapper or object with skip_path=true),
+                // children don***REMOVED***t nest under the field ID - they stay flat at itemValue level
+                const isSkipPath = childField.type === ***REMOVED***objectWrapper***REMOVED*** || (childField as any).skip_path === true
+                
                 const childValue = typeof itemValue === ***REMOVED***object***REMOVED*** && itemValue !== null && !Array.isArray(itemValue)
-                  ? (itemValue as ICompositeValueType)[childField.id]
-                  : null
+                  ? isSkipPath 
+                    ? (itemValue as ICompositeValueType)  // Pass entire itemValue for skip_path fields
+                    : (itemValue as ICompositeValueType)[childField.id]
+                  : isSkipPath
+                    ? itemValue
+                    : null
 
                 return (
                   <FieldCreator
@@ -354,12 +363,21 @@ export const ObjectListCreator = ({
                     disabled={disabled}
                     value={childValue ?? null}
                     onChange={(newChildValue) => {
-                      const newItemValue = cloneObject(itemValue ?? {})
-                      newItemValue[childField.id] = newChildValue
+                      // For skip_path fields, the onChange value is the entire merged object
+                      // For normal fields, it***REMOVED***s just the value for that field
+                      let newItemValue: ICompositeValueType
+                      if (isSkipPath) {
+                        newItemValue = typeof newChildValue === ***REMOVED***object***REMOVED*** && newChildValue !== null 
+                          ? cloneObject(newChildValue)
+                          : {}
+                      } else {
+                        newItemValue = cloneObject(itemValue ?? {})
+                        newItemValue[childField.id] = newChildValue
+                      }
 
                       // If this is the key field, update the key if it changed
                       if (childField.id === keyField) {
-                        const newKey = String(newChildValue ?? ***REMOVED******REMOVED***)
+                        const newKey = String(newItemValue[keyField] ?? ***REMOVED******REMOVED***)
                         if (newKey !== currentKey) {
                           const newObjValue = cloneObject(objValue)
                           delete newObjValue[currentKey]
@@ -449,10 +467,15 @@ const FieldCreator = ({
   const formValues = useFormValues()
   const formValuesRef = useRef(formValues)
   formValuesRef.current = formValues
-  const InputComponent = {
+  
+  // Check for special field types before looking up in inputMap
+  const isObjectList = field.type === ***REMOVED***objectList***REMOVED***
+  const isMultiple = (field as any).multiple === true
+  
+  const InputComponent = !isObjectList && !isMultiple ? {
     ...inputMap,
     ...(inputOverrides ?? {}),
-  }[field.type]
+  }[field.type] : undefined
 
   const defaultOnChange = useCallback((v: IValueType | IValueType[] | undefined): void => {
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
@@ -500,7 +523,7 @@ const FieldCreator = ({
         )
       }}
     >
-      {InputComponent !== undefined ? (
+      {InputComponent !== undefined || isObjectList || isMultiple ? (
         <div
           className={utils.makeClassName({
             className,
@@ -508,10 +531,10 @@ const FieldCreator = ({
             extras: [disabled ? disabledClassName : undefined, getFieldWrapperClass(field)],
           })}
         >
-          {(field as any).multiple === true ? (
-            <MultipleFieldCreator field={field} disabled={disabled} onChange={onChange} />
-          ) : field.type === ***REMOVED***objectList***REMOVED*** ? (
-            <ObjectListCreator field={field} disabled={disabled} onChange={onChange} />
+          {isMultiple ? (
+            <MultipleFieldCreator field={field} disabled={disabled} onChange={onChange} value={initialValue} />
+          ) : isObjectList ? (
+            <ObjectListCreator field={field} disabled={disabled} onChange={onChange} value={initialValue} />
           ) : (
             <InputComponent
               field={field}
