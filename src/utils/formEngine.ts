@@ -217,7 +217,15 @@ export function seedNestedDefaults(
   if (!fields) return
 
   for (const field of fields) {
-    if (field.type === ***REMOVED***object***REMOVED*** && field.fields) {
+    if (field.type === ***REMOVED***objectList***REMOVED***) {
+      // objectList fields should not have child field defaults applied at form level
+      // Initialize as empty object; defaults will be applied when items are added to the list
+      if (!formValues[field.id]) {
+        formValues[field.id] = {}
+      }
+      // Skip processing nested fields - they will get defaults when added via getNewDefaultElement
+      continue
+    } else if (field.type === ***REMOVED***object***REMOVED*** && field.fields) {
       // For multiple=true object fields the container is an array; for single objects it***REMOVED***s {}
       if (!formValues[field.id]) {
         formValues[field.id] = field.multiple ? [] : {}

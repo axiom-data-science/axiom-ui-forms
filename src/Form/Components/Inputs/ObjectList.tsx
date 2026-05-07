@@ -11,7 +11,7 @@ const ObjectListInput = ({ field, onChange, value, disabled }: IFieldInputProps)
     if(keyField === undefined || keyField === null){
         configError = `Key field ${f.settings.keyField} does not point at a valid field`
     }
-    if(keyField?.multiple){
+    if((keyField as {multiple?: boolean})?.multiple){
         configError = ***REMOVED***Key field cannot be a multiple***REMOVED***
     }
     if(keyField?.type === ***REMOVED***object***REMOVED*** || keyField?.type === ***REMOVED***number***REMOVED*** || keyField?.type === ***REMOVED***boolean***REMOVED*** || keyField?.type === ***REMOVED***checkbox***REMOVED***){
