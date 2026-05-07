@@ -14,11 +14,12 @@ import formValuesAtom from '@/state/formValuesAtom'
 import { getFormPayload } from '@/utils/getters'
 import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 
-const Footer = ({ formValues }: { formValues?: IFormValues }): ReactElement => {
+const Footer = ({ formValues, form }: { formValues?: IFormValues, form?: IForm }): ReactElement => {
+  const payload = form && formValues ? getFormPayload(formValues, form) : formValues ?? {}
   return (
     <div className='py-20'>
       <CopyButton
-        string={JSON.stringify(formValues ?? {}, null, 2)}
+        string={JSON.stringify(payload, null, 2)}
         OnCopiedElement={<><CheckIcon className=' inline' /> Copied to clipboard</>}
         ToCopyElement={<><CopyIcon className=' inline' /> Copy form output</>}
       />
