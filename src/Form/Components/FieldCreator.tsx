@@ -339,11 +339,15 @@ export const ObjectListCreator = ({
     <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
       <FieldLabel field={field} disabled={disabled} />
       <div className="flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed">
-        {Object.entries(objValue).map(([currentKey, itemValue]) => (
-          <div key={currentKey} className={`flex flex-col gap-2 py-2 ${getFieldWrapperClass(field)}`}>
+        {Object.entries(objValue).map(([currentKey, itemValue]) => {
+          // Use _id for stable React key if it exists, otherwise fallback to currentKey
+          const itemId = (itemValue as any)?._id || currentKey
+          
+          return (
+            <div key={itemId} className={`flex flex-col gap-2 py-2 ${getFieldWrapperClass(field)}`}>
             <div className="flex flex-col gap-4">
               {objListField.fields?.map((childField: IFormField) => {
-                const key = `${field.id}-${currentKey}-${childField.id}`
+                const key = `${field.id}-${itemId}-${childField.id}`
                 
                 // For skip_path fields (objectWrapper or object with skip_path=true),
                 // children don***REMOVED***t nest under the field ID - they stay flat at itemValue level
@@ -447,7 +451,9 @@ export const ObjectListCreator = ({
                   onClick={() => {
                     const newKey = String(new Date().getTime())
                     const newObjValue = cloneObject(objValue)
-                    newObjValue[newKey] = getNewDefaultElement()
+                    const newItem = getNewDefaultElement()
+                    ;(newItem as any)._id = newKey
+                    newObjValue[newKey] = newItem
                     defaultOnChange(newObjValue)
                   }}
                 >
@@ -459,7 +465,9 @@ export const ObjectListCreator = ({
                   onClick={() => {
                     const newKey = String(new Date().getTime())
                     const newObjValue = cloneObject(objValue)
-                    newObjValue[newKey] = cloneObject(itemValue)
+                    const newItem = cloneObject(itemValue)
+                    ;(newItem as any)._id = newKey
+                    newObjValue[newKey] = newItem
                     defaultOnChange(newObjValue)
                   }}
                 >
@@ -476,8 +484,9 @@ export const ObjectListCreator = ({
                 />
               )}
             </div>
-          </div>
-        ))}
+            </div>
+          )
+        })}
       </div>
       {Object.keys(objValue).length === 0 && (
         <Button
@@ -485,7 +494,9 @@ export const ObjectListCreator = ({
           onClick={() => {
             const newKey = String(new Date().getTime())
             const newObjValue: ICompositeValueType = {}
-            newObjValue[newKey] = getNewDefaultElement()
+            const newItem = getNewDefaultElement()
+            ;(newItem as any)._id = newKey
+            newObjValue[newKey] = newItem
             defaultOnChange(newObjValue)
           }}
           className="mt-4"
