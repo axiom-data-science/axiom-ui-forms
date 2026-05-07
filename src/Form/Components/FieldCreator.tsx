@@ -291,6 +291,13 @@ export const ObjectListCreator = ({
   const formValuesRef = useRef(formValues)
   formValuesRef.current = formValues
 
+  // pendingItems is an array so each pending entry has a stable tempKey that cannot be overwritten.
+  // Items live here until the keyField is filled with a unique value, at which point they are
+  // committed to formValues.
+  const [pendingItems, setPendingItems] = useState<Array<{ tempKey: string; data: ICompositeValueType }>>([])
+  // itemErrors maps item keys (tempKey for pending, currentKey for committed) to error messages
+  const [itemErrors, setItemErrors] = useState<Record<string, string>>({})
+
   const objListField = field as any // IObjectListField
   const keyField = objListField.settings?.keyField
 
@@ -330,6 +337,46 @@ export const ObjectListCreator = ({
 
   const objValue = (typeof value === ***REMOVED***object***REMOVED*** && value !== null && !Array.isArray(value)) ? value as ICompositeValueType : {}
 
+  // Returns true if keyValue is already used by a committed item (excluding excludeCommittedKey)
+  // or by another pending item (excluding excludeTempKey).
+  const isKeyDuplicate = (keyValue: string, options?: { excludeCommittedKey?: string; excludeTempKey?: string }): boolean => {
+    const { excludeCommittedKey, excludeTempKey } = options ?? {}
+    if (keyValue !== excludeCommittedKey && keyValue in objValue) return true
+    return pendingItems.some(p =>
+      p.tempKey !== excludeTempKey &&
+      keyValue !== ***REMOVED******REMOVED*** &&
+      String(p.data[keyField] ?? ***REMOVED******REMOVED***) === keyValue
+    )
+  }
+
+  // Commit a pending item to formValues once its keyField has a unique value.
+  // If the key is a duplicate, show an error and keep the item in pending state.
+  const commitPendingItem = (tempKey: string, itemData: ICompositeValueType, keyValue: string): void => {
+    if (isKeyDuplicate(keyValue, { excludeTempKey: tempKey })) {
+      setItemErrors(prev => ({
+        ...prev,
+        [tempKey]: `"${keyValue}" is already in use. Each ${keyField} must be unique.`
+      }))
+      setPendingItems(prev => prev.map(p => p.tempKey === tempKey ? { ...p, data: itemData } : p))
+      return
+    }
+    setItemErrors(prev => {
+      const next = { ...prev }
+      delete next[tempKey]
+      return next
+    })
+    const newObjValue = cloneObject(objValue)
+    newObjValue[keyValue] = itemData
+    defaultOnChange(newObjValue)
+    setPendingItems(prev => prev.filter(p => p.tempKey !== tempKey))
+  }
+
+  // Combine committed (formValues) and pending (local) items for rendering
+  const allItems: Array<{ currentKey: string; itemValue: ICompositeValueType; isPending: boolean }> = [
+    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: v as ICompositeValueType, isPending: false })),
+    ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true })),
+  ]
+
   const InputComponent = {
     ...inputMap,
     ...(inputOverrides ?? {}),
@@ -339,12 +386,18 @@ export const ObjectListCreator = ({
     <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ***REMOVED******REMOVED***}`}>
       <FieldLabel field={field} disabled={disabled} />
       <div className="flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed">
-        {Object.entries(objValue).map(([currentKey, itemValue]) => {
+        {allItems.map(({ currentKey, itemValue, isPending }) => {
           // Use _id for stable React key if it exists, otherwise fallback to currentKey
           const itemId = (itemValue as any)?._id || currentKey
+          const itemError = itemErrors[currentKey]
           
           return (
             <div key={itemId} className={`flex flex-col gap-2 py-2 ${getFieldWrapperClass(field)}`}>
+            {itemError && (
+              <p className="text-rose-700 text-sm flex items-center gap-1">
+                <ExclamationTriangleIcon className="inline w-4 h-4 shrink-0" /> {itemError}
+              </p>
+            )}
             <div className="flex flex-col gap-4">
               {objListField.fields?.map((childField: IFormField) => {
                 const key = `${field.id}-${itemId}-${childField.id}`
@@ -380,20 +433,52 @@ export const ObjectListCreator = ({
                         newItemValue[childField.id] = newChildValue
                       }
 
-                      // Check if the keyField value has changed
+                      const newKeyValue = String(newItemValue[keyField] ?? ***REMOVED******REMOVED***)
+
+                      if (isPending) {
+                        if (newKeyValue !== ***REMOVED******REMOVED***) {
+                          commitPendingItem(currentKey, newItemValue, newKeyValue)
+                        } else {
+                          setPendingItems(prev => prev.map(p => p.tempKey === currentKey ? { ...p, data: newItemValue } : p))
+                        }
+                        return
+                      }
+
+                      // Check if the keyField value has changed or if there***REMOVED***s an existing error
                       const hasKeyFieldChange = keyField !== undefined && 
                         (newItemValue[keyField] !== (itemValue as ICompositeValueType)?.[keyField])
                       
-                      if (hasKeyFieldChange) {
-                        // Key field changed - update the key in the object
-                        const newKey = String(newItemValue[keyField] ?? ***REMOVED******REMOVED***)
-                        if (newKey !== currentKey) {
+                      if ((hasKeyFieldChange || itemError !== undefined) && newKeyValue !== ***REMOVED******REMOVED*** && newKeyValue !== currentKey) {
+                        if (isKeyDuplicate(newKeyValue, { excludeCommittedKey: currentKey })) {
+                          setItemErrors(prev => ({
+                            ...prev,
+                            [currentKey]: `"${newKeyValue}" is already in use. Each ${keyField} must be unique.`
+                          }))
+                          // Update data under the existing key without renaming
                           const newObjValue = cloneObject(objValue)
-                          delete newObjValue[currentKey]
-                          newObjValue[newKey] = newItemValue
+                          newObjValue[currentKey] = newItemValue
                           defaultOnChange(newObjValue)
                           return
                         }
+                        setItemErrors(prev => {
+                          const next = { ...prev }
+                          delete next[currentKey]
+                          return next
+                        })
+                        const newObjValue = cloneObject(objValue)
+                        delete newObjValue[currentKey]
+                        newObjValue[newKeyValue] = newItemValue
+                        defaultOnChange(newObjValue)
+                        return
+                      }
+
+                      // Check if there***REMOVED***s an error and the value is no longer a duplicate (e.g., reverted to original key)
+                      if (itemError !== undefined && !isKeyDuplicate(newKeyValue, { excludeCommittedKey: currentKey })) {
+                        setItemErrors(prev => {
+                          const next = { ...prev }
+                          delete next[currentKey]
+                          return next
+                        })
                       }
 
                       // Otherwise just update the value
@@ -412,20 +497,51 @@ export const ObjectListCreator = ({
                       value={{
                         scopedValue: childValue as ICompositeValueType,
                         scopedOnChange: (newValue: ICompositeValueType) => {
-                          // Check if the keyField value has changed in the scoped value
-                          const oldKeyValue = (childValue as ICompositeValueType)?.[keyField]
-                          const newKeyValue = newValue[keyField]
+                          const newKeyValue = String(newValue[keyField] ?? ***REMOVED******REMOVED***)
+
+                          if (isPending) {
+                            if (newKeyValue !== ***REMOVED******REMOVED***) {
+                              commitPendingItem(currentKey, newValue, newKeyValue)
+                            } else {
+                              setPendingItems(prev => prev.map(p => p.tempKey === currentKey ? { ...p, data: newValue } : p))
+                            }
+                            return
+                          }
+
+                          // Check if the keyField value has changed in the scoped value or if there***REMOVED***s an existing error
+                          const oldKeyValue = String((childValue as ICompositeValueType)?.[keyField] ?? ***REMOVED******REMOVED***)
+                          const hasKeyFieldChange = newKeyValue !== oldKeyValue
                           
-                          if (keyField !== undefined && newKeyValue !== oldKeyValue) {
-                            // Key field changed - update the key in the object
-                            const keyString = String(newKeyValue ?? ***REMOVED******REMOVED***)
-                            if (keyString !== currentKey) {
+                          if ((hasKeyFieldChange || itemError !== undefined) && newKeyValue !== ***REMOVED******REMOVED*** && newKeyValue !== currentKey) {
+                            if (isKeyDuplicate(newKeyValue, { excludeCommittedKey: currentKey })) {
+                              setItemErrors(prev => ({
+                                ...prev,
+                                [currentKey]: `"${newKeyValue}" is already in use. Each ${keyField} must be unique.`
+                              }))
                               const newObjValue = cloneObject(objValue)
-                              delete newObjValue[currentKey]
-                              newObjValue[keyString] = newValue
+                              newObjValue[currentKey] = newValue
                               defaultOnChange(newObjValue)
                               return
                             }
+                            setItemErrors(prev => {
+                              const next = { ...prev }
+                              delete next[currentKey]
+                              return next
+                            })
+                            const newObjValue = cloneObject(objValue)
+                            delete newObjValue[currentKey]
+                            newObjValue[newKeyValue] = newValue
+                            defaultOnChange(newObjValue)
+                            return
+                          }
+                          
+                          // Check if there***REMOVED***s an error and the value is no longer a duplicate (e.g., reverted to original key)
+                          if (itemError !== undefined && !isKeyDuplicate(newKeyValue, { excludeCommittedKey: currentKey })) {
+                            setItemErrors(prev => {
+                              const next = { ...prev }
+                              delete next[currentKey]
+                              return next
+                            })
                           }
                           
                           // Otherwise just update the value
@@ -449,12 +565,10 @@ export const ObjectListCreator = ({
                   size="xs"
                   className={toolButtonClass}
                   onClick={() => {
-                    const newKey = String(new Date().getTime())
-                    const newObjValue = cloneObject(objValue)
-                    const newItem = getNewDefaultElement()
-                    ;(newItem as any)._id = newKey
-                    newObjValue[newKey] = newItem
-                    defaultOnChange(newObjValue)
+                    const tempKey = String(new Date().getTime())
+                    const newItem = getNewDefaultElement() ?? {}
+                    ;(newItem as any)._id = tempKey
+                    setPendingItems(prev => [...prev, { tempKey, data: newItem as ICompositeValueType }])
                   }}
                 >
                   Add <PlusIcon className="inline ml-2" />
@@ -463,23 +577,32 @@ export const ObjectListCreator = ({
                   size="xs"
                   className={toolButtonClass}
                   onClick={() => {
-                    const newKey = String(new Date().getTime())
-                    const newObjValue = cloneObject(objValue)
-                    const newItem = cloneObject(itemValue)
-                    ;(newItem as any)._id = newKey
-                    newObjValue[newKey] = newItem
-                    defaultOnChange(newObjValue)
+                    const tempKey = String(new Date().getTime())
+                    const newItem = cloneObject(itemValue) as ICompositeValueType
+                    ;(newItem as any)._id = tempKey
+                    // Clear keyField so the duplicate starts without a key (pending state)
+                    delete newItem[keyField]
+                    setPendingItems(prev => [...prev, { tempKey, data: newItem }])
                   }}
                 >
                   Duplicate <CopyIcon className="inline ml-2" />
                 </Button>
               </div>
-              {Object.keys(objValue).length > 1 && (
+              {(allItems.length > 1) && (
                 <DeleteMultiple
                   doDelete={() => {
-                    const newObjValue = cloneObject(objValue)
-                    delete newObjValue[currentKey]
-                    defaultOnChange(newObjValue)
+                    setItemErrors(prev => {
+                      const next = { ...prev }
+                      delete next[currentKey]
+                      return next
+                    })
+                    if (isPending) {
+                      setPendingItems(prev => prev.filter(p => p.tempKey !== currentKey))
+                    } else {
+                      const newObjValue = cloneObject(objValue)
+                      delete newObjValue[currentKey]
+                      defaultOnChange(newObjValue)
+                    }
                   }}
                 />
               )}
@@ -488,16 +611,14 @@ export const ObjectListCreator = ({
           )
         })}
       </div>
-      {Object.keys(objValue).length === 0 && (
+      {allItems.length === 0 && (
         <Button
           size="sm"
           onClick={() => {
-            const newKey = String(new Date().getTime())
-            const newObjValue: ICompositeValueType = {}
-            const newItem = getNewDefaultElement()
-            ;(newItem as any)._id = newKey
-            newObjValue[newKey] = newItem
-            defaultOnChange(newObjValue)
+            const tempKey = String(new Date().getTime())
+            const newItem = getNewDefaultElement() ?? {}
+            ;(newItem as any)._id = tempKey
+            setPendingItems([{ tempKey, data: newItem as ICompositeValueType }])
           }}
           className="mt-4"
         >
@@ -532,7 +653,7 @@ const FieldCreator = ({
   const InputComponent = !isObjectList && !isMultiple ? {
     ...inputMap,
     ...(inputOverrides ?? {}),
-  }[field.type] : undefined
+  }[field.type] as React.ComponentType<IFieldInputProps> : undefined
 
   const defaultOnChange = useCallback((v: IValueType | IValueType[] | undefined): void => {
     // If we***REMOVED***re in a scoped context, update the scoped value instead of global formValues
@@ -605,7 +726,7 @@ const FieldCreator = ({
           ) : isObjectList ? (
             <ObjectListCreator field={field} disabled={disabled} onChange={onChange} value={initialValue} />
           ) : (
-            <InputComponent
+            InputComponent && <InputComponent
               field={field}
               disabled={disabled}
               onChange={onChangeFn}

@@ -306,19 +306,22 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
         if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
           const itemPayload: IFormValues = {}
           ;(field.fields ?? []).forEach((childField: IFormField) => {
-            // Skip the keyField value by default
-            if (keyField && childField.id === keyField) {
-              return
-            }
-            
             if (childField.excludeFromPayload !== true) {
-              // For skip_path fields (like objectWrapper), the data is stored flat in the item
-              if ((childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) && childField.skip_path === true) {
+              // For objectWrapper and skip_path fields, the data is stored flat in the item
+              const isObjectWrapper = (childField as any).type === ***REMOVED***objectWrapper***REMOVED***
+              const isSkipPath = (childField as any).skip_path === true
+              const isObject = (childField as any).type === ***REMOVED***object***REMOVED***
+              
+              if (isObjectWrapper || (isObject && isSkipPath)) {
                 // Get all grandchild fields (from fields, tabs, pages, wizard_steps)
                 const childFields = getChildFields(childField)
-                // Extract fields flat from the item  
+                // Extract fields flat from the item, excluding keyField
                 childFields.forEach(grandchildField => {
                   if (grandchildField.excludeFromPayload !== true) {
+                    // Skip the keyField value by default
+                    if (keyField && grandchildField.id === keyField) {
+                      return
+                    }
                     const grandchildId = grandchildField.id
                     if ((item as IFormValues)[grandchildId] !== undefined) {
                       itemPayload[grandchildId] = (item as IFormValues)[grandchildId]
@@ -326,7 +329,7 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
                   }
                 })
               } else {
-                // For non-skip_path fields, extract normally
+                // For non-skip_path nested objects, extract normally
                 const childFieldId = childField.id
                 if ((item as IFormValues)[childFieldId] !== undefined) {
                   itemPayload[childFieldId] = (item as IFormValues)[childFieldId]
