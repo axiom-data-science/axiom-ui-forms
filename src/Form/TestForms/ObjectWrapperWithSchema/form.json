@@ -1,0 +1,18 @@
+{
+    "pages": [
+        {
+            "id": "intro",
+            "label": "Intro",
+            "fields": [
+                {"prop": "product_info"}
+            ]
+        },
+        {
+            "id": "more",
+            "label": "More",
+            "fields": [
+                {"prop": "supplier_info"}
+            ]
+        }
+    ]
+}

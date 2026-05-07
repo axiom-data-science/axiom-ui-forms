@@ -1,18 +1,21 @@
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues, type ICompositeValueType } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/utils/validators'
 import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import React, { memo, ReactNode, useEffect, useState, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
+import FieldCreator from '@/Form/Components/FieldCreator'
+import { cloneObject } from '@/utils/manipulators'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import InlineMarkdown from '@/Form/Components/InlineMarkdown'
 import { useAtom } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 import { Button } from '@axdspub/axiom-ui-utilities'
 import FieldLabel, { FieldLabelText } from '@/Form/Components/FieldLabel'
+import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
 
 const PageNav = ({
   sections,
@@ -141,6 +144,8 @@ export interface IPageLayoutProps {
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
+  scopedValue?: ICompositeValueType
+  scopedOnChange?: (v: ICompositeValueType) => void
 }
 
 export const ActivePage = ({
@@ -178,6 +183,9 @@ export const ActivePage = ({
   )
 }
 
+// Backwards compatibility alias - use ScopedActiveSection from TabLayout
+export const ScopedActivePage = ScopedActiveSection
+
 const PageLayout = (props: IPageLayoutProps): ReactElement => {
   if (props.sections === undefined) {
     return <></>
@@ -202,13 +210,14 @@ const PageLayout = (props: IPageLayoutProps): ReactElement => {
 }
 
 const PageLayoutContent = ({
-
   sections,
   inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
   className = 'flex flex-row gap-8 grow',
-  level
+  level,
+  scopedValue,
+  scopedOnChange
 }: IPageLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -218,20 +227,29 @@ const PageLayoutContent = ({
   const sectionStatus = calculateSectionStatus(sections, formValues)
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
+  const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
-
     <div className={className}>
       <NavComponent
         sections={sections}
         sectionStatus={sectionStatus}
         level={level}
       />
-      <ContentComponent
-        formSection={formSection}
-        sectionStatus={sectionStatus}
-        level={level}
-      />
+      {useScoped && formSection ? (
+        <ScopedActivePage
+          formSection={formSection}
+          scopedValue={scopedValue}
+          scopedOnChange={scopedOnChange}
+          level={level}
+        />
+      ) : (
+        <ContentComponent
+          formSection={formSection}
+          sectionStatus={sectionStatus}
+          level={level}
+        />
+      )}
     </div>
   )
 }

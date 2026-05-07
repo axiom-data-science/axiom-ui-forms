@@ -1,0 +1,44 @@
+{
+  "id": "infrastructure_config",
+  "label": "Infrastructure Configuration",
+  "fields": [
+    {
+      "id": "servers",
+      "type": "objectList",
+      "label": "Managed Servers",
+      "settings": {
+        "keyField": "hostname"
+      },
+      "fields": [
+        {
+          "id": "hostname",
+          "type": "text",
+          "label": "Hostname",
+          "required": true
+        },
+        {
+          "id": "ip_address",
+          "type": "text",
+          "label": "IP Address",
+          "required": true
+        },
+        {
+          "id": "environment",
+          "type": "select",
+          "label": "Environment",
+          "options": [
+            { "label": "Development", "value": "dev" },
+            { "label": "Staging", "value": "staging" },
+            { "label": "Production", "value": "prod" }
+          ]
+        },
+        {
+          "id": "port",
+          "type": "number",
+          "label": "SSH Port",
+          "defaultValue": 22
+        }
+      ]
+    }
+  ]
+}
