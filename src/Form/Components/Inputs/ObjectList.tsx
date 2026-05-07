@@ -11,7 +11,7 @@ const ObjectListInput = ({ field, onChange, value, disabled }: IFieldInputProps)
     if(keyField === undefined || keyField === null){
         configError = `Key field ${f.settings.keyField} does not point at a valid field`
     }
-    if(keyField?.multiple){
+    if((keyField as {multiple?: boolean})?.multiple){
         configError = 'Key field cannot be a multiple'
     }
     if(keyField?.type === 'object' || keyField?.type === 'number' || keyField?.type === 'boolean' || keyField?.type === 'checkbox'){
