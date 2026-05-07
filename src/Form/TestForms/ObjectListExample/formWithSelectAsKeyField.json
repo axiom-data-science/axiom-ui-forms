@@ -10,6 +10,25 @@
         "keyField": "hostname"
       },
       "fields": [
+                        {
+                  "id": "hostname",
+                  "type": "select",
+                  "options": [
+                        {
+                            "label": "First",
+                            "value": "first"
+                        },
+                        {
+                            "label": "Second",
+                            "value": "second"
+                        },
+                        {
+                            "label": "Third",
+                            "value": "third"
+                        }
+                  ],
+                  "label": "Hostname"
+                },
         {
           "id": "info",
           "type": "objectWrapper",
@@ -18,11 +37,6 @@
               "id": "one",
               "label": "Basic Info",
               "fields": [
-                {
-                  "id": "hostname",
-                  "type": "text",
-                  "label": "Hostname"
-                },
                 {
                   "id": "ip_address",
                   "type": "text",

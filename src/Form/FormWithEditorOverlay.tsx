@@ -54,7 +54,7 @@ const FormEditor = ({
   children: ReactNode
 }): ReactElement => {
   const [editing, setEditing] = useState<boolean>(false)
-  const [sidebarWidth, setSidebarWidth] = useState<number>(1200)
+  const [sidebarWidth, setSidebarWidth] = useState<number>(Math.max(300, window.innerWidth * 0.4))
 
   return <>
     {
