@@ -17,6 +17,7 @@ import {
   type ICheckConditionResult,
 } from '@/Form/Creator/FormCreatorTypes'
 import { checkCondition } from '@/utils/validators'
+import { getChildFields } from '@/utils/getters'
 
 /**
  * Context information for evaluating nested fields
@@ -256,9 +257,15 @@ export function seedNestedDefaults(
         }
       }
     } else {
-      // objectWrapper fields are UI-only containers (skip_path: true, no value storage)
-      // — they have no defaultValue to apply and TypeScript omits 'multiple' from their type
-      if (field.type === 'objectWrapper') continue
+      // objectWrapper fields are UI-only containers that organize fields with tabs/pages
+      // They don't store values themselves, but their child fields should get defaults applied
+      if (field.type === 'objectWrapper') {
+        // Get all child fields (including those in tabs, pages, wizard_steps)
+        const childFields = getChildFields(field)
+        // Recursively apply defaults to the child fields
+        seedNestedDefaults(childFields, formValues, context, '')
+        continue
+      }
 
       // For non-object fields, check and apply defaults
       // Use the raw field.id for direct access (not destPath)
