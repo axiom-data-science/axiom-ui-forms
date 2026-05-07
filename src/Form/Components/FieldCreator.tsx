@@ -490,7 +490,10 @@ const FieldCreator = ({
       notifyFn(v)
     }
   }, [form, field, setFormValues, onChange, contextOnChange])
-  const onChangeFn = defaultOnChange
+  
+  // If onChange was provided (scoped rendering context), use that directly
+  // Otherwise use defaultOnChange which updates formValues
+  const onChangeFn = onChange ? onChange : defaultOnChange
 
   conditionResult = conditionResult ?? checkCondition(field, formValues)
 
