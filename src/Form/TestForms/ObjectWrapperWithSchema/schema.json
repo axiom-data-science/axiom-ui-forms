@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "price": { "type": "number" },
+    "sku": { "type": "string" },
+    "weight": { "type": "number" },
+    "dimensions_length": { "type": "number" },
+    "dimensions_width": { "type": "number" },
+    "dimensions_height": { "type": "number" },
+    "supplier_name": { "type": "string" },
+    "supplier_contact": { "type": "string" },
+    "supplier_email": { "type": "string" }
+  }
+}

@@ -23,7 +23,7 @@ const getFieldExtra = (field: IFormField, index?: number): string => {
  * @returns The JSON path for the given field
  */
 export const makeJsonPath = (field: IFormField, index?: number): string | undefined => {
-  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
+  if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.skip_path === true) {
     return undefined
   }
   if (field.destPath !== undefined) {
@@ -42,13 +42,20 @@ export const makeJsonPath = (field: IFormField, index?: number): string | undefi
 }
 
 /** `
- * Returns the child fields of a given field
+ * Returns the child fields of a given field, including fields nested in tabs, pages, and wizard_steps
  *
  * @param field - The field to get the child fields from
  * @returns The child fields of the given field
  */
 export const getChildFields = (field: { id: string, fields?: IFormField[] }): IFormField[] => {
-  return field?.fields ?? []
+  const f = field as any
+  const directFields: IFormField[] = f.fields ?? []
+  const fromSections: IFormField[] = [
+    ...(f.tabs ?? []),
+    ...(f.pages ?? []),
+    ...(f.wizard_steps ?? []),
+  ].flatMap((section: IFormSection) => getFieldsFromFormSection(section))
+  return [...directFields, ...fromSections]
 }
 
 /**
@@ -156,7 +163,7 @@ export function getFieldValue (field: IFormField, formValues: IFormValues, index
  */
 export function getPathFromField (field: IFormField): string | undefined {
   // console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
-  if (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true) {
+  if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.skip_path === true) {
     return undefined
   }
   if (field.destPath) {

@@ -1,18 +1,21 @@
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues, type ICompositeValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { memo, ReactNode, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
+import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
+import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import FieldLabel, { FieldLabelText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
+import { ScopedActiveSection } from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
 
 const PageNav = ({
   sections,
@@ -141,6 +144,8 @@ export interface IPageLayoutProps {
   className?: string
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
+  scopedValue?: ICompositeValueType
+  scopedOnChange?: (v: ICompositeValueType) => void
 }
 
 export const ActivePage = ({
@@ -178,6 +183,9 @@ export const ActivePage = ({
   )
 }
 
+// Backwards compatibility alias - use ScopedActiveSection from TabLayout
+export const ScopedActivePage = ScopedActiveSection
+
 const PageLayout = (props: IPageLayoutProps): ReactElement => {
   if (props.sections === undefined) {
     return <></>
@@ -202,13 +210,14 @@ const PageLayout = (props: IPageLayoutProps): ReactElement => {
 }
 
 const PageLayoutContent = ({
-
   sections,
   inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
   className = ***REMOVED***flex flex-row gap-8 grow***REMOVED***,
-  level
+  level,
+  scopedValue,
+  scopedOnChange
 }: IPageLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -218,20 +227,29 @@ const PageLayoutContent = ({
   const sectionStatus = calculateSectionStatus(sections, formValues)
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
+  const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
-
     <div className={className}>
       <NavComponent
         sections={sections}
         sectionStatus={sectionStatus}
         level={level}
       />
-      <ContentComponent
-        formSection={formSection}
-        sectionStatus={sectionStatus}
-        level={level}
-      />
+      {useScoped && formSection ? (
+        <ScopedActivePage
+          formSection={formSection}
+          scopedValue={scopedValue}
+          scopedOnChange={scopedOnChange}
+          level={level}
+        />
+      ) : (
+        <ContentComponent
+          formSection={formSection}
+          sectionStatus={sectionStatus}
+          level={level}
+        />
+      )}
     </div>
   )
 }

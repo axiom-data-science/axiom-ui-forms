@@ -1,16 +1,17 @@
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { IFormValues, type IFormSection, type IWizardStep } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { IFormValues, type IFormSection, type IWizardStep, type ICompositeValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IPageLayoutProps, ActivePage, type INavProps } from ***REMOVED***@/Form/Creator/Page***REMOVED***
 import { SelectInput, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { CaretRightIcon, CaretLeftIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import React, { ReactNode, type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { ReactNode, type ReactElement, memo } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { useAtomValue } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
+import { ScopedActiveSection } from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
 
 const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
   const aOrder = a.order ?? Infinity
@@ -241,7 +242,9 @@ const WizardLayoutContent = ({
   SmallNavComponent = WizardNavSmall,
   className = ***REMOVED***flex flex-col gap-4 pt-8 grow h-full***REMOVED***,
   level,
-  SubmitButton
+  SubmitButton,
+  scopedValue,
+  scopedOnChange
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -250,28 +253,37 @@ const WizardLayoutContent = ({
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
   const sectionStatus = calculateSectionStatus(sections, formValues)
+  const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
-
-      <div className={className}>
-        <NavComponent
-            sections={sections}
-            sectionStatus={sectionStatus}
-            level={level}
-            SubmitButton={SubmitButton}
-          />
+    <div className={className}>
+      <NavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+        SubmitButton={SubmitButton}
+      />
+      {useScoped && formSection ? (
+        <ScopedActiveSection
+          formSection={formSection}
+          scopedValue={scopedValue}
+          scopedOnChange={scopedOnChange}
+          level={level}
+        />
+      ) : (
         <ContentComponent
-            formSection={formSection}
-            sectionStatus={sectionStatus}
-            level={level}
-            />
-        <SmallNavComponent
-          sections={sections}
+          formSection={formSection}
           sectionStatus={sectionStatus}
           level={level}
-          SubmitButton={SubmitButton}
-          />
-      </div>
+        />
+      )}
+      <SmallNavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+        SubmitButton={SubmitButton}
+      />
+    </div>
   )
 }
 

@@ -1,0 +1,53 @@
+[
+  {
+    "prop": "product_info",
+    "type": "objectWrapper",
+    "skip_path": true,
+    "tabs": [
+      {
+        "id": "basic",
+        "label": "Basic Info",
+        "fields": [
+          { "prop": "name", "label": "Product Name" },
+          { "prop": "description", "label": "Description", "type": "long_text" }
+        ]
+      },
+      {
+        "id": "inventory",
+        "label": "Inventory",
+        "fields": [
+            {
+                "prop": "sku_wrapper",
+                "type": "objectWrapper",
+                "label": "SKU Wrapper",
+                "fields": [
+                    { "prop": "sku", "label": "SKU" }
+                ]
+            },
+            { "prop": "price", "label": "Price", "type": "number" }
+        ]
+      },
+      {
+        "id": "shipping",
+        "label": "Shipping Info",
+        "fields": [
+          { "prop": "weight", "label": "Weight (kg)", "type": "number" },
+          { "prop": "dimensions_length", "label": "Length (cm)", "type": "number" },
+          { "prop": "dimensions_width", "label": "Width (cm)", "type": "number" },
+          { "prop": "dimensions_height", "label": "Height (cm)", "type": "number" }
+        ]
+      }
+    ]
+  },
+  {
+    "prop": "supplier_info",
+    "type": "objectWrapper",
+    "label": "Supplier Information",
+    "layout": "horizontal",
+    "fields": [
+      { "prop": "supplier_name", "label": "Supplier Name" },
+      { "prop": "supplier_contact", "label": "Contact Person" },
+      { "prop": "supplier_email", "label": "Email", "type": "text" }
+    ]
+  }
+]

@@ -543,6 +543,10 @@ const mergeFormField = ({
       formFieldOverrides.type === ***REMOVED***object***REMOVED*** || formFieldOverrides.type === ***REMOVED***objectWrapper***REMOVED***
         ? (formFieldOverrides.fields ?? [])
         : []
+    const formOverrideFieldTabs =
+      formFieldOverrides.type === ***REMOVED***object***REMOVED*** || formFieldOverrides.type === ***REMOVED***objectWrapper***REMOVED***
+        ? formFieldOverrides.tabs
+        : undefined
     const formOverrideFieldsMap = Object.fromEntries(
       formOverrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
     )
@@ -571,10 +575,11 @@ const mergeFormField = ({
       })
     })
 
+    const mergedTabs = formOverrideFieldTabs ?? overrideFieldTabs
     mergedField.tabs =
-      overrideFieldTabs !== undefined
+      mergedTabs !== undefined
         ? (mergeFormSections({
-            sectionOverrides: overrideFieldTabs as IFormSectionOverride[],
+            sectionOverrides: mergedTabs as IFormSectionOverride[],
             schemaForm,
             formFieldsOverrideMap,
           }) as IFormLayoutTab[])
