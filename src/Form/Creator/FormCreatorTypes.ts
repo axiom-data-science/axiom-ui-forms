@@ -273,7 +273,7 @@ export interface IObjectListField extends Omit<IValidContainerField, ***REMOVED*
   settings: {
     keyField: string
   }
-  fields?: IFormField[]
+  fields: IFormField[]
 }
 
 /**

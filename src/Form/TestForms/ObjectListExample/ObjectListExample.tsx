@@ -1,15 +1,14 @@
-import FormWithEditorOverlay from "@/Form/FormWithEditorOverlay"
+import { FormWithEditorOverlay } from "@/Form/FormWithEditorOverlay"
 import form from "./form.json"
 import { ReactElement, useState } from "react"
-import { IFormOverride } from "@/Form/Creator/FormCreatorTypes"
+import { IForm } from "@/Form/Creator/FormCreatorTypes"
 
 const ObjectListExample = (): ReactElement => {
-  const formOverrideState = useState<IFormOverride | undefined>(form as IFormOverride)
+  const formState = useState<IForm | undefined>(form as IForm)
   
   return (
     <FormWithEditorOverlay
-      label="ObjectList Example - Infrastructure Configuration"
-      formOverrideState={formOverrideState}
+      formState={formState}
     />
   )
 }
