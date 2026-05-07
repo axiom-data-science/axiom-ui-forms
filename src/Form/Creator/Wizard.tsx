@@ -1,16 +1,17 @@
 import { calculateSectionStatus } from '@/utils/validators'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { IFormValues, type IFormSection, type IWizardStep } from '@/Form/Creator/FormCreatorTypes'
+import { IFormValues, type IFormSection, type IWizardStep, type ICompositeValueType } from '@/Form/Creator/FormCreatorTypes'
 import { type IPageLayoutProps, ActivePage, type INavProps } from '@/Form/Creator/Page'
 import { SelectInput, utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
-import React, { ReactNode, type ReactElement } from 'react'
+import React, { ReactNode, type ReactElement, memo } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import { useAtomValue } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
+import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
 
 const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
   const aOrder = a.order ?? Infinity
@@ -241,7 +242,9 @@ const WizardLayoutContent = ({
   SmallNavComponent = WizardNavSmall,
   className = 'flex flex-col gap-4 pt-8 grow h-full',
   level,
-  SubmitButton
+  SubmitButton,
+  scopedValue,
+  scopedOnChange
 }: IWizardLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -250,28 +253,37 @@ const WizardLayoutContent = ({
   const { activeId } = useFormSectionContext()
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
   const sectionStatus = calculateSectionStatus(sections, formValues)
+  const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
-
-      <div className={className}>
-        <NavComponent
-            sections={sections}
-            sectionStatus={sectionStatus}
-            level={level}
-            SubmitButton={SubmitButton}
-          />
+    <div className={className}>
+      <NavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+        SubmitButton={SubmitButton}
+      />
+      {useScoped && formSection ? (
+        <ScopedActiveSection
+          formSection={formSection}
+          scopedValue={scopedValue}
+          scopedOnChange={scopedOnChange}
+          level={level}
+        />
+      ) : (
         <ContentComponent
-            formSection={formSection}
-            sectionStatus={sectionStatus}
-            level={level}
-            />
-        <SmallNavComponent
-          sections={sections}
+          formSection={formSection}
           sectionStatus={sectionStatus}
           level={level}
-          SubmitButton={SubmitButton}
-          />
-      </div>
+        />
+      )}
+      <SmallNavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+        SubmitButton={SubmitButton}
+      />
+    </div>
   )
 }
 

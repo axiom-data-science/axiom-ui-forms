@@ -1,0 +1,86 @@
+{
+  "id": "application_settings",
+  "label": "Application Settings",
+  "pages": [
+    {
+      "id": "general",
+      "label": "General",
+      "fields": [
+        { "id": "app_name", "type": "text", "label": "Application Name" },
+        { "id": "app_version", "type": "text", "label": "Version" },
+        { "id": "description", "type": "long_text", "label": "Description" }
+      ]
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced Settings",
+      "tabs": [
+        {
+          "id": "performance",
+          "label": "Performance",
+          "fields": [
+            {
+              "id": "performance_wrapper",
+              "type": "objectWrapper",
+              "skip_path": true,
+              "tabs": [
+                {
+                  "id": "caching",
+                  "label": "Caching",
+                  "fields": [
+                    { "id": "cache_enabled", "type": "boolean", "label": "Enable Caching", "defaultValue": true },
+                    { "id": "cache_ttl", "type": "number", "label": "TTL (seconds)", "defaultValue": 3600 },
+                    { "id": "cache_strategy", "type": "select", "label": "Strategy", "options": [
+                      { "label": "LRU", "value": "lru" },
+                      { "label": "FIFO", "value": "fifo" },
+                      { "label": "LFU", "value": "lfu" }
+                    ]}
+                  ]
+                },
+                {
+                  "id": "compression",
+                  "label": "Compression",
+                  "fields": [
+                    { "id": "compression_enabled", "type": "boolean", "label": "Enable Compression", "defaultValue": false },
+                    { "id": "compression_level", "type": "number", "label": "Level (1-9)", "constraints": { "min": 1, "max": 9 } }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "security",
+          "label": "Security",
+          "fields": [
+            { "id": "ssl_enabled", "type": "boolean", "label": "Enable SSL", "defaultValue": true },
+            { "id": "ssl_cert_path", "type": "text", "label": "Certificate Path" },
+            { "id": "auth_type", "type": "select", "label": "Authentication", "options": [
+              { "label": "JWT", "value": "jwt" },
+              { "label": "OAuth2", "value": "oauth2" },
+              { "label": "Basic Auth", "value": "basic" }
+            ]},
+            { "id": "password_min_length", "type": "number", "label": "Min Password Length", "defaultValue": 8 }
+          ]
+        },
+        {
+          "id": "logging",
+          "label": "Logging",
+          "fields": [
+            { "id": "log_level", "type": "select", "label": "Level", "options": [
+              { "label": "Debug", "value": "debug" },
+              { "label": "Info", "value": "info" },
+              { "label": "Warn", "value": "warn" },
+              { "label": "Error", "value": "error" }
+            ]},
+            { "id": "log_format", "type": "select", "label": "Format", "options": [
+              { "label": "JSON", "value": "json" },
+              { "label": "Plain Text", "value": "text" }
+            ]},
+            { "id": "max_log_size", "type": "number", "label": "Max Size (MB)", "defaultValue": 100 }
+          ]
+        }
+      ]
+    }
+  ]
+}
