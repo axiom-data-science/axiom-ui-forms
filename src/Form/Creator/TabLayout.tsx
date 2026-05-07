@@ -65,19 +65,25 @@ export const ActiveTab = ({
   )
 }
 
-export const ScopedActiveTab = ({
-  formSection,
-  scopedValue,
-  scopedOnChange,
-  className = ***REMOVED***flex flex-col gap-2 grow h-full***REMOVED***,
-  level
-}: {
+interface IScopedActiveTabProps {
   formSection?: IFormSection
   scopedValue: ICompositeValueType
   scopedOnChange: (v: ICompositeValueType) => void
   className?: string
   level: number
-}): ReactElement => {
+}
+
+/**
+ * Generic scoped section component - renders fields with scoped value/onChange
+ * Used by TabLayout, Page, and WizardLayout when embedding sections in objects
+ */
+export const ScopedActiveSection = memo(({
+  formSection,
+  scopedValue,
+  scopedOnChange,
+  className = ***REMOVED***flex flex-col gap-2 grow h-full***REMOVED***,
+  level
+}: IScopedActiveTabProps): ReactElement => {
   return (
     <div className={className}>
       {
@@ -113,7 +119,10 @@ export const ScopedActiveTab = ({
       </div>
     </div>
   )
-}
+})
+
+// Backwards compatibility alias
+export const ScopedActiveTab = ScopedActiveSection
 
 const TabLayout = (props: ITabLayoutProps): ReactElement => {
   if (props.sections === undefined) {
@@ -138,6 +147,53 @@ const TabLayout = (props: ITabLayoutProps): ReactElement => {
   )
 }
 
+const ScopedTabContentWrapper = memo(({
+  formSection,
+  sectionStatus,
+  level,
+  scopedValue,
+  scopedOnChange
+}: {
+  formSection?: IFormSection
+  sectionStatus: IFormSectionStatus
+  level: number
+  scopedValue: ICompositeValueType
+  scopedOnChange: (v: ICompositeValueType) => void
+}): ReactElement => {
+  return (
+    <ScopedActiveTab
+      formSection={formSection}
+      scopedValue={scopedValue}
+      scopedOnChange={scopedOnChange}
+      level={level}
+    />
+  )
+})
+
+const RegularTabContentWrapper = memo(({
+  formSection,
+  sectionStatus,
+  level,
+  ContentComponent
+}: {
+  formSection?: IFormSection
+  sectionStatus: IFormSectionStatus
+  level: number
+  ContentComponent: React.FC<{
+    level: number
+    formSection?: IFormSection
+    sectionStatus: IFormSectionStatus
+  }>
+}): ReactElement => {
+  return (
+    <ContentComponent
+      formSection={formSection}
+      sectionStatus={sectionStatus}
+      level={level}
+    />
+  )
+})
+
 const TabLayoutContent = ({
   sections,
   inputOverrides,
@@ -155,15 +211,7 @@ const TabLayoutContent = ({
   const sectionStatus = calculateSectionStatus(sections, formValues)
 
   // If scopedValue/scopedOnChange are provided, use ScopedActiveTab instead
-  const EffectiveContentComponent = (scopedValue !== undefined && scopedOnChange !== undefined)
-    ? (props: any) => (
-      <ScopedActiveTab
-        {...props}
-        scopedValue={scopedValue}
-        scopedOnChange={scopedOnChange}
-      />
-    )
-    : ContentComponent
+  const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
     <div className={className}>
@@ -172,11 +220,22 @@ const TabLayoutContent = ({
           return {
             id: s.id,
             label: s.label ?? s.id,
-            content: <EffectiveContentComponent
-              formSection={s}
-              sectionStatus={sectionStatus}
-              level={level}
-            />
+            content: useScoped ? (
+              <ScopedTabContentWrapper
+                formSection={s}
+                sectionStatus={sectionStatus}
+                level={level}
+                scopedValue={scopedValue}
+                scopedOnChange={scopedOnChange}
+              />
+            ) : (
+              <RegularTabContentWrapper
+                formSection={s}
+                sectionStatus={sectionStatus}
+                level={level}
+                ContentComponent={ContentComponent}
+              />
+            )
           }
         })}
       />

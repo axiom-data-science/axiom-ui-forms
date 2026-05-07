@@ -55,6 +55,9 @@ import AssetForm from ***REMOVED***@/WaterLevel/COLLAB/AssetManager/Form***REMOV
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
 import OverrideOfSchemaArray from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
 import DefaultValueThatIsDependent from ***REMOVED***@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent***REMOVED***
+import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
+import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
+import TabsInPagesWithWrapper from ***REMOVED***@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -280,6 +283,11 @@ const App = (): ReactElement => {
             <Route path="/test">
               <Route path="override-of-schema-array" element={<OverrideOfSchemaArray />} />
               <Route path="default-value" element={<DefaultValueThatIsDependent />} />
+              <Route path="object-list" element={<ObjectListExample />} />
+              <Route path="object-wrapper" element={<ObjectWrapperWithSchema />}>
+                <Route path="*" element={<ObjectWrapperWithSchema />} />
+              </Route>
+              <Route path="tab-in-pages" element={<TabsInPagesWithWrapper />} />
             </Route>
           </Routes>
         </BrowserRouter>

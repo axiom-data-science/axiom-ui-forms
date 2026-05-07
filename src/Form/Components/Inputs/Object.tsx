@@ -8,20 +8,58 @@ import WizardLayout from ***REMOVED***@/Form/Creator/Wizard***REMOVED***
 import { evaluateFieldLogicState, type FieldEvaluationContext } from ***REMOVED***@/utils/formEngine***REMOVED***
 import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import React, { type ReactElement } from ***REMOVED***react***REMOVED***
+import React, { type ReactElement, useMemo } from ***REMOVED***react***REMOVED***
 
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const formValues = useFormValues()
 
-  const initialValue = (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType
+  // Memoize initialValue so it doesn***REMOVED***t change reference on every render
+  const initialValue = useMemo(() => 
+    (typeof value === ***REMOVED***object***REMOVED*** ? value ?? {} : {}) as ICompositeValueType,
+    [value]
+  )
+
   const objectField = (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) ? (field as any) : undefined
+
+  // objectWrapper enforces skip_path: true — its children live in the parent scope.
+  // Use unscoped rendering (global FormSection) so fields read/write at the root level.
+  // Regular object fields (skip_path: false) use scoped rendering to nest under their own path.
+  const isSkipPath = field.type === ***REMOVED***objectWrapper***REMOVED*** || objectField?.skip_path === true
+
   if (objectField?.tabs !== undefined && objectField.tabs.length) {
-    return <TabLayout sections={objectField.tabs} level={0} scopedValue={initialValue} scopedOnChange={onChange} />
+    return (
+      <div>
+        {field.label !== undefined
+          ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
+          : null}
+        {isSkipPath
+          ? <TabLayout sections={objectField.tabs} level={0} />
+          : <TabLayout sections={objectField.tabs} level={0} scopedValue={initialValue} scopedOnChange={onChange} />}
+      </div>
+    )
   } else if (objectField?.pages !== undefined && objectField.pages.length) {
-    return <Page sections={objectField.pages} level={0} />
+    return (
+      <div>
+        {field.label !== undefined
+          ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
+          : null}
+        {isSkipPath
+          ? <Page sections={objectField.pages} level={0} />
+          : <Page sections={objectField.pages} level={0} scopedValue={initialValue} scopedOnChange={onChange} />}
+      </div>
+    )
   } else if (objectField?.wizard_steps !== undefined && objectField.wizard_steps.length) {
-    return <WizardLayout sections={objectField.wizard_steps} level={0} />
-  } else if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
+    return (
+      <div>
+        {field.label !== undefined
+          ? <FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />
+          : null}
+        {isSkipPath
+          ? <WizardLayout sections={objectField.wizard_steps} level={0} />
+          : <WizardLayout sections={objectField.wizard_steps} level={0} scopedValue={initialValue} scopedOnChange={onChange} />}
+      </div>
+    )
+  } else if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.fields !== undefined) {
     const cl = `${field.layout === ***REMOVED***horizontal***REMOVED***
       ? ***REMOVED***flex md:flex-row sm:flex-col gap-4 sm:gap-2***REMOVED***
       : field.layout === ***REMOVED***grid4***REMOVED***
@@ -35,6 +73,8 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
     const fc = field.layout === ***REMOVED***horizontal***REMOVED***
       ? ***REMOVED***flex-1***REMOVED***
       : ***REMOVED******REMOVED***
+    
+    const isParentSkipPath = field.skip_path === true || (field as any).type === ***REMOVED***objectWrapper***REMOVED***
 
     // Use formEngine for consistent condition evaluation
     // Always pass ROOT formValues context, not the nested object
@@ -60,32 +100,51 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
               // and used the wrong context
               const fieldLogicState = evaluateFieldLogicState(childField, evaluationContext)
 
-              return (
-                <FieldCreator
-                  disabled={disabled || fieldLogicState.isDisabled}
-                  conditionResult={fieldLogicState.conditionResult}
-                  onChange={(e) => {
-                    if (childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true) {
-                      onChange(e)
-                    } else {
-                      const newValue = cloneObject(initialValue)
-                      newValue[childField.id] = e
-                      onChange(newValue)
+              // For skip-path parents (objectWrapper, or object with skip_path=true),
+              // children are independent and write directly to formValues.
+              // For normal parents, children nest under the parent object.
+              if (isParentSkipPath) {
+                return (
+                  <FieldCreator
+                    disabled={disabled || fieldLogicState.isDisabled}
+                    conditionResult={fieldLogicState.conditionResult}
+                    // No onChange wrapper - children write independently to formValues
+                    className={utils.makeClassName({
+                      className: fc
+                    })}
+                    // No value prop - FieldCreator reads from formValues independently
+                    field={childField}
+                    key={key}
+                  />
+                )
+              } else {
+                return (
+                  <FieldCreator
+                    disabled={disabled || fieldLogicState.isDisabled}
+                    conditionResult={fieldLogicState.conditionResult}
+                    onChange={(e) => {
+                      if ((childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) && childField.skip_path === true) {
+                        onChange(e)
+                      } else {
+                        const newValue = cloneObject(initialValue)
+                        newValue[childField.id] = e
+                        onChange(newValue)
+                      }
+                    }}
+                    className={utils.makeClassName({
+                      className: fc
+                    })}
+                    value={(
+                      (childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) && childField.skip_path === true
+                        ? initialValue
+                        : initialValue[childField.id]
+                    ) ?? null
                     }
-                  }}
-                  className={utils.makeClassName({
-                    className: fc
-                  })}
-                  value={(
-                    childField.type === ***REMOVED***object***REMOVED*** && childField.skip_path === true
-                      ? initialValue
-                      : initialValue[childField.id]
-                  ) ?? null
-                  }
-                  field={childField}
-                  key={key}
-                />
-              )
+                    field={childField}
+                    key={key}
+                  />
+                )
+              }
             })
           }
         </div>
