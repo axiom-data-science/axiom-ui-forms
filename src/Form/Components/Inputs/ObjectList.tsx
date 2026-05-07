@@ -1,6 +1,6 @@
 import ObjectInput from "@/Form/Components/Inputs/Object"
 import { IFieldInputProps, IObjectListField, IValueType } from "@/Form/Creator/FormCreatorTypes"
-import { ReactElement } from "react"
+import { ReactElement, useCallback } from "react"
 
 const ObjectListInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
 
@@ -17,10 +17,10 @@ const ObjectListInput = ({ field, onChange, value, disabled }: IFieldInputProps)
     if(keyField?.type === 'object' || keyField?.type === 'number' || keyField?.type === 'boolean' || keyField?.type === 'checkbox'){
         configError = 'Key field cannot be an object, numeric or boolean type'
     }
-    const oC = (value: IValueType | IValueType[]): void => {
+    const oC = useCallback((value: IValueType | IValueType[]): void => {
         console.log('hi..')
         onChange(value)
-    }
+    }, [onChange])
 
 
     return <>
