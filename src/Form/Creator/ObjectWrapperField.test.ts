@@ -22,7 +22,7 @@ describe('IObjectWrapperField', () => {
               id: 'firstName',
               type: 'text',
               label: 'First Name'
-            } as ITextField
+            } satisfies ITextField
           ]
         },
         {
@@ -33,7 +33,7 @@ describe('IObjectWrapperField', () => {
               id: 'email',
               type: 'text',
               label: 'Email'
-            } as ITextField
+            } satisfies ITextField
           ]
         }
       ]
@@ -60,7 +60,7 @@ describe('IObjectWrapperField', () => {
               id: 'step1_field',
               type: 'text',
               label: 'Step 1 Field'
-            } as ITextField
+            } satisfies ITextField
           ]
         }
       ]
@@ -81,12 +81,12 @@ describe('IObjectWrapperField', () => {
           id: 'field1',
           type: 'text',
           label: 'Field 1'
-        } as ITextField,
+        } satisfies ITextField,
         {
           id: 'field2',
           type: 'text',
           label: 'Field 2'
-        } as ITextField
+        } satisfies ITextField
       ]
     }
 
@@ -140,11 +140,11 @@ describe('IObjectWrapperField', () => {
         {
           id: 'email',
           type: 'text'
-        } as ITextField,
+        } satisfies ITextField,
         {
           id: 'phone',
           type: 'text'
-        } as ITextField
+        } satisfies ITextField
       ]
     }
 
@@ -169,7 +169,7 @@ describe('IObjectWrapperField', () => {
               id: 'existing_field_1',
               type: 'text',
               label: 'Field 1'
-            }
+            } satisfies ITextField
           ]
         }
       ]
