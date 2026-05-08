@@ -1,6 +1,6 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "0.3.38",
+  "version":"1.0.0-alpha.1",
   "private": false,
   "description": "Axiom UI Forms",
   "type": "module",

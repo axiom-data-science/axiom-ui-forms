@@ -739,7 +739,7 @@ export const GeometryInput = ({
           <div className="absolute z-50 bg-white bg-opacity-20 cursor-not-allowed top-0 right-0 left-0 bottom-0"></div>
         )}
         {/* Map Component */}
-        <MapLoader {...MAP_CONFIG} setState={setMapState} mapLibraryKey="openlayers" />
+        <MapLoader {...MAP_CONFIG} setState={setMapState} mapLibraryKey="mapbox" />
 
         {/* Coordinate Input Section */}
         {showCoordinateInput && (

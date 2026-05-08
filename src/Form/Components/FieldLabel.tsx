@@ -26,7 +26,7 @@ export const FieldRevertToDefault = ({
 }): ReactElement => {
   const isDifferent =
     onChange !== undefined &&
-    !field.multiple &&
+    !(field as {multiple?: boolean})?.multiple &&
     field.defaultValue !== undefined &&
     !isEqual(value, field.defaultValue)
   return isDifferent ? (
@@ -166,7 +166,7 @@ export const FieldLabelText = ({
         defaultClassName: ***REMOVED***font-semibold***REMOVED***,
         extras: [
           disabled ? ***REMOVED***cursor-not-allowed opacity-70***REMOVED*** : ***REMOVED******REMOVED***,
-          field.level !== undefined && field.type !== ***REMOVED***object***REMOVED*** && field.multiple !== true
+          field.level !== undefined && field.type !== ***REMOVED***object***REMOVED*** && (field as {multiple?: boolean}).multiple !== true
             ? ***REMOVED***font-normal***REMOVED***
             : undefined,
           field.level !== undefined && field.level > 1 ? ***REMOVED***text-sm***REMOVED*** : undefined,
@@ -243,6 +243,7 @@ export const FieldLabel = ({
   className?: string
   textClassName?: string
 }): ReactElement => {
+  const descriptionPresentation = (field.settings as {descriptionPresentation?: string} | undefined)?.descriptionPresentation ?? ***REMOVED***default***REMOVED***
   return (
     <>
       {field.label !== undefined && field.label !== null && (
@@ -254,7 +255,7 @@ export const FieldLabel = ({
             onChange={onChange}
             className={textClassName}
           />
-          {field.settings?.descriptionPresentation === ***REMOVED***tooltip***REMOVED*** ? (
+          {descriptionPresentation === ***REMOVED***tooltip***REMOVED*** ? (
             <>
               {***REMOVED*** ***REMOVED***}
               <FieldDescriptionTooltip field={field} disabled={disabled} />
@@ -264,8 +265,8 @@ export const FieldLabel = ({
           )}
         </p>
       )}
-      {field.settings?.descriptionPresentation === ***REMOVED***inline***REMOVED*** ||
-      field.settings?.descriptionPresentation === undefined ? (
+      {descriptionPresentation === ***REMOVED***inline***REMOVED*** ||
+      descriptionPresentation === ***REMOVED***default***REMOVED*** ? (
         <FieldDescriptionText field={field} disabled={disabled} />
       ) : (
         <></>

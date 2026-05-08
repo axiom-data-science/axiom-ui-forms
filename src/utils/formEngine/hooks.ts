@@ -14,8 +14,8 @@
  */
 
 import { useMemo } from ***REMOVED***react***REMOVED***
-import { useFormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { type IFormField, type IFormValues, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { useFormValues as useFormValuesContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { type IFormField, type IValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { evaluateFieldLogicState, type FieldEvaluationContext, type FieldLogicState } from ***REMOVED***../formEngine***REMOVED***
 import { getValueFromPath } from ***REMOVED***@/utils/getters***REMOVED***
 
@@ -56,7 +56,7 @@ import { getValueFromPath } from ***REMOVED***@/utils/getters***REMOVED***
  * @returns Memoized FieldLogicState with visibility, disabled, and default value
  */
 export function useFieldLogicState(field: IFormField): FieldLogicState {
-  const { formValues } = useFormContext()
+  const formValues = useFormValuesContext()
 
   return useMemo(() => {
     const context: FieldEvaluationContext = {
@@ -102,7 +102,7 @@ export function useFieldLogicState(field: IFormField): FieldLogicState {
 export function useFormValues(
   fieldPaths: string | string[]
 ): Record<string, IValueType | IValueType[] | undefined> {
-  const { formValues } = useFormContext()
+  const formValues = useFormValuesContext()
 
   // Normalize to array
   const pathsArray = Array.isArray(fieldPaths) ? fieldPaths : [fieldPaths]
@@ -169,7 +169,7 @@ export function useFormValue(fieldPath: string): IValueType | IValueType[] | und
  * @returns The current value for this field from form values
  */
 export function useFieldValue(field: IFormField): IValueType | IValueType[] | undefined {
-  const { formValues } = useFormContext()
+  const formValues = useFormValuesContext()
 
   return useMemo(() => {
     const path = field.destPath ?? field.id

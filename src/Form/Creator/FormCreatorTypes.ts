@@ -294,7 +294,7 @@ export interface IObjectListField extends Omit<IValidContainerField, ***REMOVED*
  *   ]
  * }
  */
-export interface IObjectWrapperField extends Omit<IValidContainerField, ***REMOVED***fields***REMOVED***> {
+export interface IObjectWrapperField extends Omit<IValidContainerField, ***REMOVED***fields***REMOVED*** | ***REMOVED***multiple***REMOVED***> {
   type: ***REMOVED***objectWrapper***REMOVED***
   tabs?: IFormLayoutTab[]
   pages?: IPage[]
@@ -302,7 +302,6 @@ export interface IObjectWrapperField extends Omit<IValidContainerField, ***REMOV
   fields?: IFormField[]
   // Enforce skip_path: true for wrapper fields via type constraint
   skip_path: true
-  multiple: false
 }
 
 export interface IOneOfField extends IValidContainerField {

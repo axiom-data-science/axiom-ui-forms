@@ -10,7 +10,6 @@ const TabsInPagesWithWrapper = (): ReactElement => {
     <FormWithEditorOverlay
       label="Tabs in Pages with Wrapper - Application Settings"
       formOverrideState={formOverrideState}
-      description="Demonstrates complex layout combination: a form with pages where one page contains tabs. The Performance tab embeds an objectWrapper that contains nested tabs (Caching and Compression). This shows the full capability of combining pages, tabs, and objectWrapper."
     />
   )
 }
