@@ -26,7 +26,7 @@ export const FieldRevertToDefault = ({
 }): ReactElement => {
   const isDifferent =
     onChange !== undefined &&
-    !field.multiple &&
+    !(field as {multiple?: boolean})?.multiple &&
     field.defaultValue !== undefined &&
     !isEqual(value, field.defaultValue)
   return isDifferent ? (
@@ -166,7 +166,7 @@ export const FieldLabelText = ({
         defaultClassName: 'font-semibold',
         extras: [
           disabled ? 'cursor-not-allowed opacity-70' : '',
-          field.level !== undefined && field.type !== 'object' && field.multiple !== true
+          field.level !== undefined && field.type !== 'object' && (field as {multiple?: boolean}).multiple !== true
             ? 'font-normal'
             : undefined,
           field.level !== undefined && field.level > 1 ? 'text-sm' : undefined,
@@ -243,6 +243,7 @@ export const FieldLabel = ({
   className?: string
   textClassName?: string
 }): ReactElement => {
+  const descriptionPresentation = (field.settings as {descriptionPresentation?: string} | undefined)?.descriptionPresentation ?? 'default'
   return (
     <>
       {field.label !== undefined && field.label !== null && (
@@ -254,7 +255,7 @@ export const FieldLabel = ({
             onChange={onChange}
             className={textClassName}
           />
-          {field.settings?.descriptionPresentation === 'tooltip' ? (
+          {descriptionPresentation === 'tooltip' ? (
             <>
               {' '}
               <FieldDescriptionTooltip field={field} disabled={disabled} />
@@ -264,8 +265,8 @@ export const FieldLabel = ({
           )}
         </p>
       )}
-      {field.settings?.descriptionPresentation === 'inline' ||
-      field.settings?.descriptionPresentation === undefined ? (
+      {descriptionPresentation === 'inline' ||
+      descriptionPresentation === 'default' ? (
         <FieldDescriptionText field={field} disabled={disabled} />
       ) : (
         <></>

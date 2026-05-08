@@ -294,7 +294,7 @@ export interface IObjectListField extends Omit<IValidContainerField, 'fields'> {
  *   ]
  * }
  */
-export interface IObjectWrapperField extends Omit<IValidContainerField, 'fields'> {
+export interface IObjectWrapperField extends Omit<IValidContainerField, 'fields' | 'multiple'> {
   type: 'objectWrapper'
   tabs?: IFormLayoutTab[]
   pages?: IPage[]
@@ -302,7 +302,6 @@ export interface IObjectWrapperField extends Omit<IValidContainerField, 'fields'
   fields?: IFormField[]
   // Enforce skip_path: true for wrapper fields via type constraint
   skip_path: true
-  multiple: false
 }
 
 export interface IOneOfField extends IValidContainerField {

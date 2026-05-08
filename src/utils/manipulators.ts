@@ -22,7 +22,7 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
     })
   }
   // return field
-  return field.multiple ? cloneObject(field) : field
+  return (field as { multiple?: boolean }).multiple ? cloneObject(field) : field
   // return cloneObject(field)
 }
 

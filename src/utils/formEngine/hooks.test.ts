@@ -7,29 +7,34 @@
  * - Work correctly in custom component scenarios
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import React, { type PropsWithChildren, type ReactElement } from 'react'
 import { useFieldLogicState, useFormValues, useFormValue, useFieldValue } from './hooks'
-import { FormContext } from '@/Form/Creator/FormContextProvider'
-import { type IForm, type IFormField, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
-import { copyAndAddPathToFields } from '@/utils/manipulators'
+import { FormStableContext, FormValuesContext } from '@/Form/Creator/FormContextProvider'
+import {  type IFormField, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 
 // Create a wrapper component that provides form context for hook testing
-const createWrapper = (formValues: IFormValues, setFormValues?: (v: IFormValues) => void) => {
-  return ({ children }: PropsWithChildren): ReactElement =>
+const createWrapper = (formValues: IFormValues, setFormValues?: (v: IFormValues) => void): React.FC<PropsWithChildren> => {
+  const Wrapper = ({ children }: PropsWithChildren): ReactElement =>
     React.createElement(
-      FormContext.Provider,
+      FormStableContext.Provider,
       {
         value: {
           form: { id: 'test', fields: [] },
-          formValues,
           setFormValues: setFormValues ?? (() => {}),
           urlNavigable: false
         }
       },
-      children
+      React.createElement(
+        FormValuesContext.Provider,
+        { value: formValues },
+        children
+      )
     )
+  
+  Wrapper.displayName = 'FormContextWrapper'
+  return Wrapper
 }
 
 describe('formEngine hooks - Custom component integration', () => {
