@@ -1,4 +1,4 @@
-import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import { FormContextProvider } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { type IForm, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
@@ -36,15 +36,15 @@ const NestedDataTest = (): ReactElement => {
   const [formValues, setFormValues] = useState<IFormValues>({})
 
   return (
-    <FormContext.Provider value={{
-      form,
-      formValues,
-      setFormValues
-    }}>
-    <div className=***REMOVED***p-20***REMOVED***>
-        <p>This is a nested data test.</p>
-    </div>
-    </FormContext.Provider>
+    <FormContextProvider 
+      form={form}
+      formValues={formValues}
+      setFormValues={setFormValues}
+    >
+      <div className=***REMOVED***p-20***REMOVED***>
+          <p>This is a nested data test.</p>
+      </div>
+    </FormContextProvider>
   )
 }
 export default NestedDataTest

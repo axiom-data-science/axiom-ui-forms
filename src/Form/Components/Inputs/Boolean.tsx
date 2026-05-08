@@ -9,6 +9,7 @@ import React, { type ReactElement } from ***REMOVED***react***REMOVED***
 
 const BooleanInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : false
+  const descriptionPresentation = (field.settings as {descriptionPresentation?: string} | undefined)?.descriptionPresentation ?? ***REMOVED***default***REMOVED***
   return (
     <Checkbox
       id={field.id}
@@ -21,8 +22,7 @@ const BooleanInput = ({ field, onChange, value, disabled }: IFieldInputProps): R
       label={
         <>
           <FieldLabelText field={field} disabled={disabled} value={value} onChange={onChange} />{***REMOVED*** ***REMOVED***}
-          {field.settings?.descriptionPresentation === ***REMOVED***inline***REMOVED*** ||
-          field.settings?.descriptionPresentation === undefined ? (
+          {descriptionPresentation === ***REMOVED***inline***REMOVED*** || descriptionPresentation === ***REMOVED***default***REMOVED*** ? (
             <span className="ml-1">
               <FieldDescriptionTooltip field={field} disabled={disabled} />
             </span>

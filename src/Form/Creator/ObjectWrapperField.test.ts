@@ -22,7 +22,7 @@ describe(***REMOVED***IObjectWrapperField***REMOVED***, () => {
               id: ***REMOVED***firstName***REMOVED***,
               type: ***REMOVED***text***REMOVED***,
               label: ***REMOVED***First Name***REMOVED***
-            } as ITextField
+            } satisfies ITextField
           ]
         },
         {
@@ -33,7 +33,7 @@ describe(***REMOVED***IObjectWrapperField***REMOVED***, () => {
               id: ***REMOVED***email***REMOVED***,
               type: ***REMOVED***text***REMOVED***,
               label: ***REMOVED***Email***REMOVED***
-            } as ITextField
+            } satisfies ITextField
           ]
         }
       ]
@@ -60,7 +60,7 @@ describe(***REMOVED***IObjectWrapperField***REMOVED***, () => {
               id: ***REMOVED***step1_field***REMOVED***,
               type: ***REMOVED***text***REMOVED***,
               label: ***REMOVED***Step 1 Field***REMOVED***
-            } as ITextField
+            } satisfies ITextField
           ]
         }
       ]
@@ -81,12 +81,12 @@ describe(***REMOVED***IObjectWrapperField***REMOVED***, () => {
           id: ***REMOVED***field1***REMOVED***,
           type: ***REMOVED***text***REMOVED***,
           label: ***REMOVED***Field 1***REMOVED***
-        } as ITextField,
+        } satisfies ITextField,
         {
           id: ***REMOVED***field2***REMOVED***,
           type: ***REMOVED***text***REMOVED***,
           label: ***REMOVED***Field 2***REMOVED***
-        } as ITextField
+        } satisfies ITextField
       ]
     }
 
@@ -140,11 +140,11 @@ describe(***REMOVED***IObjectWrapperField***REMOVED***, () => {
         {
           id: ***REMOVED***email***REMOVED***,
           type: ***REMOVED***text***REMOVED***
-        } as ITextField,
+        } satisfies ITextField,
         {
           id: ***REMOVED***phone***REMOVED***,
           type: ***REMOVED***text***REMOVED***
-        } as ITextField
+        } satisfies ITextField
       ]
     }
 
@@ -169,7 +169,7 @@ describe(***REMOVED***IObjectWrapperField***REMOVED***, () => {
               id: ***REMOVED***existing_field_1***REMOVED***,
               type: ***REMOVED***text***REMOVED***,
               label: ***REMOVED***Field 1***REMOVED***
-            }
+            } satisfies ITextField
           ]
         }
       ]

@@ -7,29 +7,34 @@
  * - Work correctly in custom component scenarios
  */
 
-import { describe, it, expect, vi } from ***REMOVED***vitest***REMOVED***
+import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 import { renderHook } from ***REMOVED***@testing-library/react***REMOVED***
 import React, { type PropsWithChildren, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useFieldLogicState, useFormValues, useFormValue, useFieldValue } from ***REMOVED***./hooks***REMOVED***
-import { FormContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import { type IForm, type IFormField, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { copyAndAddPathToFields } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { FormStableContext, FormValuesContext } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
+import {  type IFormField, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
 // Create a wrapper component that provides form context for hook testing
-const createWrapper = (formValues: IFormValues, setFormValues?: (v: IFormValues) => void) => {
-  return ({ children }: PropsWithChildren): ReactElement =>
+const createWrapper = (formValues: IFormValues, setFormValues?: (v: IFormValues) => void): React.FC<PropsWithChildren> => {
+  const Wrapper = ({ children }: PropsWithChildren): ReactElement =>
     React.createElement(
-      FormContext.Provider,
+      FormStableContext.Provider,
       {
         value: {
           form: { id: ***REMOVED***test***REMOVED***, fields: [] },
-          formValues,
           setFormValues: setFormValues ?? (() => {}),
           urlNavigable: false
         }
       },
-      children
+      React.createElement(
+        FormValuesContext.Provider,
+        { value: formValues },
+        children
+      )
     )
+  
+  Wrapper.displayName = ***REMOVED***FormContextWrapper***REMOVED***
+  return Wrapper
 }
 
 describe(***REMOVED***formEngine hooks - Custom component integration***REMOVED***, () => {
