@@ -9,6 +9,7 @@ import layoutAtom, { getWindowSize } from '@/utils/responsive/layoutState'
 import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { calculateSectionStatus } from '@/utils/validators'
 import { seedNestedDefaults } from '@/utils/formEngine'
+import { formHasNestedNavigation } from '@/utils/formEngine/hasNestedNavigation'
 import { Loader, utils } from '@axdspub/axiom-ui-utilities'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useAtom } from 'jotai'
@@ -125,7 +126,10 @@ const FormCreator = ({
 }: IFormCreatorProps): ReactElement => {
   const activeForm = useMemo(() => {
     const af = copyAndAddPathToFields(form)
-    af.settings = { url_navigable: urlNavigable, ...af.settings }
+    // Disable URL navigation if form has nested pages or wizard_steps (these don't support URL nav)
+    // This includes both top-level and embedded within object/objectList fields
+    const hasNestedNavigation = formHasNestedNavigation(af)
+    af.settings = { url_navigable: hasNestedNavigation ? false : urlNavigable, ...af.settings }
     return af
   }, [form, urlNavigable])
 
