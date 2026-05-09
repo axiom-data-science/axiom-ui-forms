@@ -1,0 +1,78 @@
+{
+    "id": "map-test",
+    "label": "Map Test",
+    "fields": [
+        {
+    "id": "shape_type",
+    "label": "Shape",
+    "type": "select",
+    "defaultValue": "point",
+    "options": [
+      {
+        "label": "Point",
+        "value": "point"
+      },
+      {
+        "label": "Polygon",
+        "value": "polygon"
+      },
+      {
+        "label": "Line",
+        "value": "linestring"
+      },
+      {
+        "label": "Shapefile",
+        "value": "shapefile"
+      }
+    ],
+    "settings": {
+      "allowNull": false
+    }
+  },
+  {
+    "id": "point",
+    "destPath": "geojson",
+    "type": "geometry",
+    "label": null,
+    "description": "Select a point on the map.",
+    "settings": {
+      "drawPointEnabled": true,
+      "showCoordinateInput": false
+    },
+    "conditions": {
+      "dependsOn": "shape_type",
+      "value": "point"
+    }
+  },
+  {
+    "id": "polygon",
+    "destPath": "geojson",
+    "type": "geometry",
+    "label": null,
+    "description": "Draw a polygon on the map.",
+    "settings": {
+      "drawPolygonEnabled": true,
+      "showCoordinateInput": false
+    },
+    "conditions": {
+      "dependsOn": "shape_type",
+      "value": "polygon"
+    }
+  },
+  {
+    "id": "linestring",
+    "destPath": "geojson",
+    "type": "geometry",
+    "label": null,
+    "description": "Draw a line on the map.",
+    "settings": {
+      "drawPathEnabled": true,
+      "showCoordinateInput": false
+    },
+    "conditions": {
+      "dependsOn": "shape_type",
+      "value": "linestring"
+    }
+  }
+    ]
+}
