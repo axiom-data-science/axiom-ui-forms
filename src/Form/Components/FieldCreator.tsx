@@ -753,20 +753,22 @@ const FieldCreator = ({
     disabled
   )
 
-  // If field should be excluded by condition, return null (field not rendered)
+  // Apply newDefaultValue to formValues if conditions are met and value hasn***REMOVED***t been user-modified.
+  // MUST be before any early returns to satisfy the Rules of Hooks.
+  useEffect(() => {
+    if (conditionStateUpdate.shouldUpdateFormValue && conditionStateUpdate.newFormValues !== undefined) {
+      setFormValues(conditionStateUpdate.newFormValues)
+    }
+  }, [conditionStateUpdate.shouldUpdateFormValue, conditionStateUpdate.newFormValues, setFormValues])
+
+  // If field should be excluded by condition, return null (field not rendered).
+  // This early return is AFTER all hooks above.
   if (conditionStateUpdate.isExcluded) {
     return null
   }
 
   // Apply disabled state from condition
   disabled = conditionStateUpdate.disabledState.disabled
-
-  // Apply newDefaultValue to formValues if conditions are met and value hasn***REMOVED***t been user-modified
-  useEffect(() => {
-    if (conditionStateUpdate.shouldUpdateFormValue && conditionStateUpdate.newFormValues !== undefined) {
-      setFormValues(conditionStateUpdate.newFormValues)
-    }
-  }, [conditionStateUpdate.shouldUpdateFormValue, conditionStateUpdate.newFormValues, setFormValues])
 
   const initialValue = value !== undefined ? value : fieldValue
 
