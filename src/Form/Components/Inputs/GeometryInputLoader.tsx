@@ -1,9 +1,14 @@
 import { type IFieldInputProps, type IGeometryField } from '@/Form/Creator/FormCreatorTypes'
+import { IMap } from '@axdspub/axiom-maps'
 import { Loader } from '@axdspub/axiom-ui-utilities'
-import React, { lazy, Suspense, type ReactElement } from 'react'
+import React, { lazy, ReactNode, Suspense, type ReactElement } from 'react'
 
 const GeometryInput = lazy(async () => await import('./Geometry'))
-const GeoJSONInputLoader = (props: IFieldInputProps): ReactElement => {
+const GeoJSONInputLoader = (props: IFieldInputProps & {
+  mapCallback?: (map: IMap) => void
+  MapOverLayer?: ReactNode
+
+}): ReactElement => {
   const geomField = props.field as IGeometryField
   const height = geomField.settings?.height ?? '500px'
 
