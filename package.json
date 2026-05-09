@@ -1,6 +1,6 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version":"1.0.0-alpha.1",
+  "version": "1.0.0-alpha.1",
   "private": false,
   "description": "Axiom UI Forms",
   "type": "module",
@@ -15,7 +15,7 @@
     "react-router-dom": "^7.0.0"
   },
   "dependencies": {
-    "@axdspub/axiom-maps": "^1.0.8",
+    "@axdspub/axiom-maps": "^1.0.9-alpha.0",
     "@axdspub/axiom-ui-data-services": "^1.0.2",
     "@axdspub/axiom-ui-utilities": "^1.0.16",
     "@codemirror/lang-json": "^6.0.1",
