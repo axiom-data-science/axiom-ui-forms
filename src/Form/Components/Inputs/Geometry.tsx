@@ -10,6 +10,7 @@ import { useFormValue } from ***REMOVED***@/utils/formEngine/hooks***REMOVED***
 
 import {
   EMapShape,
+  IMapLoadedEvent,
   type IMap,
   type IMapDrawEvent,
   type IStyleableMapProps,
@@ -17,7 +18,7 @@ import {
 import { MapLoader } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 // Import Geometry type if not already done
 import { type Feature, type GeoJSON, type Geometry } from ***REMOVED***geojson***REMOVED***
-import React, { useEffect, useState, type ReactElement, useCallback } from ***REMOVED***react***REMOVED*** // Added useCallback
+import React, { useEffect, useState, type ReactElement, useCallback, ReactNode } from ***REMOVED***react***REMOVED*** // Added useCallback
 import { TrashIcon, SquareIcon, BorderSolidIcon, DrawingPinFilledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import isEqual from ***REMOVED***lodash-es/isEqual***REMOVED***
 
@@ -271,7 +272,13 @@ export const GeometryInput = ({
   onChange,
   value,
   disabled,
-}: IFieldInputProps): ReactElement => {
+  mapLoadedCallback,
+  MapOverLay
+}: IFieldInputProps & {
+  mapLoadedCallback?: (map: IMapLoadedEvent) => void
+  MapOverLay?: ReactNode
+
+}): ReactElement => {
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const [showGeoJSONInput] = useState<boolean>(false)
@@ -739,7 +746,14 @@ export const GeometryInput = ({
           <div className="absolute z-50 bg-white bg-opacity-20 cursor-not-allowed top-0 right-0 left-0 bottom-0"></div>
         )}
         {/* Map Component */}
-        <MapLoader {...MAP_CONFIG} setState={setMapState} mapLibraryKey="mapbox" />
+        <MapLoader {...MAP_CONFIG} 
+          setState={setMapState} 
+          mapLibraryKey="openlayers"
+          onMapLoaded={mapLoadedCallback}
+          Overlay={MapOverLay}
+
+          
+        />
 
         {/* Coordinate Input Section */}
         {showCoordinateInput && (
