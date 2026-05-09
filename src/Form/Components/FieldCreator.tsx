@@ -15,6 +15,7 @@ import {
   type ICompositeValueType,
 } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { seedNestedDefaults } from ***REMOVED***@/utils/formEngine***REMOVED***
+import { evaluateConditionStateUpdate } from ***REMOVED***@/utils/formEngine/conditionLogic***REMOVED***
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
 import { getFieldValue, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import {
@@ -349,6 +350,58 @@ export const ObjectListCreator = ({
     )
   }
 
+  // Helper: recursively mark keyField as required within field hierarchy
+  const markKeyFieldRequired = (f: IFormField): IFormField => {
+    if (f.id === keyField) {
+      return { ...f, required: true }
+    }
+    
+    // For container fields with nested fields, recursively process them
+    if ((f.type === ***REMOVED***objectWrapper***REMOVED*** || (f as any).skip_path === true) && f.type !== ***REMOVED***objectList***REMOVED***) {
+      const fAsAny = f as any
+      const updates: Record<string, any> = {}
+      let updated = false
+      
+      // List of properties that can contain field collections (fields or array of objects with fields)
+      const fieldContainers = [***REMOVED***fields***REMOVED***, ***REMOVED***tabs***REMOVED***, ***REMOVED***pages***REMOVED***, ***REMOVED***wizard_steps***REMOVED***]
+      
+      for (const containerProp of fieldContainers) {
+        if (fAsAny[containerProp]) {
+          const container = fAsAny[containerProp]
+          
+          // If it***REMOVED***s an array of objects with fields property, process each
+          if (Array.isArray(container) && container[0]?.fields !== undefined) {
+            const processedContainer = container.map((item: any) => {
+              const processedFields = item.fields.map((cf: IFormField) => markKeyFieldRequired(cf))
+              if (processedFields.some((pf: IFormField, i: number) => pf !== item.fields[i])) {
+                return { ...item, fields: processedFields }
+              }
+              return item
+            })
+            if (processedContainer.some((item: any, i: number) => item !== container[i])) {
+              updates[containerProp] = processedContainer
+              updated = true
+            }
+          }
+          // If it***REMOVED***s a direct array of fields, process it
+          else if (Array.isArray(container) && container[0]?.id !== undefined) {
+            const processedFields = container.map((cf: IFormField) => markKeyFieldRequired(cf))
+            if (processedFields.some((pf: IFormField, i: number) => pf !== container[i])) {
+              updates[containerProp] = processedFields
+              updated = true
+            }
+          }
+        }
+      }
+      
+      if (updated) {
+        return { ...(f as any), ...updates } as IFormField
+      }
+    }
+    
+    return f
+  }
+
   // Commit a pending item to formValues once its keyField has a unique value.
   // If the key is a duplicate, show an error and keep the item in pending state.
   const commitPendingItem = (tempKey: string, itemData: ICompositeValueType, keyValue: string): void => {
@@ -414,10 +467,14 @@ export const ObjectListCreator = ({
                     ? itemValue
                     : null
 
+                // Mark keyField as required in UI even if not required in config
+                // (recursively handles nested fields like objectWrapper)
+                const fieldToRender = markKeyFieldRequired(childField)
+
                 const fieldElement = (
                   <FieldCreator
                     key={key}
-                    field={childField}
+                    field={fieldToRender}
                     disabled={disabled}
                     value={childValue ?? null}
                     onChange={(newChildValue) => {
@@ -684,21 +741,33 @@ const FieldCreator = ({
 
   conditionResult = conditionResult ?? checkCondition(field, formValues)
 
-  if (
-    (conditionResult.pass && conditionResult.result === ***REMOVED***exclude***REMOVED***) ||
-    (!conditionResult.pass && conditionResult.result === ***REMOVED***include***REMOVED***)
-  ) {
+  const fieldValue = getFieldValue(field, formValues)
+  
+  // Evaluate all condition-related state changes (exclude/include, disable/enable, newDefaultValue)
+  const conditionStateUpdate = evaluateConditionStateUpdate(
+    conditionResult,
+    field,
+    fieldValue,
+    form,
+    formValues,
+    disabled
+  )
+
+  // If field should be excluded by condition, return null (field not rendered)
+  if (conditionStateUpdate.isExcluded) {
     return null
-  } else if (
-    (conditionResult.result === ***REMOVED***disable***REMOVED*** && conditionResult.pass) ||
-    (conditionResult.result === ***REMOVED***enable***REMOVED*** && !conditionResult.pass)
-  ) {
-    disabled = true
-  } else if (conditionResult.result === ***REMOVED***enable***REMOVED*** && conditionResult.pass) {
-    disabled = false
   }
 
-  const fieldValue = getFieldValue(field, formValues)
+  // Apply disabled state from condition
+  disabled = conditionStateUpdate.disabledState.disabled
+
+  // Apply newDefaultValue to formValues if conditions are met and value hasn***REMOVED***t been user-modified
+  useEffect(() => {
+    if (conditionStateUpdate.shouldUpdateFormValue && conditionStateUpdate.newFormValues !== undefined) {
+      setFormValues(conditionStateUpdate.newFormValues)
+    }
+  }, [conditionStateUpdate.shouldUpdateFormValue, conditionStateUpdate.newFormValues, setFormValues])
+
   const initialValue = value !== undefined ? value : fieldValue
 
   return (
