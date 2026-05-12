@@ -273,11 +273,10 @@ export const GeometryInput = ({
   value,
   disabled,
   mapLoadedCallback,
-  MapOverLay
+  MapOverLay,
 }: IFieldInputProps & {
-  mapLoadedCallback?: (map: IMapLoadedEvent) => void
+  mapLoadedCallback?: (e: IMapLoadedEvent) => void
   MapOverLay?: ReactNode
-
 }): ReactElement => {
   const [map, setMapState] = useState<IMap | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
@@ -746,13 +745,12 @@ export const GeometryInput = ({
           <div className="absolute z-50 bg-white bg-opacity-20 cursor-not-allowed top-0 right-0 left-0 bottom-0"></div>
         )}
         {/* Map Component */}
-        <MapLoader {...MAP_CONFIG} 
-          setState={setMapState} 
+        <MapLoader
+          {...MAP_CONFIG}
+          setState={setMapState}
           mapLibraryKey="openlayers"
           onMapLoaded={mapLoadedCallback}
           Overlay={MapOverLay}
-
-          
         />
 
         {/* Coordinate Input Section */}

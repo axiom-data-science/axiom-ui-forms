@@ -59,6 +59,7 @@ import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/Ob
 import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
 import TabsInPagesWithWrapper from ***REMOVED***@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
+import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustomGeom***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -285,11 +286,15 @@ const App = (): ReactElement => {
               <Route path="override-of-schema-array" element={<OverrideOfSchemaArray />} />
               <Route path="default-value" element={<DefaultValueThatIsDependent />} />
               <Route path="object-list" element={<ObjectListExample />} />
-              <Route path="object-list-select-field" element={<ObjectListExampleWithSelectAsKeyField />} />
+              <Route
+                path="object-list-select-field"
+                element={<ObjectListExampleWithSelectAsKeyField />}
+              />
               <Route path="object-wrapper" element={<ObjectWrapperWithSchema />}>
                 <Route path="*" element={<ObjectWrapperWithSchema />} />
               </Route>
               <Route path="tab-in-pages" element={<TabsInPagesWithWrapper />} />
+              <Route path="form-with-custom-geom" element={<FormWithCustomGeom />} />
             </Route>
           </Routes>
         </BrowserRouter>
