@@ -21,7 +21,7 @@ COPY --from=deps /app/node_modules ./node_modules
 RUN npm run build
 
 # Production image, copy all the files and run vite
-FROM nginx:1.25.1 AS nginx
+FROM nginx:1.31.0-alpine AS nginx
 WORKDIR /app
 
 ENV NODE_ENV=production
