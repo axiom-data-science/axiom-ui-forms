@@ -326,6 +326,7 @@ const schemaToFormField = ({
     return {
       ...baseFieldProps,
       type,
+      multiple,
     }
   }
 
@@ -352,6 +353,7 @@ const schemaToFormField = ({
       ...baseFieldProps,
       type: options.find((d) => d.description !== undefined) ? ***REMOVED***radio***REMOVED*** : type,
       options,
+      multiple,
     }
   }
   if (type === ***REMOVED***object***REMOVED***) {
@@ -483,16 +485,19 @@ const mergeFormField = ({
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(
     formFieldsOverrideMap.map((overrides) => overrides[path ?? ***REMOVED******REMOVED***]).filter((d) => d !== undefined)
   )
-  
+
   // Auto-exclude artificially added fields (not in schema) from payload
   // unless explicitly set to includeInPayload (excludeFromPayload: false)
   // Exception 1: if destPath is EXPLICITLY set in override to a schema location, include it
   // Exception 2: if the schema has no properties at all, nothing is "override-only" — include all
   const isFromOverrideOnly = field === undefined && fieldOverride !== undefined
   const schemaHasProperties = Object.keys(schemaFieldMap).length > 0
-  const hasExplicitExcludeOverride = fieldOverride?.excludeFromPayload !== undefined || formFieldOverrides.excludeFromPayload !== undefined
-  const hasExplicitDestPath = fieldOverride?.destPath !== undefined || formFieldOverrides?.destPath !== undefined
-  
+  const hasExplicitExcludeOverride =
+    fieldOverride?.excludeFromPayload !== undefined ||
+    formFieldOverrides.excludeFromPayload !== undefined
+  const hasExplicitDestPath =
+    fieldOverride?.destPath !== undefined || formFieldOverrides?.destPath !== undefined
+
   const mergedField = {
     ...mergeObjects<IFormFieldOverride | IFormField>([
       field ? { ...field, destPath: path } : ({ destPath: path } as any),
@@ -500,7 +505,7 @@ const mergeFormField = ({
       (fieldOverride ?? {}) as IFormFieldOverride,
     ]),
   }
-  
+
   // Auto-set excludeFromPayload for artificially added fields
   // If the schema has no properties, all fields are intentional — include them
   // If the override-only field has an EXPLICIT destPath, it***REMOVED***s writing to schema, so include it
