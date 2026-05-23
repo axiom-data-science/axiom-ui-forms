@@ -1,0 +1,25 @@
+{
+  "fields": [
+    { "prop": "records" }
+  ],
+  "tabs": [
+    {
+      "id": "personal",
+      "label": "Personal Info",
+      "fields": [
+        { "prop": "records[].name" },
+        { "prop": "records[].email" },
+        { "prop": "records[].phone" }
+      ]
+    },
+    {
+      "id": "location",
+      "label": "Location",
+      "fields": [
+        { "prop": "records[].address" },
+        { "prop": "records[].city" },
+        { "prop": "records[].country" }
+      ]
+    }
+  ]
+}

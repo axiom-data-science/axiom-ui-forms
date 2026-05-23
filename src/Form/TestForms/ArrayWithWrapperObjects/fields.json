@@ -1,0 +1,34 @@
+[
+  {
+    "prop": "products[].id",
+    "label": "Product ID"
+  },
+  {
+    "prop": "products[].name",
+    "label": "Product Name"
+  },
+  {
+    "prop": "products[].sku",
+    "label": "SKU Code"
+  },
+  {
+    "prop": "products[].price",
+    "label": "Selling Price"
+  },
+  {
+    "prop": "products[].cost",
+    "label": "Cost Price"
+  },
+  {
+    "prop": "products[].quantity",
+    "label": "Stock Quantity"
+  },
+  {
+    "prop": "products[].description",
+    "label": "Product Description"
+  },
+  {
+    "prop": "products[].category",
+    "label": "Product Category"
+  }
+]

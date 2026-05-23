@@ -226,7 +226,13 @@ export const MultipleFieldCreator = ({
   }, [form, field, setFormValues, onChange, contextOnChange])
 
   const initialVal = value !== undefined ? value : getFieldValue(field, formValues)
-  const initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
+  let initialValues = Array.isArray(initialVal) ? initialVal : [initialVal]
+  
+  // If array is empty and field is an object, initialize with one empty object
+  // so the user can see the field controls
+  if (initialValues.length === 0 && (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***)) {
+    initialValues = [getNewDefaultElement()]
+  }
 
   if (
     field.type === ***REMOVED***object***REMOVED*** &&

@@ -94,7 +94,43 @@ export const mergeField = ({
           fieldOverrides
         })
         : null
-    }).filter(f => f !== null)
+    }).filter(f => f !== null) as IFormField[]
+  }
+  // Handle array fields (multiple: true) - apply overrides to nested item properties
+  if ((mergedField as any).multiple === true && (mergedField as any).fields !== undefined) {
+    const itemFields = (mergedField as any).fields as IFormField[]
+    (mergedField as any).fields = itemFields.map((f: IFormField) => {
+      const childPath = getPathFromField(f)
+      if (childPath === undefined) return null
+      
+      // Look for overrides matching:
+      // 1. arrayPath[].childProp (e.g., "testObject[].field1")
+      // 2. arrayPath.childProp (e.g., "testObject.field1")
+      const arrayNotationKey = `${key}[].${childPath}`
+      const dotNotationKey = `${key}.${childPath}`
+      
+      const arrayItemOverrides = fieldOverrides?.[arrayNotationKey] ?? fieldOverrides?.[dotNotationKey] ?? []
+      
+      if (arrayItemOverrides.length > 0) {
+        // Apply array item overrides to the field
+        return {
+          ...f,
+          ...(arrayItemOverrides.length > 0 ? Object.assign({}, ...arrayItemOverrides) : {}),
+          destPath: childPath
+        }
+      }
+      
+      // Recursively handle nested objects within array items
+      if (f.type === ***REMOVED***object***REMOVED*** && f.fields !== undefined) {
+        return mergeField({
+          field: f,
+          key: childPath,
+          fieldOverrides
+        })
+      }
+      
+      return f
+    }).filter((f: IFormField | null) => f !== null) as IFormField[]
   }
   return mergedField
 }

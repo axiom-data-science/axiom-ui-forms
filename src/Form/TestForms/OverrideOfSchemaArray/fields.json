@@ -2,5 +2,13 @@
   {
     "prop": "testObject",
     "layout": "grid2"
+  },
+  {
+    "prop": "testObject[].field1",
+    "label": "Custom Field 1 Label (from array override)"
+  },
+  {
+    "prop": "testObject[].field2",
+    "label": "Custom Field 2 Label (from array override)"
   }
 ]

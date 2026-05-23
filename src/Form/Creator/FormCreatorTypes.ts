@@ -143,7 +143,8 @@ interface INumberValueInput extends IFormFieldRoot {
   settings?: IFormFieldSettingsBase & {
     step?: number
     canBeNull?: boolean
-    nonNullDefaultValue?: number
+    nonNullDefaultValue?: number,
+    invertForDisplay?: boolean
   }
 }
 

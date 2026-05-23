@@ -1,0 +1,26 @@
+[
+  {
+    "prop": "records[].name",
+    "label": "Full Name"
+  },
+  {
+    "prop": "records[].email",
+    "label": "Email Address"
+  },
+  {
+    "prop": "records[].phone",
+    "label": "Phone Number"
+  },
+  {
+    "prop": "records[].address",
+    "label": "Street Address"
+  },
+  {
+    "prop": "records[].city",
+    "label": "City"
+  },
+  {
+    "prop": "records[].country",
+    "label": "Country"
+  }
+]

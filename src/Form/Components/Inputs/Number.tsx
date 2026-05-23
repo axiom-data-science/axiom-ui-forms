@@ -159,6 +159,7 @@ const NumberInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
   const isNull = initialValue === undefined || initialValue === null || initialValue === ***REMOVED******REMOVED***
   const [userSelectedNotNull, setUserSelectedNotNull] = useState<boolean>(!isNull)
   const canBeNull = numberField.settings?.canBeNull === true
+  const invertForDisplay = numberField.settings?.invertForDisplay === true
 
   const myOnChange = (v: IValueType | IValueType[] | undefined): void => {
     onChange(v)

@@ -60,6 +60,8 @@ import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperW
 import TabsInPagesWithWrapper from ***REMOVED***@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
 import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustomGeom***REMOVED***
+import ArrayWithWrapperObjects from ***REMOVED***@/Form/TestForms/ArrayWithWrapperObjects/ArrayWithWrapperObjects***REMOVED***
+import ArrayWithTabs from ***REMOVED***@/Form/TestForms/ArrayWithTabs/ArrayWithTabs***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -221,6 +223,12 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/schema-override-test" element={<SchemaWithOverridesTest />}>
               <Route path="*" element={<SchemaWithOverridesTest />} />
+            </Route>
+            <Route path="/array-with-tabs" element={<ArrayWithTabs />}>
+              <Route path="*" element={<ArrayWithTabs />} />
+            </Route>
+            <Route path="/array-with-wrapper-objects" element={<ArrayWithWrapperObjects />}>
+              <Route path="*" element={<ArrayWithWrapperObjects />} />
             </Route>
             <Route path="/json-editor" element={<CodeEditor />} />
             <Route path="/schema-to-form-ptt" element={<SchemaToFormPTT />} />

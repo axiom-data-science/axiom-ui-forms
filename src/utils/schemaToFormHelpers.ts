@@ -564,11 +564,22 @@ const mergeFormField = ({
 
     mergedField.fields = allKeys.map((key) => {
       // const fieldOverride = overrideFieldsMap[key] ?? { prop: key }
+      // For array item fields (multiple: true), also check bracket and dot notation keys
+      // "key" here is the full path (e.g. "testObject.field1"), so we strip the parent prefix
+      // to get the leaf name and build the bracket-notation key correctly
+      const isArrayItems = (mergedField as any).multiple === true
+      const leafKey = isArrayItems && path ? key.replace(new RegExp(`^${path}\\.`), ***REMOVED******REMOVED***) : key
+      const arrayBracketKey = isArrayItems && path ? `${path}[].${leafKey}` : undefined
+      const arrayDotKey = isArrayItems && path ? `${path}.${leafKey}` : undefined
       const fieldOverride = mergeObjects<IFormFieldOverride>([
         overrideFieldsMap[key],
         formOverrideFieldsMap[key],
         mergeObjects<IFormFieldOverride>(
-          formFieldsOverrideMap.map((overrides) => overrides[key]).filter((d) => d !== undefined)
+          formFieldsOverrideMap.map((overrides) =>
+            overrides[key] ??
+            (arrayBracketKey !== undefined ? overrides[arrayBracketKey] : undefined) ??
+            (arrayDotKey !== undefined ? overrides[arrayDotKey] : undefined)
+          ).filter((d) => d !== undefined)
         ),
       ])
       return mergeFormField({
