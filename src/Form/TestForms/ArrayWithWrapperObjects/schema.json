@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Array with Wrapper Objects",
+  "description": "Schema with array items that can be organized using wrapper objects",
+  "type": "object",
+  "properties": {
+    "products": {
+      "type": "array",
+      "title": "Products",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "title": "Product ID" },
+          "name": { "type": "string", "title": "Product Name" },
+          "sku": { "type": "string", "title": "SKU" },
+          "price": { "type": "number", "title": "Price" },
+          "cost": { "type": "number", "title": "Cost" },
+          "quantity": { "type": "number", "title": "Quantity" },
+          "description": { "type": "string", "title": "Description" },
+          "category": { "type": "string", "title": "Category" }
+        }
+      }
+    }
+  }
+}

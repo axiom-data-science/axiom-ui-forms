@@ -60,6 +60,8 @@ import ObjectWrapperWithSchema from '@/Form/TestForms/ObjectWrapperWithSchema/Ob
 import TabsInPagesWithWrapper from '@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper'
 import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField'
 import FormWithCustomGeom from '@/Form/TestForms/Geom/FormWithCustomGeom'
+import ArrayWithWrapperObjects from '@/Form/TestForms/ArrayWithWrapperObjects/ArrayWithWrapperObjects'
+import ArrayWithTabs from '@/Form/TestForms/ArrayWithTabs/ArrayWithTabs'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -221,6 +223,12 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/schema-override-test" element={<SchemaWithOverridesTest />}>
               <Route path="*" element={<SchemaWithOverridesTest />} />
+            </Route>
+            <Route path="/array-with-tabs" element={<ArrayWithTabs />}>
+              <Route path="*" element={<ArrayWithTabs />} />
+            </Route>
+            <Route path="/array-with-wrapper-objects" element={<ArrayWithWrapperObjects />}>
+              <Route path="*" element={<ArrayWithWrapperObjects />} />
             </Route>
             <Route path="/json-editor" element={<CodeEditor />} />
             <Route path="/schema-to-form-ptt" element={<SchemaToFormPTT />} />

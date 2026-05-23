@@ -285,4 +285,79 @@ describe('schemaToFormHelpers', () => {
       expect(merged).toEqual({ a: 3, b: 2 })
     })
   })
+
+  describe('array item overrides', () => {
+    const schema: JSONSchema6 = {
+      type: 'object',
+      properties: {
+        testObject: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              field1: { type: 'string' },
+              field2: { type: 'number' }
+            }
+          }
+        }
+      }
+    }
+
+    it('produces a multiple:true object field from array-of-objects schema', () => {
+      const form = overridesAndSchemaToFormObject({ schema })
+      const testObjectField = form.fields?.find(f => f.id === 'testObject') as any
+      expect(testObjectField).toBeDefined()
+      expect(testObjectField.multiple).toBe(true)
+      expect(testObjectField.fields?.length).toBe(2)
+    })
+
+    it('applies field overrides to array item properties using bracket notation', () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [{ fields: [{ prop: 'testObject' }] }],
+        formFieldOverrides: [[
+          { prop: 'testObject', layout: 'grid2' },
+          { prop: 'testObject[].field1', label: 'Custom Field 1 Label' },
+          { prop: 'testObject[].field2', label: 'Custom Field 2 Label' }
+        ]]
+      })
+      const testObjectField = form.fields?.find(f => f.id === 'testObject') as any
+      expect(testObjectField).toBeDefined()
+      expect(testObjectField.multiple).toBe(true)
+      expect(testObjectField.fields?.find((f: any) => f.id === 'field1')?.label).toBe('Custom Field 1 Label')
+      expect(testObjectField.fields?.find((f: any) => f.id === 'field2')?.label).toBe('Custom Field 2 Label')
+    })
+
+    it('also works when testObject has both test and testObject fields in form.fields', () => {
+      const schemaWithTest: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          test: { type: 'array', items: { type: 'string' } },
+          testObject: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                field1: { type: 'string' },
+                field2: { type: 'number' }
+              }
+            }
+          }
+        }
+      }
+      const form = overridesAndSchemaToFormObject({
+        schema: schemaWithTest,
+        formOverrides: [{ fields: [{ prop: 'test' }, { prop: 'testObject' }] }],
+        formFieldOverrides: [[
+          { prop: 'testObject', layout: 'grid2' },
+          { prop: 'testObject[].field1', label: 'Custom Field 1 Label' },
+          { prop: 'testObject[].field2', label: 'Custom Field 2 Label' }
+        ]]
+      })
+      const testObjectField = form.fields?.find(f => f.id === 'testObject') as any
+      expect(testObjectField).toBeDefined()
+      expect(testObjectField.multiple).toBe(true)
+      expect(testObjectField.fields?.find((f: any) => f.id === 'field1')?.label).toBe('Custom Field 1 Label')
+    })
+  })
 })

@@ -1,0 +1,42 @@
+{
+  "fields": [
+    { "prop": "products" }
+  ],
+  "tabs": [
+    {
+      "id": "basic",
+      "label": "Basic Info",
+      "layout": "grid3",
+      "type": "object",
+      "skip_path": true,
+      "fields": [
+        { "prop": "products[].id" },
+        { "prop": "products[].name" },
+        { "prop": "products[].sku" }
+      ]
+    },
+    {
+      "id": "pricing",
+      "label": "Pricing",
+      "fields": [
+        { "prop": "products[].price" },
+        { "prop": "products[].cost" }
+      ]
+    },
+    {
+      "id": "inventory",
+      "label": "Inventory",
+      "fields": [
+        { "prop": "products[].quantity" },
+        { "prop": "products[].category" }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Details",
+      "fields": [
+        { "prop": "products[].description" }
+      ]
+    }
+  ]
+}
