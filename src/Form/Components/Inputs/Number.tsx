@@ -182,7 +182,7 @@ const NumberInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         field={fieldForInput}
         value={initialValue}
         onChange={myOnChange}
-        min={numberField?.constraints?.min}
+        min={invertForDisplay ? numberField?.constraints?.max : numberField?.constraints?.min}
         max={max}
         step={numberField?.settings?.step} />
       : <TextInput
