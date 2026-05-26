@@ -1,16 +1,15 @@
-import FormWithEditorOverlay from "@/Form/FormWithEditorOverlay"
-import form from "./form.json"
-import { ReactElement, useState } from "react"
-import { IFormOverride } from "@/Form/Creator/FormCreatorTypes"
+import { FormWithEditorOverlay } from '@/Form/FormWithEditorOverlay'
+import form from './form.json'
+import { ReactElement, useState } from 'react'
+import { IForm, IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 
 const TabsInPagesWithWrapper = (): ReactElement => {
-  const formOverrideState = useState<IFormOverride | undefined>(form as IFormOverride)
-  
+  const formState = useState<IForm | undefined>(form as IForm)
+
   return (
-    <FormWithEditorOverlay
-      label="Tabs in Pages with Wrapper - Application Settings"
-      formOverrideState={formOverrideState}
-    />
+    <>
+      <FormWithEditorOverlay formState={formState} />
+    </>
   )
 }
 
