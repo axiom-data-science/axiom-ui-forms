@@ -9,7 +9,7 @@ import {
   overridesAndSchemaToFormObject,
   getSchemaPaths,
   getSchemaPathDescriptors,
-  mergeObjects
+  mergeObjects,
 } from ***REMOVED***./schemaToFormHelpers***REMOVED***
 import type { IFormFieldOverride, IFormOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
@@ -19,8 +19,8 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       const schema: JSONSchema6 = {
         type: ***REMOVED***object***REMOVED***,
         properties: {
-          name: { type: ***REMOVED***string***REMOVED*** }
-        }
+          name: { type: ***REMOVED***string***REMOVED*** },
+        },
       }
       const result = validateSchema(schema)
       expect(result.schema).toBeDefined()
@@ -38,9 +38,9 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
     const schema: JSONSchema6 = {
       type: ***REMOVED***object***REMOVED***,
       properties: {
-        age: { type: ***REMOVED***number***REMOVED***, minimum: 0 }
+        age: { type: ***REMOVED***number***REMOVED***, minimum: 0 },
       },
-      required: [***REMOVED***age***REMOVED***]
+      required: [***REMOVED***age***REMOVED***],
     }
 
     it(***REMOVED***returns undefined for valid data***REMOVED***, () => {
@@ -62,7 +62,7 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       // Invalid: "properties" must be an object, not an array
       const invalidSchema: JSONSchema6 = {
         type: ***REMOVED***object***REMOVED***,
-        properties: [] as any
+        properties: [] as any,
       }
       const errors = validateAgainstSchema(invalidSchema, { age: 10 })
       console.log(errors)
@@ -130,8 +130,8 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
         type: ***REMOVED***object***REMOVED***,
         properties: {
           firstName: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***First Name***REMOVED*** },
-          age: { type: ***REMOVED***number***REMOVED*** }
-        }
+          age: { type: ***REMOVED***number***REMOVED*** },
+        },
       }
       const form = schemaToFormObject(schema)
       expect(form.label).toBe(***REMOVED***Test Form***REMOVED***)
@@ -146,13 +146,13 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
         title: ***REMOVED***Base***REMOVED***,
         type: ***REMOVED***object***REMOVED***,
         properties: {
-          foo: { type: ***REMOVED***string***REMOVED*** }
-        }
+          foo: { type: ***REMOVED***string***REMOVED*** },
+        },
       }
       const form = overridesAndSchemaToFormObject({
         schema,
         formOverrides: [{ label: ***REMOVED***Overridden***REMOVED***, fields: [{ prop: ***REMOVED***foo***REMOVED*** }] }],
-        formFieldOverrides: [[{ prop: ***REMOVED***foo***REMOVED***, label: ***REMOVED***Bar***REMOVED*** }]]
+        formFieldOverrides: [[{ prop: ***REMOVED***foo***REMOVED***, label: ***REMOVED***Bar***REMOVED*** }]],
       })
       expect(form.label).toBe(***REMOVED***Overridden***REMOVED***)
       expect(form?.fields?.[0]?.label).toBe(***REMOVED***Bar***REMOVED***)
@@ -163,8 +163,8 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       const schema: JSONSchema6 = {
         type: ***REMOVED***object***REMOVED***,
         properties: {
-          geojson: { type: ***REMOVED***object***REMOVED***, title: ***REMOVED***Geojson***REMOVED*** }
-        }
+          geojson: { type: ***REMOVED***object***REMOVED***, title: ***REMOVED***Geojson***REMOVED*** },
+        },
       }
 
       // Field override adds shape_type with defaultValue: "point"
@@ -176,25 +176,25 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
           defaultValue: ***REMOVED***point***REMOVED***,
           options: [
             { label: ***REMOVED***Point***REMOVED***, value: ***REMOVED***point***REMOVED*** },
-            { label: ***REMOVED***Polygon***REMOVED***, value: ***REMOVED***polygon***REMOVED*** }
-          ]
-        }
+            { label: ***REMOVED***Polygon***REMOVED***, value: ***REMOVED***polygon***REMOVED*** },
+          ],
+        },
       ]
 
       // Form override specifies shape_type in fields
       const formOverride: IFormOverride = {
         label: ***REMOVED***GeoJSON Form***REMOVED***,
-        fields: [{ prop: ***REMOVED***shape_type***REMOVED*** }]
+        fields: [{ prop: ***REMOVED***shape_type***REMOVED*** }],
       }
 
       const form = overridesAndSchemaToFormObject({
         schema,
         formOverrides: [formOverride],
-        formFieldOverrides: [fieldOverrides]
+        formFieldOverrides: [fieldOverrides],
       })
 
       // shape_type should be in form.fields with all its properties from the override
-      const shapeTypeField = form.fields?.find(f => f.id === ***REMOVED***shape_type***REMOVED***)
+      const shapeTypeField = form.fields?.find((f) => f.id === ***REMOVED***shape_type***REMOVED***)
       expect(shapeTypeField).toBeDefined()
       expect(shapeTypeField?.type).toBe(***REMOVED***select***REMOVED***)
       expect(shapeTypeField?.defaultValue).toBe(***REMOVED***point***REMOVED***)
@@ -206,22 +206,22 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
 
       const fieldOverrides: IFormFieldOverride[] = [
         { prop: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED*** },
-        { prop: ***REMOVED***age***REMOVED***, type: ***REMOVED***number***REMOVED***, label: ***REMOVED***Age***REMOVED*** }
+        { prop: ***REMOVED***age***REMOVED***, type: ***REMOVED***number***REMOVED***, label: ***REMOVED***Age***REMOVED*** },
       ]
 
       const formOverride: IFormOverride = {
         label: ***REMOVED***No-Schema Form***REMOVED***,
-        fields: [{ prop: ***REMOVED***name***REMOVED*** }, { prop: ***REMOVED***age***REMOVED*** }]
+        fields: [{ prop: ***REMOVED***name***REMOVED*** }, { prop: ***REMOVED***age***REMOVED*** }],
       }
 
       const form = overridesAndSchemaToFormObject({
         schema,
         formOverrides: [formOverride],
-        formFieldOverrides: [fieldOverrides]
+        formFieldOverrides: [fieldOverrides],
       })
 
-      const nameField = form.fields?.find(f => f.id === ***REMOVED***name***REMOVED***)
-      const ageField = form.fields?.find(f => f.id === ***REMOVED***age***REMOVED***)
+      const nameField = form.fields?.find((f) => f.id === ***REMOVED***name***REMOVED***)
+      const ageField = form.fields?.find((f) => f.id === ***REMOVED***age***REMOVED***)
       expect(nameField?.excludeFromPayload).not.toBe(true)
       expect(ageField?.excludeFromPayload).not.toBe(true)
     })
@@ -236,10 +236,10 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
           b: {
             type: ***REMOVED***object***REMOVED***,
             properties: {
-              c: { type: ***REMOVED***number***REMOVED*** }
-            }
-          }
-        }
+              c: { type: ***REMOVED***number***REMOVED*** },
+            },
+          },
+        },
       }
       const paths = getSchemaPaths(schema)
       expect(paths).toContain(***REMOVED***a***REMOVED***)
@@ -250,7 +250,7 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
     it(***REMOVED***handles arrays***REMOVED***, () => {
       const schema: JSONSchema6 = {
         type: ***REMOVED***array***REMOVED***,
-        items: { type: ***REMOVED***string***REMOVED*** }
+        items: { type: ***REMOVED***string***REMOVED*** },
       }
       const paths = getSchemaPaths(schema)
       expect(paths).toContain(***REMOVED***[]***REMOVED***)
@@ -266,15 +266,15 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
           y: {
             type: ***REMOVED***object***REMOVED***,
             properties: {
-              z: { type: ***REMOVED***boolean***REMOVED*** }
-            }
-          }
+              z: { type: ***REMOVED***boolean***REMOVED*** },
+            },
+          },
         },
-        required: [***REMOVED***x***REMOVED***]
+        required: [***REMOVED***x***REMOVED***],
       }
       const desc = getSchemaPathDescriptors(schema)
-      expect(desc.find(d => d.path === ***REMOVED***x***REMOVED***)?.required).toBe(true)
-      expect(desc.find(d => d.path === ***REMOVED***y.z***REMOVED***)?.type).toBe(***REMOVED***boolean***REMOVED***)
+      expect(desc.find((d) => d.path === ***REMOVED***x***REMOVED***)?.required).toBe(true)
+      expect(desc.find((d) => d.path === ***REMOVED***y.z***REMOVED***)?.type).toBe(***REMOVED***boolean***REMOVED***)
     })
   })
 
@@ -296,16 +296,16 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
             type: ***REMOVED***object***REMOVED***,
             properties: {
               field1: { type: ***REMOVED***string***REMOVED*** },
-              field2: { type: ***REMOVED***number***REMOVED*** }
-            }
-          }
-        }
-      }
+              field2: { type: ***REMOVED***number***REMOVED*** },
+            },
+          },
+        },
+      },
     }
 
     it(***REMOVED***produces a multiple:true object field from array-of-objects schema***REMOVED***, () => {
       const form = overridesAndSchemaToFormObject({ schema })
-      const testObjectField = form.fields?.find(f => f.id === ***REMOVED***testObject***REMOVED***) as any
+      const testObjectField = form.fields?.find((f) => f.id === ***REMOVED***testObject***REMOVED***) as any
       expect(testObjectField).toBeDefined()
       expect(testObjectField.multiple).toBe(true)
       expect(testObjectField.fields?.length).toBe(2)
@@ -315,17 +315,23 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       const form = overridesAndSchemaToFormObject({
         schema,
         formOverrides: [{ fields: [{ prop: ***REMOVED***testObject***REMOVED*** }] }],
-        formFieldOverrides: [[
-          { prop: ***REMOVED***testObject***REMOVED***, layout: ***REMOVED***grid2***REMOVED*** },
-          { prop: ***REMOVED***testObject[].field1***REMOVED***, label: ***REMOVED***Custom Field 1 Label***REMOVED*** },
-          { prop: ***REMOVED***testObject[].field2***REMOVED***, label: ***REMOVED***Custom Field 2 Label***REMOVED*** }
-        ]]
+        formFieldOverrides: [
+          [
+            { prop: ***REMOVED***testObject***REMOVED***, layout: ***REMOVED***grid2***REMOVED*** },
+            { prop: ***REMOVED***testObject[].field1***REMOVED***, label: ***REMOVED***Custom Field 1 Label***REMOVED*** },
+            { prop: ***REMOVED***testObject[].field2***REMOVED***, label: ***REMOVED***Custom Field 2 Label***REMOVED*** },
+          ],
+        ],
       })
-      const testObjectField = form.fields?.find(f => f.id === ***REMOVED***testObject***REMOVED***) as any
+      const testObjectField = form.fields?.find((f) => f.id === ***REMOVED***testObject***REMOVED***) as any
       expect(testObjectField).toBeDefined()
       expect(testObjectField.multiple).toBe(true)
-      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field1***REMOVED***)?.label).toBe(***REMOVED***Custom Field 1 Label***REMOVED***)
-      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field2***REMOVED***)?.label).toBe(***REMOVED***Custom Field 2 Label***REMOVED***)
+      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field1***REMOVED***)?.label).toBe(
+        ***REMOVED***Custom Field 1 Label***REMOVED***
+      )
+      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field2***REMOVED***)?.label).toBe(
+        ***REMOVED***Custom Field 2 Label***REMOVED***
+      )
     })
 
     it(***REMOVED***also works when testObject has both test and testObject fields in form.fields***REMOVED***, () => {
@@ -339,25 +345,196 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
               type: ***REMOVED***object***REMOVED***,
               properties: {
                 field1: { type: ***REMOVED***string***REMOVED*** },
-                field2: { type: ***REMOVED***number***REMOVED*** }
-              }
-            }
-          }
-        }
+                field2: { type: ***REMOVED***number***REMOVED*** },
+              },
+            },
+          },
+        },
       }
       const form = overridesAndSchemaToFormObject({
         schema: schemaWithTest,
         formOverrides: [{ fields: [{ prop: ***REMOVED***test***REMOVED*** }, { prop: ***REMOVED***testObject***REMOVED*** }] }],
-        formFieldOverrides: [[
-          { prop: ***REMOVED***testObject***REMOVED***, layout: ***REMOVED***grid2***REMOVED*** },
-          { prop: ***REMOVED***testObject[].field1***REMOVED***, label: ***REMOVED***Custom Field 1 Label***REMOVED*** },
-          { prop: ***REMOVED***testObject[].field2***REMOVED***, label: ***REMOVED***Custom Field 2 Label***REMOVED*** }
-        ]]
+        formFieldOverrides: [
+          [
+            { prop: ***REMOVED***testObject***REMOVED***, layout: ***REMOVED***grid2***REMOVED*** },
+            { prop: ***REMOVED***testObject[].field1***REMOVED***, label: ***REMOVED***Custom Field 1 Label***REMOVED*** },
+            { prop: ***REMOVED***testObject[].field2***REMOVED***, label: ***REMOVED***Custom Field 2 Label***REMOVED*** },
+          ],
+        ],
       })
-      const testObjectField = form.fields?.find(f => f.id === ***REMOVED***testObject***REMOVED***) as any
+      const testObjectField = form.fields?.find((f) => f.id === ***REMOVED***testObject***REMOVED***) as any
       expect(testObjectField).toBeDefined()
       expect(testObjectField.multiple).toBe(true)
-      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field1***REMOVED***)?.label).toBe(***REMOVED***Custom Field 1 Label***REMOVED***)
+      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field1***REMOVED***)?.label).toBe(
+        ***REMOVED***Custom Field 1 Label***REMOVED***
+      )
+    })
+
+    it(***REMOVED***remaps top-level tabs shorthand to the matching multiple array object field***REMOVED***, () => {
+      const schemaWithTabs: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          records: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+                email: { type: ***REMOVED***string***REMOVED*** },
+                city: { type: ***REMOVED***string***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: schemaWithTabs,
+        formOverrides: [
+          {
+            fields: [{ prop: ***REMOVED***records***REMOVED*** }],
+            tabs: [
+              {
+                id: ***REMOVED***personal***REMOVED***,
+                label: ***REMOVED***Personal***REMOVED***,
+                fields: [{ prop: ***REMOVED***records[].name***REMOVED*** }, { prop: ***REMOVED***records[].email***REMOVED*** }],
+              },
+              {
+                id: ***REMOVED***location***REMOVED***,
+                label: ***REMOVED***Location***REMOVED***,
+                fields: [{ prop: ***REMOVED***records[].city***REMOVED*** }],
+              },
+            ],
+          },
+        ],
+        formFieldOverrides: [
+          [
+            { prop: ***REMOVED***records[].name***REMOVED***, label: ***REMOVED***Full Name***REMOVED*** },
+            { prop: ***REMOVED***records[].email***REMOVED***, label: ***REMOVED***Email Address***REMOVED*** },
+            { prop: ***REMOVED***records[].city***REMOVED***, label: ***REMOVED***City Name***REMOVED*** },
+          ],
+        ],
+      })
+
+      const recordsField = form.fields?.find((f) => f.id === ***REMOVED***records***REMOVED***) as any
+      expect(recordsField).toBeDefined()
+      expect(recordsField.multiple).toBe(true)
+      expect(form.tabs).toBeUndefined()
+      expect(recordsField.tabs?.length).toBe(2)
+      expect(recordsField.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)?.label).toBe(
+        ***REMOVED***Full Name***REMOVED***
+      )
+      expect(recordsField.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***email***REMOVED***)?.label).toBe(
+        ***REMOVED***Email Address***REMOVED***
+      )
+      expect(recordsField.tabs?.[1]?.fields?.find((f: any) => f.id === ***REMOVED***city***REMOVED***)?.label).toBe(
+        ***REMOVED***City Name***REMOVED***
+      )
+    })
+
+    it(***REMOVED***resolves section field overrides with bracket notation to schema fields***REMOVED***, () => {
+      const schemaWithTabs: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          records: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: schemaWithTabs,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***records***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                tabs: [{ id: ***REMOVED***tab1***REMOVED***, label: ***REMOVED***Tab 1***REMOVED***, fields: [{ prop: ***REMOVED***records[].name***REMOVED*** }] }],
+              },
+            ],
+          },
+        ],
+        formFieldOverrides: [[{ prop: ***REMOVED***records[].name***REMOVED***, label: ***REMOVED***Name Label***REMOVED*** }]],
+      })
+
+      const recordsField = form.fields?.find((f) => f.id === ***REMOVED***records***REMOVED***) as any
+      expect(recordsField.tabs?.[0]?.fields?.[0]?.id).toBe(***REMOVED***name***REMOVED***)
+      expect(recordsField.tabs?.[0]?.fields?.[0]?.label).toBe(***REMOVED***Name Label***REMOVED***)
+    })
+
+    it(***REMOVED***remaps wrapper-style top-level tabs to the array field and preserves multiple controls***REMOVED***, () => {
+      const wrapperSchema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          products: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                id: { type: ***REMOVED***string***REMOVED*** },
+                name: { type: ***REMOVED***string***REMOVED*** },
+                sku: { type: ***REMOVED***string***REMOVED*** },
+                price: { type: ***REMOVED***number***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: wrapperSchema,
+        formOverrides: [
+          {
+            fields: [{ prop: ***REMOVED***products***REMOVED*** }],
+            tabs: [
+              {
+                id: ***REMOVED***basic***REMOVED***,
+                label: ***REMOVED***Basic Info***REMOVED***,
+                layout: ***REMOVED***grid3***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                skip_path: true,
+                fields: [
+                  { prop: ***REMOVED***products[].id***REMOVED*** },
+                  { prop: ***REMOVED***products[].name***REMOVED*** },
+                  { prop: ***REMOVED***products[].sku***REMOVED*** },
+                ],
+              },
+              {
+                id: ***REMOVED***pricing***REMOVED***,
+                label: ***REMOVED***Pricing***REMOVED***,
+                fields: [{ prop: ***REMOVED***products[].price***REMOVED*** }],
+              },
+            ],
+          },
+        ],
+        formFieldOverrides: [
+          [
+            { prop: ***REMOVED***products[].id***REMOVED***, label: ***REMOVED***Product ID***REMOVED*** },
+            { prop: ***REMOVED***products[].name***REMOVED***, label: ***REMOVED***Product Name***REMOVED*** },
+            { prop: ***REMOVED***products[].sku***REMOVED***, label: ***REMOVED***SKU Code***REMOVED*** },
+            { prop: ***REMOVED***products[].price***REMOVED***, label: ***REMOVED***Selling Price***REMOVED*** },
+          ],
+        ],
+      })
+
+      const productsField = form.fields?.find((f) => f.id === ***REMOVED***products***REMOVED***) as any
+      expect(productsField).toBeDefined()
+      expect(productsField.multiple).toBe(true)
+      expect(form.tabs).toBeUndefined()
+      expect(productsField.tabs?.length).toBe(2)
+      expect(productsField.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***id***REMOVED***)?.label).toBe(
+        ***REMOVED***Product ID***REMOVED***
+      )
+      expect(productsField.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)?.label).toBe(
+        ***REMOVED***Product Name***REMOVED***
+      )
     })
   })
 })

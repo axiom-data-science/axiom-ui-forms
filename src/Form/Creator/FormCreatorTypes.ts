@@ -143,7 +143,7 @@ interface INumberValueInput extends IFormFieldRoot {
   settings?: IFormFieldSettingsBase & {
     step?: number
     canBeNull?: boolean
-    nonNullDefaultValue?: number,
+    nonNullDefaultValue?: number
     invertForDisplay?: boolean
   }
 }
@@ -302,7 +302,7 @@ export interface IObjectWrapperField extends Omit<IValidContainerField, ***REMOV
   wizard_steps?: IWizardStep[]
   fields?: IFormField[]
   // Enforce skip_path: true for wrapper fields via type constraint
-  skip_path: true
+  skip_path?: true
 }
 
 export interface IOneOfField extends IValidContainerField {

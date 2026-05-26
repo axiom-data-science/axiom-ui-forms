@@ -481,9 +481,22 @@ const mergeFormField = ({
   schemaFieldMap: Record<string, IFormField>
   schemaForm: IForm
 }): IFormField => {
-  const path = fieldOverride?.prop ?? (field ? makeJsonPath(field) : undefined)
+  const rawOverridePath = fieldOverride?.prop
+  const normalizedOverridePath = rawOverridePath?.replace(/\[\]/g, ***REMOVED******REMOVED***)
+  const fieldPath = field ? makeJsonPath(field) : undefined
+  const path = normalizedOverridePath ?? fieldPath
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(
-    formFieldsOverrideMap.map((overrides) => overrides[path ?? ***REMOVED******REMOVED***]).filter((d) => d !== undefined)
+    formFieldsOverrideMap
+      .map((overrides) =>
+        mergeObjects<IFormFieldOverride>(
+          [
+            path !== undefined ? overrides[path] : undefined,
+            rawOverridePath !== undefined ? overrides[rawOverridePath] : undefined,
+            fieldPath !== undefined ? overrides[fieldPath] : undefined,
+          ].filter((d): d is IFormFieldOverride => d !== undefined)
+        )
+      )
+      .filter((d) => d !== undefined)
   )
 
   // Auto-exclude artificially added fields (not in schema) from payload
@@ -575,11 +588,14 @@ const mergeFormField = ({
         overrideFieldsMap[key],
         formOverrideFieldsMap[key],
         mergeObjects<IFormFieldOverride>(
-          formFieldsOverrideMap.map((overrides) =>
-            overrides[key] ??
-            (arrayBracketKey !== undefined ? overrides[arrayBracketKey] : undefined) ??
-            (arrayDotKey !== undefined ? overrides[arrayDotKey] : undefined)
-          ).filter((d) => d !== undefined)
+          formFieldsOverrideMap
+            .map(
+              (overrides) =>
+                overrides[key] ??
+                (arrayBracketKey !== undefined ? overrides[arrayBracketKey] : undefined) ??
+                (arrayDotKey !== undefined ? overrides[arrayDotKey] : undefined)
+            )
+            .filter((d) => d !== undefined)
         ),
       ])
       return mergeFormField({
@@ -621,7 +637,8 @@ const mergeFormFields = ({
   const schemaFieldMap = buildFieldMapFromForm(schemaForm)
 
   return (fieldOverrides ?? []).map((fieldOverride) => {
-    const schemaField = schemaFieldMap[fieldOverride.prop]
+    const normalizedProp = fieldOverride.prop.replace(/\[\]/g, ***REMOVED******REMOVED***)
+    const schemaField = schemaFieldMap[fieldOverride.prop] ?? schemaFieldMap[normalizedProp]
     return mergeFormField({
       field: schemaField,
       fieldOverride,
@@ -735,40 +752,126 @@ export const overridesAndSchemaToFormObject = ({
     return schemaForm
   }
   const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
+  const schemaFieldMap = buildFieldMapFromForm(schemaForm)
+
+  // Support shorthand where top-level tabs reference array item fields via
+  // `arrayProp[].child` while the array field is declared in top-level fields.
+  // In this case, tabs should be attached to that array field, not the form root.
+  const remapTopLevelTabsToArrayField = (): IFormOverride => {
+    if (
+      mergedFormOverrides.tabs === undefined ||
+      mergedFormOverrides.tabs.length === 0 ||
+      mergedFormOverrides.fields === undefined ||
+      mergedFormOverrides.fields.length === 0
+    ) {
+      return mergedFormOverrides
+    }
+
+    const tabFieldProps = mergedFormOverrides.tabs
+      .flatMap((tab) => tab.fields ?? [])
+      .map((field) => field.prop)
+      .filter((prop): prop is string => prop !== undefined)
+      .map((prop) => prop.trim())
+
+    if (tabFieldProps.length === 0) {
+      return mergedFormOverrides
+    }
+
+    const candidateFields = mergedFormOverrides.fields.filter((fieldOverride) => {
+      const prop = fieldOverride.prop
+      if (prop === undefined) {
+        return false
+      }
+      const schemaField = schemaFieldMap[prop]
+      return (
+        schemaField !== undefined &&
+        (schemaField.type === ***REMOVED***object***REMOVED*** || schemaField.type === ***REMOVED***objectWrapper***REMOVED***) &&
+        (schemaField as { multiple?: boolean }).multiple === true
+      )
+    })
+
+    const tabRoots = Array.from(
+      new Set(
+        tabFieldProps
+          .map((tabProp) => tabProp.replace(/\[\]/g, ***REMOVED******REMOVED***))
+          .map((tabProp) => tabProp.split(***REMOVED***.***REMOVED***)[0])
+          .filter((root) => root.length > 0)
+      )
+    )
+
+    if (tabRoots.length !== 1) {
+      return mergedFormOverrides
+    }
+
+    const targetRoot = tabRoots[0]
+    const matchingCandidates = candidateFields.filter(
+      (fieldOverride) => fieldOverride.prop?.replace(/\[\]/g, ***REMOVED******REMOVED***) === targetRoot
+    )
+
+    if (matchingCandidates.length !== 1) {
+      return mergedFormOverrides
+    }
+
+    const target = matchingCandidates[0]
+    const schemaTarget = target.prop !== undefined ? schemaFieldMap[target.prop] : undefined
+
+    return {
+      ...mergedFormOverrides,
+      tabs: undefined,
+      fields: mergedFormOverrides.fields.map((fieldOverride) => {
+        if (fieldOverride.prop !== target.prop) {
+          return fieldOverride
+        }
+        const inheritedType: ***REMOVED***object***REMOVED*** | ***REMOVED***objectWrapper***REMOVED*** =
+          fieldOverride.type === ***REMOVED***object***REMOVED*** || fieldOverride.type === ***REMOVED***objectWrapper***REMOVED***
+            ? fieldOverride.type
+            : schemaTarget?.type === ***REMOVED***objectWrapper***REMOVED***
+              ? ***REMOVED***objectWrapper***REMOVED***
+              : ***REMOVED***object***REMOVED***
+        return {
+          ...fieldOverride,
+          type: inheritedType,
+          tabs: mergedFormOverrides.tabs,
+        }
+      }) as IFormFieldOverride[],
+    }
+  }
+
+  const normalizedFormOverrides = remapTopLevelTabsToArrayField()
   const form: IForm = {
     id: schemaForm.id,
-    label: mergedFormOverrides?.label ?? schemaForm.label,
-    settings: mergedFormOverrides?.settings,
+    label: normalizedFormOverrides?.label ?? schemaForm.label,
+    settings: normalizedFormOverrides?.settings,
   }
 
   form.pages =
-    mergedFormOverrides.pages !== undefined
+    normalizedFormOverrides.pages !== undefined
       ? (mergeFormSections({
-          sectionOverrides: mergedFormOverrides.pages,
+          sectionOverrides: normalizedFormOverrides.pages,
           schemaForm,
           formFieldsOverrideMap: formFieldOverridesByProp,
         }) as IPage[])
       : undefined
   form.wizard_steps =
-    mergedFormOverrides.wizard_steps !== undefined
+    normalizedFormOverrides.wizard_steps !== undefined
       ? (mergeFormSections({
-          sectionOverrides: mergedFormOverrides.wizard_steps,
+          sectionOverrides: normalizedFormOverrides.wizard_steps,
           schemaForm,
           formFieldsOverrideMap: formFieldOverridesByProp,
         }) as IWizardStep[])
       : undefined
 
   form.tabs =
-    mergedFormOverrides.tabs !== undefined
+    normalizedFormOverrides.tabs !== undefined
       ? (mergeFormSections({
-          sectionOverrides: mergedFormOverrides.tabs,
+          sectionOverrides: normalizedFormOverrides.tabs,
           schemaForm,
           formFieldsOverrideMap: formFieldOverridesByProp,
         }) as IFormLayoutTab[])
       : undefined
 
   form.fields = mergeFormFields({
-    fieldOverrides: mergedFormOverrides.fields,
+    fieldOverrides: normalizedFormOverrides.fields,
     schemaForm,
     formFieldsOverrideMap: formFieldOverridesByProp,
   })

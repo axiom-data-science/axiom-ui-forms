@@ -1,4 +1,14 @@
-import { type IFormSection, type IPage, type IWizardStep, type IFormField, type IForm, type IValueType, type IFormValues, type IObjectField, type ICheckConditionResult } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import {
+  type IFormSection,
+  type IPage,
+  type IWizardStep,
+  type IFormField,
+  type IForm,
+  type IValueType,
+  type IFormValues,
+  type IObjectField,
+  type ICheckConditionResult,
+} from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { getFieldsFromFormSection, getFieldValue, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { checkCondition } from ***REMOVED***@/utils/validators***REMOVED***
 import { merge, set } from ***REMOVED***lodash-es***REMOVED***
@@ -17,7 +27,7 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
     field.level = parentPath !== undefined ? parentPath.length + 1 : 1
   }
   if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.fields !== undefined) {
-    field.fields = field.fields.map(childField => {
+    field.fields = field.fields.map((childField) => {
       return addFieldPath(childField, field.path?.slice())
     })
   }
@@ -26,35 +36,35 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
   // return cloneObject(field)
 }
 
-function addPathsToFormSections (section: IFormSection): IFormSection {
+function addPathsToFormSections(section: IFormSection): IFormSection {
   if (section.pages !== undefined) {
-    section.pages = section.pages.map(page => {
+    section.pages = section.pages.map((page) => {
       return addPathsToFormSections(page)
     }) as IPage[]
   }
   if (section.wizard_steps !== undefined) {
-    section.wizard_steps = section.wizard_steps.map(wizardStep => {
+    section.wizard_steps = section.wizard_steps.map((wizardStep) => {
       return addPathsToFormSections(wizardStep)
     }) as IWizardStep[]
   }
   if (section.fields !== undefined) {
-    section.fields = section.fields.map(field => {
+    section.fields = section.fields.map((field) => {
       return addFieldPath(field)
     })
   }
   return section
 }
 
-export function copyAndAddPathToFields (formOrContainer: IFormSection | IForm): IForm {
+export function copyAndAddPathToFields(formOrContainer: IFormSection | IForm): IForm {
   const form = addPathsToFormSections(cloneObject(formOrContainer)) as IForm
   return form
 }
 
-function removeFieldPath (field: IFormField): IFormField {
+function removeFieldPath(field: IFormField): IFormField {
   field.path = undefined
   field.level = undefined
   if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
-    field.fields = field.fields.map(childField => {
+    field.fields = field.fields.map((childField) => {
       return removeFieldPath(childField)
     })
   }
@@ -62,40 +72,48 @@ function removeFieldPath (field: IFormField): IFormField {
   return field
 }
 
-function removePathsFromFormSections (section: IFormSection): IFormSection {
+function removePathsFromFormSections(section: IFormSection): IFormSection {
   if (section.pages !== undefined) {
-    section.pages = section.pages.map(page => {
+    section.pages = section.pages.map((page) => {
       return removePathsFromFormSections(page)
     }) as IPage[]
   }
   if (section.wizard_steps !== undefined) {
-    section.wizard_steps = section.wizard_steps.map(wizardStep => {
+    section.wizard_steps = section.wizard_steps.map((wizardStep) => {
       return removePathsFromFormSections(wizardStep)
     }) as IWizardStep[]
   }
   if (section.fields !== undefined) {
-    section.fields = section.fields.map(field => {
+    section.fields = section.fields.map((field) => {
       return removeFieldPath(field)
     })
   }
   return section
 }
 
-export function copyAndRemovePathFromFields (formOrContainer: IFormSection | IForm): IForm {
+export function copyAndRemovePathFromFields(formOrContainer: IFormSection | IForm): IForm {
   const form = removePathsFromFormSections(cloneObject(formOrContainer)) as IForm
   return form
 }
 
-export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormField[], formValuesPath: string = ***REMOVED******REMOVED***): IFormValues {
+export function cleanFormValuesLevel(
+  formValues: IFormValues,
+  fields: IFormField[],
+  formValuesPath: string = ***REMOVED******REMOVED***
+): IFormValues {
   const formValuesCopy = cloneObject(formValues)
-  Object.keys(formValues).forEach(key => {
+  Object.keys(formValues).forEach((key) => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
-    const field = fields?.find(f => {
-        const ff = getPathFromField(f) === path
-        const cc = ff ? checkCondition(f, formValues).pass : false
-        return ff && cc
-  })
-    if (field?.type === ***REMOVED***object***REMOVED*** && field?.multiple === true && Array.isArray(formValuesCopy[key])) {
+    const field = fields?.find((f) => {
+      const ff = getPathFromField(f) === path
+      const cc = ff ? checkCondition(f, formValues).pass : false
+      return ff && cc
+    })
+    if (
+      field?.type === ***REMOVED***object***REMOVED*** &&
+      field?.multiple === true &&
+      Array.isArray(formValuesCopy[key])
+    ) {
       return formValuesCopy[key].map((value, index) => {
         const checkedOneOfMultiple = checkCondition(field, value as IFormValues)
         if (!checkedOneOfMultiple.pass && checkedOneOfMultiple.result === ***REMOVED***include***REMOVED***) {
@@ -104,24 +122,26 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
         return value
       })
     }
-    const checkedCondition: ICheckConditionResult = field !== undefined
-      ? checkCondition(field, formValues)
-      : { pass: true, result: ***REMOVED***include***REMOVED*** }
-    if (field !== undefined && (
-      (
-        !checkedCondition.pass && checkedCondition.result === ***REMOVED***include***REMOVED***
-      ) || (
-        checkedCondition.pass && checkedCondition.result === ***REMOVED***exclude***REMOVED***
-      )
-    )) {
+    const checkedCondition: ICheckConditionResult =
+      field !== undefined ? checkCondition(field, formValues) : { pass: true, result: ***REMOVED***include***REMOVED*** }
+    if (
+      field !== undefined &&
+      ((!checkedCondition.pass && checkedCondition.result === ***REMOVED***include***REMOVED***) ||
+        (checkedCondition.pass && checkedCondition.result === ***REMOVED***exclude***REMOVED***))
+    ) {
       formValuesCopy[key] = undefined
       // this ensures that objects that are the result of mapping get checked
       // but fields that are not explicitly defined as objects but may contain objects
       // are not checked (geom, json, etc)
-    } else if (typeof formValuesCopy[key] === ***REMOVED***object***REMOVED*** && (
-      field?.type === ***REMOVED***object***REMOVED*** || field === undefined
-    )) {
-      formValuesCopy[key] = cleanFormValuesLevel((formValuesCopy[key] ?? {}) as IFormValues, fields, path)
+    } else if (
+      typeof formValuesCopy[key] === ***REMOVED***object***REMOVED*** &&
+      (field?.type === ***REMOVED***object***REMOVED*** || field === undefined)
+    ) {
+      formValuesCopy[key] = cleanFormValuesLevel(
+        (formValuesCopy[key] ?? {}) as IFormValues,
+        fields,
+        path
+      )
       /* } else if (field !== undefined && checkedCondition.pass && checkedCondition.newDefaultValue !== undefined) {
         formValuesCopy[key] = checkedCondition.newDefaultValue */
     } else if (field === undefined) {
@@ -133,13 +153,20 @@ export function cleanFormValuesLevel (formValues: IFormValues, fields: IFormFiel
   return formValuesCopy
 }
 
-export function cleanUnusedDependenciesFromFormValues (form: IForm, formValues: IFormValues): IFormValues {
+export function cleanUnusedDependenciesFromFormValues(
+  form: IForm,
+  formValues: IFormValues
+): IFormValues {
   const fields = getFieldsFromFormSection(form)
   const newFormValues = cleanFormValuesLevel(formValues, fields)
   return newFormValues
 }
 
-export function updateFormValuesWithFieldValueInPlace (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): void {
+export function updateFormValuesWithFieldValueInPlace(
+  field: IFormField,
+  newValue: IValueType | IValueType[],
+  formValues: IFormValues
+): void {
   const fieldPath = getPathFromField(field)
   if (fieldPath === undefined) {
     merge(formValues, newValue)
@@ -148,7 +175,11 @@ export function updateFormValuesWithFieldValueInPlace (field: IFormField, newVal
   }
 }
 
-export function updateFormValuesWithFieldValue (field: IFormField, newValue: IValueType | IValueType[], formValues: IFormValues): IFormValues {
+export function updateFormValuesWithFieldValue(
+  field: IFormField,
+  newValue: IValueType | IValueType[],
+  formValues: IFormValues
+): IFormValues {
   const formValuesCopy = cloneObject(formValues)
   updateFormValuesWithFieldValueInPlace(field, newValue, formValuesCopy)
   return formValuesCopy
@@ -178,11 +209,11 @@ export function updateFormValuesWithFieldValue (field: IFormField, newValue: IVa
  * @param formValues - Current form values
  * @returns Updated and cleaned form values
  */
-export function cleanAndUpdateFormValuesWithFieldValue ({
+export function cleanAndUpdateFormValuesWithFieldValue({
   field,
   form,
   value,
-  formValues
+  formValues,
 }: {
   field: IFormField
   form: IForm
@@ -190,58 +221,62 @@ export function cleanAndUpdateFormValuesWithFieldValue ({
   formValues: IFormValues
 }): IFormValues {
   // Step 1: Apply the new field value
-  const updatedFormValuesCopyPreClean = updateFormValuesWithFieldValue(
-    field,
-    value,
-    formValues
-  )
+  const updatedFormValuesCopyPreClean = updateFormValuesWithFieldValue(field, value, formValues)
 
   // Step 2: Clean up excluded fields (those whose conditions no longer pass)
-  const cleanedFormValues = cleanUnusedDependenciesFromFormValues(form, updatedFormValuesCopyPreClean)
+  const cleanedFormValues = cleanUnusedDependenciesFromFormValues(
+    form,
+    updatedFormValuesCopyPreClean
+  )
 
   // Step 3: Re-apply the changed field to handle destPath collisions
   // (critical when multiple fields share a destPath with mutually exclusive conditions)
-  const formValuesCopyClean = updateFormValuesWithFieldValue(
-    field,
-    value,
-    cleanedFormValues
-  )
+  const formValuesCopyClean = updateFormValuesWithFieldValue(field, value, cleanedFormValues)
 
   return formValuesCopyClean
 }
 
-export const assignDefaultValuesToFormValues = (form: IForm, formValues: IFormValues): IFormValues => {
+export const assignDefaultValuesToFormValues = (
+  form: IForm,
+  formValues: IFormValues
+): IFormValues => {
   const formValuesCopy = cloneObject(formValues)
   const formWithPaths = copyAndAddPathToFields(form)
 
   // Recursively process fields, but skip fields nested inside objectList
   const processFields = (fields: IFormField[] | undefined): void => {
     if (!fields) return
-    
-    fields.forEach(field => {
+
+    fields.forEach((field) => {
       // Skip objectList fields - their children should not get defaults at root level
       if (field.type === ***REMOVED***objectList***REMOVED***) {
         return
       }
-      
+
       // Apply default if not already set
       if (field.defaultValue !== undefined && getFieldValue(field, formValuesCopy) === undefined) {
         updateFormValuesWithFieldValueInPlace(field, field.defaultValue, formValuesCopy)
       }
-      
+
       // Recursively process nested object fields (but not objectList)
       if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.fields) {
         processFields(field.fields)
       }
       // Also process fields in tabs, pages, wizard_steps for wrapper/object fields
-      if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***)) {
-        ;(field as any).tabs?.forEach((tab: any) => { processFields(tab.fields); })
-        ;(field as any).pages?.forEach((page: any) => { processFields(page.fields); })
-        ;(field as any).wizard_steps?.forEach((step: any) => { processFields(step.fields); })
+      if (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) {
+        ;(field as any).tabs?.forEach((tab: any) => {
+          processFields(tab.fields)
+        })
+        ;(field as any).pages?.forEach((page: any) => {
+          processFields(page.fields)
+        })
+        ;(field as any).wizard_steps?.forEach((step: any) => {
+          processFields(step.fields)
+        })
       }
     })
   }
-  
+
   processFields(formWithPaths.fields)
   return formValuesCopy
 }
@@ -250,12 +285,17 @@ const assignIndexToField = (field: IFormField, index: number): IFormField => {
   return {
     ...field,
     path: undefined,
-    index
+    index,
   }
 }
 
-const assignIndexToFields = (parentField: IObjectField, indexField: IObjectField, index: number, level?: number): IFormField[] => {
-  return (parentField.fields ?? []).map(f => {
+const assignIndexToFields = (
+  parentField: IObjectField,
+  indexField: IObjectField,
+  index: number,
+  level?: number
+): IFormField[] => {
+  return (parentField.fields ?? []).map((f) => {
     if (f.path !== undefined && level !== undefined && f.path[level] !== undefined) {
       const newPath = f.path.slice()
       newPath[level] = assignIndexToField(indexField, index)
@@ -267,7 +307,7 @@ const assignIndexToFields = (parentField: IObjectField, indexField: IObjectField
       // return cloneObject(f)
     }
     return {
-      ...f
+      ...f,
     }
   })
 }
@@ -278,7 +318,12 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
     const last = assignIndexToField(path[path.length - 1], index)
     path[path.length - 1] = last
     if (last.type === ***REMOVED***object***REMOVED*** && last.fields !== undefined) {
-      last.fields = assignIndexToFields(last, last, index, last.level !== undefined ? (last.level - 1) : undefined)
+      last.fields = assignIndexToFields(
+        last,
+        last,
+        index,
+        last.level !== undefined ? last.level - 1 : undefined
+      )
     }
   }
 
@@ -290,11 +335,40 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
     label: index > 0 ? null : field.label,
     description: index > 0 ? null : field.description,
     long_description: index > 0 ? null : field.long_description,
-    id: `${field.id}-${index}`
+    id: `${field.id}-${index}`,
   }
 
-  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined && out.type === ***REMOVED***object***REMOVED***) {
-    out.fields = assignIndexToFields(field, field, index)
+  if (field.type === ***REMOVED***object***REMOVED*** && out.type === ***REMOVED***object***REMOVED***) {
+    // Index direct fields
+    if (field.fields !== undefined) {
+      out.fields = assignIndexToFields(field, field, index)
+    }
+
+    // Index fields in tabs, pages, and wizard steps
+    if ((field as any).tabs !== undefined) {
+      ;(out as any).tabs = (field as any).tabs.map((tab: any) => ({
+        ...tab,
+        fields: tab.fields
+          ? assignIndexToFields({ ...field, fields: tab.fields } as IObjectField, field, index)
+          : undefined,
+      }))
+    }
+    if ((field as any).pages !== undefined) {
+      ;(out as any).pages = (field as any).pages.map((page: any) => ({
+        ...page,
+        fields: page.fields
+          ? assignIndexToFields({ ...field, fields: page.fields } as IObjectField, field, index)
+          : undefined,
+      }))
+    }
+    if ((field as any).wizard_steps !== undefined) {
+      ;(out as any).wizard_steps = (field as any).wizard_steps.map((step: any) => ({
+        ...step,
+        fields: step.fields
+          ? assignIndexToFields({ ...field, fields: step.fields } as IObjectField, field, index)
+          : undefined,
+      }))
+    }
   }
   return out
 }

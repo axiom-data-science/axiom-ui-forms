@@ -227,6 +227,13 @@ export function seedNestedDefaults(
       // Skip processing nested fields - they will get defaults when added via getNewDefaultElement
       continue
     } else if (field.type === ***REMOVED***object***REMOVED*** && field.fields) {
+      // skip_path objects are UI-only containers (like objectWrapper) — don***REMOVED***t nest under field.id
+      if ((field as any).skip_path === true) {
+        const childFields = getChildFields(field)
+        seedNestedDefaults(childFields, formValues, context, ***REMOVED******REMOVED***)
+        continue
+      }
+
       // For multiple=true object fields the container is an array; for single objects it***REMOVED***s {}
       if (!formValues[field.id]) {
         formValues[field.id] = field.multiple ? [] : {}

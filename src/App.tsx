@@ -62,6 +62,8 @@ import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/
 import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustomGeom***REMOVED***
 import ArrayWithWrapperObjects from ***REMOVED***@/Form/TestForms/ArrayWithWrapperObjects/ArrayWithWrapperObjects***REMOVED***
 import ArrayWithTabs from ***REMOVED***@/Form/TestForms/ArrayWithTabs/ArrayWithTabs***REMOVED***
+import MultiTabs from ***REMOVED***@/Form/TestForms/MultiTabs/MultiTabs***REMOVED***
+import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -224,12 +226,6 @@ const App = (): ReactElement => {
             <Route path="/schema-override-test" element={<SchemaWithOverridesTest />}>
               <Route path="*" element={<SchemaWithOverridesTest />} />
             </Route>
-            <Route path="/array-with-tabs" element={<ArrayWithTabs />}>
-              <Route path="*" element={<ArrayWithTabs />} />
-            </Route>
-            <Route path="/array-with-wrapper-objects" element={<ArrayWithWrapperObjects />}>
-              <Route path="*" element={<ArrayWithWrapperObjects />} />
-            </Route>
             <Route path="/json-editor" element={<CodeEditor />} />
             <Route path="/schema-to-form-ptt" element={<SchemaToFormPTT />} />
             <Route path="/ptt/oil" element={<OilForm />}>
@@ -303,6 +299,18 @@ const App = (): ReactElement => {
               </Route>
               <Route path="tab-in-pages" element={<TabsInPagesWithWrapper />} />
               <Route path="form-with-custom-geom" element={<FormWithCustomGeom />} />
+              <Route path="array-with-tabs" element={<ArrayWithTabs />}>
+                <Route path="*" element={<ArrayWithTabs />} />
+              </Route>
+              <Route path="array-with-wrapper-objects" element={<ArrayWithWrapperObjects />}>
+                <Route path="*" element={<ArrayWithWrapperObjects />} />
+              </Route>
+              <Route path="multi-tabs" element={<MultiTabs />}>
+                <Route path="*" element={<MultiTabs />} />
+              </Route>
+              <Route path="nested-layout-in-multi-tabs" element={<NestedLayoutInMultiTab />}>
+                <Route path="*" element={<NestedLayoutInMultiTab />} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>
