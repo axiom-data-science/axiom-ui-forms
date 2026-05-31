@@ -31,3 +31,5 @@ const ObjectWrapper = (): ReactElement => {
 
   return <FormWithEditorOverlay formState={formState} />
 }
+
+export default ObjectWrapper

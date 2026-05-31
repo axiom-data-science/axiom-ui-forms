@@ -83,7 +83,7 @@ const FormEditor = ({ children }: { children: ReactNode }): ReactElement => {
         <Tooltip
           content="Edit schema and field overrides"
           side="left"
-          className="bg-white bg-opacity-50 hover:bg-opacity-100 text-black p-2 rounded-md top-20 right-10 fixed z-10 shadow-lg"
+          className="bg-white bg-opacity-50 hover:bg-opacity-100 text-black p-2 rounded-md top-10 right-10 fixed z-10 shadow-lg"
         >
           <Pencil2Icon
             className="cursor-pointer w-6 h-6"
