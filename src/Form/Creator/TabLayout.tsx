@@ -238,6 +238,10 @@ const TabLayoutContent = ({
   return (
     <div className={className}>
       <Tabs
+        className="w-full"
+        tabNavClassName="border-b-0"
+        activeTabNavClassName="border-b-2 border-slate-400"
+        navClassName="w-full border-b border-slate-300"
         tabs={sections.map((s) => {
           return {
             id: s.id,
