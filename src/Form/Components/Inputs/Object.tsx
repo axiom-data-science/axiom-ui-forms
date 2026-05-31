@@ -11,6 +11,7 @@ import TabLayout from '@/Form/Creator/TabLayout'
 import WizardLayout from '@/Form/Creator/Wizard'
 import { evaluateFieldLogicState, type FieldEvaluationContext } from '@/utils/formEngine'
 import { cloneObject } from '@/utils/manipulators'
+import { getLayoutClassName, getFieldFlexClass } from '@/utils/layoutHelpers'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement, useMemo, useCallback, memo } from 'react'
 
@@ -92,12 +93,6 @@ ObjectFieldItem.displayName = 'ObjectFieldItem'
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const formValues = useFormValues()
 
-  // Memoize initialValue so it doesn't change reference on every render
-  const initialValue = useMemo(
-    () => (typeof value === 'object' ? (value ?? {}) : {}) as ICompositeValueType,
-    [value]
-  )
-
   const objectField =
     field.type === 'object' || field.type === 'objectWrapper' ? (field as any) : undefined
 
@@ -107,9 +102,21 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
   // Detect this by checking if we have both value and onChange (indicating scoped context).
   const isSkipPath = field.type === 'objectWrapper' || objectField?.skip_path === true
   const hasEffectiveOnChange = typeof onChange === 'function'
-  // When onChange is provided, we're in a scoped context (e.g. array item) and must use scoped rendering
-  // regardless of whether there's an existing value — we need onChange to propagate changes correctly
-  const shouldUseScopedRenderingDespiteSkipPath = hasEffectiveOnChange
+
+  // When rendering skip_path containers in scoped mode but no explicit scoped value is supplied
+  // (common in root form rendering), hydrate from root formValues so tab/page switches keep values.
+  const initialValue = useMemo(() => {
+    if (isSkipPath && hasEffectiveOnChange && value === undefined) {
+      return formValues as ICompositeValueType
+    }
+    return (typeof value === 'object' ? (value ?? {}) : {}) as ICompositeValueType
+  }, [formValues, hasEffectiveOnChange, isSkipPath, value])
+
+  // Scoped rendering is required when an explicit scoped value is supplied
+  // (e.g. array/objectList item context). For root skip_path wrappers, `value`
+  // is typically undefined and we should render non-scoped so nested tabs read
+  // directly from live form context.
+  const shouldUseScopedRenderingDespiteSkipPath = hasEffectiveOnChange && value !== undefined
 
   if (objectField?.tabs !== undefined && objectField.tabs.length) {
     return (
@@ -169,18 +176,8 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
     (field.type === 'object' || field.type === 'objectWrapper') &&
     field.fields !== undefined
   ) {
-    const cl = `${
-      field.layout === 'horizontal'
-        ? 'flex md:flex-row sm:flex-col gap-4 sm:gap-2'
-        : field.layout === 'grid4'
-          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
-          : field.layout === 'grid3'
-            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
-            : field.layout === 'grid2'
-              ? 'grid grid-cols-1 md:grid-cols-2 gap-4'
-              : 'flex flex-col gap-4'
-    }`
-    const fc = field.layout === 'horizontal' ? 'flex-1' : ''
+    const cl = getLayoutClassName(field.layout as any)
+    const fc = getFieldFlexClass(field.layout as any)
 
     // When onChange is provided we're in a scoped context (e.g. inside an array item).
     // In that case children must propagate changes through onChange rather than writing

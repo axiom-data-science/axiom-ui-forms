@@ -1,4 +1,8 @@
-import { IFormValues, type IFieldInputProps, type IFormSection } from '@/Form/Creator/FormCreatorTypes'
+import {
+  IFormValues,
+  type IFieldInputProps,
+  type IFormSection,
+} from '@/Form/Creator/FormCreatorTypes'
 import FormFields from '@/Form/Creator/FormFields'
 import PageLayout from '@/Form/Creator/Page'
 import TabLayout from '@/Form/Creator/TabLayout'
@@ -9,13 +13,12 @@ const FormSection = ({
   formSection,
   level = 0,
   inputOverrides,
-  SubmitButton
+  SubmitButton,
 }: {
   formSection?: IFormSection
   level?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
-
 }): ReactElement => {
   if (formSection === undefined) {
     return <></>
@@ -32,7 +35,7 @@ const FormSection = ({
     pages.unshift({
       id: 'default',
       label: 'Default',
-      fields
+      fields,
     })
   }
   if ((hasPages || hasFields || hasTabs) && hasWizardSteps) {
@@ -41,25 +44,24 @@ const FormSection = ({
       order: -10,
       label: 'Default',
       pages,
-      fields
+      fields,
     })
   }
   return (
     <>
-      {
-        hasWizardSteps
-          ? <WizardLayout sections={wizardSteps} level={level} SubmitButton={SubmitButton} />
-
-          : hasPages
-            ? <PageLayout sections={pages} level={level} />
-            : hasTabs
-              ? <TabLayout sections={tabs} level={level} />
-              : <FormFields
-                fields={fields}
-                className={level === 0 ? 'flex flex-col gap-8' : undefined}
-
-              />
-      }
+      {hasWizardSteps ? (
+        <WizardLayout sections={wizardSteps} level={level} SubmitButton={SubmitButton} />
+      ) : hasPages ? (
+        <PageLayout sections={pages} level={level} />
+      ) : hasTabs ? (
+        <TabLayout sections={tabs} level={level} />
+      ) : (
+        <FormFields
+          fields={fields}
+          className={level === 0 ? 'flex flex-col gap-8' : undefined}
+          layout={(formSection as any)?.layout}
+        />
+      )}
     </>
   )
 }

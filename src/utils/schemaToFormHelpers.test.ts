@@ -498,8 +498,6 @@ describe('schemaToFormHelpers', () => {
                 id: 'basic',
                 label: 'Basic Info',
                 layout: 'grid3',
-                type: 'object',
-                skip_path: true,
                 fields: [
                   { prop: 'products[].id' },
                   { prop: 'products[].name' },
@@ -535,6 +533,57 @@ describe('schemaToFormHelpers', () => {
       expect(productsField.tabs?.[0]?.fields?.find((f: any) => f.id === 'name')?.label).toBe(
         'Product Name'
       )
+      // layout must be preserved through the override pipeline
+      expect(productsField.tabs?.[0]?.layout).toBe('grid3')
+      expect(productsField.tabs?.[1]?.layout).toBeUndefined()
+    })
+
+    it('preserves layout on tabs when applied directly to an object field', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          item: {
+            type: 'object',
+            properties: {
+              a: { type: 'string' },
+              b: { type: 'string' },
+              c: { type: 'string' },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'item',
+                tabs: [
+                  {
+                    id: 'details',
+                    label: 'Details',
+                    layout: 'grid2',
+                    fields: [{ prop: 'item.a' }, { prop: 'item.b' }],
+                  },
+                  {
+                    id: 'extra',
+                    label: 'Extra',
+                    fields: [{ prop: 'item.c' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const itemField = form.fields?.find((f) => f.id === 'item') as any
+      expect(itemField).toBeDefined()
+      expect(itemField.tabs?.length).toBe(2)
+      expect(itemField.tabs?.[0]?.layout).toBe('grid2')
+      expect(itemField.tabs?.[1]?.layout).toBeUndefined()
     })
   })
 })

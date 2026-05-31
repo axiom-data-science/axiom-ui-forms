@@ -17,6 +17,7 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import FormFields from '@/Form/Creator/FormFields'
 import { cloneObject } from '@/utils/manipulators'
 import FieldCreator from '@/Form/Components/FieldCreator'
+import { getLayoutClassName } from '@/utils/layoutHelpers'
 
 export interface ITabLayoutProps {
   sections?: IFormSection[]
@@ -87,6 +88,8 @@ export const ScopedActiveSection = memo(
     className = 'flex flex-col gap-2 grow h-full',
     level,
   }: IScopedActiveTabProps): ReactElement => {
+    const fieldLayoutClass = getLayoutClassName((formSection as any)?.layout)
+
     return (
       <div className={className}>
         {formSection?.description !== undefined ? (
@@ -107,7 +110,7 @@ export const ScopedActiveSection = memo(
         ) : (
           ''
         )}
-        <div className={level === 0 ? 'flex flex-col gap-8' : 'flex flex-col gap-4'}>
+        <div className={fieldLayoutClass}>
           {(formSection?.fields ?? []).map((field) => {
             // For skip_path fields (objectWrapper or object with skip_path=true),
             // pass the entire scoped value and handle onChange to merge back

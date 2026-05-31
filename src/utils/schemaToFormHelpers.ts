@@ -11,6 +11,7 @@ import {
   type IWizardStep,
   type IValueType,
   type IFormLayoutTab,
+  type IObjectFormFieldOverride,
 } from '@/Form/Creator/FormCreatorTypes'
 import Ajv, { type ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
@@ -547,10 +548,11 @@ const mergeFormField = ({
       fieldOverride?.type === 'object' || fieldOverride?.type === 'objectWrapper'
         ? (fieldOverride.fields ?? [])
         : []
-    const overrideFieldTabs =
-      fieldOverride?.type === 'object' || fieldOverride?.type === 'objectWrapper'
-        ? fieldOverride.tabs
-        : undefined
+    // Read tabs from the override regardless of whether `type` is explicitly set on the
+    // override — we are already inside the mergedField.type === 'object' branch, so the
+    // merged type is confirmed to be an object. An override that specifies tabs but omits
+    // `type` is perfectly valid (type comes from the schema field).
+    const overrideFieldTabs = (fieldOverride as IObjectFormFieldOverride)?.tabs
     // const overrideFieldPages = fieldOverride?.type === 'object' ? fieldOverride.pages : undefined
     const overrideFieldsMap = Object.fromEntries(
       overrideFields.filter((f): f is IFormFieldOverride => 'prop' in f).map((f) => [f.prop, f])
@@ -561,10 +563,9 @@ const mergeFormField = ({
       formFieldOverrides.type === 'object' || formFieldOverrides.type === 'objectWrapper'
         ? (formFieldOverrides.fields ?? [])
         : []
-    const formOverrideFieldTabs =
-      formFieldOverrides.type === 'object' || formFieldOverrides.type === 'objectWrapper'
-        ? formFieldOverrides.tabs
-        : undefined
+    // Same as overrideFieldTabs above — read tabs from formFieldOverrides regardless of
+    // whether `type` is explicitly set.
+    const formOverrideFieldTabs = (formFieldOverrides as any)?.tabs
     const formOverrideFieldsMap = Object.fromEntries(
       formOverrideFields.filter((f): f is IFormFieldOverride => 'prop' in f).map((f) => [f.prop, f])
     )
