@@ -498,8 +498,6 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
                 id: ***REMOVED***basic***REMOVED***,
                 label: ***REMOVED***Basic Info***REMOVED***,
                 layout: ***REMOVED***grid3***REMOVED***,
-                type: ***REMOVED***object***REMOVED***,
-                skip_path: true,
                 fields: [
                   { prop: ***REMOVED***products[].id***REMOVED*** },
                   { prop: ***REMOVED***products[].name***REMOVED*** },
@@ -535,6 +533,57 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(productsField.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)?.label).toBe(
         ***REMOVED***Product Name***REMOVED***
       )
+      // layout must be preserved through the override pipeline
+      expect(productsField.tabs?.[0]?.layout).toBe(***REMOVED***grid3***REMOVED***)
+      expect(productsField.tabs?.[1]?.layout).toBeUndefined()
+    })
+
+    it(***REMOVED***preserves layout on tabs when applied directly to an object field***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          item: {
+            type: ***REMOVED***object***REMOVED***,
+            properties: {
+              a: { type: ***REMOVED***string***REMOVED*** },
+              b: { type: ***REMOVED***string***REMOVED*** },
+              c: { type: ***REMOVED***string***REMOVED*** },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***item***REMOVED***,
+                tabs: [
+                  {
+                    id: ***REMOVED***details***REMOVED***,
+                    label: ***REMOVED***Details***REMOVED***,
+                    layout: ***REMOVED***grid2***REMOVED***,
+                    fields: [{ prop: ***REMOVED***item.a***REMOVED*** }, { prop: ***REMOVED***item.b***REMOVED*** }],
+                  },
+                  {
+                    id: ***REMOVED***extra***REMOVED***,
+                    label: ***REMOVED***Extra***REMOVED***,
+                    fields: [{ prop: ***REMOVED***item.c***REMOVED*** }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const itemField = form.fields?.find((f) => f.id === ***REMOVED***item***REMOVED***) as any
+      expect(itemField).toBeDefined()
+      expect(itemField.tabs?.length).toBe(2)
+      expect(itemField.tabs?.[0]?.layout).toBe(***REMOVED***grid2***REMOVED***)
+      expect(itemField.tabs?.[1]?.layout).toBeUndefined()
     })
   })
 })

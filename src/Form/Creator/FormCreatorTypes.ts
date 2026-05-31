@@ -371,7 +371,9 @@ export interface IFormSection {
 
 export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {}
 export interface IWizardStep extends Omit<IFormSection, ***REMOVED***wizard_steps***REMOVED***> {}
-export interface IFormLayoutTab extends Omit<IFormSection, ***REMOVED***tabs***REMOVED***> {}
+export interface IFormLayoutTab extends Omit<IFormSection, ***REMOVED***tabs***REMOVED***> {
+  layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
+}
 
 export interface IFormSettings {
   url_navigable?: boolean
@@ -403,7 +405,9 @@ export type IObjectFormFieldOverride = Omit<
   wizard_steps?: IWizardStepOverride[]
 }
 
-export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {}
+export interface IFormSectionOverride extends Omit<IFormOverride, ***REMOVED***settings***REMOVED***> {
+  layout?: IContainerField[***REMOVED***layout***REMOVED***]
+}
 
 interface IPageOverride extends Omit<IFormSectionOverride, ***REMOVED***pages***REMOVED***> {}
 interface IFormLayoutTabOverride extends Omit<IFormSectionOverride, ***REMOVED***tabs***REMOVED***> {}

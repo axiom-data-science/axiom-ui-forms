@@ -1,4 +1,8 @@
-import { IFormValues, type IFieldInputProps, type IFormSection } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import {
+  IFormValues,
+  type IFieldInputProps,
+  type IFormSection,
+} from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormFields from ***REMOVED***@/Form/Creator/FormFields***REMOVED***
 import PageLayout from ***REMOVED***@/Form/Creator/Page***REMOVED***
 import TabLayout from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
@@ -9,13 +13,12 @@ const FormSection = ({
   formSection,
   level = 0,
   inputOverrides,
-  SubmitButton
+  SubmitButton,
 }: {
   formSection?: IFormSection
   level?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
-
 }): ReactElement => {
   if (formSection === undefined) {
     return <></>
@@ -32,7 +35,7 @@ const FormSection = ({
     pages.unshift({
       id: ***REMOVED***default***REMOVED***,
       label: ***REMOVED***Default***REMOVED***,
-      fields
+      fields,
     })
   }
   if ((hasPages || hasFields || hasTabs) && hasWizardSteps) {
@@ -41,25 +44,24 @@ const FormSection = ({
       order: -10,
       label: ***REMOVED***Default***REMOVED***,
       pages,
-      fields
+      fields,
     })
   }
   return (
     <>
-      {
-        hasWizardSteps
-          ? <WizardLayout sections={wizardSteps} level={level} SubmitButton={SubmitButton} />
-
-          : hasPages
-            ? <PageLayout sections={pages} level={level} />
-            : hasTabs
-              ? <TabLayout sections={tabs} level={level} />
-              : <FormFields
-                fields={fields}
-                className={level === 0 ? ***REMOVED***flex flex-col gap-8***REMOVED*** : undefined}
-
-              />
-      }
+      {hasWizardSteps ? (
+        <WizardLayout sections={wizardSteps} level={level} SubmitButton={SubmitButton} />
+      ) : hasPages ? (
+        <PageLayout sections={pages} level={level} />
+      ) : hasTabs ? (
+        <TabLayout sections={tabs} level={level} />
+      ) : (
+        <FormFields
+          fields={fields}
+          className={level === 0 ? ***REMOVED***flex flex-col gap-8***REMOVED*** : undefined}
+          layout={(formSection as any)?.layout}
+        />
+      )}
     </>
   )
 }

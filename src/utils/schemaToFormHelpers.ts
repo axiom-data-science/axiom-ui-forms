@@ -11,6 +11,7 @@ import {
   type IWizardStep,
   type IValueType,
   type IFormLayoutTab,
+  type IObjectFormFieldOverride,
 } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import Ajv, { type ValidateFunction } from ***REMOVED***ajv***REMOVED***
 import addFormats from ***REMOVED***ajv-formats***REMOVED***
@@ -547,10 +548,11 @@ const mergeFormField = ({
       fieldOverride?.type === ***REMOVED***object***REMOVED*** || fieldOverride?.type === ***REMOVED***objectWrapper***REMOVED***
         ? (fieldOverride.fields ?? [])
         : []
-    const overrideFieldTabs =
-      fieldOverride?.type === ***REMOVED***object***REMOVED*** || fieldOverride?.type === ***REMOVED***objectWrapper***REMOVED***
-        ? fieldOverride.tabs
-        : undefined
+    // Read tabs from the override regardless of whether `type` is explicitly set on the
+    // override — we are already inside the mergedField.type === ***REMOVED***object***REMOVED*** branch, so the
+    // merged type is confirmed to be an object. An override that specifies tabs but omits
+    // `type` is perfectly valid (type comes from the schema field).
+    const overrideFieldTabs = (fieldOverride as IObjectFormFieldOverride)?.tabs
     // const overrideFieldPages = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.pages : undefined
     const overrideFieldsMap = Object.fromEntries(
       overrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
@@ -561,10 +563,9 @@ const mergeFormField = ({
       formFieldOverrides.type === ***REMOVED***object***REMOVED*** || formFieldOverrides.type === ***REMOVED***objectWrapper***REMOVED***
         ? (formFieldOverrides.fields ?? [])
         : []
-    const formOverrideFieldTabs =
-      formFieldOverrides.type === ***REMOVED***object***REMOVED*** || formFieldOverrides.type === ***REMOVED***objectWrapper***REMOVED***
-        ? formFieldOverrides.tabs
-        : undefined
+    // Same as overrideFieldTabs above — read tabs from formFieldOverrides regardless of
+    // whether `type` is explicitly set.
+    const formOverrideFieldTabs = (formFieldOverrides as any)?.tabs
     const formOverrideFieldsMap = Object.fromEntries(
       formOverrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
     )
