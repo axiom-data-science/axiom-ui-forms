@@ -6,7 +6,7 @@ import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
 import { copyAndAddPathToFields } from '@/utils/manipulators'
 import layoutAtom, { getWindowSize } from '@/utils/responsive/layoutState'
-import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
+import { overridesAndSchemaToFormObject, schemaToFormObject, ensureObjectWrappersHaveSkipPath } from '@/utils/schemaToFormHelpers'
 import { calculateSectionStatus } from '@/utils/validators'
 import { seedNestedDefaults } from '@/utils/formEngine'
 import { formHasNestedNavigation } from '@/utils/formEngine/hasNestedNavigation'
@@ -125,7 +125,7 @@ const FormCreator = ({
   initialFormValues
 }: IFormCreatorProps): ReactElement => {
   const activeForm = useMemo(() => {
-    const af = copyAndAddPathToFields(form)
+    const af = copyAndAddPathToFields(ensureObjectWrappersHaveSkipPath(form))
     // Disable URL navigation if form has nested pages or wizard_steps (these don't support URL nav)
     // This includes both top-level and embedded within object/objectList fields
     const hasNestedNavigation = formHasNestedNavigation(af)
