@@ -1,6 +1,6 @@
 {
-  "id": "tethis-form",
-  "label": "TETHIS Data Submission",
+  "id": "pam-form",
+  "label": "PAM Data Submission",
   "description": "Marine bioacoustic data submission form based on TETHIS schema",
   "pages": [
     {
@@ -889,12 +889,12 @@
           "label": "Quality Code",
           "required": true,
           "type": "radio",
-            "options": [
-                { "value": "pass", "label": "Pass" },
-                { "value": "fail", "label": "Fail" },
-                { "value": "suspect", "label": "Suspect" },
-                { "value": "not_evaluated", "label": "Not Evaluated" }
-            ]
+          "options": [
+            { "value": "pass", "label": "Pass" },
+            { "value": "fail", "label": "Fail" },
+            { "value": "suspect", "label": "Suspect" },
+            { "value": "not_evaluated", "label": "Not Evaluated" }
+          ]
         },
         {
           "prop": "recording_interval_json",
