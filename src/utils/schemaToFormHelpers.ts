@@ -639,7 +639,7 @@ const mergeFormField = ({
  * This function is called after form construction to catch any objectWrapper fields
  * that might exist outside of the schema override context.
  */
-const ensureObjectWrappersHaveSkipPath = (form: IForm): IForm => {
+export const ensureObjectWrappersHaveSkipPath = (form: IForm): IForm => {
   const ensureFieldSkipPath = (field: IFormField): IFormField => {
     if (field.type === ***REMOVED***objectWrapper***REMOVED***) {
       (field as unknown as Record<string, unknown>).skip_path = true
