@@ -633,6 +633,43 @@ const mergeFormField = ({
   } as unknown as IFormField
 }
 
+/**
+ * Recursively ensures all objectWrapper fields have skip_path: true.
+ * objectWrapper fields are UI-only containers and should never nest data in the form payload.
+ * This function is called after form construction to catch any objectWrapper fields
+ * that might exist outside of the schema override context.
+ */
+const ensureObjectWrappersHaveSkipPath = (form: IForm): IForm => {
+  const ensureFieldSkipPath = (field: IFormField): IFormField => {
+    if (field.type === ***REMOVED***objectWrapper***REMOVED***) {
+      (field as unknown as Record<string, unknown>).skip_path = true
+    }
+    // Recursively process nested fields
+    if (***REMOVED***fields***REMOVED*** in field && Array.isArray((field as any).fields)) {
+      ;(field as any).fields = (field as any).fields.map(ensureFieldSkipPath)
+    }
+    return field
+  }
+
+  const ensureSectionSkipPath = (section: IFormSection): IFormSection => {
+    return {
+      ...section,
+      fields: section.fields?.map(ensureFieldSkipPath),
+      pages: section.pages?.map(ensureSectionSkipPath),
+      wizard_steps: section.wizard_steps?.map(ensureSectionSkipPath),
+      tabs: section.tabs?.map(ensureSectionSkipPath),
+    }
+  }
+
+  return {
+    ...form,
+    fields: form.fields?.map(ensureFieldSkipPath),
+    pages: form.pages?.map(ensureSectionSkipPath),
+    wizard_steps: form.wizard_steps?.map(ensureSectionSkipPath),
+    tabs: form.tabs?.map(ensureSectionSkipPath),
+  }
+}
+
 const mergeFormFields = ({
   fieldOverrides,
   schemaForm,
@@ -752,12 +789,12 @@ export const overridesAndSchemaToFormObject = ({
         schemaForm,
       })
     })
-    return {
+    return ensureObjectWrappersHaveSkipPath({
       ...schemaForm,
       fields,
-    }
+    })
   } else if (formOverrides === undefined && !hasFormFieldOverrides) {
-    return schemaForm
+    return ensureObjectWrappersHaveSkipPath(schemaForm)
   }
   const mergedFormOverrides = mergeObjects<IFormOverride>(formOverrides ?? [])
   const schemaFieldMap = buildFieldMapFromForm(schemaForm)
@@ -884,7 +921,7 @@ export const overridesAndSchemaToFormObject = ({
     formFieldsOverrideMap: formFieldOverridesByProp,
   })
 
-  return form
+  return ensureObjectWrappersHaveSkipPath(form)
 }
 
 export const schemaToFormObject = (schema: JSONSchema6): IForm => {
@@ -905,14 +942,14 @@ export const schemaToFormObject = (schema: JSONSchema6): IForm => {
       )
     }
   }
-  return {
+  return ensureObjectWrappersHaveSkipPath({
     id: makeFormFieldId([
       resolvedSchema.$id,
       resolvedSchema.title?.toLowerCase().replace(***REMOVED*** ***REMOVED***, ***REMOVED***-***REMOVED***),
     ]),
     label: schema.title ?? ***REMOVED***Untitled***REMOVED***,
     fields: formFields,
-  }
+  })
 }
 
 export const buildFieldMapFromForm = (form: IForm): Record<string, IFormField> => {
