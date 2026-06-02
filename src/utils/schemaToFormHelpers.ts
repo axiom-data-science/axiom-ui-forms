@@ -618,11 +618,18 @@ const mergeFormField = ({
           }) as IFormLayoutTab[])
         : undefined
   }
+
+  // Enforce skip_path: true for objectWrapper fields
+  // objectWrapper is a UI-only container that should never nest data
+  if ((mergedField.type ?? ***REMOVED***text***REMOVED***) === ***REMOVED***objectWrapper***REMOVED***) {
+    (mergedField as Record<string, unknown>).skip_path = true
+  }
+
   return {
+    ...mergedField,
     type: mergedField.type ?? ***REMOVED***text***REMOVED***,
     id,
     label: mergedField.label ?? makeLabel([labelProp]) ?? ***REMOVED***Default***REMOVED***,
-    ...mergedField,
   } as unknown as IFormField
 }
 
