@@ -53,6 +53,17 @@
             { "prop": "creator_sector" },
             { "prop": "source_url" }
           ]
+        },
+        {
+          "id": "contributor-information",
+          "label": "Contributor Information",
+          "layout": "grid2",
+          "fields": [
+            { "prop": "contributor_email" },
+            { "prop": "contributor_role" },
+            { "prop": "contributor_role_vocabulary" },
+            { "prop": "contributor_url" }
+          ]
         }
       ]
     },
@@ -61,7 +72,18 @@
       "label": "Sample File",
       "fields": [
         {
-          "prop": "sample_file"
+          "prop": "sample_file",
+          "type": "object",
+          "fields": [
+            { "prop": "sample_file.file_uri" },
+            {
+              "prop": "sample_file.headers",
+              "label": "Test override label...",
+              "conditions": {
+                "field": "sample_file.file_uri"
+              }
+            }
+          ]
         }
       ]
     }

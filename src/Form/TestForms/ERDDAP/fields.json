@@ -1,9 +1,1 @@
-[
-  {
-    "prop": "sample_file.headers",
-    "label": "Test override label...",
-    "conditions": {
-      "field": "sample_file.file_uri"
-    }
-  }
-]
+[]

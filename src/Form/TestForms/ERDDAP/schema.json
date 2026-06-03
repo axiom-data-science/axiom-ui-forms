@@ -25,6 +25,9 @@
     "sample_file": {
       "type": "object",
       "properties": {
+        "file_uri": {
+          "type": "string"
+        },
         "headers": {
           "type": "array",
           "items": {
@@ -47,9 +50,6 @@
               }
             }
           }
-        },
-        "file_uri": {
-          "type": "string"
         }
       }
     }
