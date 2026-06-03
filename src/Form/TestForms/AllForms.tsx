@@ -1,5 +1,6 @@
 import ArrayWithTabs from '@/Form/TestForms/ArrayWithTabs/ArrayWithTabs'
 import DefaultValueThatIsDependent from '@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent'
+import ERDDAPForm from '@/Form/TestForms/ERDDAP/ERDDAPForm'
 import FormWithCustomGeom from '@/Form/TestForms/Geom/FormWithCustomGeom'
 import MultiTabs from '@/Form/TestForms/MultiTabs/MultiTabs'
 import NestedLayoutInMultiTab from '@/Form/TestForms/NestedLayoutInMultiTab'
@@ -75,6 +76,16 @@ const forms = [
     label: 'Tabs in page with wrapper',
     path: 'tabs-in-page-with-wrapper',
     view: TabsInPagesWithWrapper,
+  },
+  {
+    label: 'Custom Geometry Input',
+    path: 'custom-geometry-input',
+    view: FormWithCustomGeom,
+  },
+  {
+    label: 'ERDDAP',
+    path: 'erddap',
+    view: ERDDAPForm,
   },
 ]
 
