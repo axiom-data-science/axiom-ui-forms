@@ -27,11 +27,6 @@
           "label": "Site Code"
         },
         {
-          "prop": "deployment_device_codes",
-          "label": "Deployment Device Codes",
-          "multiple": true
-        },
-        {
           "prop": "deployment_platform_type_code",
           "label": "Platform Type Code",
           "required": true
@@ -123,10 +118,6 @@
           "prop": "recovery_comments",
           "label": "Recovery Comments",
           "type": "long_text"
-        },
-        {
-          "prop": "parent_deployment_code",
-          "label": "Parent Deployment Code"
         }
       ]
     },
@@ -135,16 +126,6 @@
       "label": "Recordings",
       "description": "Define recording information",
       "fields": [
-        {
-          "prop": "organization_code",
-          "label": "Organization Code",
-          "required": true
-        },
-        {
-          "prop": "deployment_code",
-          "label": "Deployment Code",
-          "required": true
-        },
         {
           "prop": "recording_code",
           "label": "Recording Code",
@@ -277,22 +258,6 @@
       "label": "Analyses",
       "description": "Define analysis information",
       "fields": [
-        {
-          "prop": "deployment_organization_code",
-          "label": "Deployment Organization Code",
-          "required": true
-        },
-        {
-          "prop": "deployment_code",
-          "label": "Deployment Code",
-          "required": true
-        },
-        {
-          "prop": "recording_codes",
-          "label": "Recording Codes",
-          "required": true,
-          "multiple": true
-        },
         {
           "prop": "analysis_organization_code",
           "label": "Analysis Organization Code",
@@ -431,26 +396,6 @@
       "label": "Detections",
       "description": "Define detection information",
       "fields": [
-        {
-          "prop": "deployment_organization_code",
-          "label": "Deployment Organization Code",
-          "required": true
-        },
-        {
-          "prop": "deployment_code",
-          "label": "Deployment Code",
-          "required": true
-        },
-        {
-          "prop": "analysis_organization_code",
-          "label": "Analysis Organization Code",
-          "required": true
-        },
-        {
-          "prop": "analysis_code",
-          "label": "Analysis Code",
-          "required": true
-        },
         {
           "prop": "detection_start_datetime",
           "label": "Detection Start Date/Time",
@@ -734,11 +679,6 @@
               "prop": "device_comments",
               "label": "Comments",
               "type": "long_text"
-            },
-            {
-              "prop": "child_device_codes",
-              "label": "Child Device Codes",
-              "multiple": true
             }
           ]
         },
@@ -846,21 +786,6 @@
       "description": "Recording interval QA/QC data",
       "fields": [
         {
-          "prop": "organization_code",
-          "label": "Organization Code",
-          "required": true
-        },
-        {
-          "prop": "deployment_code",
-          "label": "Deployment Code",
-          "required": true
-        },
-        {
-          "prop": "recording_code",
-          "label": "Recording Code",
-          "required": true
-        },
-        {
           "prop": "recording_interval_channel",
           "label": "Channel"
         },
@@ -913,16 +838,6 @@
       "label": "Tracks",
       "description": "Animal track and position data",
       "fields": [
-        {
-          "prop": "organization_code",
-          "label": "Organization Code",
-          "required": true
-        },
-        {
-          "prop": "deployment_code",
-          "label": "Deployment Code",
-          "required": true
-        },
         {
           "prop": "track_code",
           "label": "Track Code",
