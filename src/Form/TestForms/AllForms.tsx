@@ -3,6 +3,7 @@ import DefaultValueThatIsDependent from ***REMOVED***@/Form/TestForms/DefaultVal
 import ERDDAPForm from ***REMOVED***@/Form/TestForms/ERDDAP/ERDDAPForm***REMOVED***
 import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustomGeom***REMOVED***
 import MultiTabs from ***REMOVED***@/Form/TestForms/MultiTabs/MultiTabs***REMOVED***
+import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
 import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
@@ -86,6 +87,11 @@ const forms = [
     label: ***REMOVED***ERDDAP***REMOVED***,
     path: ***REMOVED***erddap***REMOVED***,
     view: ERDDAPForm,
+  },
+  {
+    label: ***REMOVED***Nested dependents***REMOVED***,
+    path: ***REMOVED***nested-dependents***REMOVED***,
+    view: NestedDependents,
   },
 ]
 

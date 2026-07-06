@@ -1,0 +1,49 @@
+[
+  {
+    "prop": "do3D",
+    "label": "3D Simulation",
+    "description": "If box is checked, run in three-dimensions instead of two."
+  },
+  {
+    "prop": "vertical_mixing",
+    "conditions": {
+      "field": "do3D",
+      "value": true,
+      "result": "include",
+      "_note": "Change to false and exclude and it misbehaves (after it***REMOVED***s included, value resets after changing a dependent field)"
+    }
+  },
+  {
+    "prop": "vertical_mixing_advanced_options",
+    "skip_path": true,
+    "type": "object",
+    "label": "",
+    "conditions": {
+      "dependsOn": "vertical_mixing",
+      "value": true
+    },
+    "fields": [
+      {
+        "prop": "vertical_mixing_timestep"
+      },
+      {
+        "prop": "diffusivitymodel"
+      }
+    ]
+  },
+  {
+    "prop": "vertical_mixing_basic_options",
+    "skip_path": true,
+    "type": "object",
+    "label": "",
+    "conditions": {
+      "dependsOn": "vertical_mixing",
+      "value": true
+    },
+    "fields": [
+      {
+        "prop": "mixed_layer_depth"
+      }
+    ]
+  }
+]

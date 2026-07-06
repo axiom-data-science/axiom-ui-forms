@@ -65,6 +65,7 @@ import ArrayWithTabs from ***REMOVED***@/Form/TestForms/ArrayWithTabs/ArrayWithT
 import MultiTabs from ***REMOVED***@/Form/TestForms/MultiTabs/MultiTabs***REMOVED***
 import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
 import AllForms from ***REMOVED***@/Form/TestForms/AllForms***REMOVED***
+import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -311,6 +312,9 @@ const App = (): ReactElement => {
               </Route>
               <Route path="nested-layout-in-multi-tabs" element={<NestedLayoutInMultiTab />}>
                 <Route path="*" element={<NestedLayoutInMultiTab />} />
+              </Route>
+              <Route path="nested-dependents" element={<NestedDependents />}>
+                <Route path="*" element={<NestedDependents />} />
               </Route>
             </Route>
             <Route path="all-forms" element={<AllForms />}>
