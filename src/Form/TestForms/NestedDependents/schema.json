@@ -1,0 +1,67 @@
+{
+  "title": "Nested Dependents Form",
+  "type": "object",
+  "properties": {
+    "do3D": {
+      "default": true,
+      "description": "Set to True to run drifters in 3D, by default False for most drift models.",
+      "ptm_level": 1,
+      "title": "Do3D",
+      "type": "boolean"
+    },
+    "vertical_mixing": {
+      "default": true,
+      "description": "Activate vertical mixing scheme. Vertical mixing includes movement due to buoyancy and turbulent mixing.",
+      "od_mapping": "drift:vertical_mixing",
+      "ptm_level": 2,
+      "title": "Vertical Mixing",
+      "type": "boolean"
+    },
+    "vertical_mixing_at_surface": {
+      "default": true,
+      "description": "If vertical mixing is activated, surface elements (z=0) can only be mixed (downwards) if this setting it True.",
+      "od_mapping": "drift:vertical_mixing_at_surface",
+      "ptm_level": 2,
+      "title": "Vertical Mixing At Surface",
+      "type": "boolean"
+    },
+    "vertical_mixing_timestep": {
+      "default": 60,
+      "description": "Time step used for inner (fast) loop of the vertical mixing model. Set this smaller to increase frequency of vertical mixing calculation; number of loops is calculated as int(self.time_step/vertical_mixing_timestep) so vertical_mixing_timestep must be smaller than time_step.",
+      "maximum": 3600,
+      "minimum": 0.1,
+      "od_mapping": "vertical_mixing:timestep",
+      "ptm_level": 3,
+      "title": "Vertical Mixing Timestep",
+      "type": "number",
+      "units": "seconds"
+    },
+    "diffusivitymodel": {
+      "default": "windspeed_Large1994",
+      "description": "Algorithm/source used for profile of vertical diffusivity. Environment means that diffusivity is acquired from readers or environment constants/fallback. Parameterizations based on wind speed are also available.",
+      "od_mapping": "vertical_mixing:diffusivitymodel",
+      "ptm_level": 3,
+      "title": "Diffusivity model",
+      "units": "seconds",
+      "enum": [
+        "environment",
+        "stepfunction",
+        "windspeed_Sundby1983",
+        "windspeed_Large1994",
+        "gls_tke",
+        "constant"
+      ],
+      "type": "string"
+    },
+    "mixed_layer_depth": {
+      "default": 20,
+      "description": "mixed_layer_depth controls how deep the vertical diffusivity profile reaches. This sets the fallback value for ocean_mixed_layer_thickness if not available from any reader.",
+      "minimum": 0,
+      "od_mapping": "environment:constant:ocean_mixed_layer_thickness",
+      "ptm_level": 3,
+      "title": "Mixed Layer Depth",
+      "type": "number",
+      "units": "m"
+    }
+  }
+}

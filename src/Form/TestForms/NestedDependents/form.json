@@ -1,0 +1,11 @@
+{
+  "id": "nested-dependents",
+  "title": "Nested Dependents",
+  "description": "Nested Dependents Form",
+  "fields": [
+    { "prop": "do3D" },
+    { "prop": "vertical_mixing" },
+    { "prop": "vertical_mixing_basic_options" },
+    { "prop": "vertical_mixing_advanced_options" }
+  ]
+}
