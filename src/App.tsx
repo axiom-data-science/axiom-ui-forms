@@ -48,7 +48,7 @@ import PlatformsMetadata from '@/Platforms/PlatformsMetadata'
 import MODLForm from '@/Form/MODL/MODLForm'
 import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm'
 import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet'
-import MakaraForm from '@/Form/PAM/MakaraForm'
+import PAMForm from '@/Form/PAM/PAMForm'
 import COLLABWaterLevelFormDev from '@/WaterLevel/COLLAB/COLLABWaterLevelFormDev'
 import TestForm from '@/WaterLevel/tester/Form'
 import AssetForm from '@/WaterLevel/COLLAB/AssetManager/Form'
@@ -280,8 +280,8 @@ const App = (): ReactElement => {
             <Route path="/modl" element={<MODLForm />}>
               <Route path="*" element={<MODLForm />} />
             </Route>
-            <Route path="/PAM/makara" element={<MakaraForm />}>
-              <Route path="*" element={<MakaraForm />} />
+            <Route path="/PAM" element={<PAMForm />}>
+              <Route path="*" element={<PAMForm />} />
             </Route>
             <Route path="/water-level-test" element={<TestForm />}>
               <Route path="*" element={<TestForm />} />
