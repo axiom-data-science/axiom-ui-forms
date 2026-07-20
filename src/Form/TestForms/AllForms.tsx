@@ -1,3 +1,4 @@
+import MODLS3Form from ***REMOVED***@/Form/MODL/s3/MODLS3Form***REMOVED***
 import ArrayWithTabs from ***REMOVED***@/Form/TestForms/ArrayWithTabs/ArrayWithTabs***REMOVED***
 import DefaultValueThatIsDependent from ***REMOVED***@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent***REMOVED***
 import ERDDAPForm from ***REMOVED***@/Form/TestForms/ERDDAP/ERDDAPForm***REMOVED***
@@ -92,6 +93,11 @@ const forms = [
     label: ***REMOVED***Nested dependents***REMOVED***,
     path: ***REMOVED***nested-dependents***REMOVED***,
     view: NestedDependents,
+  },
+  {
+    label: ***REMOVED***MODL S3***REMOVED***,
+    path: ***REMOVED***modl-s3***REMOVED***,
+    view: MODLS3Form,
   },
 ]
 
