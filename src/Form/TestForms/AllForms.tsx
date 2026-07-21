@@ -11,6 +11,9 @@ import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListEx
 import ObjectWrapper from '@/Form/TestForms/ObjectWrapper/ObjectWrapper'
 import ObjectWrapperWithSchema from '@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema'
 import OverrideOfSchemaArray from '@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray'
+import PopulateHeadersFromUpload, {
+  PrePopulatedPopulateHeadersFromUpload,
+} from '@/Form/TestForms/PopulateHeadersFromUpload.tsx/PopulateHeadersFromUpload'
 import TabsInPagesWithWrapper from '@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper'
 import { Tooltip } from '@axdspub/axiom-ui-utilities'
 import {
@@ -98,6 +101,16 @@ const forms = [
     label: 'MODL S3',
     path: 'modl-s3',
     view: MODLS3Form,
+  },
+  {
+    label: 'File upload',
+    path: 'file-upload',
+    view: PopulateHeadersFromUpload,
+  },
+  {
+    label: 'File upload (edit)',
+    path: 'file-upload-edit',
+    view: PrePopulatedPopulateHeadersFromUpload,
   },
 ]
 
