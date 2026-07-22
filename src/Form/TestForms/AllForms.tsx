@@ -1,4 +1,5 @@
 import MODLS3Form from '@/Form/MODL/s3/MODLS3Form'
+import MODLS3SchemaForm from '@/Form/MODL/s3/MODLS3SchemaForm'
 import ArrayWithTabs from '@/Form/TestForms/ArrayWithTabs/ArrayWithTabs'
 import DefaultValueThatIsDependent from '@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent'
 import ERDDAPForm from '@/Form/TestForms/ERDDAP/ERDDAPForm'
@@ -98,8 +99,13 @@ const forms = [
     view: NestedDependents,
   },
   {
+    label: 'MODL S3 - schema',
+    path: 'modl-s3-schema-form',
+    view: MODLS3SchemaForm,
+  },
+    {
     label: 'MODL S3',
-    path: 'modl-s3',
+    path: 'modl-s3-form',
     view: MODLS3Form,
   },
   {

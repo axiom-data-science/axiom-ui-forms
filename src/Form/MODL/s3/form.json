@@ -1,42 +1,424 @@
 {
-  "id": "modl-s3-form",
-  "label": "S3 Timeseries Dataset Metadata Form",
+  "id": "s3timeseriesconfig",
+  "label": "S3TimeseriesConfig",
+  "settings": {
+    "url_navigable": false
+  },
   "pages": [
     {
-      "id": "setup",
-      "label": "Setup",
+        "id": "overview",
+        "label": "Overview",
+        "fields": [
+                {
+                "id": "station",
+                    "label": "Station",
+                    "description": "Station name/timeseries_id",
+                    "required": false,
+                    "type": "text"
+                },
+                {
+                    "id": "location",
+                    "type": "object",
+                    "skip_path": true,
+                    "layout": "grid2",
+                    "fields": [
+                                        {
+                    "id": "latitude",
+                    "label": "Latitude",
+                    "description": "Fixed latitude of the station",
+                    "defaultValue": null,
+                    "required": false,
+                    "type": "number"
+                },
+                {
+                    "id": "longitude",
+                    "label": "Longitude",
+                    "description": "Fixed longitude of the station",
+                    "defaultValue": null,
+                    "required": false,
+                    "type": "number"
+                }
+                    ]
+
+                },
+                
+    {
+      "id": "dataset_type",
+      "label": "Dataset Type",
+      "description": "Dateset type (timeseries or profile)",
+      "defaultValue": "timeseries",
+      "required": false,
+      "type": "select",
+      "options": [
+        {
+          "label": "Timeseries",
+          "value": "timeseries"
+        },
+        {
+          "label": "Profile",
+          "value": "profile"
+        }
+      ]
+    },
+                    {
+                "id": "start_date",
+                "label": "Start Date",
+                "required": false,
+                "type": "date"
+                }
+        ]
+    },
+    {
+      "id": "s3",
+      "label": "S3 data source",
       "fields": [
         {
-          "label": "S3 Source Configuration",
-          "prop": "s3_source",
-          "layout": "grid2"
+          "id": "s3_source",
+          "label": "Configuration for accessing data in S3",
+          "required": false,
+          "type": "object",
+          "fields": [
+            {
+              "id": "bucket",
+              "label": "Bucket",
+              "description": "The S3 bucket name",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "prefix",
+              "label": "Prefix",
+              "description": "The S3 prefix/folder where files are located",
+              "defaultValue": "/",
+              "required": false,
+              "type": "text"
+            }
+          ]
         }
       ]
     },
     {
-      "id": "csv-reader",
+      "id": "data-reader",
       "label": "Data Reader",
       "fields": [
         {
-          "prop": "reader",
-          "label": "CSV Reader Configuration",
-          "layout": "grid2"
+          "id": "reader",
+          "label": "CSV parsing configuration",
+          "description": "Add settings to read CSVs in S3.\n\nPassed through to [pd.read_csv](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html), so see full argument definitions at",
+          "required": false,
+          "type": "object",
+          "layout": "grid2",
+          "fields": [
+            {
+              "id": "sep",
+              "label": "Sep",
+              "description": "CSV delimiter",
+              "defaultValue": null,
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "comment",
+              "label": "Comment",
+              "description": "CSV line comment character",
+              "defaultValue": null,
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "na_values",
+              "label": "NA Values",
+              "defaultValue": "None",
+              "required": false,
+              "type": "text"
+            }
+          ]
         },
+            {
+      "id": "file_pattern",
+      "label": "Source file name pattern",
+      "required": false,
+      "type": "object",
+      "fields": [
         {
-          "prop": "variable_converter"
+          "id": "day_pattern",
+          "label": "Day Pattern",
+          "description": "\nGlob pattern for daily files.\nThe `partition_date` is available for formatting\n",
+          "defaultValue": null,
+          "required": false,
+          "type": "text"
         }
+      ]
+    }
       ]
     },
     {
-      "id": "variable-mapping",
-      "label": "Variable Mapping",
+        "id": "globals",
+        "label": "Global Attributes",
+        "fields": [
+            {
+                "id": "global_attributes",
+                "label": "Global Attributes",
+                "description": "Global attributes to add to the NetCDF file",
+                "required": false,
+                "type": "object",
+                "multiple": true,
+                "fields": [
+                    {
+                        "id": "attribute",
+                        "label": "Attribute",
+                        "type": "text"
+                    },
+                    {
+                        "id": "value",
+                        "label": "Value",
+                        "type": "text"
+                    }
+                ]
+            },
+            {
+                "id": "additional_attributes_file",
+                "label": "Additional Attributes File",
+                "description": "Path to the file that defines additional attributes for source",
+                "defaultValue": null,
+                "required": false,
+                "type": "text"
+            }
+        ]
+
+    },
+    {
+        "id": "variables",
+        "label": "Variables",
+        "fields": [
+            {
+                "id": "source_time_var",
+                "label": "Source Time Var",
+                "defaultValue": "datetime",
+                "required": false,
+                "type": "text"
+            },
+            {
+                "id": "variable_mappings",
+                "label": "Variable Mappings",
+                "description": "Configure a single variable mapping",
+                "required": false,
+                "type": "object",
+                "fields": [
+                    {
+                        "id": "output",
+                        "label": "Output",
+                        "description": "The output variable name in the dataset",
+                        "required": false,
+                        "type": "text"
+                    },
+                    {
+                        "id": "source",
+                        "label": "Source",
+                        "description": "The source variable name in the input data",
+                        "required": false,
+                        "type": "text"
+                    }
+                ],
+                "multiple": true
+            }
+        ]
+    },
+    {
+        "id": "conversions",
+        "label": "Conversions",
+        "fields": [
+                {
+      "id": "variable_converter",
+      "label": "Variable converter",
+      "required": false,
+      "type": "object",
+      
       "fields": [
         {
-          "prop": "variable_mappings",
-          "label": "Variable Mappings",
-          "layout": "grid2"
+          "id": "split_operator",
+          "label": "Split Operator",
+          "description": "Takes the source variable, splits it on the separator and  maps the resulting array to new variables",
+          "required": false,
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid2",
+          "fields": [
+            {
+              "id": "source_variable",
+              "label": "Source Variable",
+              "description": "The source variable to split into multiple columns",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "sep",
+              "label": "Sep",
+              "description": "The separator",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "col_data_type",
+              "label": "Col Data Type",
+              "description": "The data type of the new variables",
+              "defaultValue": "float",
+              "required": false,
+              "type": "select",
+              "options": [
+                {
+                    "label": "String",
+                    "value": "string"
+                },
+                {
+                    "label": "Integer",
+                    "value": "int"
+                },
+                {
+                    "label": "Float",
+                    "value": "float"
+                }
+              ],
+                                  "settings":{
+                        "descriptionPresentation": "tooltip"
+                    }
+            },
+            {
+              "id": "converter_type",
+              "label": "Converter Type",
+              "description": "The type of converter to use",
+              "defaultValue": "split",
+              "required": false,
+              "type": "text",
+            "settings":{
+                        "descriptionPresentation": "tooltip"
+                    }
+              
+            }
+          ]
+        },
+        {
+              "id": "output_variables",
+              "label": "Output Variables",
+              "description": "Mapping of index number to output variable.",
+              "required": false,
+              "type": "object",
+              "layout": "grid2",
+              "multiple": true,
+              "fields": [
+                {
+                    "id": "index",
+                    "label": "Index",
+                    "description": "The index of the split array to map to the output variable",
+                    "required": false,
+                    "type": "number",
+                    "settings":{
+                        "descriptionPresentation": "tooltip"
+                    }
+                },
+                {
+                    "id": "output_variable",
+                    "label": "Output Variable",
+                    "description": "The output variable name in the dataset",
+                    "required": false,
+                    "type": "text",
+                    "settings":{
+                        "descriptionPresentation": "tooltip"
+                    }
+                }
+              ]
+            },
+        {
+          "id": "drop_columns",
+          "label": "DropColumns",
+          "required": false,
+          "type": "object",
+          "fields": [
+            {
+              "id": "converter_type",
+              "label": "Converter Type",
+              "defaultValue": "drop",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "column_names",
+              "label": "Column names",
+              "required": false,
+              "type": "text",
+              "description": "Columns to drop from the dataset",
+              "multiple": true
+            }
+          ],
+          "skip_path": true
+        },
+        {
+          "id": "profile_converter",
+          "label": "Profile Converter",
+          "required": false,
+          "type": "object",
+          "fields": [
+            {
+              "id": "profile_data",
+              "label": "Profile Depth Mappings",
+              "required": false,
+              "type": "object",
+              "fields": [
+                {
+                  "id": "depth",
+                  "label": "Depth",
+                  "description": "Optional- fixed depth for the mapping.",
+                  "defaultValue": null,
+                  "required": false,
+                  "type": "number"
+                },
+                {
+                  "id": "mappings",
+                  "label": "Mappings",
+                  "description": "Maps input variables to output variables at the current depth ",
+                  "required": false,
+                  "type": "object",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                        "id": "input_variable",
+                        "label": "Input Variable",
+                        "description": "The input variable name in the dataset",
+                        "required": false,
+                        "type": "text",
+                        "settings": {
+                            "descriptionPresentation": "tooltip"
+                        }
+                    },
+                    {
+                        "id": "output_variable",
+                        "label": "Output Variable",
+                        "description": "The output variable name in the dataset",
+                        "required": false,
+                        "type": "text",
+                        "settings": {
+                            "descriptionPresentation": "tooltip"
+                        }
+                    }
+                  ]
+                }
+              ],
+              "multiple": true
+            },
+            {
+              "id": "converter_type",
+              "label": "Converter Type",
+              "defaultValue": "profile",
+              "required": false,
+              "type": "text"
+            }
+          ],
+          "skip_path": true
         }
-      ]
+      ],
+      "multiple": true
+    }
+        ]
     }
   ]
 }
