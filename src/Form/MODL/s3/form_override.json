@@ -1,0 +1,61 @@
+{
+  "id": "modl-s3-form",
+  "label": "S3 Timeseries Dataset Metadata Form",
+  "pages": [
+    {
+      "id": "setup",
+      "label": "Setup",
+      "fields": [
+        {
+          "label": "S3 Source Configuration",
+          "prop": "s3_source",
+          "layout": "grid2"
+        }
+      ]
+    },
+    {
+      "id": "csv-reader",
+      "label": "Data Reader",
+      "fields": [
+        {
+          "prop": "reader",
+          "label": "CSV Reader Configuration",
+          "layout": "grid2"
+        },
+        {
+          "prop": "variable_converter"
+        }
+      ]
+    },
+    {
+      "id": "global-attributes",
+      "label": "Global Attributes",
+      "fields": [
+        {
+          "prop": "attributes.global_attributes",
+          "layout": "grid2"
+        }
+      ]
+    },
+    {
+      "id": "variable-mapping",
+      "label": "Variable Mapping",
+      "fields": [
+        {"prop": "source_time_var"},
+        {
+          "prop": "variable_mappings",
+          "label": "Variable Mappings",
+          "description": "",
+          "layout": "grid2"
+        }
+      ]
+    },
+    {
+      "id": "conversions",
+      "label": "Conversions",
+      "fields": [
+        {"prop": "variable_converter"}
+      ]
+    }
+  ]
+}

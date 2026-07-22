@@ -4,7 +4,6 @@
     "VarMap": {
       "type": "object",
       "title": "VarMap",
-      "required": ["source", "output"],
       "properties": {
         "output": {
           "type": "string",
@@ -46,7 +45,6 @@
     "DropColumns": {
       "type": "object",
       "title": "DropColumns",
-      "required": ["column_names"],
       "properties": {
         "column_names": {
           "type": "array",
@@ -77,10 +75,21 @@
           }
         },
         "global_attributes": {
-          "type": "object",
+          "type": "array",
           "title": "Global Attributes",
           "description": "Global attributes to add to the NetCDF file",
-          "additionalProperties": true
+          "items": {
+            "type": "object",
+            "properties": {
+              "attribute": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "additionalProperties": true
+            }
+          }
         },
         "additional_attributes_file": {
           "type": "string",
@@ -94,7 +103,6 @@
     "SplitOperator": {
       "type": "object",
       "title": "SplitOperator",
-      "required": ["sep", "output_variables", "source_variable"],
       "properties": {
         "sep": {
           "type": "string",
@@ -119,11 +127,19 @@
           "description": "The source variable to split into multiple columns"
         },
         "output_variables": {
-          "type": "object",
+          "type": "array",
           "title": "Output Variables",
           "description": "Mapping of index number to output variable.",
-          "additionalProperties": {
-            "type": "string"
+          "items":{
+            "index": {
+              "type": "number"
+            },
+            "output_variable": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         }
       },
@@ -132,7 +148,6 @@
     "S3SourceConfig": {
       "type": "object",
       "title": "S3SourceConfig",
-      "required": ["bucket"],
       "properties": {
         "bucket": {
           "type": "string",
@@ -189,7 +204,6 @@
     "ProfileConverter": {
       "type": "object",
       "title": "ProfileConverter",
-      "required": ["profile_data"],
       "properties": {
         "profile_data": {
           "type": "array",
@@ -210,7 +224,6 @@
     "ProfileDepthMappings": {
       "type": "object",
       "title": "ProfileDepthMappings",
-      "required": ["mappings"],
       "properties": {
         "depth": {
           "type": "number",
@@ -230,7 +243,7 @@
     }
   },
   "title": "S3TimeseriesConfig",
-  "required": ["start_date", "reader", "file_pattern", "station"],
+  "required": ["start_date", "station"],
   "properties": {
     "reader": {
       "$ref": "#/$defs/PandasCSVReader"

@@ -1,23 +1,13 @@
-import FormWithEditorOverlay from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
+import { FormWithEditorOverlay } from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
 import { ReactElement, useState } from ***REMOVED***react***REMOVED***
-import schema from ***REMOVED***./schema.json***REMOVED***
-import fieldOverrides from ***REMOVED***./field_overrides.json***REMOVED***
-import formOverride from ***REMOVED***./form.json***REMOVED***
-import { JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import { IFormFieldOverride, IFormOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import form from ***REMOVED***./form.json***REMOVED***
+import { IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+
 
 const MODLForm = (): ReactElement => {
-  const schemaState = useState<JSONSchema6 | undefined>(schema as JSONSchema6)
-  const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
-  const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
-  return (
-    <FormWithEditorOverlay
-      label={***REMOVED***MODL Form***REMOVED***}
-      schemaState={schemaState}
-      fieldOverrideState={fieldOverrideState}
-      formOverrideState={formOverrideState}
-    />
-  )
+  const formState = useState<IForm | undefined>(form as IForm)
+  return <FormWithEditorOverlay formState={formState} />
+  
 }
 
 export default MODLForm
