@@ -100,6 +100,12 @@ export const FieldDescriptionTooltip = ({
   field: IFormField
   disabled?: boolean
 }): ReactElement => {
+
+  const hasDescription = 
+  field.description !== undefined && 
+  field.description !== null && 
+  field.description !== ***REMOVED******REMOVED***
+
   const hasLongDescription =
     field.long_description !== undefined &&
     field.long_description !== null &&
@@ -107,7 +113,7 @@ export const FieldDescriptionTooltip = ({
   const [showModal, setShowModal] = useState(false)
   return (
     <>
-      {field.description !== undefined || hasLongDescription ? (
+      {(hasDescription) || hasLongDescription ? (
         <span
           onClick={() => {
             if (hasLongDescription) {
