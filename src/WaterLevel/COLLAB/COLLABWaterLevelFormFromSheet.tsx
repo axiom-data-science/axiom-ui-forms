@@ -6,8 +6,13 @@ import FormWithEditorOverlay from '@/Form/FormWithEditorOverlay'
 import fieldOverrides from './collabFieldOverrides.json'
 import formOverride from './collabFormOverrides.json'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-import { getCollabSchema, getFormSections } from '@/WaterLevel/COLLAB/helpers'
+import { getCollabSchema, getFormGroupings, getFormSections } from '@/WaterLevel/COLLAB/helpers'
 import { ViewWithLoader } from '@axdspub/axiom-ui-utilities'
+import FileUpload from '@/Form/TestForms/PopulateHeadersFromUpload.tsx/FileUpload'
+
+const inputOverrides = {
+  'custom:file_upload': FileUpload
+}
 
 
 const CollabWatterLevelFormSheet = (
@@ -31,14 +36,37 @@ const CollabWatterLevelFormSheet = (
     <FormWithEditorOverlay
       label="Water Level Form (COLLAB schema): from spreadsheet"
       schemaState={schemaState}
-      fieldOverrideState={fieldOverrideState} // Don't allow overrides for this one since it's from the sheet
-      formOverrideState={formOverrideState} // Don't allow overrides for this one since it's from the sheet
+      fieldOverrideState={fieldOverrideState}
+      formOverrideState={formOverrideState} 
+      inputOverrides={inputOverrides}  
     />
   )
 }
 
+const CollabedWatterLevelFormSheetSchemaOnly = (
+  {
+    schema
+  }: {
+    schema: JSONSchema6
+  }
+): ReactElement => {
+  const schemaState = useState<JSONSchema6 | undefined>(schema)
+  const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
+  const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
+  return (
+    <FormWithEditorOverlay
+      label="Water Level Form (COLLAB schema): from spreadsheet"
+      schemaState={schemaState}
+      fieldOverrideState={fieldOverrideState} 
+      formOverrideState={formOverrideState} 
+      inputOverrides={inputOverrides}
+    />
+  )
 
-const CollabWatterLevelFormSheetLoader = (): ReactElement => {
+}
+
+
+const CollabWatterLevelFormSheetLoader = ({useSchemaOnly}: {useSchemaOnly?: boolean}): ReactElement => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['collab-metadata-schema'],
     queryFn: async () => {
@@ -51,19 +79,24 @@ const CollabWatterLevelFormSheetLoader = (): ReactElement => {
   return (
     <ViewWithLoader isLoading={isLoading} error={error} data={data}>
       {
-        data !== undefined && <CollabWatterLevelFormSheet schema={data.schema} formSectionOverrides={data.formSectionOverrides} />
+        data !== undefined && (
+          useSchemaOnly
+            ? <CollabedWatterLevelFormSheetSchemaOnly schema={data.schema} />
+            : <CollabWatterLevelFormSheet schema={data.schema} formSectionOverrides={data.formSectionOverrides} />
+        )
       }
-    </ViewWithLoader >
+    </ViewWithLoader>
 
   )
 }
 
+
 const queryClient = new QueryClient()
 
-export default (): ReactElement => {
+export default ({useSchemaOnly}: {useSchemaOnly?: boolean}): ReactElement => {
   return (
     <QueryClientProvider client={queryClient}>
-      <CollabWatterLevelFormSheetLoader />
+      <CollabWatterLevelFormSheetLoader useSchemaOnly={useSchemaOnly} />
     </QueryClientProvider>
   )
 }

@@ -259,6 +259,9 @@ const App = (): ReactElement => {
             <Route path="/water-level-collab-sheet" element={<COLLABWaterLevelFormSheet />}>
               <Route path="*" element={<COLLABWaterLevelFormSheet />} />
             </Route>
+            <Route path="/water-level-collab-sheet-so" element={<COLLABWaterLevelFormSheet useSchemaOnly={true} />}>
+              <Route path="*" element={<COLLABWaterLevelFormSheet useSchemaOnly={true} />} />
+            </Route>
             <Route path="/water-level-collab-dev" element={<COLLABWaterLevelFormDev />}>
               <Route path="*" element={<COLLABWaterLevelFormDev />} />
             </Route>
