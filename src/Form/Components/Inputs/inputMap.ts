@@ -14,6 +14,7 @@ import DateInput from '@/Form/Components/Inputs/Date'
 import TimeInput from '@/Form/Components/Inputs/Time'
 import ConstantInput from '@/Form/Components/Inputs/Constant'
 import OneOfInput from '@/Form/Components/Inputs/OneOfInput'
+import StateSelectorInput from '@/Form/Components/Inputs/StateSelectorInput'
 
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
@@ -32,6 +33,7 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   date: DateInput,
   time: TimeInput,
   constant: ConstantInput,
+  stateSelector: StateSelectorInput
 }
 
 export default inputMap
