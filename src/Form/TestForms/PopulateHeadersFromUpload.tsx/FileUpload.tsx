@@ -1,8 +1,83 @@
 import { parseCSV, type ParsedCSV } from './csvParser'
 import { CloudUpload, File, X } from 'lucide-react'
 import { useState, useRef, type ReactElement } from 'react'
-import { utils, ViewWithLoader } from '@axdspub/axiom-ui-utilities'
+import { Loader, Table, Tooltip, utils, ViewWithLoader } from '@axdspub/axiom-ui-utilities'
 import { IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+
+const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | null }) => {
+  if(!parsedData) {
+    return <Loader size='xs' className='align-left' />
+  }
+  const maxRows = 500
+  return (
+    <>
+    <div className='flex flex-col relative max-h-100 w-full overflow-auto'>
+    <Table
+      columns={parsedData.headers.map((h) => ({ 
+        id: h.key, 
+        label:h.key.length > 20
+            ? <Tooltip content={h.key} dark={true}>
+                <span className='truncate max-w-[50vw] inline-block'>{h.key.slice(0,20)}...</span>
+              </Tooltip>
+            : h.key,
+        accessor: (row: Record<string, any>) => {
+          const val = row[h.key]
+          return val.length > 20
+            ? <Tooltip content={val} dark={true}>
+                <span className='truncate max-w-[50vw] inline-block'>{val.slice(0,20)}...</span>
+              </Tooltip>
+            : val
+        },
+        cellClassName: 'text-xs',
+        headerClassName: ''
+      }))}
+      data={parsedData.data.slice(0, maxRows)}
+      rowClassName='event:bg-slate-100 odd:bg-slate-50 hover:bg-slate-200'
+      className="table-auto mt-2 max-h-100 overflow-y-auto rounded-md shadow-lg"
+    />
+</div>
+        {
+      parsedData.data.length > maxRows && (
+        <p className="text-sm text-gray-500 mt-2">
+          Showing first {maxRows} rows of {parsedData.data.length} total rows in {file.name}
+        </p>
+      )
+    }
+    </>
+  )
+}
+
+
+const FileUploadPreview = ({ file, csvData }: { file: File, csvData: ParsedCSV | null }) => {
+  return (
+    <>
+    {file.type}
+      {
+        file.type.match(/^image/) ? (
+          <img
+            src={URL.createObjectURL(file)}
+            alt="Uploaded file preview"
+            className="mt-2 max-h-100 rounded-md shadow-lg"
+          />
+        ) : file.type.match(/^video/) ? (
+          <video
+            src={URL.createObjectURL(file)}
+            controls
+            className="mt-2 max-h-100 rounded-md shadow-lg"
+          />
+        ) : file.type.match(/^audio/) ? (
+          <audio
+            src={URL.createObjectURL(file)}
+            controls
+            className="mt-2 max-h-100 rounded-md"
+          />
+        ) : file.type.match(/csv/) ?  (
+          <CSVPreview file={file} parsedData={csvData} />
+        ) : null
+      }
+    </>
+  )
+}
 
 const FileUpload = ({
   field,
@@ -23,10 +98,19 @@ const FileUpload = ({
   )
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [csvData, setCsvData] = useState<ParsedCSV | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const settingsAcceptedFileTypes = (field.settings as { acceptedFileTypes?: string[] | string })?.acceptedFileTypes
+  const settingsAcceptedFileTypesArray = Array.isArray(settingsAcceptedFileTypes)
+    ? settingsAcceptedFileTypes
+    : settingsAcceptedFileTypes
+      ? [settingsAcceptedFileTypes]
+      : undefined
+  const acceptFileTypeToUse = settingsAcceptedFileTypesArray ?? acceptFileTypes
 
   const onUpload = async (f?: File | null) => {
     const _file = f ?? file
+    setCsvData(null)
     if (!_file) return
     setUploading(true)
     try {
@@ -37,6 +121,7 @@ const FileUpload = ({
         const text = event.target?.result
         if (typeof text === 'string') {
           const data = parseCSV(text)
+          setCsvData(data)
           if (onFileUploaded) {
             onFileUploaded(text, data)
           }
@@ -82,7 +167,7 @@ const FileUpload = ({
           className="sr-only"
           disabled={file !== null}
           onChange={handleFileChange}
-          accept={acceptFileTypes ? acceptFileTypes.join(', ') : undefined}
+          accept={acceptFileTypeToUse ? acceptFileTypeToUse.join(', ') : undefined}
         />
         {!fileRef && (
           <div
@@ -99,9 +184,10 @@ const FileUpload = ({
           </div>
         )}
         {file && (
+          <>
           <span className="text-sm text-gray-700">
-            <span className="bg-slate-200 p-2 my-2 inline-flex items-center gap-1 rounded-md">
-              <File size={14} /> {file.name}{' '}
+            <span className="bg-slate-200 p-2 my-2 inline-flex items-baseline gap-2 rounded-md">
+              <File size={14} /> {file.name}{' '}{file.size ? <span className='text-slate-500 text-xs border-b border-slate-400 border-dashed'>{(file.size / 1024).toFixed(2)} KB</span> : ''}
             </span>
             {!fileRef && (
               <CloudUpload
@@ -116,6 +202,7 @@ const FileUpload = ({
                 e.preventDefault()
                 setFile(null)
                 setFileRef(null)
+                setCsvData(null)
                 onChange(null)
                 if (fileInputRef.current) {
                   fileInputRef.current.value = ''
@@ -123,11 +210,12 @@ const FileUpload = ({
               }}
             />
           </span>
+          <FileUploadPreview file={file} csvData={csvData} />
+          </>
         )}
       </label>
       {fileRef && (
         <div className="flex flex-row gap-2">
-          <pre>{JSON.stringify(fileRef, null, 2)}</pre>
           {!file && (
             <X
               className="inline-block ml-1 cursor-pointer"
