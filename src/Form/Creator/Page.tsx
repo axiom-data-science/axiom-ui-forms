@@ -16,6 +16,7 @@ import layoutAtom from '@/utils/responsive/layoutState'
 import { Button } from '@axdspub/axiom-ui-utilities'
 import FieldLabel, { FieldLabelText } from '@/Form/Components/FieldLabel'
 import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
+import { WizardNavSmall } from '@/Form/Creator/Wizard'
 
 const PageNav = ({
   sections,
@@ -145,12 +146,19 @@ export interface IPageLayoutProps {
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
   scopedValue?: ICompositeValueType
-  scopedOnChange?: (v: ICompositeValueType) => void
+  scopedOnChange?: (v: ICompositeValueType) => void,
+    SmallNavComponent?: React.FC<{
+      level: number
+      sections?: IFormSection[]
+      sectionStatus: IFormSectionStatus
+      className?: string
+      SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
+    }>
 }
 
 export const ActivePage = ({
   formSection,
-  className = 'flex flex-col gap-2 grow h-full',
+  className = 'flex flex-col gap-2 grow h-full max-w-full',
   level
 }: {
   formSection?: IFormSection
@@ -214,8 +222,10 @@ const PageLayoutContent = ({
   inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
-  className = 'flex flex-row gap-8 grow',
+  SmallNavComponent = WizardNavSmall,
+  className = 'flex flex-row gap-8 grow max-w-full',
   level,
+  SubmitButton,
   scopedValue,
   scopedOnChange
 }: IPageLayoutProps): ReactElement => {
@@ -230,6 +240,7 @@ const PageLayoutContent = ({
   const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
+    <div className='flex flex-col gap-4 grow h-full'>
     <div className={className}>
       <NavComponent
         sections={sections}
@@ -250,6 +261,13 @@ const PageLayoutContent = ({
           level={level}
         />
       )}
+    </div>
+      <SmallNavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+        SubmitButton={SubmitButton}
+      />
     </div>
   )
 }
