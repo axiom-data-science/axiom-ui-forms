@@ -1,898 +1,759 @@
 {
-  "id": "collab-water-level-metadata",
-  "label": "COLLAB Water Level Metadata Form",
-  "description": "Comprehensive water level station metadata collection form",
+  "id": "collab-sheet",
+  "label": "COLLAB Metadata from sheet",
   "pages": [
     {
-      "id": "step1",
-      "label": "Form Preparation",
-      "description": "Basic information about who is completing this form",
+      "id": "overview",
+      "label": "Overview",
       "fields": [
         {
-          "prop": "preparedBy",
-          "type": "text",
-          "required": true
+          "id": "overview1",
+          "label": "",
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "prepared-by"
+            },
+            {
+              "prop": "date-prepared"
+            }
+          ]
         },
         {
-          "prop": "datePrepared",
-          "type": "date",
-          "required": true
+          "prop": "update-or-new-station"
         },
         {
-          "prop": "updateOrNewStation",
-          "type": "radio",
-          "required": true
-        },
-        {
-          "prop": "previousSiteLog",
-          "type": "text",
+          "prop": "previous-site-log",
+          "type": "custom:file_upload",
           "conditions": {
-            "field": "updateOrNewStation",
-            "value": "Update",
-            "operator": "=",
-            "result": "include"
+            "field": "update-or-new-station",
+            "value": "Update"
           }
         },
         {
-          "prop": "modifiedAddedSection",
-          "type": "text",
-          "conditions": {
-            "field": "updateOrNewStation",
-            "value": "Update",
-            "operator": "=",
-            "result": "include"
+          "prop": "reason-for-update"
+        },
+        {
+          "prop": "funding-source"
+        },
+        {
+          "prop": "funding-grant"
+        }
+      ]
+    },
+    {
+      "id": "creator",
+      "label": "Creator",
+      "description": "Party responsible for collecting the data and/or creating the resource",
+      "fields": [
+        {
+          "prop": "creator_name",
+          "label": "Name"
+        },
+        {
+          "prop": "creator_address",
+          "label": "Address",
+          "settings": {
+            "descriptionPresentation": "tooltip"
           }
         },
         {
-          "prop": "reasonForUpdate",
-          "type": "long_text",
-          "conditions": {
-            "field": "updateOrNewStation",
-            "value": "Update",
-            "operator": "=",
-            "result": "include"
-          }
+          "id": "creator1",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "creator_city",
+              "label": "City",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_postalcode",
+              "label": "Postal Code",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_country",
+              "label": "Country",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_state",
+              "label": "State",
+              "type": "stateSelector",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_email",
+              "label": "Email",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_phone",
+              "label": "Phone",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_institution_url",
+              "label": "Institution URL",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_url",
+              "label": "URL",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
+        },
+        {
+          "id": "creator2",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "horizontal",
+          "fields": [
+            {
+              "prop": "creator_institution",
+              "label": "Institution",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_sector",
+              "label": "Sector",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator_type",
+              "label": "Type",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "id": "step2",
-      "label": "Funding Information",
-      "description": "Details about funding source and grants",
+      "id": "custodian",
+      "label": "Contributor: Custodian",
+      "description": "Custodian is party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource",
       "fields": [
         {
-          "prop": "fundingSource",
-          "type": "text",
-          "required": true
+          "prop": "contributor_role:custodian",
+          "description": "",
+          "label": "Name"
         },
         {
-          "prop": "fundingGrant",
-          "type": "text"
-        },
-        {
-          "prop": "deploymentYearOfProposal",
-          "type": "text"
+          "id": "custodian1",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "custodian-telephone-primary",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "label": "Phone"
+            },
+            {
+              "prop": "contributor_email",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "label": "Email"
+            },
+            {
+              "prop": "contributor_url",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "label": "URL"
+            },
+            {
+              "prop": "custodian-affliation-or-organization",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              },
+              "label": "Affiliation or Organization"
+            }
+          ]
         }
       ]
     },
     {
-      "id": "step3",
-      "label": "Operator Contact",
-      "description": "Primary operator point of contact information",
+      "id": "poc_contact",
+      "label": "Community POC",
+      "description": "Name of community contact, if applicable. This information is not reported to ERDDAP. It is only recorded for RA project tracking purposes.",
       "fields": [
         {
-          "prop": "operatorPOC",
-          "type": "text",
-          "required": true
+          "prop": "community-poc-name",
+          "label": "Name",
+          "description": ""
         },
         {
-          "prop": "telephonePrimary",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "email",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "affiliation",
-          "type": "text",
-          "required": true
+          "id": "poc_contact1",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "community-poc-telephone",
+              "label": "Phone",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "community-poc-email",
+              "label": "Email",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "community-poc-affiliation",
+              "label": "Affiliation or Organization",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "id": "step4",
-      "label": "Community Contact",
-      "description": "Community point of contact information",
+      "id": "owner",
+      "label": "Owner",
+      "description": "Party that owns the resource",
       "fields": [
         {
-          "prop": "communityPOCName",
-          "type": "text"
+          "prop": "contributor_name"
         },
         {
-          "prop": "communityPOCTelephone",
-          "type": "text"
-        },
-        {
-          "prop": "communityPOCEmail",
-          "type": "text"
-        },
-        {
-          "prop": "communityPOCAffiliation",
-          "type": "text"
+          "id": "owner1",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "contributor_email",
+              "label": "Email",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "contributor_url",
+              "label": "URL",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "id": "step5",
+      "id": "data-publisher",
+      "label": "Data Publisher",
+      "description": "Party who published the resource",
+      "fields": [
+        {
+          "prop": "contributor_role:publisher",
+          "label": "Name"
+        },
+        {
+          "id": "data-publisher1",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "contributor_name"
+            },
+            {
+              "prop": "contributor_email"
+            },
+            {
+              "prop": "contributor_url"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-processor",
+      "label": "Data Processor",
+      "description": "Party that has processed the data in a manner such that the resource has been modified",
+      "fields": [
+        {
+          "prop": "contributor_role:processor"
+        },
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ]
+    },
+    {
+      "id": "distributor",
+      "label": "Distributor",
+      "fields": [
+        {
+          "prop": "contributor_role:distributor"
+        },
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ]
+    },
+    {
+      "id": "funder",
+      "label": "Funder",
+      "description": "Party providing monetary support for the resource",
+      "fields": [
+        {
+          "prop": "contributor_role:funder"
+        },
+        {
+          "prop": "contributor_name"
+        },
+        {
+          "prop": "contributor_email"
+        },
+        {
+          "prop": "contributor_url"
+        }
+      ]
+    },
+    {
+      "id": "data-management",
       "label": "Data Management",
-      "description": "Data management contact and system information",
       "fields": [
         {
-          "prop": "dataManagementEntity",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "dataManagementPOC",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "dataManagementAffiliation",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "dataManagementTelephone",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "dataManagementEmail",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "erddapLink",
-          "type": "text"
-        },
-        {
-          "prop": "portalLink",
-          "type": "text"
-        },
-        {
-          "prop": "dataProvider",
-          "type": "text"
-        },
-        {
-          "prop": "dataProviderAdditional",
-          "type": "text"
-        },
-        {
-          "prop": "apiLink",
-          "type": "text"
-        },
-        {
-          "prop": "additionalInformationGeneral",
-          "type": "long_text"
+          "prop": "portal-link"
         }
       ]
     },
     {
-      "id": "step6",
+      "id": "platform",
+      "label": "Platform",
+      "fields": [
+        {
+          "prop": "platform"
+        }
+      ]
+    },
+    {
+      "id": "station-information",
       "label": "Station Information",
-      "description": "Basic station location and identification",
       "fields": [
         {
-          "prop": "state",
-          "type": "select",
-          "required": true
+          "prop": "platform_name"
         },
         {
-          "prop": "stationName",
-          "type": "text",
-          "required": true
+          "prop": "station-id"
         },
         {
-          "prop": "stationID",
-          "type": "text",
-          "required": true
+          "prop": "latitude"
         },
         {
-          "prop": "nwsLocationIdentifier",
-          "type": "text"
+          "prop": "longitude"
         },
         {
-          "prop": "isCOOPSStation",
-          "type": "radio",
-          "required": true,
-          "layout": "horizontal"
+          "prop": "horizontal-datum-projection-"
         },
         {
-          "prop": "coopsID",
-          "type": "text",
-          "conditions": {
-            "field": "isCOOPSStation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "wmo_platform_code"
         },
         {
-          "prop": "otherID",
-          "type": "text",
-          "conditions": {
-            "field": "isCOOPSStation",
-            "value": "No",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "is-coops-stsation"
         },
         {
-          "prop": "waterBodySetting",
-          "type": "radio",
-          "required": true
+          "prop": "station-coops-id"
         },
         {
-          "prop": "approximatePosition",
-          "type": "text"
+          "prop": "other-id"
         },
         {
-          "prop": "latitude",
-          "type": "number",
-          "required": true
+          "prop": "water-body-setting"
         },
         {
-          "prop": "longitude",
-          "type": "number",
-          "required": true
+          "prop": "approximate-position"
         },
         {
-          "prop": "datumProjection",
-          "type": "select",
-          "required": true
+          "prop": "additional-information"
         },
         {
-          "prop": "additionalInformationStation",
-          "type": "long_text"
+          "prop": "shef-element-code"
         }
       ]
     },
     {
-      "id": "step7",
+      "id": "sensor-information",
       "label": "Sensor Information",
-      "description": "Water level sensor and instrument details",
+      "description": "Enter one or more sensors. Definitions:  - Platform is the type of asset, and this term is defined with options by ERDDAP. For WL, it is considered a ***REMOVED***station***REMOVED*** platform.   - Station is the physical location of a deployment. For example, West Dock Station.  - Instrument is the large physical instrument that may house individual or smaller components, aka sensors.   - Components are the individual sensors within an instrument. There may be multiple components within a single instrument.  Example two radar gauges within one instrument.  - Discriminant is the serial numbeer of the individual component(s), if applicable, or the instrument itself.",
       "fields": [
         {
-          "prop": "priorCOOPSLocation",
-          "type": "radio",
-          "layout": "horizontal",
-          "conditions": {
-            "field": "isCOOPSStation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "priorLocationLatLong",
-          "type": "text",
-          "conditions": {
-            "field": "priorCOOPSLocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "typeOfCOOPSApprovedStation",
-          "type": "select",
-          "conditions": {
-            "field": "isCOOPSStation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "instrumentBrand",
-          "type": "radio"
-        },
-        {
-          "prop": "sensorType",
-          "type": "radio",
-          "required": true
-        },
-        {
-          "prop": "sensorBrandManufacturer",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "sensorModel",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "sensorSerialNumber",
-          "type": "text",
-          "required": true
-        },
-        {
-          "prop": "realTime"
-        },
-        {
-          "prop": "sampleInterval",
-          "required": true,
-          "type": "radio"
-        },
-        {
-          "prop": "sampleAverageWindow",
-          "required": true,
-          "type": "radio"
-        },
-        {
-          "prop": "mountingStructure",
-          "required": true,
-          "type": "radio"
-        },
-        {
-          "prop": "sensorAccuracy",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "dateInstalled",
-          "type": "date",
-          "required": true
-        },
-        {
-          "prop": "dateRemoved",
-          "type": "date"
+          "prop": "sensors",
+          "type": "object",
+          "multiple": true,
+          "tabs": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "fields": [
+                {
+                  "prop": "prior-wmo-id"
+                },
+                {
+                  "prop": "prior-wmo-coordinates"
+                },
+                {
+                  "prop": "instrument"
+                },
+                {
+                  "prop": "instrument_variable:component"
+                },
+                {
+                  "prop": "instrument_variable:make_model"
+                },
+                {
+                  "prop": "sensor-serial-number"
+                },
+                {
+                  "prop": "is-real-time"
+                },
+                {
+                  "prop": "sample-interval-min"
+                },
+                {
+                  "prop": "sample-average-window-sec"
+                },
+                {
+                  "prop": "mounting-structure"
+                },
+                {
+                  "prop": "geophysical_variable:accuracy"
+                },
+                {
+                  "prop": "time_coverage_start"
+                },
+                {
+                  "prop": "time_coverage_end"
+                },
+                {
+                  "prop": "telemetry-method"
+                },
+                {
+                  "prop": "modem-communication-manufacturer-model"
+                },
+                {
+                  "prop": "serial-number-for-modem"
+                },
+                {
+                  "prop": "date-removed"
+                },
+                {
+                  "prop": "is-station-surveyed"
+                }
+              ]
+            },
+            {
+              "id": "marker-information-and-stamping",
+              "label": "Marker information and stamping",
+              "fields": [
+                {
+                  "prop": "marker-stamping"
+                },
+                {
+                  "prop": "marker-ngs-pid"
+                },
+                {
+                  "prop": "marker-co-ops-vm"
+                },
+                {
+                  "prop": "marker-other-identifier"
+                },
+                {
+                  "prop": "survey-method"
+                },
+                {
+                  "prop": "date-of-most-recent-survey"
+                },
+                {
+                  "prop": "measurement-by-at-most-recent-survey"
+                },
+                {
+                  "prop": "additional-survey-information"
+                },
+                {
+                  "prop": "gnss-rtk-unit"
+                },
+                {
+                  "prop": "processing-software"
+                },
+                {
+                  "prop": "movement-since-last-survey"
+                },
+                {
+                  "prop": "difference-since-last-survey"
+                },
+                {
+                  "prop": "difference-within-5-cm"
+                },
+                {
+                  "prop": "additional-sensor-information"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
-      "id": "step8",
-      "label": "Telemetry Information",
-      "description": "Communication and data transmission details",
+      "id": "station-error-analysis",
+      "label": "Station Error Analysis",
       "fields": [
         {
-          "prop": "telemetryMethod",
-          "required": true
+          "prop": "total-water-level-error-cm"
         },
         {
-          "prop": "modemCommunicationManufacturerModel",
-          "type": "text",
-          "required": true
+          "prop": "sensor-error-cm"
         },
         {
-          "prop": "modemSerialNumber",
-          "type": "text",
-          "required": true
+          "prop": "survey-error-cm"
         },
         {
-          "prop": "modemDateRemoved",
-          "type": "date"
+          "prop": "data-processing-error-cm"
         }
       ]
     },
     {
-      "id": "step9",
-      "label": "Survey Information",
-      "description": "Station survey and benchmark information",
+      "id": "local-tidal-datum-establishment",
+      "label": "Local tidal datum establishment",
       "fields": [
         {
-          "prop": "isStationSurveyed",
-          "type": "radio",
-          "required": true,
-          "layout": "horizontal"
+          "prop": "record-start-date"
         },
         {
-          "prop": "markerStamping",
-          "type": "text",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "record-end-date"
         },
         {
-          "prop": "markerNGSPID",
-          "type": "text",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "computational-tool"
         },
         {
-          "prop": "markerCOOPSVM",
-          "type": "text",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "computation-method"
         },
         {
-          "prop": "markerOtherIdentifier",
-          "type": "text",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "nwlon-control-station"
         },
         {
-          "prop": "surveyMethod",
-          "type": "select",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "control-station-epoch"
         },
         {
-          "prop": "surveyDate",
-          "type": "date",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "datum-type"
         },
         {
-          "prop": "surveyMeasurementBy",
-          "type": "text",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "computation-date"
         },
         {
-          "prop": "orthoHeight",
-          "type": "number",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "stationDatumHeight",
-          "type": "number",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "ellipsoidalHeight",
-          "type": "number",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "sensorOffset",
-          "type": "number",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "gnssRTKUnit",
-          "type": "select",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "processingSoftware",
-          "type": "select",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "hasMovementSinceLastSurvey",
-          "type": "radio",
-          "layout": "horizontal",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "movementDifference",
-          "type": "number",
-          "conditions": {
-            "field": "hasMovementSinceLastSurvey",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "isDifferenceWithin5cm",
-          "type": "radio",
-          "layout": "horizontal",
-          "conditions": {
-            "field": "hasMovementSinceLastSurvey",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "additionalInformationSurvey",
-          "type": "long_text",
-          "conditions": {
-            "field": "isStationSurveyed",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "computed-by"
         }
       ]
     },
     {
-      "id": "step10",
-      "label": "Error Analysis",
-      "description": "Station error analysis measurements",
+      "id": "tidal-datum-offsets-relative-to-station",
+      "label": "Tidal Datum Offsets relative to station",
       "fields": [
         {
-          "prop": "totalWaterLevelError",
-          "type": "number",
-          "required": true
+          "prop": "offset-from-station-datum"
         },
         {
-          "prop": "sensorError",
-          "type": "number",
-          "required": true
+          "prop": "sensor-elevation-on-station-datum"
         },
         {
-          "prop": "surveyError",
-          "type": "number",
-          "required": true
+          "prop": "sensor-elevation-ortho"
         },
         {
-          "prop": "dataProcessingError",
-          "type": "number",
-          "required": true
+          "prop": "sensor-elevation-ellipsoidal"
         },
         {
-          "prop": "datumError",
-          "type": "number",
-          "required": true
+          "prop": "sensor-offset"
+        },
+        {
+          "prop": "navd88-m"
+        },
+        {
+          "prop": "nad83-m"
+        },
+        {
+          "prop": "mhhw-m"
+        },
+        {
+          "prop": "mhw-m"
+        },
+        {
+          "prop": "dtl-m"
+        },
+        {
+          "prop": "mtl-m"
+        },
+        {
+          "prop": "msl-m"
+        },
+        {
+          "prop": "mlw-m"
+        },
+        {
+          "prop": "mllw-m"
+        },
+        {
+          "prop": "gt-m"
+        },
+        {
+          "prop": "mn-m"
+        },
+        {
+          "prop": "dhq-m"
+        },
+        {
+          "prop": "dlq-m"
+        },
+        {
+          "prop": "hwi-hr"
+        },
+        {
+          "prop": "lwi-hr"
+        },
+        {
+          "prop": "igld"
+        },
+        {
+          "prop": "lwd"
         }
       ]
     },
     {
-      "id": "step11",
-      "label": "Tidal Datum Establishment",
-      "description": "Local tidal datum computation information",
-      "fields": [
-        {
-          "prop": "recordStartDate",
-          "type": "date",
-          "required": true
-        },
-        {
-          "prop": "recordEndDate",
-          "type": "date",
-          "required": true
-        },
-        {
-          "prop": "computationalTool",
-          "type": "select",
-          "required": true
-        },
-        {
-          "prop": "computationMethod",
-          "type": "select",
-          "required": true
-        },
-        {
-          "prop": "nwlonControlStation",
-          "type": "text"
-        },
-        {
-          "prop": "controlStationEpoch",
-          "type": "text"
-        },
-        {
-          "prop": "datumType",
-          "type": "select",
-          "required": true
-        },
-        {
-          "prop": "computationDate",
-          "type": "date",
-          "required": true
-        },
-        {
-          "prop": "computedBy",
-          "type": "text",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": "step12",
-      "label": "Tidal Datum Offsets",
-      "description": "Tidal datum offsets relative to station",
-      "fields": [
-        {
-          "prop": "mhhw",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "mhw",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "dtl",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "mtl",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "msl",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "mlw",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "mllw",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "gt",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "mn",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "dhq",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "dlq",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "hwi",
-          "type": "number",
-          "required": true
-        },
-        {
-          "prop": "lwi",
-          "type": "number",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": "step13",
+      "id": "collocation-information",
       "label": "Collocation Information",
-      "description": "Information about co-located instruments",
       "fields": [
         {
-          "prop": "isCollocation",
-          "type": "radio",
-          "required": true,
-          "layout": "horizontal"
+          "prop": "is-collocation"
         },
         {
-          "prop": "collocationInstrumentType",
-          "type": "text",
-          "conditions": {
-            "field": "isCollocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "collocationManufacturerModel",
-          "type": "text",
-          "conditions": {
-            "field": "isCollocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "collocationSerialNumber",
-          "type": "text",
-          "conditions": {
-            "field": "isCollocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "collocationDateInstalled",
-          "type": "date",
-          "conditions": {
-            "field": "isCollocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "collocationDateRemoved",
-          "type": "date",
-          "conditions": {
-            "field": "isCollocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
-        },
-        {
-          "prop": "collocationAdditionalInformation",
-          "type": "long_text",
-          "conditions": {
-            "field": "isCollocation",
-            "value": "Yes",
-            "operator": "=",
-            "result": "include"
-          }
+          "prop": "additional-colocation-information"
         }
       ]
     },
     {
-      "id": "step14",
-      "label": "Additional Information",
-      "description": "Environmental compliance and notes",
+      "id": "ecc",
+      "label": "ECC",
       "fields": [
         {
-          "prop": "eccURL",
-          "type": "text"
-        },
-        {
-          "prop": "wasNepaCompleted",
-          "type": "radio",
-          "layout": "horizontal"
-        },
-        {
-          "prop": "notes",
-          "type": "long_text"
+          "prop": "ecc-url"
         }
       ]
     },
     {
-      "id": "step15",
-      "label": "Photos & Documentation",
-      "description": "Upload or link to station photos and documentation",
+      "id": "photos",
+      "label": "Photos",
       "fields": [
         {
-          "prop": "photoStation",
-          "type": "text"
+          "prop": "sensor-survey-reference-point"
         },
         {
-          "prop": "photoSensor",
-          "type": "text"
+          "prop": "benchmarks-photo"
         },
         {
-          "prop": "photoSensorManagement",
-          "type": "text"
+          "prop": "dcp"
         },
         {
-          "prop": "photoSensorSurveyReferencePoint",
-          "type": "text"
+          "prop": "underwater-components"
         },
         {
-          "prop": "photoTwoSurveyedBenchmarks",
-          "type": "text"
-        },
-        {
-          "prop": "photoDCP",
-          "type": "text"
-        },
-        {
-          "prop": "photoUnderwaterComponents",
-          "type": "text"
-        },
-        {
-          "prop": "photoVicinity",
-          "type": "text"
-        },
-        {
-          "prop": "photoOtherAttachments",
-          "type": "text"
-        },
-        {
-          "prop": "benchmarkDiagram",
-          "type": "text"
-        },
-        {
-          "prop": "sensorTestWorksheet",
-          "type": "text"
-        },
-        {
-          "prop": "sensorElevationDrawing",
-          "type": "text"
-        },
-        {
-          "prop": "benchmarkDescriptions",
-          "type": "text"
-        },
-        {
-          "prop": "stationToReachStatement",
-          "type": "text"
+          "prop": "vicinity"
         }
       ]
     },
     {
-      "id": "step16",
-      "label": "Review & Submit",
-      "description": "Review form and add final information",
+      "id": "attachments",
+      "label": "Attachments",
       "fields": [
         {
-          "prop": "disclaimer",
-          "type": "long_text"
+          "prop": "bench-mark-descriptions"
         },
         {
-          "prop": "disseminationFlag",
-          "type": "text"
+          "prop": "bench-mark-diagram"
+        },
+        {
+          "prop": "sensor-test-worksheet"
+        },
+        {
+          "prop": "sensor-elevation-drawing"
+        },
+        {
+          "prop": "license"
+        },
+        {
+          "prop": "dissemination-flag"
+        }
+      ]
+    },
+    {
+      "id": "qartod-fields",
+      "label": "QARTOD fields",
+      "fields": [
+        {
+          "prop": "gross-range"
+        },
+        {
+          "prop": "spike"
+        },
+        {
+          "prop": "flatline"
+        },
+        {
+          "prop": "rate-of-change"
+        },
+        {
+          "prop": "aggregate"
         }
       ]
     }
-  ],
-  "settings": {
-    "show_progress": true,
-    "url_navigable": true
-  }
+  ]
 }

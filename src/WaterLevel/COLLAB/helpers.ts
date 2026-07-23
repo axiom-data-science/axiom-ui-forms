@@ -9,6 +9,7 @@ const COLLAB_ROOT =
   ***REMOVED***https://docs.google.com/spreadsheets/d/e/2PACX-1vRcD83QFtU6UeW5KwMt0qDYWtLoDWzRbw1dKZI5ntOhevndBL1CyxtSvBXgg7vREdmVCvDgnw4fbSrq/pub?output=tsv***REMOVED***
 const METADATA_SHEET = `${COLLAB_ROOT}&gid=0`
 const FORM_SECTIONS_SHEET = `${COLLAB_ROOT}&gid=1566055209`
+const FORM_GROUPINGS_SHEET = `${COLLAB_ROOT}&gid=68809768`
 
 export const loadSheet = async <T>(url: string, emptyHeaderRows: number = 0): Promise<T[]> => {
   const j = await (await fetch(url)).text()
@@ -46,10 +47,24 @@ export const getCollabSchema = async (): Promise<JSONSchema6> => {
 export const getFormSections = async (): Promise<IFormSectionOverride[]> => {
   const sections = await loadSheet<IMetadataFormSection>(FORM_SECTIONS_SHEET)
   const fields = await getMetadataFields()
+  const groupings = await getFormGroupings()
   return parseFormSections(
     fields.filter((f) => f.id && !f.remove_field),
-    sections
+    sections,
+    groupings
   )
+}
+
+export interface IFormGrouping {
+  id: string
+  label?: string
+  description?: string | null
+  layout?: IFormSectionOverride[***REMOVED***layout***REMOVED***]
+}
+
+export const getFormGroupings = async (): Promise<IFormGrouping[]> => {
+  const groupings = await loadSheet<IMetadataFormSection>(FORM_GROUPINGS_SHEET)
+  return groupings.filter(g=>g.id && g.id.trim() !== ***REMOVED******REMOVED***) as IFormGrouping[]
 }
 
 const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 => {
@@ -62,7 +77,9 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
     f.option6,
     f.option7,
     f.option8,
-  ].filter((o) => o !== null)
+  ].filter((o) => o !== null && o !== ***REMOVED******REMOVED***)
+  .map((o) => o?.split(***REMOVED***; ***REMOVED***))
+  .flat(Infinity) as string[]
   // const optionsToUse = options.length > 0 ? options.filter(o => o !== ***REMOVED***Other***REMOVED***) : []
   // const optionsIncludesOther = options.some(o => o && o.toLowerCase() === ***REMOVED***other***REMOVED***) || (f.response_type === "Multichoice with ***REMOVED***other***REMOVED*** option" && optionsToUse.length > 0)
   // const useAnyOf = optionsIncludesOther && options.length > 0
@@ -220,7 +237,8 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
 
 export const parseFormSections = (
   fields: IMetadataField[],
-  sections: IMetadataFormSection[]
+  sections: IMetadataFormSection[],
+  groupings: IFormGrouping[]
 ): IFormSectionOverride[] => {
   const fieldsBySection: Record<string, IMetadataField[]> = {}
   const sectionsByLabel = Object.fromEntries(sections.map((s) => [s.label, s]))
@@ -232,6 +250,7 @@ export const parseFormSections = (
     }
     fieldsBySection[sectionId].push(f)
   })
+  const groupingsById = Object.fromEntries(groupings.map((g) => [g.id, g]))
 
   return sections
     .sort((a, b) => a.order - b.order)
@@ -246,6 +265,7 @@ export const parseFormSections = (
       if (hasTabs) {
         const fieldsBySecondarySection: Record<string, IMetadataField[]> = {}
         const fieldsByPath: Record<string, IMetadataField[]> = {}
+        const fieldsByGrouping: Record<string, IMetadataField[]> = {}
         fields.forEach((f) => {
           const secondarySectionId =
             sectionsByLabel[f.secondary_form_section ?? ***REMOVED***Other***REMOVED***]?.id ??
@@ -259,6 +279,10 @@ export const parseFormSections = (
             fieldsByPath[f.path ?? ***REMOVED******REMOVED***] = []
           }
           fieldsByPath[f.path ?? ***REMOVED******REMOVED***].push(f)
+          if(f.field_grouping && groupingsById[f.field_grouping]) {
+            fieldsByGrouping[f.field_grouping] = fieldsByGrouping[f.field_grouping] ?? []
+            fieldsByGrouping[f.field_grouping].push(f)
+          }
         })
 
         const tabs = Object.keys(fieldsBySecondarySection)

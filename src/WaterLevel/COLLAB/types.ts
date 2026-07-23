@@ -4,6 +4,7 @@ export interface IMetadataField {
   is_erddap: boolean
   remove_field: boolean
   path: string | null
+  field_grouping: string | null
   form_section: string
   secondary_form_section?: string | null
   description: string | null
