@@ -521,7 +521,7 @@ const mergeFormField = ({
     ...mergeObjects<IFormFieldOverride | IFormField>([
       field ? { ...field, destPath: path } : ({ destPath: path } as any),
       formFieldOverrides,
-      (fieldOverride ?? {}) as IFormFieldOverride,
+      (fieldOverride ?? {}),
     ]),
   }
 
@@ -687,8 +687,10 @@ const mergeFormFields = ({
   const schemaFieldMap = buildFieldMapFromForm(schemaForm)
 
   return (fieldOverrides ?? []).map((fieldOverride) => {
-    const normalizedProp = fieldOverride.prop.replace(/\[\]/g, ***REMOVED******REMOVED***)
-    const schemaField = schemaFieldMap[fieldOverride.prop] ?? schemaFieldMap[normalizedProp]
+    const normalizedProp = fieldOverride.prop?.replace(/\[\]/g, ***REMOVED******REMOVED***)
+    const schemaField = fieldOverride.prop
+      ? schemaFieldMap[fieldOverride.prop] ?? (normalizedProp ? schemaFieldMap[normalizedProp] : undefined)
+      : undefined
     return mergeFormField({
       field: schemaField,
       fieldOverride,
