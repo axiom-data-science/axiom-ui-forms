@@ -399,7 +399,7 @@ export type IObjectFormFieldOverride = Omit<
   'fields' | 'tabs' | 'pages' | 'wizard_steps'
 > & {
   fields?: IFormFieldOverride[]
-  prop: string
+  prop?: string
   tabs?: IFormLayoutTabOverride[]
   pages?: IPageOverride[]
   wizard_steps?: IWizardStepOverride[]
