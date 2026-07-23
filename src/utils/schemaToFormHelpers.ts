@@ -290,10 +290,15 @@ const schemaToFormField = ({
   ])
   const label = makeLabel([schemaField.title, property])
   const schemaRequired = schema.required ?? []
+  const exampleString = schemaField.examples && Array.isArray(schemaField.examples) && schemaField.examples.length > 0
+      ? `Examples:\n\n - ${schemaField.examples.map((e) => String(e)).join(***REMOVED***\n - ***REMOVED***)}`
+      : undefined
+  const hasDescription = schemaField.description !== undefined && schemaField.description !== null && String(schemaField.description).trim().length > 0
   const baseFieldProps = {
     id,
     label,
-    description: schemaField.description,
+    description: hasDescription ? schemaField.description : exampleString,
+    long_description: hasDescription ? exampleString : undefined,
     defaultValue:
       schemaField.default !== undefined ? (schemaField.default as IValueType) : undefined,
     required: schemaRequired.includes(property) ?? false,
