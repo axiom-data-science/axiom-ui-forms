@@ -8,7 +8,7 @@ const SingleSelectInput = ({
   onChange,
   value,
   disabled,
-  className = 'w-auto',
+  className,
 }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ''
 
