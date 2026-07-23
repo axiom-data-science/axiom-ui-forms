@@ -202,7 +202,7 @@ interface IMultiSelectableInput extends ISelectableInput {
 }
 
 export interface ISelectField extends ISingleSelectableInput {
-  type: 'select'
+  type: 'select' | 'stateSelector'
 }
 
 export interface IRadioField extends ISingleSelectableInput {
