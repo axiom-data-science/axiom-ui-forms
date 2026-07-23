@@ -16,6 +16,7 @@ import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import FieldLabel, { FieldLabelText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { ScopedActiveSection } from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
+import { WizardNavSmall } from ***REMOVED***@/Form/Creator/Wizard***REMOVED***
 
 const PageNav = ({
   sections,
@@ -145,12 +146,19 @@ export interface IPageLayoutProps {
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
   scopedValue?: ICompositeValueType
-  scopedOnChange?: (v: ICompositeValueType) => void
+  scopedOnChange?: (v: ICompositeValueType) => void,
+    SmallNavComponent?: React.FC<{
+      level: number
+      sections?: IFormSection[]
+      sectionStatus: IFormSectionStatus
+      className?: string
+      SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
+    }>
 }
 
 export const ActivePage = ({
   formSection,
-  className = ***REMOVED***flex flex-col gap-2 grow h-full***REMOVED***,
+  className = ***REMOVED***flex flex-col gap-2 grow h-full max-w-full***REMOVED***,
   level
 }: {
   formSection?: IFormSection
@@ -214,8 +222,10 @@ const PageLayoutContent = ({
   inputOverrides,
   ContentComponent = ActivePage,
   NavComponent = PageNav,
-  className = ***REMOVED***flex flex-row gap-8 grow***REMOVED***,
+  SmallNavComponent = WizardNavSmall,
+  className = ***REMOVED***flex flex-row gap-8 grow max-w-full***REMOVED***,
   level,
+  SubmitButton,
   scopedValue,
   scopedOnChange
 }: IPageLayoutProps): ReactElement => {
@@ -230,6 +240,7 @@ const PageLayoutContent = ({
   const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
+    <div className=***REMOVED***flex flex-col gap-4 grow h-full***REMOVED***>
     <div className={className}>
       <NavComponent
         sections={sections}
@@ -250,6 +261,13 @@ const PageLayoutContent = ({
           level={level}
         />
       )}
+    </div>
+      <SmallNavComponent
+        sections={sections}
+        sectionStatus={sectionStatus}
+        level={level}
+        SubmitButton={SubmitButton}
+      />
     </div>
   )
 }

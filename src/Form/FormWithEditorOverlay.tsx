@@ -241,7 +241,7 @@ const SchemaFormWithEditorOverlay = ({
 
   return (
     <div
-      className={`${layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED*** ? ***REMOVED***m-4***REMOVED*** : ***REMOVED***m-10 mt-4***REMOVED***} relative`}
+      className={`${layout.size === ***REMOVED***sm***REMOVED*** || layout.size === ***REMOVED***md***REMOVED*** ? ***REMOVED***m-4***REMOVED*** : ***REMOVED***m-10 mt-4***REMOVED***} relative max-w-full`}
     >
       {schemaInput !== undefined ? (
         <SchemaFormCreator

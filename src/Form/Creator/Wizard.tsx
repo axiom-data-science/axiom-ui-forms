@@ -186,11 +186,15 @@ export const WizardNavSmall = ({
   sectionStatus,
   level,
   SubmitButton,
+  defaultClassName = ***REMOVED***flex flex-row gap-4 justify-end  p-4 mt-10 sticky bottom-0 bg-white/80 z-10***REMOVED***,
+  className
 }: {
   sections?: IFormSection[]
   sectionStatus: IFormSectionStatus
   level: number
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
+  defaultClassName?: string
+  className?: string
 }): ReactElement => {
   const { activeId, setActiveId, path } = useFormSectionContext()
   const { urlNavigable } = useFormContext()
@@ -203,7 +207,10 @@ export const WizardNavSmall = ({
   // const params = (useParams()[***REMOVED*******REMOVED***] ?? ***REMOVED******REMOVED***).split(***REMOVED***/***REMOVED***)
   // const path = params.slice(0, level).join(***REMOVED***/***REMOVED***)
   return (
-    <div className="flex flex-row gap-4 justify-end  p-4 mt-10 sticky bottom-0 bg-white/80 z-10">
+    <div className={utils.makeClassName({
+      defaultClassName,
+      className
+    })}>
       {prevIndex >= 0 ? (
         <NavElement
           className="px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white"
@@ -256,13 +263,7 @@ export const WizardNavSmall = ({
 }
 
 export interface IWizardLayoutProps extends IPageLayoutProps {
-  SmallNavComponent?: React.FC<{
-    level: number
-    sections?: IFormSection[]
-    sectionStatus: IFormSectionStatus
-    className?: string
-    SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
-  }>
+
 }
 
 const WizardLayout = (props: IPageLayoutProps): ReactElement => {
