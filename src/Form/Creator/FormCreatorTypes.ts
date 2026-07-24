@@ -206,6 +206,7 @@ interface ISelectOrTextInput extends ISelectableInput {
 }
 
 interface IFileUploadInput extends IFormFieldRoot {
+  type: 'fileUpload' | 'file_upload'
   settings?: IFormFieldSettingsBase & {
     acceptFileTypes?: string[]
   }
@@ -266,10 +267,12 @@ interface IDateTimeField extends IFormFieldRoot {
   type: 'datetime'
   constraints?: IDateTimeConstraints
 }
+
+export type IFormFieldLayout = 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 interface IContainerField extends IFormFieldRoot {
   skip_path?: boolean
   fields: IFormField[]
-  layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
+  layout?: IFormFieldLayout
   multiple?: boolean
 }
 
