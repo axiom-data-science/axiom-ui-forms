@@ -22,7 +22,8 @@
           ]
         },
         {
-          "prop": "update-or-new-station"
+          "prop": "update-or-new-station",
+          "type": "radio"
         },
         {
           "prop": "previous-site-log",
@@ -49,11 +50,11 @@
       "description": "Party responsible for collecting the data and/or creating the resource",
       "fields": [
         {
-          "prop": "creator_name",
+          "prop": "creator.name",
           "label": "Name"
         },
         {
-          "prop": "creator_address",
+          "prop": "creator.address",
           "label": "Address",
           "settings": {
             "descriptionPresentation": "tooltip"
@@ -66,28 +67,28 @@
           "layout": "grid2",
           "fields": [
             {
-              "prop": "creator_city",
+              "prop": "creator.city",
               "label": "City",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_postalcode",
+              "prop": "creator.postal_code",
               "label": "Postal Code",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_country",
+              "prop": "creator.country",
               "label": "Country",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_state",
+              "prop": "creator.state",
               "label": "State",
               "type": "stateSelector",
               "settings": {
@@ -95,28 +96,28 @@
               }
             },
             {
-              "prop": "creator_email",
+              "prop": "creator.email",
               "label": "Email",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_phone",
+              "prop": "creator.phone",
               "label": "Phone",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_institution_url",
+              "prop": "creator.institution_url",
               "label": "Institution URL",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_url",
+              "prop": "creator.url",
               "label": "URL",
               "settings": {
                 "descriptionPresentation": "tooltip"
@@ -131,21 +132,21 @@
           "layout": "horizontal",
           "fields": [
             {
-              "prop": "creator_institution",
+              "prop": "creator.institution",
               "label": "Institution",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_sector",
+              "prop": "creator.sector",
               "label": "Sector",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
             },
             {
-              "prop": "creator_type",
+              "prop": "creator.type",
               "label": "Type",
               "settings": {
                 "descriptionPresentation": "tooltip"
@@ -156,207 +157,282 @@
       ]
     },
     {
-      "id": "custodian",
-      "label": "Contributor: Custodian",
-      "description": "Custodian is party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource",
+      "id": "contributors",
+      "label": "Contributors",
       "fields": [
         {
-          "prop": "contributor_role:custodian",
-          "description": "",
-          "label": "Name"
-        },
-        {
-          "id": "custodian1",
-          "label": "",
+          "id": "custodian-wrapper",
           "type": "objectWrapper",
-          "layout": "grid2",
+          "label": "Custodian",
+          "layout": "grid3",
+          "description": "Custodian is party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource",
+          "settings": {
+            "boldLabel": true
+          },
           "fields": [
             {
-              "prop": "custodian-telephone-primary",
+              "prop": "contributor.custodian.name",
+              "description": "",
+              "label": "Name",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.custodian.phone",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               },
               "label": "Phone"
             },
             {
-              "prop": "contributor_email",
+              "prop": "contributor.custodian.email",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               },
               "label": "Email"
             },
             {
-              "prop": "contributor_url",
+              "prop": "contributor.custodian.url",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               },
               "label": "URL"
             },
             {
-              "prop": "custodian-affliation-or-organization",
+              "prop": "contributor.custodian.affiliation",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               },
               "label": "Affiliation or Organization"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "poc_contact",
-      "label": "Community POC",
-      "description": "Name of community contact, if applicable. This information is not reported to ERDDAP. It is only recorded for RA project tracking purposes.",
-      "fields": [
-        {
-          "prop": "community-poc-name",
-          "label": "Name",
-          "description": ""
         },
         {
-          "id": "poc_contact1",
-          "label": "",
+          "id": "owner-wrapper",
           "type": "objectWrapper",
-          "layout": "grid2",
+          "label": "Owner",
+          "description": "Party that owns the resource",
+          "layout": "grid3",
           "fields": [
             {
-              "prop": "community-poc-telephone",
-              "label": "Phone",
+              "prop": "contributor.owner.name",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               }
             },
             {
-              "prop": "community-poc-email",
+              "prop": "contributor.owner.email",
               "label": "Email",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               }
             },
             {
-              "prop": "community-poc-affiliation",
-              "label": "Affiliation or Organization",
-              "settings": {
-                "descriptionPresentation": "tooltip"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "owner",
-      "label": "Owner",
-      "description": "Party that owns the resource",
-      "fields": [
-        {
-          "prop": "contributor_name"
-        },
-        {
-          "id": "owner1",
-          "label": "",
-          "type": "objectWrapper",
-          "layout": "grid2",
-          "fields": [
-            {
-              "prop": "contributor_email",
-              "label": "Email",
-              "settings": {
-                "descriptionPresentation": "tooltip"
-              }
-            },
-            {
-              "prop": "contributor_url",
+              "prop": "contributor.owner.url",
               "label": "URL",
               "settings": {
-                "descriptionPresentation": "tooltip"
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ],
+          "settings": {
+            "boldLabel": true
+          }
+        },
+        {
+          "id": "data-publisher",
+          "label": "Data Publisher",
+          "description": "Party who published the resource",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "fields": [
+            {
+              "prop": "contributor.publisher.name",
+              "label": "Name",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.publisher.email",
+              "label": "E-mail",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.publisher.url",
+              "label": "URL",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ],
+          "settings": {
+            "boldLabel": true
+          }
+        },
+        {
+          "id": "data-processor",
+          "label": "Data Processor",
+          "description": "Party that has processed the data in a manner such that the resource has been modified",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "fields": [
+            {
+              "prop": "contributor.processor.name",
+              "label": "Name",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.processor.email",
+              "label": "E-mail",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.processor.url",
+              "label": "URL",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ],
+          "settings": {
+            "boldLabel": true
+          }
+        },
+        {
+          "id": "distributor",
+          "label": "Distributor",
+          "description": "Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "type": "objectWrapper",
+          "fields": [
+            {
+              "prop": "contributor.distributor.name",
+              "label": "Name",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.distributor.email",
+              "label": "E-mail",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.distributor.url",
+              "label": "URL",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "data-publisher",
-      "label": "Data Publisher",
-      "description": "Party who published the resource",
-      "fields": [
-        {
-          "prop": "contributor_role:publisher",
-          "label": "Name"
         },
         {
-          "id": "data-publisher1",
-          "label": "",
+          "id": "funder",
+          "label": "Funder",
+          "description": "Party providing monetary support for the resource",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
           "type": "objectWrapper",
-          "layout": "grid2",
           "fields": [
             {
-              "prop": "contributor_name"
+              "prop": "contributor.funder.name",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             },
             {
-              "prop": "contributor_email"
+              "prop": "contributor.funder.email",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             },
             {
-              "prop": "contributor_url"
+              "prop": "contributor.funder.url",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "data-processor",
-      "label": "Data Processor",
-      "description": "Party that has processed the data in a manner such that the resource has been modified",
-      "fields": [
-        {
-          "prop": "contributor_role:processor"
         },
         {
-          "prop": "contributor_name"
-        },
-        {
-          "prop": "contributor_email"
-        },
-        {
-          "prop": "contributor_url"
-        }
-      ]
-    },
-    {
-      "id": "distributor",
-      "label": "Distributor",
-      "fields": [
-        {
-          "prop": "contributor_role:distributor"
-        },
-        {
-          "prop": "contributor_name"
-        },
-        {
-          "prop": "contributor_email"
-        },
-        {
-          "prop": "contributor_url"
-        }
-      ]
-    },
-    {
-      "id": "funder",
-      "label": "Funder",
-      "description": "Party providing monetary support for the resource",
-      "fields": [
-        {
-          "prop": "contributor_role:funder"
-        },
-        {
-          "prop": "contributor_name"
-        },
-        {
-          "prop": "contributor_email"
-        },
-        {
-          "prop": "contributor_url"
+          "id": "poc_contact",
+          "label": "Community POC",
+          "description": "Name of community contact, if applicable. This information is not reported to ERDDAP. It is only recorded for RA project tracking purposes.",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "fields": [
+            {
+              "prop": "contributor.community_poc.name",
+              "label": "Name",
+              "description": "",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.community_poc.phone",
+              "label": "Phone",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.community_poc.email",
+              "label": "Email",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "contributor.community_poc.affiliation",
+              "label": "Affiliation or Organization",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ],
+          "settings": {
+            "boldLabel": true
+          }
         }
       ]
     },
@@ -370,63 +446,181 @@
       ]
     },
     {
-      "id": "platform",
-      "label": "Platform",
-      "fields": [
-        {
-          "prop": "platform"
-        }
-      ]
-    },
-    {
       "id": "station-information",
       "label": "Station Information",
       "fields": [
         {
-          "prop": "platform_name"
+          "id": "station-wrapper",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "platform_name",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "station-id",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "platform",
+              "type": "select",
+              "defaultValue": "fixed",
+              "label": "Platform",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              },
+              "options": [
+                {
+                  "label": "Fixed",
+                  "value": "fixed"
+                },
+                {
+                  "label": "Buoy",
+                  "value": "buoy"
+                },
+                {
+                  "label": "Tide Gauge",
+                  "value": "tide_gauge"
+                },
+                {
+                  "label": "Other",
+                  "value": "other"
+                }
+              ]
+            }
+          ]
         },
         {
-          "prop": "station-id"
+          "id": "location-wrapper",
+          "label": "Location",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "latitude",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "longitude",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "horizontal-datum-projection",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "water-body-setting",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              },
+              "defaultValue": "Ocean coastline"
+            },
+            {
+              "prop": "approximate-position",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         },
         {
-          "prop": "latitude"
+          "id": "coops-wrapper",
+          "label": "COOPS identification",
+          "type": "objectWrapper",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "is-coops-station",
+              "type": "boolean",
+              "settings": {
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "station-coops-id",
+              "description": "Provided by CO-OPS. Only provide if known/established. Do not create. CO-OPS station IDs can be found [here](https://tidesandcurrents.noaa.gov/stations.html?type=Water+Level).",
+              "conditions": {
+                "field": "is-coops-station",
+                "value": true
+              },
+              "type": "text",
+              "settings": {
+                "smallLabel": true
+              }
+            }
+          ]
         },
         {
-          "prop": "longitude"
+          "id": "ids-wrapper",
+          "label": "Other identifiers",
+          "type": "objectWrapper",
+          "settings": {
+            "boldLabel": true
+          },
+          "layout": "grid3",
+          "fields": [
+            {
+              "prop": "wmo_platform_code",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "other-id",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "shef-element-code",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         },
         {
-          "prop": "horizontal-datum-projection-"
-        },
-        {
-          "prop": "wmo_platform_code"
-        },
-        {
-          "prop": "is-coops-stsation"
-        },
-        {
-          "prop": "station-coops-id"
-        },
-        {
-          "prop": "other-id"
-        },
-        {
-          "prop": "water-body-setting"
-        },
-        {
-          "prop": "approximate-position"
-        },
-        {
-          "prop": "additional-information"
-        },
-        {
-          "prop": "shef-element-code"
+          "prop": "additional-information",
+          "settings": {
+            "boldLabel": true
+          }
         }
       ]
     },
     {
       "id": "sensor-information",
       "label": "Sensor Information",
-      "description": "Enter one or more sensors. Definitions:  - Platform is the type of asset, and this term is defined with options by ERDDAP. For WL, it is considered a ***REMOVED***station***REMOVED*** platform.   - Station is the physical location of a deployment. For example, West Dock Station.  - Instrument is the large physical instrument that may house individual or smaller components, aka sensors.   - Components are the individual sensors within an instrument. There may be multiple components within a single instrument.  Example two radar gauges within one instrument.  - Discriminant is the serial numbeer of the individual component(s), if applicable, or the instrument itself.",
+      "description": "Enter one or more sensors. Definitions:  - Platform is the type of asset, and this term is defined with options by ERDDAP. For WL, it is considered a ***REMOVED***station***REMOVED*** platform.   - Station is the physical location of a deployment. For example, West Dock Station.  - Instrument is the large physical instrument that may house individual or smaller components, aka sensors.   - Components are the individual sensors within an instrument. There may be multiple components within a single instrument.  Example two radar gauges within one instrument.  - Discriminant is the serial number of the individual component(s), if applicable, or the instrument itself.",
       "fields": [
         {
           "prop": "sensors",
@@ -438,31 +632,64 @@
               "label": "Overview",
               "fields": [
                 {
-                  "prop": "prior-wmo-id"
+                  "id": "time-coverage-wrapper",
+                  "label": "Time coverage",
+                  "type": "objectWrapper",
+                  "fields": [
+                    {
+                      "prop": "is-real-time",
+                      "type": "boolean"
+                    }
+                  ]
                 },
                 {
-                  "prop": "prior-wmo-coordinates"
+                  "id": "start-end-wrapper",
+                  "label": "",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "time_coverage_start",
+                      "type": "date",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "time_coverage_end",
+                      "description": "Only if not real-time. If real-time, leave blank.",
+                      "type": "date",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
+                  ]
                 },
                 {
-                  "prop": "instrument"
+                  "id": "sample-wrapper",
+                  "label": "Sampling",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                  "prop": "sample-interval-min",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
                 },
                 {
-                  "prop": "instrument_variable:component"
-                },
-                {
-                  "prop": "instrument_variable:make_model"
-                },
-                {
-                  "prop": "sensor-serial-number"
-                },
-                {
-                  "prop": "is-real-time"
-                },
-                {
-                  "prop": "sample-interval-min"
-                },
-                {
-                  "prop": "sample-average-window-sec"
+                  "prop": "sensors[].sample-average-window-sec",
+                  
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+
+                  ]
                 },
                 {
                   "prop": "mounting-structure"
@@ -471,25 +698,102 @@
                   "prop": "geophysical_variable:accuracy"
                 },
                 {
-                  "prop": "time_coverage_start"
-                },
-                {
-                  "prop": "time_coverage_end"
-                },
-                {
                   "prop": "telemetry-method"
-                },
-                {
-                  "prop": "modem-communication-manufacturer-model"
-                },
-                {
-                  "prop": "serial-number-for-modem"
                 },
                 {
                   "prop": "date-removed"
                 },
                 {
                   "prop": "is-station-surveyed"
+                }
+              ]
+            },
+            {
+              "id": "sensor-information",
+              "label": "Instrument and installation",
+              "fields": [
+                {
+                  "id": "instrument-wrapper",
+                  "label": "Instrument",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "instrument",
+                      "label": "Instrument",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "instrument_variable:component",
+                      "label": "Component",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "prop": "instrument_variable:make_model",
+                  "label": "Make/Model",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "sensor-serial-number"
+                },
+                {
+                  "id": "prior-wrapper",
+                  "type": "objectWrapper",
+                  "label": "Prior installation",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "prior-wmo-id",
+                      "label": "WMO ID",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "prior-wmo-coordinates",
+                      "label": "WMO Coordinates",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "modem-wrapper",
+                  "label": "Modem",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "modem-communication-manufacturer-model",
+                      "label": "Manufacturer/Model",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "serial-number-for-modem",
+                      "label": "Serial Number",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
+                  ]
                 }
               ]
             },

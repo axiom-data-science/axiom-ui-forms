@@ -8,7 +8,10 @@ import formOverride from ***REMOVED***./collabFormOverrides.json***REMOVED***
 import { QueryClient, QueryClientProvider, useQuery } from ***REMOVED***@tanstack/react-query***REMOVED***
 import { getCollabSchema, getFormGroupings, getFormSections } from ***REMOVED***@/WaterLevel/COLLAB/helpers***REMOVED***
 import { ViewWithLoader } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import FileUpload from ***REMOVED***@/Form/TestForms/PopulateHeadersFromUpload.tsx/FileUpload***REMOVED***
+import FileUpload from ***REMOVED***@/Form/Components/Inputs/FileUpload/FileUpload***REMOVED***
+import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
+import { getFieldsFromFormSection } from ***REMOVED***@/utils/getters***REMOVED***
+import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 
 const inputOverrides = {
   ***REMOVED***custom:file_upload***REMOVED***: FileUpload
@@ -53,14 +56,55 @@ const CollabedWatterLevelFormSheetSchemaOnly = (
   const schemaState = useState<JSONSchema6 | undefined>(schema)
   const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
   const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
+  
+  const schemaOnlyForm = schemaToFormObject(cloneObject(schema))
+  const allSchemaOnlyFields = getFieldsFromFormSection(schemaOnlyForm)
+  console.log(***REMOVED***allSchemaOnlyFields***REMOVED***, allSchemaOnlyFields)
+
+  const formOverrideOb = cloneObject(formOverride) as IFormOverride
+  const combinedForm = overridesAndSchemaToFormObject({
+    formOverrides: [formOverrideOb] as IFormOverride[],
+    formFieldOverrides: [fieldOverrides] as IFormFieldOverride[][],
+    schema
+})
+
+const allCombinedFields = getFieldsFromFormSection(combinedForm).filter(f => !(f as {skip_path?: boolean}).skip_path)
+console.log(***REMOVED***allCombinedFields***REMOVED***, allCombinedFields)
+const keys1 = new Set(allSchemaOnlyFields.map(f => f.id))
+const keys2 = new Set(allCombinedFields.map(f => f.id))
+const missingInCombined = [...keys1].filter(k => !keys2.has(k))
+const addedInCombined = [...keys2].filter(k => !keys1.has(k))
+
+  
+
+
   return (
+    <>
     <FormWithEditorOverlay
       label="Water Level Form (COLLAB schema): from spreadsheet"
       schemaState={schemaState}
       fieldOverrideState={fieldOverrideState} 
       formOverrideState={formOverrideState} 
       inputOverrides={inputOverrides}
+      urlNavigable={true}
     />
+    { (missingInCombined.length > 0 || addedInCombined.length > 0) &&
+    <div className=***REMOVED***fixed bottom-4 left-4 w-90 bg-white/90 z-80 shadow-md p-4 border-2 border-slate-200 rounded-md***REMOVED***>
+      <h3 className=***REMOVED***text-lg font-bold mb-2***REMOVED***>Missing fields in combined form:</h3>
+      <ul className=***REMOVED***list-disc pl-5 max-h-50 overflow-auto***REMOVED***>
+        {missingInCombined.map((fieldId) => (
+          <li key={fieldId} className=***REMOVED***text-sm text-red-600***REMOVED***>{fieldId}</li>
+        ))}
+      </ul>
+      <h3 className=***REMOVED***text-lg font-bold mb-2***REMOVED***>Additional fields in combined form:</h3>
+      <ul className=***REMOVED***list-disc pl-5 max-h-50 overflow-auto***REMOVED***>
+        {addedInCombined.map((fieldId) => (
+          <li key={fieldId} className=***REMOVED***text-sm text-green-600***REMOVED***>{fieldId}</li>
+        ))}
+      </ul>
+    </div>
+    }
+    </>
   )
 
 }
