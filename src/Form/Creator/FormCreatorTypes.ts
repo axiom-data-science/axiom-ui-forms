@@ -206,6 +206,7 @@ interface ISelectOrTextInput extends ISelectableInput {
 }
 
 interface IFileUploadInput extends IFormFieldRoot {
+  type: ***REMOVED***fileUpload***REMOVED*** | ***REMOVED***file_upload***REMOVED***
   settings?: IFormFieldSettingsBase & {
     acceptFileTypes?: string[]
   }
@@ -266,10 +267,12 @@ interface IDateTimeField extends IFormFieldRoot {
   type: ***REMOVED***datetime***REMOVED***
   constraints?: IDateTimeConstraints
 }
+
+export type IFormFieldLayout = ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
 interface IContainerField extends IFormFieldRoot {
   skip_path?: boolean
   fields: IFormField[]
-  layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
+  layout?: IFormFieldLayout
   multiple?: boolean
 }
 
