@@ -1,6 +1,7 @@
 import {
   type IObjectFormFieldOverride,
   type IFormSectionOverride,
+  type IFormFieldOverride,
 } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IMetadataFormSection, type IMetadataField } from ***REMOVED***@/WaterLevel/COLLAB/types***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
@@ -64,7 +65,7 @@ export interface IFormGrouping {
 
 export const getFormGroupings = async (): Promise<IFormGrouping[]> => {
   const groupings = await loadSheet<IMetadataFormSection>(FORM_GROUPINGS_SHEET)
-  return groupings.filter(g=>g.id && g.id.trim() !== ***REMOVED******REMOVED***) as IFormGrouping[]
+  return groupings.filter((g) => g.id && g.id.trim() !== ***REMOVED******REMOVED***) as IFormGrouping[]
 }
 
 const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 => {
@@ -77,9 +78,10 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
     f.option6,
     f.option7,
     f.option8,
-  ].filter((o) => o !== null && o !== ***REMOVED******REMOVED***)
-  .map((o) => o?.split(***REMOVED***; ***REMOVED***))
-  .flat(Infinity) as string[]
+  ]
+    .filter((o) => o !== null && o !== ***REMOVED******REMOVED***)
+    .map((o) => o?.split(***REMOVED***; ***REMOVED***))
+    .flat(Infinity) as string[]
   // const optionsToUse = options.length > 0 ? options.filter(o => o !== ***REMOVED***Other***REMOVED***) : []
   // const optionsIncludesOther = options.some(o => o && o.toLowerCase() === ***REMOVED***other***REMOVED***) || (f.response_type === "Multichoice with ***REMOVED***other***REMOVED*** option" && optionsToUse.length > 0)
   // const useAnyOf = optionsIncludesOther && options.length > 0
@@ -279,7 +281,7 @@ export const parseFormSections = (
             fieldsByPath[f.path ?? ***REMOVED******REMOVED***] = []
           }
           fieldsByPath[f.path ?? ***REMOVED******REMOVED***].push(f)
-          if(f.field_grouping && groupingsById[f.field_grouping]) {
+          if (f.field_grouping && groupingsById[f.field_grouping]) {
             fieldsByGrouping[f.field_grouping] = fieldsByGrouping[f.field_grouping] ?? []
             fieldsByGrouping[f.field_grouping].push(f)
           }
@@ -320,9 +322,15 @@ export const parseFormSections = (
           section.tabs = tabs
         }
       } else {
-        section.fields = fields.map((f) => ({
-          prop: f.id,
-        }))
+        section.fields = fields.map((f) => {
+          const fO: IFormFieldOverride = {
+            prop: f.id,
+          }
+          if (f.response_type && f.response_type.toLowerCase().includes(***REMOVED***upload***REMOVED***)) {
+            fO.type = ***REMOVED***file_upload***REMOVED***
+          }
+          return fO
+        })
       }
       return section
     })

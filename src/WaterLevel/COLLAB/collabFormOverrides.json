@@ -27,7 +27,7 @@
         },
         {
           "prop": "previous-site-log",
-          "type": "custom:file_upload",
+          "type": "file_upload",
           "conditions": {
             "field": "update-or-new-station",
             "value": "Update"
@@ -674,22 +674,21 @@
                   "layout": "grid2",
                   "fields": [
                     {
-                  "prop": "sensors[].sample-interval-min",
-                  "type": "selectOrText",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "sensors[].sample-average-window-sec",
-                  "type": "selectOrText",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                }
-
+                      "prop": "sensors[].sample-interval-min",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].sample-average-window-sec",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
                   ]
                 },
                 {
@@ -1006,16 +1005,20 @@
           "prop": "sensor-survey-reference-point"
         },
         {
-          "prop": "benchmarks-photo"
+          "prop": "benchmarks-photo",
+          "type": "file_upload",
+          "multiple": true
         },
         {
           "prop": "dcp"
         },
         {
-          "prop": "underwater-components"
+          "prop": "underwater-components",
+          "type": "file_upload"
         },
         {
-          "prop": "vicinity"
+          "prop": "vicinity",
+          "type": "file_upload"
         }
       ]
     },
@@ -1024,19 +1027,24 @@
       "label": "Attachments",
       "fields": [
         {
-          "prop": "bench-mark-descriptions"
+          "prop": "bench-mark-descriptions",
+          "type": "long_text"
         },
         {
-          "prop": "bench-mark-diagram"
+          "prop": "bench-mark-diagram",
+          "type": "file_upload"
         },
         {
-          "prop": "sensor-test-worksheet"
+          "prop": "sensor-test-worksheet",
+          "type": "file_upload"
         },
         {
-          "prop": "sensor-elevation-drawing"
+          "prop": "sensor-elevation-drawing",
+          "type": "file_upload"
         },
         {
-          "prop": "license"
+          "prop": "license",
+          "type": "long_text"
         },
         {
           "prop": "dissemination-flag"
