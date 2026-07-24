@@ -265,5 +265,45 @@ describe('getters.ts', () => {
       expect(result).toEqual({ field1: 'value1' })
       expect(result).not.toHaveProperty('field2')
     })
+
+    it('should emit simple key/value payload for objectList when settings.valueField is set', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'servers',
+            type: 'objectList',
+            settings: {
+              keyField: 'hostname',
+              valueField: 'ip',
+            },
+            fields: [
+              { id: 'hostname', type: 'text' },
+              { id: 'ip', type: 'text' },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        servers: {
+          alpha: '10.0.0.1',
+          beta: {
+            hostname: 'beta',
+            ip: '10.0.0.2',
+            environment: 'prod',
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        servers: {
+          alpha: '10.0.0.1',
+          beta: '10.0.0.2',
+        },
+      })
+    })
   })
 })
