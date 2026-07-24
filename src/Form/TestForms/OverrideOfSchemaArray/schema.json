@@ -15,7 +15,7 @@
       "items": {
         "type": "object",
         "properties": {
-          "field1": { "type": "string" },
+          "field1": { "type": "string", "title": "Field 1 - from schema" },
           "field2": { "type": "number" }
         }
       }

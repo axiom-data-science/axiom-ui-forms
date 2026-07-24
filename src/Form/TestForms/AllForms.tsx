@@ -11,7 +11,7 @@ import ObjectListExample from '@/Form/TestForms/ObjectListExample/ObjectListExam
 import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField'
 import ObjectWrapper from '@/Form/TestForms/ObjectWrapper/ObjectWrapper'
 import ObjectWrapperWithSchema from '@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema'
-import OverrideOfSchemaArray from '@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray'
+import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from '@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray'
 import PopulateHeadersFromUpload, {
   PrePopulatedPopulateHeadersFromUpload,
 } from '@/Form/TestForms/PopulateHeadersFromUpload.tsx/PopulateHeadersFromUpload'
@@ -77,6 +77,11 @@ const forms = [
     label: 'Override of schema array',
     path: 'override-of-schema-array',
     view: OverrideOfSchemaArray,
+  },
+    {
+    label: 'Override of schema array with embedded tabs',
+    path: 'override-of-schema-array-with-embedded-tabs',
+    view: OverrideOfSchemaArrayWithTabs,
   },
   {
     label: 'Tabs in page with wrapper',
