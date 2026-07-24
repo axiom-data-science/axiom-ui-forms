@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
-import FileUpload from ***REMOVED***./FileUpload***REMOVED***
-import type { ParsedCSV } from ***REMOVED***./csvParser***REMOVED***
+import FileUpload from ***REMOVED***@/Form/Components/Inputs/FileUpload/FileUpload***REMOVED***
+import type { ParsedCSV } from ***REMOVED***@/Form/Components/Inputs/FileUpload/csvParser***REMOVED***
 import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
 import { IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 

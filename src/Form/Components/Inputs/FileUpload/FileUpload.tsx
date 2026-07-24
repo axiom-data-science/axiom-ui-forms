@@ -1,8 +1,49 @@
 import { parseCSV, type ParsedCSV } from ***REMOVED***./csvParser***REMOVED***
-import { CloudUpload, File, X } from ***REMOVED***lucide-react***REMOVED***
-import { useState, useRef, type ReactElement } from ***REMOVED***react***REMOVED***
-import { Loader, Table, Tooltip, utils, ViewWithLoader } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
+import { CloudUpload, File, FileImage, FilePlay, FileSpreadsheet, FileText, X } from ***REMOVED***lucide-react***REMOVED***
+import { useEffect, useState, useRef, type ReactElement } from ***REMOVED***react***REMOVED***
+import { Loader, Table, Tooltip, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+
+type FileTypeFlags = {
+  lowerName: string
+  isImage: boolean
+  isVideo: boolean
+  isAudio: boolean
+  isPdf: boolean
+  isCsv: boolean
+  isText: boolean
+}
+
+const getFileTypeFlags = (file: File): FileTypeFlags => {
+  const lowerName = file.name.toLowerCase()
+
+  return {
+    lowerName,
+    isImage: file.type.startsWith(***REMOVED***image/***REMOVED***) || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(lowerName),
+    isVideo: file.type.startsWith(***REMOVED***video/***REMOVED***) || /\.(mp4|webm|ogg|mov|m4v)$/i.test(lowerName),
+    isAudio: file.type.startsWith(***REMOVED***audio/***REMOVED***) || /\.(mp3|wav|ogg|m4a|flac|aac)$/i.test(lowerName),
+    isPdf: file.type === ***REMOVED***application/pdf***REMOVED*** || lowerName.endsWith(***REMOVED***.pdf***REMOVED***),
+    isCsv: Boolean(file.type.match(/csv/)) || lowerName.endsWith(***REMOVED***.csv***REMOVED***),
+    isText: file.type.startsWith(***REMOVED***text/***REMOVED***) || /\.(txt|md|csv|log)$/i.test(lowerName)
+  }
+}
+
+const FileTypeIcon = ({ fileType }: { fileType: FileTypeFlags }) => {
+  if (fileType.isImage) {
+    return <FileImage size={14} />
+  } else if (fileType.isVideo) {
+    return <FilePlay size={14} />
+  } else if (fileType.isAudio) {
+    return <FilePlay size={14} />
+  } else if (fileType.isPdf) {
+    return <FileText size={14} />
+  } else if (fileType.isCsv) {
+    return <FileSpreadsheet size={14} />
+  } else if(fileType.isText) {
+    return <FileText size={14} />
+  }
+  return <File size={14} />
+}
 
 const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | null }) => {
   if(!parsedData) {
@@ -11,7 +52,7 @@ const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | 
   const maxRows = 500
   return (
     <>
-    <div className=***REMOVED***flex flex-col relative max-h-100 w-full overflow-auto***REMOVED***>
+    <div className=***REMOVED***flex flex-col relative max-h-100 max-w-200 w-full overflow-auto***REMOVED***>
     <Table
       columns={parsedData.headers.map((h) => ({ 
         id: h.key, 
@@ -39,7 +80,7 @@ const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | 
         {
       parsedData.data.length > maxRows && (
         <p className="text-sm text-gray-500 mt-2">
-          Showing first {maxRows} rows of {parsedData.data.length} total rows in {file.name}
+          Showing first {maxRows} rows of {parsedData.data.length} total rows and {parsedData.headers.length} columns in {file.name}
         </p>
       )
     }
@@ -48,30 +89,54 @@ const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | 
 }
 
 
-const FileUploadPreview = ({ file, csvData }: { file: File, csvData: ParsedCSV | null }) => {
+const FileUploadPreview = ({
+  file,
+  csvData,
+  fileType,
+}: {
+  file: File
+  csvData: ParsedCSV | null
+  fileType: FileTypeFlags
+}) => {
+  const [fileUrl, setFileUrl] = useState(***REMOVED******REMOVED***)
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file)
+    setFileUrl(objectUrl)
+
+    return () => {
+      URL.revokeObjectURL(objectUrl)
+    }
+  }, [file])
+
   return (
     <>
-    {file.type}
       {
-        file.type.match(/^image/) ? (
+        fileType.isImage ? (
           <img
-            src={URL.createObjectURL(file)}
+            src={fileUrl}
             alt="Uploaded file preview"
             className="mt-2 max-h-100 rounded-md shadow-lg"
           />
-        ) : file.type.match(/^video/) ? (
+        ) : fileType.isVideo ? (
           <video
-            src={URL.createObjectURL(file)}
+            src={fileUrl}
             controls
             className="mt-2 max-h-100 rounded-md shadow-lg"
           />
-        ) : file.type.match(/^audio/) ? (
+        ) : fileType.isAudio ? (
           <audio
-            src={URL.createObjectURL(file)}
+            src={fileUrl}
             controls
             className="mt-2 max-h-100 rounded-md"
           />
-        ) : file.type.match(/csv/) ?  (
+        ) : fileType.isPdf ? (
+          <iframe
+            src={fileUrl}
+            title="Uploaded PDF preview"
+            className="mt-2 h-125 w-full rounded-md border border-slate-200 shadow-lg"
+          />
+        ) : fileType.isCsv ?  (
           <CSVPreview file={file} parsedData={csvData} />
         ) : null
       }
@@ -99,6 +164,7 @@ const FileUpload = ({
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [csvData, setCsvData] = useState<ParsedCSV | null>(null)
+  const fileType = file ? getFileTypeFlags(file) : null
   const fileInputRef = useRef<HTMLInputElement>(null)
   const settingsAcceptedFileTypes = (field.settings as { acceptedFileTypes?: string[] | string })?.acceptedFileTypes
   const settingsAcceptedFileTypesArray = Array.isArray(settingsAcceptedFileTypes)
@@ -116,22 +182,31 @@ const FileUpload = ({
     try {
       const reader = new FileReader()
 
+      const { isCsv } = getFileTypeFlags(_file)
+
       // This event fires when the file reading is complete
       reader.onload = function (event) {
-        const text = event.target?.result
-        if (typeof text === ***REMOVED***string***REMOVED***) {
+        const result = event.target?.result
+        if (isCsv && typeof result === ***REMOVED***string***REMOVED***) {
+          // Parse uploaded CSV text into preview rows/headers.
+          const text = result
           const data = parseCSV(text)
           setCsvData(data)
           if (onFileUploaded) {
             onFileUploaded(text, data)
           }
         } else if (onFileUploaded) {
-          onFileUploaded(event.target?.result, null)
+          onFileUploaded(result, null)
         }
       }
 
-      // Read the file object as a plain text string
-      reader.readAsText(_file)
+      if (isCsv) {
+        // Read CSV uploads as text for parsing.
+        reader.readAsText(_file)
+      } else {
+        // Read non-CSV uploads as binary for downstream consumers.
+        reader.readAsArrayBuffer(_file)
+      }
       // Clear the input value so the same file can be selected again
       setFileRef(_file.name)
       if (onChange) {
@@ -186,8 +261,9 @@ const FileUpload = ({
         {file && (
           <>
           <span className="text-sm text-gray-700">
-            <span className="bg-slate-200 p-2 my-2 inline-flex items-baseline gap-2 rounded-md">
-              <File size={14} /> {file.name}{***REMOVED*** ***REMOVED***}{file.size ? <span className=***REMOVED***text-slate-500 text-xs border-b border-slate-400 border-dashed***REMOVED***>{(file.size / 1024).toFixed(2)} KB</span> : ***REMOVED******REMOVED***}
+            <span className="bg-slate-200 p-2 my-2 inline-flex items-baseline gap-2 rounded-md shadow-md">
+              <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} /> {file.name}{***REMOVED*** ***REMOVED***}{file.size ? <span className=***REMOVED***text-slate-500 text-xs border-b border-slate-400 border-dashed***REMOVED***>{(file.size / 1024).toFixed(2)} KB</span> : ***REMOVED******REMOVED***}
+              <span className=***REMOVED***bg-slate-400 text-white text-xs p-1 rounded-md shadow-sm***REMOVED***>{file.type}</span>
             </span>
             {!fileRef && (
               <CloudUpload
@@ -210,7 +286,7 @@ const FileUpload = ({
               }}
             />
           </span>
-          <FileUploadPreview file={file} csvData={csvData} />
+          <FileUploadPreview file={file} csvData={csvData} fileType={fileType ?? getFileTypeFlags(file)} />
           </>
         )}
       </label>

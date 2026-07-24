@@ -15,6 +15,7 @@ import TimeInput from ***REMOVED***@/Form/Components/Inputs/Time***REMOVED***
 import ConstantInput from ***REMOVED***@/Form/Components/Inputs/Constant***REMOVED***
 import OneOfInput from ***REMOVED***@/Form/Components/Inputs/OneOfInput***REMOVED***
 import StateSelectorInput from ***REMOVED***@/Form/Components/Inputs/StateSelectorInput***REMOVED***
+import FileUpload from ***REMOVED***@/Form/Components/Inputs/FileUpload/FileUpload***REMOVED***
 
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
@@ -33,7 +34,8 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   date: DateInput,
   time: TimeInput,
   constant: ConstantInput,
-  stateSelector: StateSelectorInput
+  stateSelector: StateSelectorInput,
+  fileUpload: FileUpload
 }
 
 export default inputMap
