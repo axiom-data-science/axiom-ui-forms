@@ -876,17 +876,70 @@
       "label": "Local tidal datum establishment",
       "fields": [
         {
-          "prop": "record-start-date"
+          "id": "time-range-wrapper",
+          "label": "Time Range",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "record-start-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "record-end-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         },
         {
-          "prop": "record-end-date"
+          "id": "computation-wrapper",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "label": "Computation",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "computational-tool",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computation-method",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computation-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computed-by",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         },
-        {
-          "prop": "computational-tool"
-        },
-        {
-          "prop": "computation-method"
-        },
+
         {
           "prop": "nwlon-control-station"
         },
@@ -895,12 +948,6 @@
         },
         {
           "prop": "datum-type"
-        },
-        {
-          "prop": "computation-date"
-        },
-        {
-          "prop": "computed-by"
         }
       ]
     },
@@ -909,70 +956,181 @@
       "label": "Tidal Datum Offsets relative to station",
       "fields": [
         {
-          "prop": "offset-from-station-datum"
+          "id": "offsets-wrapper",
+          "label": "Offsets and elevation",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "offset-from-station-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-elevation-on-station-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-elevation-ortho",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-elevation-ellipsoidal",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-offset",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         },
         {
-          "prop": "sensor-elevation-on-station-datum"
-        },
-        {
-          "prop": "sensor-elevation-ortho"
-        },
-        {
-          "prop": "sensor-elevation-ellipsoidal"
-        },
-        {
-          "prop": "sensor-offset"
-        },
-        {
-          "prop": "navd88-m"
-        },
-        {
-          "prop": "nad83-m"
-        },
-        {
-          "prop": "mhhw-m"
-        },
-        {
-          "prop": "mhw-m"
-        },
-        {
-          "prop": "dtl-m"
-        },
-        {
-          "prop": "mtl-m"
-        },
-        {
-          "prop": "msl-m"
-        },
-        {
-          "prop": "mlw-m"
-        },
-        {
-          "prop": "mllw-m"
-        },
-        {
-          "prop": "gt-m"
-        },
-        {
-          "prop": "mn-m"
-        },
-        {
-          "prop": "dhq-m"
-        },
-        {
-          "prop": "dlq-m"
-        },
-        {
-          "prop": "hwi-hr"
-        },
-        {
-          "prop": "lwi-hr"
-        },
-        {
-          "prop": "igld"
-        },
-        {
-          "prop": "lwd"
+          "id": "datum-offsets-wrapper",
+          "label": "Datum Offsets",
+          "description": "As related to the station datum, in meters. If not known, leave blank.",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "navd88-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "nad83-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mhhw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mhw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dtl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mtl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "msl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mlw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mllw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "gt-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mn-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dhq-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dlq-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "hwi-hr",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "lwi-hr",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "igld",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "lwd",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         }
       ]
     },
