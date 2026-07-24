@@ -351,8 +351,22 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
       const objectListValue = value as IFormValues
       const objectListPayload: IFormValues = {}
       const keyField = (field as any).settings?.keyField
+      const valueField = (field as any).settings?.valueField as string | undefined
 
       Object.entries(objectListValue).forEach(([key, item]) => {
+        // Optional simple mapping mode: emit key -> selected scalar value.
+        if (valueField !== undefined) {
+          if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
+            const mappedValue = (item as IFormValues)[valueField]
+            if (mappedValue !== undefined) {
+              objectListPayload[key] = mappedValue
+            }
+          } else if (item !== undefined) {
+            objectListPayload[key] = item as IValueType
+          }
+          return
+        }
+
         if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
           const itemPayload: IFormValues = {}
           ;(field.fields ?? []).forEach((childField: IFormField) => {

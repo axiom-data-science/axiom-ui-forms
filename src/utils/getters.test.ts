@@ -265,5 +265,45 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       expect(result).toEqual({ field1: ***REMOVED***value1***REMOVED*** })
       expect(result).not.toHaveProperty(***REMOVED***field2***REMOVED***)
     })
+
+    it(***REMOVED***should emit simple key/value payload for objectList when settings.valueField is set***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***servers***REMOVED***,
+            type: ***REMOVED***objectList***REMOVED***,
+            settings: {
+              keyField: ***REMOVED***hostname***REMOVED***,
+              valueField: ***REMOVED***ip***REMOVED***,
+            },
+            fields: [
+              { id: ***REMOVED***hostname***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+              { id: ***REMOVED***ip***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        servers: {
+          alpha: ***REMOVED***10.0.0.1***REMOVED***,
+          beta: {
+            hostname: ***REMOVED***beta***REMOVED***,
+            ip: ***REMOVED***10.0.0.2***REMOVED***,
+            environment: ***REMOVED***prod***REMOVED***,
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        servers: {
+          alpha: ***REMOVED***10.0.0.1***REMOVED***,
+          beta: ***REMOVED***10.0.0.2***REMOVED***,
+        },
+      })
+    })
   })
 })

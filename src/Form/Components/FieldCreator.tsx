@@ -307,6 +307,7 @@ export const ObjectListCreator = ({
 
   const objListField = field as any // IObjectListField
   const keyField = objListField.settings?.keyField
+  const valueField = objListField.settings?.valueField as string | undefined
 
   if (!keyField) {
     return (
@@ -315,6 +316,22 @@ export const ObjectListCreator = ({
         <p className="text-rose-700">
           <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error: objectList field{***REMOVED*** ***REMOVED***}
           <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> requires settings.keyField
+        </p>
+      </div>
+    )
+  }
+
+  if (
+    valueField !== undefined &&
+    !objListField.fields?.some((f: IFormField) => f.id === valueField)
+  ) {
+    return (
+      <div className="p-4 bg-slate-100">
+        <FieldLabel field={field} disabled={disabled} />
+        <p className="text-rose-700">
+          <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error: objectList field{***REMOVED*** ***REMOVED***}
+          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> has settings.valueField
+          that does not point at a valid field
         </p>
       </div>
     )
@@ -343,6 +360,42 @@ export const ObjectListCreator = ({
   }, [form, field, setFormValues, onChange, contextOnChange])
 
   const objValue = (typeof value === ***REMOVED***object***REMOVED*** && value !== null && !Array.isArray(value)) ? value as ICompositeValueType : {}
+
+  const toStoredItemValue = useCallback(
+    (keyValue: string, itemData: ICompositeValueType): IValueType | IValueType[] | undefined => {
+      if (valueField === undefined) {
+        return itemData
+      }
+      if (itemData[valueField] !== undefined) {
+        return itemData[valueField]
+      }
+      // Preserve existing key/value entries when value field is missing from edited object.
+      return objValue[keyValue]
+    },
+    [objValue, valueField]
+  )
+
+  const toRenderableItemValue = useCallback(
+    (currentKey: string, item: IValueType | IValueType[] | undefined): ICompositeValueType => {
+      if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
+        const objectItem = cloneObject(item) as ICompositeValueType
+        if (objectItem[keyField] === undefined) {
+          objectItem[keyField] = currentKey
+        }
+        return objectItem
+      }
+      if (valueField !== undefined) {
+        return {
+          [keyField]: currentKey,
+          [valueField]: item,
+        } as ICompositeValueType
+      }
+      return {
+        [keyField]: currentKey,
+      } as ICompositeValueType
+    },
+    [keyField, valueField]
+  )
 
   // Returns true if keyValue is already used by a committed item (excluding excludeCommittedKey)
   // or by another pending item (excluding excludeTempKey).
@@ -425,14 +478,14 @@ export const ObjectListCreator = ({
       return next
     })
     const newObjValue = cloneObject(objValue)
-    newObjValue[keyValue] = itemData
+    newObjValue[keyValue] = toStoredItemValue(keyValue, itemData)
     defaultOnChange(newObjValue)
     setPendingItems(prev => prev.filter(p => p.tempKey !== tempKey))
   }
 
   // Combine committed (formValues) and pending (local) items for rendering
   const allItems: Array<{ currentKey: string; itemValue: ICompositeValueType; isPending: boolean }> = [
-    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: v as ICompositeValueType, isPending: false })),
+    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: toRenderableItemValue(k, v), isPending: false })),
     ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true })),
   ]
 
@@ -519,7 +572,7 @@ export const ObjectListCreator = ({
                           }))
                           // Update data under the existing key without renaming
                           const newObjValue = cloneObject(objValue)
-                          newObjValue[currentKey] = newItemValue
+                          newObjValue[currentKey] = toStoredItemValue(currentKey, newItemValue)
                           defaultOnChange(newObjValue)
                           return
                         }
@@ -530,7 +583,7 @@ export const ObjectListCreator = ({
                         })
                         const newObjValue = cloneObject(objValue)
                         delete newObjValue[currentKey]
-                        newObjValue[newKeyValue] = newItemValue
+                        newObjValue[newKeyValue] = toStoredItemValue(newKeyValue, newItemValue)
                         defaultOnChange(newObjValue)
                         return
                       }
@@ -546,7 +599,7 @@ export const ObjectListCreator = ({
 
                       // Otherwise just update the value
                       const newObjValue = cloneObject(objValue)
-                      newObjValue[currentKey] = newItemValue
+                      newObjValue[currentKey] = toStoredItemValue(currentKey, newItemValue)
                       defaultOnChange(newObjValue)
                     }}
                   />
@@ -582,7 +635,7 @@ export const ObjectListCreator = ({
                                 [currentKey]: `"${newKeyValue}" is already in use. Each ${keyField} must be unique.`
                               }))
                               const newObjValue = cloneObject(objValue)
-                              newObjValue[currentKey] = newValue
+                              newObjValue[currentKey] = toStoredItemValue(currentKey, newValue)
                               defaultOnChange(newObjValue)
                               return
                             }
@@ -593,7 +646,7 @@ export const ObjectListCreator = ({
                             })
                             const newObjValue = cloneObject(objValue)
                             delete newObjValue[currentKey]
-                            newObjValue[newKeyValue] = newValue
+                            newObjValue[newKeyValue] = toStoredItemValue(newKeyValue, newValue)
                             defaultOnChange(newObjValue)
                             return
                           }
@@ -609,7 +662,7 @@ export const ObjectListCreator = ({
                           
                           // Otherwise just update the value
                           const newObjValue = cloneObject(objValue)
-                          newObjValue[currentKey] = newValue
+                          newObjValue[currentKey] = toStoredItemValue(currentKey, newValue)
                           defaultOnChange(newObjValue)
                         }
                       }}

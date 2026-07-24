@@ -9,6 +9,7 @@ import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/Nest
 import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
 import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
+import ObjectListKeyValueExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample***REMOVED***
 import ObjectWrapper from ***REMOVED***@/Form/TestForms/ObjectWrapper/ObjectWrapper***REMOVED***
 import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
 import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
@@ -57,6 +58,11 @@ const forms = [
     label: ***REMOVED***Object list***REMOVED***,
     path: ***REMOVED***object-list***REMOVED***,
     view: ObjectListExample,
+  },
+    {
+    label: ***REMOVED***Object list (key-value)***REMOVED***,
+    path: ***REMOVED***object-list-key-value***REMOVED***,
+    view: ObjectListKeyValueExample,
   },
   {
     label: ***REMOVED***Object list with select***REMOVED***,
