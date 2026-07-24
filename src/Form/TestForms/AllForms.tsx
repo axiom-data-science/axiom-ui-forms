@@ -11,7 +11,7 @@ import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/Ob
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
 import ObjectWrapper from ***REMOVED***@/Form/TestForms/ObjectWrapper/ObjectWrapper***REMOVED***
 import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
-import OverrideOfSchemaArray from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
+import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
 import PopulateHeadersFromUpload, {
   PrePopulatedPopulateHeadersFromUpload,
 } from ***REMOVED***@/Form/TestForms/PopulateHeadersFromUpload.tsx/PopulateHeadersFromUpload***REMOVED***
@@ -77,6 +77,11 @@ const forms = [
     label: ***REMOVED***Override of schema array***REMOVED***,
     path: ***REMOVED***override-of-schema-array***REMOVED***,
     view: OverrideOfSchemaArray,
+  },
+    {
+    label: ***REMOVED***Override of schema array with embedded tabs***REMOVED***,
+    path: ***REMOVED***override-of-schema-array-with-embedded-tabs***REMOVED***,
+    view: OverrideOfSchemaArrayWithTabs,
   },
   {
     label: ***REMOVED***Tabs in page with wrapper***REMOVED***,
