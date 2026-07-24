@@ -88,7 +88,7 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
 
       const formWithPaths = copyAndAddPathToFields(form)
       const testObject = formWithPaths.fields?.[0] as any
-      const wrapper = testObject.tabs?.[0]?.fields?.[0] as IFormField
+      const wrapper = testObject.tabs?.[0]?.fields?.[0] as IObjectField
       const field2 = wrapper?.fields?.[1] as IFormField
 
       expect(getPathFromField(wrapper)).toBeUndefined()
