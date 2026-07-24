@@ -487,8 +487,10 @@ const mergeFormField = ({
   schemaFieldMap: Record<string, IFormField>
   schemaForm: IForm
 }): IFormField => {
+  const normalizePath = (value?: string): string | undefined => value?.replace(/\[\]/g, ***REMOVED******REMOVED***)
+
   const rawOverridePath = fieldOverride?.prop
-  const normalizedOverridePath = rawOverridePath?.replace(/\[\]/g, ***REMOVED******REMOVED***)
+  const normalizedOverridePath = normalizePath(rawOverridePath)
   const fieldPath = field ? makeJsonPath(field) : undefined
   const path = normalizedOverridePath ?? fieldPath
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(
@@ -549,37 +551,64 @@ const mergeFormField = ({
     } */
 
     // attached to the field override. overrides
-    const overrideFields =
-      fieldOverride?.type === ***REMOVED***object***REMOVED*** || fieldOverride?.type === ***REMOVED***objectWrapper***REMOVED***
-        ? (fieldOverride.fields ?? [])
-        : []
+    const overrideFields = (fieldOverride as IObjectFormFieldOverride)?.fields ?? []
     // Read tabs from the override regardless of whether `type` is explicitly set on the
     // override — we are already inside the mergedField.type === ***REMOVED***object***REMOVED*** branch, so the
     // merged type is confirmed to be an object. An override that specifies tabs but omits
     // `type` is perfectly valid (type comes from the schema field).
     const overrideFieldTabs = (fieldOverride as IObjectFormFieldOverride)?.tabs
     // const overrideFieldPages = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.pages : undefined
-    const overrideFieldsMap = Object.fromEntries(
-      overrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
-    )
+    const buildOverrideMap = (
+      fieldsToMap: unknown[]
+    ): Record<string, IFormFieldOverride> => {
+      const entries = fieldsToMap
+        .map((candidate) => {
+          const fieldLike = candidate as { prop?: string; id?: string }
+          const key =
+            (fieldLike.prop !== undefined ? normalizePath(fieldLike.prop) : undefined) ??
+            fieldLike.id
+          return key !== undefined
+            ? ([key, candidate as IFormFieldOverride] as [string, IFormFieldOverride])
+            : undefined
+        })
+        .filter((entry): entry is [string, IFormFieldOverride] => entry !== undefined)
+      return Object.fromEntries(entries)
+    }
+
+    const overrideFieldsMap = buildOverrideMap(overrideFields)
 
     // attached to the form override. overrides
     const formOverrideFields =
-      formFieldOverrides.type === ***REMOVED***object***REMOVED*** || formFieldOverrides.type === ***REMOVED***objectWrapper***REMOVED***
-        ? (formFieldOverrides.fields ?? [])
-        : []
+      (formFieldOverrides as IObjectFormFieldOverride | undefined)?.fields ?? []
     // Same as overrideFieldTabs above — read tabs from formFieldOverrides regardless of
     // whether `type` is explicitly set.
     const formOverrideFieldTabs = (formFieldOverrides as any)?.tabs
-    const formOverrideFieldsMap = Object.fromEntries(
-      formOverrideFields.filter((f): f is IFormFieldOverride => ***REMOVED***prop***REMOVED*** in f).map((f) => [f.prop, f])
-    )
+    const formOverrideFieldsMap = buildOverrideMap(formOverrideFields)
 
-    const allKeys = Object.keys({
-      ...fieldFieldsMap,
-      ...overrideFieldsMap,
-      ...formOverrideFieldsMap,
-    })
+    const getOverrideByKey = (
+      map: Record<string, IFormFieldOverride>,
+      key: string,
+      arrayBracketKey?: string,
+      arrayDotKey?: string
+    ): IFormFieldOverride | undefined => {
+      const normalizedKey = normalizePath(key)
+      return (
+        map[key] ??
+        (arrayBracketKey !== undefined ? map[arrayBracketKey] : undefined) ??
+        (arrayDotKey !== undefined ? map[arrayDotKey] : undefined) ??
+        (normalizedKey !== undefined ? map[normalizedKey] : undefined)
+      )
+    }
+
+    const allKeys = Array.from(
+      new Set(
+        Object.keys({
+          ...fieldFieldsMap,
+          ...overrideFieldsMap,
+          ...formOverrideFieldsMap,
+        }).map((k) => normalizePath(k) ?? k)
+      )
+    )
 
     mergedField.fields = allKeys.map((key) => {
       // const fieldOverride = overrideFieldsMap[key] ?? { prop: key }
@@ -590,20 +619,22 @@ const mergeFormField = ({
       const leafKey = isArrayItems && path ? key.replace(new RegExp(`^${path}\\.`), ***REMOVED******REMOVED***) : key
       const arrayBracketKey = isArrayItems && path ? `${path}[].${leafKey}` : undefined
       const arrayDotKey = isArrayItems && path ? `${path}.${leafKey}` : undefined
-      const fieldOverride = mergeObjects<IFormFieldOverride>([
-        overrideFieldsMap[key],
-        formOverrideFieldsMap[key],
-        mergeObjects<IFormFieldOverride>(
-          formFieldsOverrideMap
-            .map(
-              (overrides) =>
-                overrides[key] ??
-                (arrayBracketKey !== undefined ? overrides[arrayBracketKey] : undefined) ??
-                (arrayDotKey !== undefined ? overrides[arrayDotKey] : undefined)
-            )
-            .filter((d) => d !== undefined)
-        ),
-      ])
+      const fieldOverride = mergeObjects<IFormFieldOverride>(
+        [
+          getOverrideByKey(overrideFieldsMap, key, arrayBracketKey, arrayDotKey),
+          getOverrideByKey(formOverrideFieldsMap, key, arrayBracketKey, arrayDotKey),
+          mergeObjects<IFormFieldOverride>(
+            formFieldsOverrideMap
+              .map(
+                (overrides) =>
+                  overrides[key] ??
+                  (arrayBracketKey !== undefined ? overrides[arrayBracketKey] : undefined) ??
+                  (arrayDotKey !== undefined ? overrides[arrayDotKey] : undefined)
+              )
+              .filter((d): d is IFormFieldOverride => d !== undefined)
+          ),
+        ].filter((d): d is IFormFieldOverride => d !== undefined)
+      )
       return mergeFormField({
         field: fieldFieldsMap[key] ?? schemaFieldMap[key],
         fieldOverride,

@@ -7,7 +7,9 @@ import {
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   createOneOfMultipleField,
+  copyAndAddPathToFields,
 } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
 import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 
 describe(***REMOVED***manipulators.ts***REMOVED***, () => {
@@ -52,6 +54,45 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
       const secondField = createOneOfMultipleField(fieldWithPath, 1) as IObjectField
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
+    })
+
+    it(***REMOVED***adds parent array path to fields nested in tabs***REMOVED***, () => {
+      const form: IForm = {
+        id: ***REMOVED***testForm***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***testObject***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            multiple: true,
+            tabs: [
+              {
+                id: ***REMOVED***tab1***REMOVED***,
+                label: ***REMOVED***Tab 1***REMOVED***,
+                fields: [
+                  {
+                    id: ***REMOVED***wrapper***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    skip_path: true,
+                    fields: [
+                      { id: ***REMOVED***field1***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                      { id: ***REMOVED***field2***REMOVED***, type: ***REMOVED***number***REMOVED*** },
+                    ],
+                  } as any,
+                ],
+              },
+            ],
+          } as any,
+        ],
+      }
+
+      const formWithPaths = copyAndAddPathToFields(form)
+      const testObject = formWithPaths.fields?.[0] as any
+      const wrapper = testObject.tabs?.[0]?.fields?.[0] as IFormField
+      const field2 = wrapper?.fields?.[1] as IFormField
+
+      expect(getPathFromField(wrapper)).toBeUndefined()
+      expect(getPathFromField(field2)).toBe(***REMOVED***testObject.field2***REMOVED***)
     })
   })
 

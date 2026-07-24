@@ -26,9 +26,43 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
     field.path = parentPath !== undefined ? parentPath.slice().concat(newSegment) : [newSegment]
     field.level = parentPath !== undefined ? parentPath.length + 1 : 1
   }
-  if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.fields !== undefined) {
+  if (
+    (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) &&
+    field.fields !== undefined
+  ) {
     field.fields = field.fields.map((childField) => {
       return addFieldPath(childField, field.path?.slice())
+    })
+  }
+  const containerField = field as unknown as {
+    tabs?: IFormSection[]
+    pages?: IFormSection[]
+    wizard_steps?: IFormSection[]
+  }
+  if (containerField.tabs !== undefined) {
+    containerField.tabs = containerField.tabs.map((tab) => {
+      if (tab.fields !== undefined) {
+        tab.fields = tab.fields.map((childField) => addFieldPath(childField, field.path?.slice()))
+      }
+      return tab
+    })
+  }
+  if (containerField.pages !== undefined) {
+    containerField.pages = containerField.pages.map((page) => {
+      if (page.fields !== undefined) {
+        page.fields = page.fields.map((childField) => addFieldPath(childField, field.path?.slice()))
+      }
+      return addPathsToFormSections(page)
+    })
+  }
+  if (containerField.wizard_steps !== undefined) {
+    containerField.wizard_steps = containerField.wizard_steps.map((wizardStep) => {
+      if (wizardStep.fields !== undefined) {
+        wizardStep.fields = wizardStep.fields.map((childField) =>
+          addFieldPath(childField, field.path?.slice())
+        )
+      }
+      return addPathsToFormSections(wizardStep)
     })
   }
   // return field
@@ -63,9 +97,42 @@ export function copyAndAddPathToFields(formOrContainer: IFormSection | IForm): I
 function removeFieldPath(field: IFormField): IFormField {
   field.path = undefined
   field.level = undefined
-  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
+  if (
+    (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) &&
+    field.fields !== undefined
+  ) {
     field.fields = field.fields.map((childField) => {
       return removeFieldPath(childField)
+    })
+  }
+
+  const containerField = field as unknown as {
+    tabs?: IFormSection[]
+    pages?: IFormSection[]
+    wizard_steps?: IFormSection[]
+  }
+  if (containerField.tabs !== undefined) {
+    containerField.tabs = containerField.tabs.map((tab) => {
+      if (tab.fields !== undefined) {
+        tab.fields = tab.fields.map((childField) => removeFieldPath(childField))
+      }
+      return tab
+    })
+  }
+  if (containerField.pages !== undefined) {
+    containerField.pages = containerField.pages.map((page) => {
+      if (page.fields !== undefined) {
+        page.fields = page.fields.map((childField) => removeFieldPath(childField))
+      }
+      return removePathsFromFormSections(page)
+    })
+  }
+  if (containerField.wizard_steps !== undefined) {
+    containerField.wizard_steps = containerField.wizard_steps.map((wizardStep) => {
+      if (wizardStep.fields !== undefined) {
+        wizardStep.fields = wizardStep.fields.map((childField) => removeFieldPath(childField))
+      }
+      return removePathsFromFormSections(wizardStep)
     })
   }
 

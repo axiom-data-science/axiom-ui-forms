@@ -22,6 +22,10 @@ const getFieldExtra = (field: IFormField, index?: number): string => {
     : ***REMOVED******REMOVED***
 }
 
+const isPathContainerToSkip = (field: IFormField): boolean => {
+  return field.type === ***REMOVED***objectWrapper***REMOVED*** || ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.skip_path === true)
+}
+
 /**
  * Returns the JSON path for a given field
  *
@@ -30,7 +34,7 @@ const getFieldExtra = (field: IFormField, index?: number): string => {
  * @returns The JSON path for the given field
  */
 export const makeJsonPath = (field: IFormField, index?: number): string | undefined => {
-  if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.skip_path === true) {
+  if (isPathContainerToSkip(field)) {
     return undefined
   }
   if (field.destPath !== undefined) {
@@ -38,9 +42,9 @@ export const makeJsonPath = (field: IFormField, index?: number): string | undefi
   } else if (field.path === undefined) {
     return `${field.id}${getFieldExtra(field, index)}`
   } else {
-    const path = field.path
+    const path = field.path.filter((pathField) => !isPathContainerToSkip(pathField))
     const pathLen = path.length
-    return field.path
+    return path
       .map((f, i) => {
         const fMultiple = getFieldMultiple(f)
         const defaultMultipleIndex =
@@ -198,17 +202,14 @@ export function getFieldValue(
  */
 export function getPathFromField(field: IFormField): string | undefined {
   // console.log(`${field.path !== undefined ? field.path.join(***REMOVED***.***REMOVED***) : ***REMOVED***nopath***REMOVED***} = ${field.id}`)
-  if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.skip_path === true) {
+  if (isPathContainerToSkip(field)) {
     return undefined
   }
   if (field.destPath) {
     return field.destPath
   }
   return field.path !== undefined
-    ? field.path
-        .filter((f) => !(f.type === ***REMOVED***object***REMOVED*** && f.skip_path === true))
-        .map((f) => f.id)
-        .join(***REMOVED***.***REMOVED***)
+    ? field.path.filter((f) => !isPathContainerToSkip(f)).map((f) => f.id).join(***REMOVED***.***REMOVED***)
     : field.id
   // return makeJsonPath(field)
 }

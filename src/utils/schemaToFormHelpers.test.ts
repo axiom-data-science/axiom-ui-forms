@@ -370,6 +370,148 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       )
     })
 
+    it(***REMOVED***applies bracket-notation child labels defined directly in form override fields***REMOVED***, () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***testObject***REMOVED***,
+                fields: [
+                  { prop: ***REMOVED***testObject[].field1***REMOVED*** },
+                  { prop: ***REMOVED***testObject[].field2***REMOVED***, label: ***REMOVED***Custom Field 2 Label (from form override)***REMOVED*** },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const testObjectField = form.fields?.find((f) => f.id === ***REMOVED***testObject***REMOVED***) as any
+      expect(testObjectField).toBeDefined()
+      expect(testObjectField.fields?.find((f: any) => f.id === ***REMOVED***field2***REMOVED***)?.label).toBe(
+        ***REMOVED***Custom Field 2 Label (from form override)***REMOVED***
+      )
+    })
+
+    it(***REMOVED***does not duplicate child fields when bracket and normalized keys both exist***REMOVED***, () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***testObject***REMOVED***,
+                fields: [
+                  { prop: ***REMOVED***testObject[].field1***REMOVED*** },
+                  { prop: ***REMOVED***testObject.field1***REMOVED***, label: ***REMOVED***Field 1 normalized override***REMOVED*** },
+                  { prop: ***REMOVED***testObject[].field2***REMOVED*** },
+                ],
+              } as any,
+            ],
+          },
+        ],
+        formFieldOverrides: [[{ prop: ***REMOVED***testObject[].field1***REMOVED***, label: ***REMOVED***Field 1 bracket override***REMOVED*** }]],
+      })
+
+      const testObjectField = form.fields?.find((f) => f.id === ***REMOVED***testObject***REMOVED***) as any
+      expect(testObjectField).toBeDefined()
+
+      const field1Entries = (testObjectField.fields ?? []).filter((f: any) => f.id === ***REMOVED***field1***REMOVED***)
+      const field2Entries = (testObjectField.fields ?? []).filter((f: any) => f.id === ***REMOVED***field2***REMOVED***)
+
+      expect(field1Entries).toHaveLength(1)
+      expect(field2Entries).toHaveLength(1)
+      expect(testObjectField.fields).toHaveLength(2)
+      expect(field1Entries[0]?.label).toBeDefined()
+    })
+
+    it(***REMOVED***keeps nested id-only objectWrapper children and renders inner override fields***REMOVED***, () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              { prop: ***REMOVED***testObject***REMOVED*** },
+              {
+                id: ***REMOVED***wrapper1***REMOVED***,
+                type: ***REMOVED***objectWrapper***REMOVED***,
+                fields: [
+                  {
+                    id: ***REMOVED***wrapper2***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    fields: [
+                      {
+                        prop: ***REMOVED***testEnum***REMOVED***,
+                        label: ***REMOVED***Custom Label for Enum***REMOVED***,
+                      },
+                    ],
+                  },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const wrapper1 = form.fields?.find((f) => f.id === ***REMOVED***wrapper1***REMOVED***) as any
+      expect(wrapper1).toBeDefined()
+      expect(wrapper1.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+      expect(wrapper1.skip_path).toBe(true)
+
+      const wrapper2 = wrapper1.fields?.find((f: any) => f.id === ***REMOVED***wrapper2***REMOVED***)
+      expect(wrapper2).toBeDefined()
+      expect(wrapper2.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+      expect(wrapper2.skip_path).toBe(true)
+
+      const nestedField = wrapper2.fields?.find((f: any) => f.id === ***REMOVED***testEnum***REMOVED***)
+      expect(nestedField).toBeDefined()
+      expect(nestedField.label).toBe(***REMOVED***Custom Label for Enum***REMOVED***)
+    })
+
+    it(***REMOVED***supports arbitrary-depth id-only objectWrapper nesting***REMOVED***, () => {
+      const depth = 5
+      const leafField = {
+        prop: ***REMOVED***testEnum***REMOVED***,
+        label: ***REMOVED***Deep Enum Label***REMOVED***,
+      }
+
+      const nestedWrapper = Array.from({ length: depth }).reduceRight<any>((child, _, index) => {
+        return {
+          id: `wrapper${index + 1}`,
+          type: ***REMOVED***objectWrapper***REMOVED***,
+          fields: [child],
+        }
+      }, leafField)
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [nestedWrapper],
+          },
+        ],
+      })
+
+      let current: any = form.fields?.find((f) => f.id === ***REMOVED***wrapper1***REMOVED***)
+      expect(current).toBeDefined()
+
+      for (let level = 1; level <= depth; level++) {
+        expect(current).toBeDefined()
+        expect(current.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+        expect(current.skip_path).toBe(true)
+
+        if (level < depth) {
+          current = current.fields?.find((f: any) => f.id === `wrapper${level + 1}`)
+        }
+      }
+
+      const deepField = current?.fields?.find((f: any) => f.id === ***REMOVED***testEnum***REMOVED***)
+      expect(deepField).toBeDefined()
+      expect(deepField.label).toBe(***REMOVED***Deep Enum Label***REMOVED***)
+    })
+
     it(***REMOVED***remaps top-level tabs shorthand to the matching multiple array object field***REMOVED***, () => {
       const schemaWithTabs: JSONSchema6 = {
         type: ***REMOVED***object***REMOVED***,
