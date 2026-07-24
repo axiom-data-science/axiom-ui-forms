@@ -349,7 +349,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
       ;(out as any).tabs = (field as any).tabs.map((tab: any) => ({
         ...tab,
         fields: tab.fields
-          ? assignIndexToFields({ ...field, fields: tab.fields } as IObjectField, field, index)
+          ? assignIndexToFields({ ...field, fields: tab.fields } satisfies IObjectField, field, index)
           : undefined,
       }))
     }
@@ -357,7 +357,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
       ;(out as any).pages = (field as any).pages.map((page: any) => ({
         ...page,
         fields: page.fields
-          ? assignIndexToFields({ ...field, fields: page.fields } as IObjectField, field, index)
+          ? assignIndexToFields({ ...field, fields: page.fields } satisfies IObjectField, field, index)
           : undefined,
       }))
     }
@@ -365,7 +365,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
       ;(out as any).wizard_steps = (field as any).wizard_steps.map((step: any) => ({
         ...step,
         fields: step.fields
-          ? assignIndexToFields({ ...field, fields: step.fields } as IObjectField, field, index)
+          ? assignIndexToFields({ ...field, fields: step.fields } satisfies IObjectField, field, index)
           : undefined,
       }))
     }
