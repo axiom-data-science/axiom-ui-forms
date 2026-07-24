@@ -637,7 +637,7 @@
                   "type": "objectWrapper",
                   "fields": [
                     {
-                      "prop": "is-real-time",
+                      "prop": "sensors[].is-real-time",
                       "type": "boolean"
                     }
                   ]
@@ -649,7 +649,7 @@
                   "layout": "grid2",
                   "fields": [
                     {
-                      "prop": "time_coverage_start",
+                      "prop": "sensors[].time_coverage_start",
                       "type": "date",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -657,7 +657,7 @@
                       }
                     },
                     {
-                      "prop": "time_coverage_end",
+                      "prop": "sensors[].time_coverage_end",
                       "description": "Only if not real-time. If real-time, leave blank.",
                       "type": "date",
                       "settings": {
@@ -674,7 +674,8 @@
                   "layout": "grid2",
                   "fields": [
                     {
-                  "prop": "sample-interval-min",
+                  "prop": "sensors[].sample-interval-min",
+                  "type": "selectOrText",
                   "settings": {
                     "descriptionPresentation": "tooltip",
                     "smallLabel": true
@@ -682,7 +683,7 @@
                 },
                 {
                   "prop": "sensors[].sample-average-window-sec",
-                  
+                  "type": "selectOrText",
                   "settings": {
                     "descriptionPresentation": "tooltip",
                     "smallLabel": true
@@ -692,19 +693,19 @@
                   ]
                 },
                 {
-                  "prop": "mounting-structure"
+                  "prop": "sensors[].mounting-structure"
                 },
                 {
-                  "prop": "geophysical_variable:accuracy"
+                  "prop": "sensors[].geophysical_variable:accuracy"
                 },
                 {
-                  "prop": "telemetry-method"
+                  "prop": "sensors[].telemetry-method"
                 },
                 {
-                  "prop": "date-removed"
+                  "prop": "sensors[].date-removed"
                 },
                 {
-                  "prop": "is-station-surveyed"
+                  "prop": "sensors[].is-station-surveyed"
                 }
               ]
             },
@@ -719,7 +720,7 @@
                   "layout": "grid2",
                   "fields": [
                     {
-                      "prop": "instrument",
+                      "prop": "sensors[].instrument",
                       "label": "Instrument",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -727,7 +728,7 @@
                       }
                     },
                     {
-                      "prop": "instrument_variable:component",
+                      "prop": "sensors[].instrument_variable:component",
                       "label": "Component",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -737,7 +738,7 @@
                   ]
                 },
                 {
-                  "prop": "instrument_variable:make_model",
+                  "prop": "sensors[].instrument_variable:make_model",
                   "label": "Make/Model",
                   "settings": {
                     "descriptionPresentation": "tooltip",
@@ -745,7 +746,7 @@
                   }
                 },
                 {
-                  "prop": "sensor-serial-number"
+                  "prop": "sensors[].sensor-serial-number"
                 },
                 {
                   "id": "prior-wrapper",
@@ -754,7 +755,7 @@
                   "layout": "grid2",
                   "fields": [
                     {
-                      "prop": "prior-wmo-id",
+                      "prop": "sensors[].prior-wmo-id",
                       "label": "WMO ID",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -762,7 +763,7 @@
                       }
                     },
                     {
-                      "prop": "prior-wmo-coordinates",
+                      "prop": "sensors[].prior-wmo-coordinates",
                       "label": "WMO Coordinates",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -778,7 +779,7 @@
                   "layout": "grid2",
                   "fields": [
                     {
-                      "prop": "modem-communication-manufacturer-model",
+                      "prop": "sensors[].modem-communication-manufacturer-model",
                       "label": "Manufacturer/Model",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -786,7 +787,7 @@
                       }
                     },
                     {
-                      "prop": "serial-number-for-modem",
+                      "prop": "sensors[].serial-number-for-modem",
                       "label": "Serial Number",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -802,46 +803,50 @@
               "label": "Marker information and stamping",
               "fields": [
                 {
-                  "prop": "marker-stamping"
+                  "prop": "sensors[].marker-stamping"
                 },
                 {
-                  "prop": "marker-ngs-pid"
+                  "prop": "sensors[].marker-ngs-pid"
                 },
                 {
-                  "prop": "marker-co-ops-vm"
+                  "prop": "sensors[].marker-co-ops-vm"
                 },
                 {
-                  "prop": "marker-other-identifier"
+                  "prop": "sensors[].marker-other-identifier"
                 },
                 {
-                  "prop": "survey-method"
+                  "prop": "sensors[].survey-method"
                 },
                 {
-                  "prop": "date-of-most-recent-survey"
+                  "prop": "sensors[].date-of-most-recent-survey"
                 },
                 {
-                  "prop": "measurement-by-at-most-recent-survey"
+                  "prop": "sensors[].measurement-by-at-most-recent-survey"
                 },
                 {
-                  "prop": "additional-survey-information"
+                  "prop": "sensors[].additional-survey-information"
                 },
                 {
-                  "prop": "gnss-rtk-unit"
+                  "prop": "sensors[].gnss-rtk-unit"
                 },
                 {
-                  "prop": "processing-software"
+                  "prop": "sensors[].processing-software"
                 },
                 {
-                  "prop": "movement-since-last-survey"
+                  "prop": "sensors[].movement-since-last-survey"
                 },
                 {
-                  "prop": "difference-since-last-survey"
+                  "prop": "sensors[].difference-since-last-survey",
+                  "conditions": {
+                    "field": "sensors[].movement-since-last-survey",
+                    "value": "Yes"
+                  }
                 },
                 {
-                  "prop": "difference-within-5-cm"
+                  "prop": "sensors[].difference-within-5-cm"
                 },
                 {
-                  "prop": "additional-sensor-information"
+                  "prop": "sensors[].additional-sensor-information"
                 }
               ]
             }
