@@ -165,6 +165,8 @@ export const FieldLabelText = ({
   if (field.label === undefined || field.label === null || field.label === ***REMOVED******REMOVED***) {
     return <></>
   }
+  const boldLabel = (field.settings as {boldLabel?: boolean} | undefined)?.boldLabel ?? false
+  const smallLabel = (field.settings as {smallLabel?: boolean} | undefined)?.smallLabel ?? false
   return (
     <span
       className={utils.makeClassName({
@@ -176,6 +178,8 @@ export const FieldLabelText = ({
             ? ***REMOVED***font-normal***REMOVED***
             : undefined,
           field.level !== undefined && field.level > 1 ? ***REMOVED***text-sm***REMOVED*** : undefined,
+          boldLabel ? ***REMOVED***font-bold***REMOVED*** : undefined,
+          smallLabel ? ***REMOVED***text-xs***REMOVED*** : undefined,
         ],
       })}
     >

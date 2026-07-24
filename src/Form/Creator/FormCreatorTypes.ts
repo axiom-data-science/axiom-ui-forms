@@ -145,6 +145,9 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
     invertForDisplay?: boolean
+    boldLabel?: boolean
+    smallLabel?: boolean
+    className?: string
   }
 }
 
