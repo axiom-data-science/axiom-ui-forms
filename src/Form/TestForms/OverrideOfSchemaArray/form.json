@@ -1,7 +1,7 @@
 {
   "fields": [
     { "prop": "test" }, 
-      {
+    {
     "prop": "testObject",
     "layout": "grid2",
     "fields": [
@@ -12,6 +12,25 @@
           "prop": "testObject[].field2",
           "label": "Custom Field 2 Label (from array override)"
         }
+    ]
+  },
+  {
+    "id":"wrapper1",
+    "type":"objectWrapper",
+    "fields": [
+      {
+        "id":"wrapper2",
+        "type":"objectWrapper",
+        "fields": [
+            {
+              "prop": "testEnum",
+              "label": "Custom Label for Enum (from array override)",
+              "settings": {
+                "smallLabel": true
+              }
+            }
+        ]
+      }
     ]
   }
   ]
