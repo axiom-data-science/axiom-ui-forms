@@ -165,6 +165,8 @@ export const FieldLabelText = ({
   if (field.label === undefined || field.label === null || field.label === '') {
     return <></>
   }
+  const boldLabel = (field.settings as {boldLabel?: boolean} | undefined)?.boldLabel ?? false
+  const smallLabel = (field.settings as {smallLabel?: boolean} | undefined)?.smallLabel ?? false
   return (
     <span
       className={utils.makeClassName({
@@ -176,6 +178,8 @@ export const FieldLabelText = ({
             ? 'font-normal'
             : undefined,
           field.level !== undefined && field.level > 1 ? 'text-sm' : undefined,
+          boldLabel ? 'font-bold' : undefined,
+          smallLabel ? 'text-xs' : undefined,
         ],
       })}
     >
