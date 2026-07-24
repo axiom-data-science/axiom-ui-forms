@@ -21,6 +21,7 @@ import SelectOrTextInput from ***REMOVED***@/Form/Components/Inputs/SelectOrText
 const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   text: StringInput,
   long_text: LongString,
+  longText: LongString,
   number: NumberInput,
   json: JSONStringInput,
   boolean: BooleanInput,
@@ -37,7 +38,8 @@ const inputMap: Record<string, React.FC<IFieldInputProps>> = {
   constant: ConstantInput,
   stateSelector: StateSelectorInput,
   fileUpload: FileUpload,
-  selectOrText: SelectOrTextInput
+  file_upload: FileUpload,
+  selectOrText: SelectOrTextInput,
 }
 
 export default inputMap

@@ -45,6 +45,8 @@ export type IFormField =
   | IGeometryField
   | IFormFieldSection
   | ICustomField
+  | IFileUploadInput
+  | ISelectOrTextInput
 
 export type IFormFieldType =
   | ***REMOVED***text***REMOVED***
@@ -62,6 +64,11 @@ export type IFormFieldType =
   | ***REMOVED***objectWrapper***REMOVED***
   | ***REMOVED***objectList***REMOVED***
   | ***REMOVED***oneOf***REMOVED***
+  | ***REMOVED***fileUpload***REMOVED***
+  | ***REMOVED***file_upload***REMOVED***
+  | ***REMOVED***stateSelector***REMOVED***
+  | ***REMOVED***state_selector***REMOVED***
+  | ***REMOVED***selectOrText***REMOVED***
   | ***REMOVED***geojson***REMOVED***
   | ***REMOVED***geometry***REMOVED***
   | `custom:${string}`
@@ -194,6 +201,15 @@ interface ISelectableInput extends IFormFieldRoot {
   }
 }
 
+interface ISelectOrTextInput extends ISelectableInput {
+  type: ***REMOVED***selectOrText***REMOVED***
+}
+
+interface IFileUploadInput extends IFormFieldRoot {
+  settings?: IFormFieldSettingsBase & {
+    acceptFileTypes?: string[]
+  }
+}
 interface ICustomField extends IFormFieldRoot, ISelectableInput {
   type: `custom:${string}`
 }
@@ -276,7 +292,7 @@ export interface IObjectListField extends Omit<IValidContainerField, ***REMOVED*
   type: ***REMOVED***objectList***REMOVED***
   settings: {
     keyField: string
-    valueField?:string
+    valueField?: string
   }
   fields: IFormField[]
 }
