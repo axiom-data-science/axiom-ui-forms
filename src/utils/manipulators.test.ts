@@ -7,7 +7,9 @@ import {
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   createOneOfMultipleField,
+  copyAndAddPathToFields,
 } from '@/utils/manipulators'
+import { getPathFromField } from '@/utils/getters'
 import { describe, it, expect } from 'vitest'
 
 describe('manipulators.ts', () => {
@@ -52,6 +54,45 @@ describe('manipulators.ts', () => {
       const secondField = createOneOfMultipleField(fieldWithPath, 1) as IObjectField
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
+    })
+
+    it('adds parent array path to fields nested in tabs', () => {
+      const form: IForm = {
+        id: 'testForm',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'testObject',
+            type: 'object',
+            multiple: true,
+            tabs: [
+              {
+                id: 'tab1',
+                label: 'Tab 1',
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    skip_path: true,
+                    fields: [
+                      { id: 'field1', type: 'text' },
+                      { id: 'field2', type: 'number' },
+                    ],
+                  } as any,
+                ],
+              },
+            ],
+          } as any,
+        ],
+      }
+
+      const formWithPaths = copyAndAddPathToFields(form)
+      const testObject = formWithPaths.fields?.[0] as any
+      const wrapper = testObject.tabs?.[0]?.fields?.[0] as IFormField
+      const field2 = wrapper?.fields?.[1] as IFormField
+
+      expect(getPathFromField(wrapper)).toBeUndefined()
+      expect(getPathFromField(field2)).toBe('testObject.field2')
     })
   })
 
