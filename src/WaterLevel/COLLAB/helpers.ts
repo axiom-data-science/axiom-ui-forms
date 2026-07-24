@@ -1,6 +1,7 @@
 import {
   type IObjectFormFieldOverride,
   type IFormSectionOverride,
+  type IFormFieldOverride,
 } from '@/Form/Creator/FormCreatorTypes'
 import { type IMetadataFormSection, type IMetadataField } from '@/WaterLevel/COLLAB/types'
 import { type JSONSchema6 } from 'json-schema'
@@ -64,7 +65,7 @@ export interface IFormGrouping {
 
 export const getFormGroupings = async (): Promise<IFormGrouping[]> => {
   const groupings = await loadSheet<IMetadataFormSection>(FORM_GROUPINGS_SHEET)
-  return groupings.filter(g=>g.id && g.id.trim() !== '') as IFormGrouping[]
+  return groupings.filter((g) => g.id && g.id.trim() !== '') as IFormGrouping[]
 }
 
 const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 => {
@@ -77,9 +78,10 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
     f.option6,
     f.option7,
     f.option8,
-  ].filter((o) => o !== null && o !== '')
-  .map((o) => o?.split('; '))
-  .flat(Infinity) as string[]
+  ]
+    .filter((o) => o !== null && o !== '')
+    .map((o) => o?.split('; '))
+    .flat(Infinity) as string[]
   // const optionsToUse = options.length > 0 ? options.filter(o => o !== 'Other') : []
   // const optionsIncludesOther = options.some(o => o && o.toLowerCase() === 'other') || (f.response_type === "Multichoice with 'other' option" && optionsToUse.length > 0)
   // const useAnyOf = optionsIncludesOther && options.length > 0
@@ -279,7 +281,7 @@ export const parseFormSections = (
             fieldsByPath[f.path ?? ''] = []
           }
           fieldsByPath[f.path ?? ''].push(f)
-          if(f.field_grouping && groupingsById[f.field_grouping]) {
+          if (f.field_grouping && groupingsById[f.field_grouping]) {
             fieldsByGrouping[f.field_grouping] = fieldsByGrouping[f.field_grouping] ?? []
             fieldsByGrouping[f.field_grouping].push(f)
           }
@@ -320,9 +322,15 @@ export const parseFormSections = (
           section.tabs = tabs
         }
       } else {
-        section.fields = fields.map((f) => ({
-          prop: f.id,
-        }))
+        section.fields = fields.map((f) => {
+          const fO: IFormFieldOverride = {
+            prop: f.id,
+          }
+          if (f.response_type && f.response_type.toLowerCase().includes('upload')) {
+            fO.type = 'file_upload'
+          }
+          return fO
+        })
       }
       return section
     })
