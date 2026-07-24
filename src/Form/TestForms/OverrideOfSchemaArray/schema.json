@@ -19,6 +19,10 @@
           "field2": { "type": "number" }
         }
       }
+    },
+    "testEnum": {
+      "type": "string",
+      "enum": ["option1", "option2", "option3"]
     }
   }
 }
