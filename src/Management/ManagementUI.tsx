@@ -35,7 +35,12 @@ import {
 } from ***REMOVED***@/Management/types***REMOVED***
 import OverlayEditor from ***REMOVED***@/Management/Components/OverlayEditor***REMOVED***
 import FieldNodeRow from ***REMOVED***@/Management/Components/FieldNodeRow***REMOVED***
-import FieldOverrideEditors from ***REMOVED***@/Management/Components/FieldOverrideEditors***REMOVED***
+import {
+  ConditionEditor,
+  ConditionSetEditor,
+  GeneralSettingsEditor,
+  TypeSpecificSettingsEditor,
+} from ***REMOVED***@/Management/Components/FieldEditorsTabbed***REMOVED***
 import GroupNodeCard from ***REMOVED***@/Management/Components/GroupNodeCard***REMOVED***
 import habSchema from ***REMOVED***@/PTT/HAB/HABConfig.json***REMOVED***
 import habFormOverride from ***REMOVED***@/PTT/HAB/habFormOverride***REMOVED***
@@ -2892,28 +2897,43 @@ const ManagementUI = (): ReactElement => {
                     ),
                   },
                   {
-                    id: ***REMOVED***field-overrides***REMOVED***,
-                    label: ***REMOVED***Overrides***REMOVED***,
+                    id: ***REMOVED***field-conditions***REMOVED***,
+                    label: ***REMOVED***Conditions***REMOVED***,
                     content: (
-                      <FieldOverrideEditors
+                      <ConditionEditor
                         fieldProp={selectedField.prop}
-                        effectiveType={selectedFieldEffectiveType}
                         conditions={selectedField.overrideConditions}
-                        conditionsSet={selectedField.overrideConditionsSet}
-                        generalSettings={selectedFieldSettingsSplit.general}
-                        typeSpecificSettings={selectedFieldSettingsSplit.typeSpecific}
                         onConditionsChange={(next) => {
                           updateSelectedField((field) => ({
                             ...field,
                             overrideConditions: next,
                           }))
                         }}
+                      />
+                    ),
+                  },
+                  {
+                    id: ***REMOVED***field-conditions-set***REMOVED***,
+                    label: ***REMOVED***Condition Set***REMOVED***,
+                    content: (
+                      <ConditionSetEditor
+                        fieldProp={selectedField.prop}
+                        conditionsSet={selectedField.overrideConditionsSet}
                         onConditionsSetChange={(next) => {
                           updateSelectedField((field) => ({
                             ...field,
                             overrideConditionsSet: next,
                           }))
                         }}
+                      />
+                    ),
+                  },
+                  {
+                    id: ***REMOVED***field-general-settings***REMOVED***,
+                    label: ***REMOVED***General Settings***REMOVED***,
+                    content: (
+                      <GeneralSettingsEditor
+                        generalSettings={selectedFieldSettingsSplit.general}
                         onGeneralSettingsChange={(nextGeneral) => {
                           updateSelectedField((field) => {
                             const split = splitFieldSettings(field.overrideSettings)
@@ -2923,6 +2943,16 @@ const ManagementUI = (): ReactElement => {
                             }
                           })
                         }}
+                      />
+                    ),
+                  },
+                  {
+                    id: ***REMOVED***field-type-settings***REMOVED***,
+                    label: ***REMOVED***Type Settings***REMOVED***,
+                    content: (
+                      <TypeSpecificSettingsEditor
+                        effectiveType={selectedFieldEffectiveType}
+                        typeSpecificSettings={selectedFieldSettingsSplit.typeSpecific}
                         onTypeSpecificSettingsChange={(nextTypeSpecific) => {
                           updateSelectedField((field) => {
                             const split = splitFieldSettings(field.overrideSettings)
@@ -2933,44 +2963,6 @@ const ManagementUI = (): ReactElement => {
                           })
                         }}
                       />
-                    ),
-                  },
-                  {
-                    id: ***REMOVED***field-output***REMOVED***,
-                    label: ***REMOVED***Form Output***REMOVED***,
-                    content: (
-                      <div className="flex flex-col gap-2 h-full">
-                        <p className="text-xs text-slate-600">Generated form field output</p>
-                        <div className="border rounded p-2 bg-slate-50 flex-1 overflow-auto font-mono text-xs whitespace-pre-wrap">
-                          {JSON.stringify(
-                            {
-                              prop: selectedField.prop,
-                              ...(selectedField.overrideType && {
-                                type: selectedField.overrideType,
-                              }),
-                              ...(selectedField.overrideLabel && {
-                                label: selectedField.overrideLabel,
-                              }),
-                              ...(selectedField.destPath && { destPath: selectedField.destPath }),
-                              ...(selectedField.overrideConditions && {
-                                conditions: selectedField.overrideConditions,
-                              }),
-                              ...(selectedField.overrideConditionsSet && {
-                                conditionsSet: selectedField.overrideConditionsSet,
-                              }),
-                              ...(selectedField.overrideSettings && {
-                                settings: selectedField.overrideSettings,
-                              }),
-                              ...(selectedField.overrideExtras &&
-                                Object.keys(selectedField.overrideExtras).length > 0 && {
-                                  ...selectedField.overrideExtras,
-                                }),
-                            },
-                            null,
-                            2
-                          )}
-                        </div>
-                      </div>
                     ),
                   },
                 ]}
