@@ -2,6 +2,7 @@ import React, { type DragEvent, type ReactElement, type ReactNode } from 'react'
 import { Button } from '@axdspub/axiom-ui-utilities'
 import { DragHandleDots2Icon } from '@radix-ui/react-icons'
 import { type IManagementGroupNode } from '@/Management/types'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 
 type GroupNodeCardProps = {
   group: IManagementGroupNode
@@ -13,6 +14,8 @@ type GroupNodeCardProps = {
   onGroupDragOver: (event: DragEvent<HTMLDivElement>) => void
   onGroupDrop: (event: DragEvent<HTMLDivElement>) => void
   onEdit: () => void
+  isCollapsed?: boolean
+  onToggleCollapsed?: () => void
   depth: number
   children: ReactNode
 }
@@ -27,6 +30,8 @@ const GroupNodeCard = ({
   onGroupDragOver,
   onGroupDrop,
   onEdit,
+  isCollapsed = false,
+  onToggleCollapsed,
   depth,
   children,
 }: GroupNodeCardProps): ReactElement => {
@@ -52,14 +57,29 @@ const GroupNodeCard = ({
           <span className="font-semibold break-all">{group.label}</span>
           <span className="text-xs text-slate-600 ml-2">{group.id}</span>
         </div>
-        <Button size="xs" onClick={onEdit}>Edit</Button>
+        <div className="inline-flex items-center gap-1">
+          {onToggleCollapsed !== undefined ? (
+            <Button size="xs" variant="ghost" onClick={onToggleCollapsed}>
+              {isCollapsed ? (
+                <ChevronRight className="w-3 h-3" />
+              ) : (
+                <ChevronDown className="w-3 h-3" />
+              )}
+            </Button>
+          ) : null}
+          <Button size="xs" onClick={onEdit}>
+            Edit
+          </Button>
+        </div>
       </div>
-      <div
-        className="mt-2 border-l border-slate-200 pl-2"
-        style={{ marginLeft: `${Math.min(depth + 1, 6) * 8}px` }}
-      >
-        {children}
-      </div>
+      {!isCollapsed ? (
+        <div
+          className="mt-2 border-l border-slate-200 pl-2"
+          style={{ marginLeft: `${Math.min(depth + 1, 6) * 8}px` }}
+        >
+          {children}
+        </div>
+      ) : null}
     </div>
   )
 }
