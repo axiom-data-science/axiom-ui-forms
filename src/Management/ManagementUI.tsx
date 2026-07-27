@@ -252,10 +252,7 @@ const readRecord = (value: unknown): Record<string, unknown> | undefined => {
 }
 
 const generateShortGuid = (): string => {
-  return Math.random()
-    .toString(36)
-    .substring(2, 6)
-    .toUpperCase()
+  return Math.random().toString(36).substring(2, 6).toUpperCase()
 }
 
 const GENERAL_FIELD_SETTING_KEYS = new Set([
@@ -2758,12 +2755,12 @@ const ManagementUI = (): ReactElement => {
           }}
         >
           <div
-            className="bg-white rounded shadow-xl w-170 max-w-[95vw] p-4 flex flex-col gap-3"
+            className="bg-white rounded shadow-xl w-170 max-w-[95vw] h-[95vh] flex flex-col gap-3 p-4"
             onClick={(event) => {
               event.stopPropagation()
             }}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="font-semibold">Edit Field</h3>
               <Button
                 size="xs"
@@ -2775,194 +2772,210 @@ const ManagementUI = (): ReactElement => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <label className="flex flex-col gap-1 text-sm">
-                Prop
-                <input
-                  className="border rounded px-2 py-1"
-                  value={selectedField.prop}
-                  onChange={(e) => {
-                    const next = model.fields.map((field) =>
-                      field.id === selectedField.id ? { ...field, prop: e.target.value } : field
-                    )
-                    setModel({ ...model, fields: next })
-                  }}
-                />
-              </label>
+            <div className="flex-1 overflow-auto">
+              <Tabs
+                className="flex flex-col gap-2 h-full"
+                defaultContentClassName="border rounded p-3 overflow-auto flex-1"
+                tabs={[
+                  {
+                    id: ***REMOVED***field-basic***REMOVED***,
+                    label: ***REMOVED***Basic***REMOVED***,
+                    content: (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label className="flex flex-col gap-1 text-sm">
+                          Prop
+                          <input
+                            className="border rounded px-2 py-1"
+                            value={selectedField.prop}
+                            onChange={(e) => {
+                              const next = model.fields.map((field) =>
+                                field.id === selectedField.id
+                                  ? { ...field, prop: e.target.value }
+                                  : field
+                              )
+                              setModel({ ...model, fields: next })
+                            }}
+                          />
+                        </label>
 
-              <label className="flex flex-col gap-1 text-sm">
-                Parent
-                <select
-                  className="border rounded px-2 py-1"
-                  value={selectedField.parentRef}
-                  onChange={(e) => {
-                    const nextParentRef = e.target.value
-                    const siblingCount = getSiblingEntries(model, nextParentRef).length
-                    const next = model.fields.map((field) =>
-                      field.id === selectedField.id
-                        ? { ...field, parentRef: nextParentRef, order: siblingCount }
-                        : field
-                    )
-                    const withParent = { ...model, fields: next }
-                    const normalizedOld = normalizeSiblingOrder(withParent, selectedField.parentRef)
-                    setModel(normalizeSiblingOrder(normalizedOld, nextParentRef))
-                  }}
-                >
-                  {parentOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                        <label className="flex flex-col gap-1 text-sm">
+                          Parent
+                          <select
+                            className="border rounded px-2 py-1"
+                            value={selectedField.parentRef}
+                            onChange={(e) => {
+                              const nextParentRef = e.target.value
+                              const siblingCount = getSiblingEntries(model, nextParentRef).length
+                              const next = model.fields.map((field) =>
+                                field.id === selectedField.id
+                                  ? { ...field, parentRef: nextParentRef, order: siblingCount }
+                                  : field
+                              )
+                              const withParent = { ...model, fields: next }
+                              const normalizedOld = normalizeSiblingOrder(
+                                withParent,
+                                selectedField.parentRef
+                              )
+                              setModel(normalizeSiblingOrder(normalizedOld, nextParentRef))
+                            }}
+                          >
+                            {parentOptions.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
 
-              <label className="flex flex-col gap-1 text-sm">
-                Override Type
-                <select
-                  className="border rounded px-2 py-1"
-                  value={selectedField.overrideType ?? ***REMOVED******REMOVED***}
-                  onChange={(e) => {
-                    const next = model.fields.map((field) =>
-                      field.id === selectedField.id
-                        ? {
-                            ...field,
-                            overrideType:
-                              e.target.value === ***REMOVED******REMOVED***
-                                ? undefined
-                                : (e.target.value as IFormField[***REMOVED***type***REMOVED***]),
-                          }
-                        : field
-                    )
-                    setModel({ ...model, fields: next })
-                  }}
-                >
-                  <option value="">(none)</option>
-                  {fieldTypeOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                        <label className="flex flex-col gap-1 text-sm">
+                          Override Type
+                          <select
+                            className="border rounded px-2 py-1"
+                            value={selectedField.overrideType ?? ***REMOVED******REMOVED***}
+                            onChange={(e) => {
+                              const next = model.fields.map((field) =>
+                                field.id === selectedField.id
+                                  ? {
+                                      ...field,
+                                      overrideType:
+                                        e.target.value === ***REMOVED******REMOVED***
+                                          ? undefined
+                                          : (e.target.value as IFormField[***REMOVED***type***REMOVED***]),
+                                    }
+                                  : field
+                              )
+                              setModel({ ...model, fields: next })
+                            }}
+                          >
+                            <option value="">(none)</option>
+                            {fieldTypeOptions.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
 
-              <label className="flex flex-col gap-1 text-sm">
-                Override Label
-                <input
-                  className="border rounded px-2 py-1"
-                  value={selectedField.overrideLabel ?? ***REMOVED******REMOVED***}
-                  onChange={(e) => {
-                    const next = model.fields.map((field) =>
-                      field.id === selectedField.id
-                        ? { ...field, overrideLabel: e.target.value }
-                        : field
-                    )
-                    setModel({ ...model, fields: next })
-                  }}
-                />
-              </label>
+                        <label className="flex flex-col gap-1 text-sm">
+                          Override Label
+                          <input
+                            className="border rounded px-2 py-1"
+                            value={selectedField.overrideLabel ?? ***REMOVED******REMOVED***}
+                            onChange={(e) => {
+                              const next = model.fields.map((field) =>
+                                field.id === selectedField.id
+                                  ? { ...field, overrideLabel: e.target.value }
+                                  : field
+                              )
+                              setModel({ ...model, fields: next })
+                            }}
+                          />
+                        </label>
 
-              <label className="flex flex-col gap-1 text-sm">
-                Dest Path
-                <input
-                  className="border rounded px-2 py-1"
-                  placeholder="Optional output path override"
-                  value={selectedField.destPath ?? ***REMOVED******REMOVED***}
-                  onChange={(e) => {
-                    const next = model.fields.map((field) =>
-                      field.id === selectedField.id
-                        ? { ...field, destPath: e.target.value }
-                        : field
-                    )
-                    setModel({ ...model, fields: next })
-                  }}
-                />
-              </label>
-            </div>
-
-            <Tabs
-              className="flex flex-col gap-2 min-h-96 grow"
-              defaultContentClassName="border rounded p-3 grow overflow-auto"
-              tabs={[
-                {
-                  id: ***REMOVED***field-overrides***REMOVED***,
-                  label: ***REMOVED***Overrides***REMOVED***,
-                  content: (
-                    <FieldOverrideEditors
-                      fieldProp={selectedField.prop}
-                      effectiveType={selectedFieldEffectiveType}
-                      conditions={selectedField.overrideConditions}
-                      conditionsSet={selectedField.overrideConditionsSet}
-                      generalSettings={selectedFieldSettingsSplit.general}
-                      typeSpecificSettings={selectedFieldSettingsSplit.typeSpecific}
-                      onConditionsChange={(next) => {
-                        updateSelectedField((field) => ({
-                          ...field,
-                          overrideConditions: next,
-                        }))
-                      }}
-                      onConditionsSetChange={(next) => {
-                        updateSelectedField((field) => ({
-                          ...field,
-                          overrideConditionsSet: next,
-                        }))
-                      }}
-                      onGeneralSettingsChange={(nextGeneral) => {
-                        updateSelectedField((field) => {
-                          const split = splitFieldSettings(field.overrideSettings)
-                          return {
-                            ...field,
-                            overrideSettings: mergeFieldSettings(nextGeneral, split.typeSpecific),
-                          }
-                        })
-                      }}
-                      onTypeSpecificSettingsChange={(nextTypeSpecific) => {
-                        updateSelectedField((field) => {
-                          const split = splitFieldSettings(field.overrideSettings)
-                          return {
-                            ...field,
-                            overrideSettings: mergeFieldSettings(split.general, nextTypeSpecific),
-                          }
-                        })
-                      }}
-                    />
-                  ),
-                },
-                {
-                  id: ***REMOVED***field-output***REMOVED***,
-                  label: ***REMOVED***Form Output***REMOVED***,
-                  content: (
-                    <div className="flex flex-col gap-2 h-full">
-                      <p className="text-xs text-slate-600">Generated form field output</p>
-                      <div className="border rounded p-2 bg-slate-50 flex-1 overflow-auto font-mono text-xs whitespace-pre-wrap">
-                        {JSON.stringify(
-                          {
-                            prop: selectedField.prop,
-                            ...(selectedField.overrideType && { type: selectedField.overrideType }),
-                            ...(selectedField.overrideLabel && { label: selectedField.overrideLabel }),
-                            ...(selectedField.destPath && { destPath: selectedField.destPath }),
-                            ...(selectedField.overrideConditions && {
-                              conditions: selectedField.overrideConditions,
-                            }),
-                            ...(selectedField.overrideConditionsSet && {
-                              conditionsSet: selectedField.overrideConditionsSet,
-                            }),
-                            ...(selectedField.overrideSettings && {
-                              settings: selectedField.overrideSettings,
-                            }),
-                            ...(selectedField.overrideExtras &&
-                              Object.keys(selectedField.overrideExtras).length > 0 && {
-                                ...selectedField.overrideExtras,
-                              }),
-                          },
-                          null,
-                          2
-                        )}
+                        <label className="flex flex-col gap-1 text-sm">
+                          Dest Path
+                          <input
+                            className="border rounded px-2 py-1"
+                            placeholder="Optional output path override"
+                            value={selectedField.destPath ?? ***REMOVED******REMOVED***}
+                            onChange={(e) => {
+                              const next = model.fields.map((field) =>
+                                field.id === selectedField.id
+                                  ? { ...field, destPath: e.target.value }
+                                  : field
+                              )
+                              setModel({ ...model, fields: next })
+                            }}
+                          />
+                        </label>
                       </div>
-                    </div>
-                  ),
-                },
-              ]}
-            />
+                    ),
+                  },
+                  {
+                    id: ***REMOVED***field-overrides***REMOVED***,
+                    label: ***REMOVED***Overrides***REMOVED***,
+                    content: (
+                      <FieldOverrideEditors
+                        fieldProp={selectedField.prop}
+                        effectiveType={selectedFieldEffectiveType}
+                        conditions={selectedField.overrideConditions}
+                        conditionsSet={selectedField.overrideConditionsSet}
+                        generalSettings={selectedFieldSettingsSplit.general}
+                        typeSpecificSettings={selectedFieldSettingsSplit.typeSpecific}
+                        onConditionsChange={(next) => {
+                          updateSelectedField((field) => ({
+                            ...field,
+                            overrideConditions: next,
+                          }))
+                        }}
+                        onConditionsSetChange={(next) => {
+                          updateSelectedField((field) => ({
+                            ...field,
+                            overrideConditionsSet: next,
+                          }))
+                        }}
+                        onGeneralSettingsChange={(nextGeneral) => {
+                          updateSelectedField((field) => {
+                            const split = splitFieldSettings(field.overrideSettings)
+                            return {
+                              ...field,
+                              overrideSettings: mergeFieldSettings(nextGeneral, split.typeSpecific),
+                            }
+                          })
+                        }}
+                        onTypeSpecificSettingsChange={(nextTypeSpecific) => {
+                          updateSelectedField((field) => {
+                            const split = splitFieldSettings(field.overrideSettings)
+                            return {
+                              ...field,
+                              overrideSettings: mergeFieldSettings(split.general, nextTypeSpecific),
+                            }
+                          })
+                        }}
+                      />
+                    ),
+                  },
+                  {
+                    id: ***REMOVED***field-output***REMOVED***,
+                    label: ***REMOVED***Form Output***REMOVED***,
+                    content: (
+                      <div className="flex flex-col gap-2 h-full">
+                        <p className="text-xs text-slate-600">Generated form field output</p>
+                        <div className="border rounded p-2 bg-slate-50 flex-1 overflow-auto font-mono text-xs whitespace-pre-wrap">
+                          {JSON.stringify(
+                            {
+                              prop: selectedField.prop,
+                              ...(selectedField.overrideType && {
+                                type: selectedField.overrideType,
+                              }),
+                              ...(selectedField.overrideLabel && {
+                                label: selectedField.overrideLabel,
+                              }),
+                              ...(selectedField.destPath && { destPath: selectedField.destPath }),
+                              ...(selectedField.overrideConditions && {
+                                conditions: selectedField.overrideConditions,
+                              }),
+                              ...(selectedField.overrideConditionsSet && {
+                                conditionsSet: selectedField.overrideConditionsSet,
+                              }),
+                              ...(selectedField.overrideSettings && {
+                                settings: selectedField.overrideSettings,
+                              }),
+                              ...(selectedField.overrideExtras &&
+                                Object.keys(selectedField.overrideExtras).length > 0 && {
+                                  ...selectedField.overrideExtras,
+                                }),
+                            },
+                            null,
+                            2
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </div>
           </div>
         </div>
       ) : null}
@@ -3370,6 +3383,20 @@ const ManagementUI = (): ReactElement => {
                           }}
                         />
                       </div>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                id: ***REMOVED***management-form-output***REMOVED***,
+                label: ***REMOVED***Form Output***REMOVED***,
+                content: (
+                  <div className="flex flex-col gap-3 h-full">
+                    <p className="text-sm text-slate-600">
+                      JSON data collected from the preview form as values are entered.
+                    </p>
+                    <div className="border rounded p-2 bg-slate-50 flex-1 overflow-auto font-mono text-xs whitespace-pre-wrap">
+                      {JSON.stringify(formValues, null, 2)}
                     </div>
                   </div>
                 ),
