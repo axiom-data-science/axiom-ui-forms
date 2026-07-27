@@ -28,6 +28,7 @@ export interface IManagementFieldNode {
   overrideConditionsSet?: IFormField[***REMOVED***conditionsSet***REMOVED***]
   overrideSettings?: IFormField[***REMOVED***settings***REMOVED***]
   overrideExtras?: Record<string, unknown>
+  destPath?: string
 }
 
 export interface IManagementGroupNode {
