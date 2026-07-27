@@ -1,4 +1,8 @@
-import { type IFormField, type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
+import {
+  type IFormField,
+  type IFormOverride,
+  type IFormFieldOverride,
+} from '@/Form/Creator/FormCreatorTypes'
 
 export type IManagementNavigationMode = 'fields' | 'pages' | 'tabs' | 'wizard_steps'
 
@@ -23,6 +27,7 @@ export interface IManagementFieldNode {
   overrideConditions?: IFormField['conditions']
   overrideConditionsSet?: IFormField['conditionsSet']
   overrideSettings?: IFormField['settings']
+  overrideExtras?: Record<string, unknown>
 }
 
 export interface IManagementGroupNode {
