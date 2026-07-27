@@ -3167,12 +3167,12 @@ const ManagementUI = (): ReactElement => {
       ) : null}
 
       <OverlayEditor>
-        <div className="flex gap-2 p-8 pb-0">
-          <Button size="sm" onClick={applyJsonInputsToBuilder}>
+        <div className="flex flex-col gap-2 p-8 pb-0">
+          <Button size="xs" onClick={applyJsonInputsToBuilder}>
             Apply JSON To Builder
           </Button>
           <Button
-            size="sm"
+            size="xs"
             onClick={() => {
               setFormOverrideDraft(undefined)
               setFieldOverridesDraft(undefined)
