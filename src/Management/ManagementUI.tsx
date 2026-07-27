@@ -1715,6 +1715,15 @@ const ManagementUI = (): ReactElement => {
     setCollapsedNodeRefs(new Set())
   }
 
+  const clearConfigs = (): void => {
+    setSchemaInput(sampleSchema)
+    setModel(createManagementModelFromSchema(sampleSchema))
+    setFormValues({})
+    setFormOverrideDraft(undefined)
+    setFieldOverridesDraft(undefined)
+    setCollapsedNodeRefs(new Set())
+  }
+
   const startDrag =
     (item: IDragItem) =>
     (event: DragEvent<HTMLElement>): void => {
@@ -3189,6 +3198,9 @@ const ManagementUI = (): ReactElement => {
                   <div className="flex gap-2">
                     <Button size="sm" onClick={applySeedPreset}>
                       Load Preset Into Builder
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={clearConfigs}>
+                      Clear All Configs
                     </Button>
                   </div>
                   <div className="text-xs text-slate-600">
