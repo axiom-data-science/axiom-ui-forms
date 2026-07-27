@@ -3167,22 +3167,23 @@ const ManagementUI = (): ReactElement => {
       ) : null}
 
       <OverlayEditor>
-        <div className="flex flex-col gap-2 p-8 pb-0">
-          <Button size="xs" onClick={applyJsonInputsToBuilder}>
-            Apply JSON To Builder
-          </Button>
-          <Button
-            size="xs"
-            onClick={() => {
-              setFormOverrideDraft(undefined)
-              setFieldOverridesDraft(undefined)
-            }}
-          >
-            Reset To Generated
-          </Button>
-        </div>
-        <Tabs
-          className="flex flex-col h-full p-8 grow"
+        <div className="flex flex-col h-full gap-2">
+          <div className="flex gap-2 px-8 pt-8">
+            <Button size="xs" onClick={applyJsonInputsToBuilder}>
+              Apply JSON To Builder
+            </Button>
+            <Button
+              size="xs"
+              onClick={() => {
+                setFormOverrideDraft(undefined)
+                setFieldOverridesDraft(undefined)
+              }}
+            >
+              Reset To Generated
+            </Button>
+          </div>
+          <Tabs
+          className="flex flex-col h-full p-8 pt-0 grow"
           defaultContentClassName="h-full overflow-auto p-4"
           tabs={[
             {
@@ -3311,6 +3312,7 @@ const ManagementUI = (): ReactElement => {
             },
           ]}
         />
+        </div>
       </OverlayEditor>
     </>
   )
