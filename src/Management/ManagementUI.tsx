@@ -1064,6 +1064,11 @@ const createModelFromOverrides = (
         extractOverrideExtras(overrideLike)
       )
 
+      const nested = readFieldArray(overrideLike.fields)
+      if (nested.length > 0 && fieldCanContainChildren(field)) {
+        parseItems(nested, makeParentRef.field(field.id))
+      }
+
       if (!baseProps.has(field.prop) && field.label.trim() === ***REMOVED******REMOVED***) {
         field.label = prop
       }
@@ -1118,6 +1123,7 @@ const ManagementUI = (): ReactElement => {
   const [selectedFieldId, setSelectedFieldId] = useState<string | undefined>(undefined)
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(undefined)
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>(undefined)
+  const [collapsedNodeRefs, setCollapsedNodeRefs] = useState<Set<string>>(() => new Set())
   const [inlineLabelEditTarget, setInlineLabelEditTarget] = useState<
     IInlineLabelEditTarget | undefined
   >(undefined)
@@ -1186,6 +1192,18 @@ const ManagementUI = (): ReactElement => {
 
   const [formOverrideDraft, setFormOverrideDraft] = useState<unknown>(undefined)
   const [fieldOverridesDraft, setFieldOverridesDraft] = useState<unknown>(undefined)
+
+  const toggleNodeCollapsed = (nodeRef: string): void => {
+    setCollapsedNodeRefs((prev) => {
+      const next = new Set(prev)
+      if (next.has(nodeRef)) {
+        next.delete(nodeRef)
+      } else {
+        next.add(nodeRef)
+      }
+      return next
+    })
+  }
 
   const focusEditor = (editorId: string): void => {
     setFocusedEditorId(editorId)
@@ -1668,6 +1686,7 @@ const ManagementUI = (): ReactElement => {
 
   const handleBuildFromSchema = (): void => {
     setModel(createManagementModelFromSchema(schemaInput))
+    setCollapsedNodeRefs(new Set())
     setFormValues({})
     setFormOverrideDraft(undefined)
     setFieldOverridesDraft(undefined)
@@ -1684,6 +1703,7 @@ const ManagementUI = (): ReactElement => {
 
     setSchemaInput(nextSchema)
     setModel(nextModel)
+    setCollapsedNodeRefs(new Set())
     setFormValues({})
     setFormOverrideDraft(nextFormOverride)
     setFieldOverridesDraft(nextFieldOverrides)
@@ -1692,6 +1712,7 @@ const ManagementUI = (): ReactElement => {
   const applyJsonInputsToBuilder = (): void => {
     const next = createModelFromOverrides(schemaInput, formOverrideValue, fieldOverridesValue)
     setModel(next)
+    setCollapsedNodeRefs(new Set())
   }
 
   const startDrag =
@@ -2052,6 +2073,8 @@ const ManagementUI = (): ReactElement => {
               isDropAllowed(model, dragItem, fieldRef, schemaProps) ||
               isPaletteDropAllowed(model, paletteDragField, fieldRef, schemaProps)
             const hasNestedEntries = getSiblingEntries(model, fieldRef).length > 0
+            const fieldChildrenCollapsed = collapsedNodeRefs.has(fieldRef)
+            const canToggleFieldChildren = hasNestedEntries
 
             return (
               <div key={field.id} className="flex flex-col gap-1 w-full">
@@ -2119,9 +2142,14 @@ const ManagementUI = (): ReactElement => {
                   onDelete={() => {
                     deleteField(field.id)
                   }}
+                  canToggleChildren={canToggleFieldChildren}
+                  isChildrenCollapsed={fieldChildrenCollapsed}
+                  onToggleChildren={() => {
+                    toggleNodeCollapsed(fieldRef)
+                  }}
                 />
 
-                {canNestAsUnmappedContainer || hasNestedEntries ? (
+                {(canNestAsUnmappedContainer || hasNestedEntries) && !fieldChildrenCollapsed ? (
                   <div className="ml-3 mt-1 border-l border-slate-200 pl-2">
                     {canNestAsUnmappedContainer ? (
                       <div
@@ -2151,6 +2179,8 @@ const ManagementUI = (): ReactElement => {
           if (group === undefined) return null
 
           const groupRef = makeParentRef.group(group.id)
+          const groupChildrenCollapsed = collapsedNodeRefs.has(groupRef)
+          const hasGroupChildren = getSiblingEntries(model, groupRef).length > 0
 
           return (
             <div key={group.id} className="flex flex-col gap-1 w-full">
@@ -2180,6 +2210,14 @@ const ManagementUI = (): ReactElement => {
                 onEdit={() => {
                   setSelectedGroupId(group.id)
                 }}
+                isCollapsed={groupChildrenCollapsed}
+                onToggleCollapsed={
+                  hasGroupChildren
+                    ? () => {
+                        toggleNodeCollapsed(groupRef)
+                      }
+                    : undefined
+                }
                 depth={depth}
               >
                 {renderNodes(groupRef, depth + 1)}
