@@ -9,6 +9,11 @@ import {
 
 type IConditionValueKind = ***REMOVED***string***REMOVED*** | ***REMOVED***number***REMOVED*** | ***REMOVED***boolean***REMOVED***
 
+type IEditableSelectOption = {
+  label: string
+  value: string | number
+}
+
 type FieldEditorsProps = {
   fieldProp: string
   effectiveType?: IFormField[***REMOVED***type***REMOVED***]
@@ -100,6 +105,29 @@ const createTypeSpecificSettingsTemplate = (
     default:
       return {}
   }
+}
+
+const coerceSelectOptions = (options: unknown): IEditableSelectOption[] => {
+  if (!Array.isArray(options)) return []
+
+  return options
+    .map((option) => {
+      if (option === null || typeof option !== ***REMOVED***object***REMOVED***) return undefined
+
+      const optionLike = option as Record<string, unknown>
+      const label = typeof optionLike.label === ***REMOVED***string***REMOVED*** ? optionLike.label : ***REMOVED******REMOVED***
+      const rawValue = optionLike.value
+
+      if (typeof rawValue !== ***REMOVED***string***REMOVED*** && typeof rawValue !== ***REMOVED***number***REMOVED***) {
+        return undefined
+      }
+
+      return {
+        label,
+        value: rawValue,
+      }
+    })
+    .filter((option): option is IEditableSelectOption => option !== undefined)
 }
 
 export const ConditionEditor = ({
@@ -789,6 +817,111 @@ export const TypeSpecificSettingsEditor = ({
           </select>
         </label>
       ) : null}
+    </div>
+  )
+}
+
+export const SelectOptionsEditor = ({
+  options,
+  onOptionsChange,
+}: {
+  options: unknown
+  onOptionsChange: (next: IEditableSelectOption[] | undefined) => void
+}): ReactElement => {
+  const normalizedOptions = coerceSelectOptions(options)
+
+  const setOptions = (next: IEditableSelectOption[]): void => {
+    onOptionsChange(next.length > 0 ? next : undefined)
+  }
+
+  const updateOption = (
+    index: number,
+    updater: (existing: IEditableSelectOption) => IEditableSelectOption
+  ): void => {
+    const next = normalizedOptions.map((option, currentIndex) =>
+      currentIndex === index ? updater(option) : option
+    )
+    setOptions(next)
+  }
+
+  return (
+    <div className="flex flex-col gap-2 border rounded p-3">
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-semibold">Options</h4>
+        <Button
+          size="xs"
+          variant="ghost"
+          onClick={() => {
+            setOptions([
+              ...normalizedOptions,
+              {
+                label: `Option ${normalizedOptions.length + 1}`,
+                value: ***REMOVED******REMOVED***,
+              },
+            ])
+          }}
+        >
+          Add option
+        </Button>
+      </div>
+
+      {normalizedOptions.length === 0 ? (
+        <p className="text-xs text-slate-600">No options yet. Add at least one option.</p>
+      ) : null}
+
+      {normalizedOptions.map((option, index) => {
+        const isNumberValue = typeof option.value === ***REMOVED***number***REMOVED***
+
+        return (
+          <div key={`${index}-${option.label}`} className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <label className="flex flex-col gap-1 text-sm">
+              Label
+              <input
+                className="border rounded px-2 py-1"
+                value={option.label}
+                onChange={(event) => {
+                  updateOption(index, (existing) => ({
+                    ...existing,
+                    label: event.target.value,
+                  }))
+                }}
+              />
+            </label>
+
+            <div className="flex flex-col gap-1 text-sm">
+              <label className="flex flex-col gap-1">
+                Value
+                <input
+                  className="border rounded px-2 py-1"
+                  type={isNumberValue ? ***REMOVED***number***REMOVED*** : ***REMOVED***text***REMOVED***}
+                  value={String(option.value)}
+                  onChange={(event) => {
+                    const nextValue = isNumberValue
+                      ? event.target.value === ***REMOVED******REMOVED***
+                        ? 0
+                        : Number(event.target.value)
+                      : event.target.value
+
+                    updateOption(index, (existing) => ({
+                      ...existing,
+                      value: nextValue,
+                    }))
+                  }}
+                />
+              </label>
+              <Button
+                size="xs"
+                variant="outline"
+                onClick={() => {
+                  setOptions(normalizedOptions.filter((_, currentIndex) => currentIndex !== index))
+                }}
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

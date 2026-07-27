@@ -41,6 +41,7 @@ import {
   GeneralSettingsEditor,
   TypeSpecificSettingsEditor,
   ConstraintsEditor,
+  SelectOptionsEditor,
 } from ***REMOVED***@/Management/Components/FieldEditorsTabbed***REMOVED***
 import GroupNodeCard from ***REMOVED***@/Management/Components/GroupNodeCard***REMOVED***
 import habSchema from ***REMOVED***@/PTT/HAB/HABConfig.json***REMOVED***
@@ -1747,8 +1748,8 @@ const ManagementUI = (): ReactElement => {
     setSchemaInput(emptySchema)
     setModel(createManagementModelFromSchema(emptySchema))
     setFormValues({})
-    setFormOverrideDraft({})
-    setFieldOverridesDraft([])
+    setFormOverrideDraft(undefined)
+    setFieldOverridesDraft(undefined)
     setCollapsedNodeRefs(new Set())
   }
 
@@ -2794,113 +2795,140 @@ const ManagementUI = (): ReactElement => {
                     id: ***REMOVED***field-basic***REMOVED***,
                     label: ***REMOVED***Basic***REMOVED***,
                     content: (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <label className="flex flex-col gap-1 text-sm">
-                          Prop
-                          <input
-                            className="border rounded px-2 py-1"
-                            value={selectedField.prop}
-                            onChange={(e) => {
-                              const next = model.fields.map((field) =>
-                                field.id === selectedField.id
-                                  ? { ...field, prop: e.target.value }
-                                  : field
-                              )
-                              setModel({ ...model, fields: next })
+                      <div className="flex flex-col gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <label className="flex flex-col gap-1 text-sm">
+                            Prop
+                            <input
+                              className="border rounded px-2 py-1"
+                              value={selectedField.prop}
+                              onChange={(e) => {
+                                const next = model.fields.map((field) =>
+                                  field.id === selectedField.id
+                                    ? { ...field, prop: e.target.value }
+                                    : field
+                                )
+                                setModel({ ...model, fields: next })
+                              }}
+                            />
+                          </label>
+
+                          <label className="flex flex-col gap-1 text-sm">
+                            Parent
+                            <select
+                              className="border rounded px-2 py-1"
+                              value={selectedField.parentRef}
+                              onChange={(e) => {
+                                const nextParentRef = e.target.value
+                                const siblingCount = getSiblingEntries(model, nextParentRef).length
+                                const next = model.fields.map((field) =>
+                                  field.id === selectedField.id
+                                    ? { ...field, parentRef: nextParentRef, order: siblingCount }
+                                    : field
+                                )
+                                const withParent = { ...model, fields: next }
+                                const normalizedOld = normalizeSiblingOrder(
+                                  withParent,
+                                  selectedField.parentRef
+                                )
+                                setModel(normalizeSiblingOrder(normalizedOld, nextParentRef))
+                              }}
+                            >
+                              {parentOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+
+                          <label className="flex flex-col gap-1 text-sm">
+                            Override Type
+                            <select
+                              className="border rounded px-2 py-1"
+                              value={selectedField.overrideType ?? ***REMOVED******REMOVED***}
+                              onChange={(e) => {
+                                const next = model.fields.map((field) =>
+                                  field.id === selectedField.id
+                                    ? {
+                                        ...field,
+                                        overrideType:
+                                          e.target.value === ***REMOVED******REMOVED***
+                                            ? undefined
+                                            : (e.target.value as IFormField[***REMOVED***type***REMOVED***]),
+                                      }
+                                    : field
+                                )
+                                setModel({ ...model, fields: next })
+                              }}
+                            >
+                              <option value="">(none)</option>
+                              {fieldTypeOptions.map((option) => (
+                                <option key={option} value={option}>
+                                  {option}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+
+                          <label className="flex flex-col gap-1 text-sm">
+                            Override Label
+                            <input
+                              className="border rounded px-2 py-1"
+                              value={selectedField.overrideLabel ?? ***REMOVED******REMOVED***}
+                              onChange={(e) => {
+                                const next = model.fields.map((field) =>
+                                  field.id === selectedField.id
+                                    ? { ...field, overrideLabel: e.target.value }
+                                    : field
+                                )
+                                setModel({ ...model, fields: next })
+                              }}
+                            />
+                          </label>
+
+                          <label className="flex flex-col gap-1 text-sm">
+                            Dest Path
+                            <input
+                              className="border rounded px-2 py-1"
+                              placeholder="Optional output path override"
+                              value={selectedField.destPath ?? ***REMOVED******REMOVED***}
+                              onChange={(e) => {
+                                const next = model.fields.map((field) =>
+                                  field.id === selectedField.id
+                                    ? { ...field, destPath: e.target.value }
+                                    : field
+                                )
+                                setModel({ ...model, fields: next })
+                              }}
+                            />
+                          </label>
+                        </div>
+
+                        {selectedFieldEffectiveType === ***REMOVED***select***REMOVED*** ||
+                        selectedFieldEffectiveType === ***REMOVED***radio***REMOVED*** ||
+                        selectedFieldEffectiveType === ***REMOVED***checkbox***REMOVED*** ? (
+                          <SelectOptionsEditor
+                            options={selectedField.overrideExtras?.options}
+                            onOptionsChange={(nextOptions) => {
+                              updateSelectedField((field) => {
+                                const nextExtras = { ...(field.overrideExtras ?? {}) }
+
+                                if (nextOptions === undefined || nextOptions.length === 0) {
+                                  delete nextExtras.options
+                                } else {
+                                  nextExtras.options = nextOptions
+                                }
+
+                                return {
+                                  ...field,
+                                  overrideExtras:
+                                    Object.keys(nextExtras).length > 0 ? nextExtras : undefined,
+                                }
+                              })
                             }}
                           />
-                        </label>
-
-                        <label className="flex flex-col gap-1 text-sm">
-                          Parent
-                          <select
-                            className="border rounded px-2 py-1"
-                            value={selectedField.parentRef}
-                            onChange={(e) => {
-                              const nextParentRef = e.target.value
-                              const siblingCount = getSiblingEntries(model, nextParentRef).length
-                              const next = model.fields.map((field) =>
-                                field.id === selectedField.id
-                                  ? { ...field, parentRef: nextParentRef, order: siblingCount }
-                                  : field
-                              )
-                              const withParent = { ...model, fields: next }
-                              const normalizedOld = normalizeSiblingOrder(
-                                withParent,
-                                selectedField.parentRef
-                              )
-                              setModel(normalizeSiblingOrder(normalizedOld, nextParentRef))
-                            }}
-                          >
-                            {parentOptions.map((option) => (
-                              <option key={option.value} value={option.value}>
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-
-                        <label className="flex flex-col gap-1 text-sm">
-                          Override Type
-                          <select
-                            className="border rounded px-2 py-1"
-                            value={selectedField.overrideType ?? ***REMOVED******REMOVED***}
-                            onChange={(e) => {
-                              const next = model.fields.map((field) =>
-                                field.id === selectedField.id
-                                  ? {
-                                      ...field,
-                                      overrideType:
-                                        e.target.value === ***REMOVED******REMOVED***
-                                          ? undefined
-                                          : (e.target.value as IFormField[***REMOVED***type***REMOVED***]),
-                                    }
-                                  : field
-                              )
-                              setModel({ ...model, fields: next })
-                            }}
-                          >
-                            <option value="">(none)</option>
-                            {fieldTypeOptions.map((option) => (
-                              <option key={option} value={option}>
-                                {option}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-
-                        <label className="flex flex-col gap-1 text-sm">
-                          Override Label
-                          <input
-                            className="border rounded px-2 py-1"
-                            value={selectedField.overrideLabel ?? ***REMOVED******REMOVED***}
-                            onChange={(e) => {
-                              const next = model.fields.map((field) =>
-                                field.id === selectedField.id
-                                  ? { ...field, overrideLabel: e.target.value }
-                                  : field
-                              )
-                              setModel({ ...model, fields: next })
-                            }}
-                          />
-                        </label>
-
-                        <label className="flex flex-col gap-1 text-sm">
-                          Dest Path
-                          <input
-                            className="border rounded px-2 py-1"
-                            placeholder="Optional output path override"
-                            value={selectedField.destPath ?? ***REMOVED******REMOVED***}
-                            onChange={(e) => {
-                              const next = model.fields.map((field) =>
-                                field.id === selectedField.id
-                                  ? { ...field, destPath: e.target.value }
-                                  : field
-                              )
-                              setModel({ ...model, fields: next })
-                            }}
-                          />
-                        </label>
+                        ) : null}
                       </div>
                     ),
                   },
