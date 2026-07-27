@@ -3168,42 +3168,26 @@ const ManagementUI = (): ReactElement => {
 
       <OverlayEditor>
         <div className="flex flex-col h-full gap-2">
-          <div className="flex gap-2 px-8 pt-8">
-            <Button size="xs" onClick={applyJsonInputsToBuilder}>
-              Apply JSON To Builder
-            </Button>
-            <Button
-              size="xs"
-              onClick={() => {
-                setFormOverrideDraft(undefined)
-                setFieldOverridesDraft(undefined)
-              }}
-            >
-              Reset To Generated
-            </Button>
-          </div>
-          <Tabs
-          className="flex flex-col h-full p-8 pt-0 grow"
-          defaultContentClassName="h-full overflow-auto p-4"
-          tabs={[
-            {
-              id: ***REMOVED***management-seeds***REMOVED***,
-              label: ***REMOVED***Seed Presets***REMOVED***,
-              content: (
-                <div className="flex flex-col gap-3 h-full">
-                  <p className="text-sm text-slate-600">
-                    Load schema + form override + field overrides from existing project
-                    configurations.
-                  </p>
-                  <label className="flex flex-col gap-1 text-sm max-w-xl">
-                    Preset
-                    <select
-                      className="border rounded px-2 py-1"
-                      value={selectedSeedId}
-                      onChange={(event) => {
-                        setSelectedSeedId(event.target.value)
-                      }}
-                    >
+          <div className="flex gap-2 px-8 pt-8 items-start">
+            <div className="flex flex-col gap-1 text-xs">
+              <label className="block">
+                Preset
+                <select
+                  className="border rounded px-1 py-0.5 text-xs"
+                  value={selectedSeedId}
+                  onChange={(event) => {
+                    setSelectedSeedId(event.target.value)
+                  }}
+                >
+                  {managementSeedPresets.map((preset) => (
+                    <option key={preset.id} value={preset.id}>
+                      {preset.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <Button size="xs" o
                       {managementSeedPresets.map((preset) => (
                         <option key={preset.id} value={preset.id}>
                           {preset.label}
