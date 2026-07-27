@@ -82,7 +82,7 @@ export interface ICheckConditionResult {
 }
 export interface IFieldConditionsSet {
   logic?: 'and' | 'or'
-  conditions: IFieldCondition[]
+  conditions: Array<Omit<IFieldCondition, 'result' | 'newDefaultValue'>>
   result?: IFieldConditionResult
   newDefaultValue?: IValueType | IValueType[]
 }

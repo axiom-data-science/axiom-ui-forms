@@ -40,6 +40,7 @@ import {
   ConditionSetEditor,
   GeneralSettingsEditor,
   TypeSpecificSettingsEditor,
+  ConstraintsEditor,
 } from '@/Management/Components/FieldEditorsTabbed'
 import GroupNodeCard from '@/Management/Components/GroupNodeCard'
 import habSchema from '@/PTT/HAB/HABConfig.json'
@@ -930,6 +931,10 @@ const createModelFromOverrides = (
       if (overrideLabel !== undefined) existing.overrideLabel = overrideLabel
       const destPath = readString(overrideLike?.destPath)
       if (destPath !== undefined) existing.destPath = destPath
+      const overrideConstraints = readRecord(overrideLike?.constraints)
+      if (overrideConstraints !== undefined) {
+        existing.overrideConstraints = overrideConstraints
+      }
       const overrideConditions = readRecord(overrideLike?.conditions)
       if (overrideConditions !== undefined) {
         existing.overrideConditions = overrideConditions as IFormField['conditions']
@@ -965,6 +970,9 @@ const createModelFromOverrides = (
       overrideType: fallbackType,
       overrideLabel: readString(overrideLike?.label),
       destPath: readString(overrideLike?.destPath),
+      overrideConstraints: readRecord(overrideLike?.constraints) as
+        | Record<string, unknown>
+        | undefined,
       overrideConditions: readRecord(overrideLike?.conditions) as
         | IFormField['conditions']
         | undefined,
@@ -2961,6 +2969,22 @@ const ManagementUI = (): ReactElement => {
                               overrideSettings: mergeFieldSettings(split.general, nextTypeSpecific),
                             }
                           })
+                        }}
+                      />
+                    ),
+                  },
+                  {
+                    id: 'field-constraints',
+                    label: 'Constraints',
+                    content: (
+                      <ConstraintsEditor
+                        effectiveType={selectedFieldEffectiveType}
+                        constraints={selectedField.overrideConstraints}
+                        onConstraintsChange={(next) => {
+                          updateSelectedField((field) => ({
+                            ...field,
+                            overrideConstraints: Object.keys(next).length > 0 ? next : undefined,
+                          }))
                         }}
                       />
                     ),
