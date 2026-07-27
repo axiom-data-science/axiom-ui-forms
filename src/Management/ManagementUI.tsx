@@ -1719,8 +1719,8 @@ const ManagementUI = (): ReactElement => {
     setSchemaInput(sampleSchema)
     setModel(createManagementModelFromSchema(sampleSchema))
     setFormValues({})
-    setFormOverrideDraft(undefined)
-    setFieldOverridesDraft(undefined)
+    setFormOverrideDraft({})
+    setFieldOverridesDraft([])
     setCollapsedNodeRefs(new Set())
   }
 
