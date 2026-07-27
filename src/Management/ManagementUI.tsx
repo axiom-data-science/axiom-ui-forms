@@ -3168,12 +3168,12 @@ const ManagementUI = (): ReactElement => {
 
       <OverlayEditor>
         <div className="flex flex-col h-full gap-2">
-          <div className="flex gap-2 px-8 pt-8 items-start">
-            <div className="flex flex-col gap-1 text-xs">
+          <div className="flex flex-wrap gap-2 px-8 pt-8 items-start">
+            <div className="flex flex-col gap-1 text-xs max-w-32">
               <label className="block">
                 Preset
                 <select
-                  className="border rounded px-1 py-0.5 text-xs"
+                  className="border rounded px-1 py-0.5 text-xs w-full"
                   value={selectedSeedId}
                   onChange={(event) => {
                     setSelectedSeedId(event.target.value)
@@ -3187,115 +3187,115 @@ const ManagementUI = (): ReactElement => {
                 </select>
               </label>
             </div>
-            <Button size="xs" o
-                      {managementSeedPresets.map((preset) => (
-                        <option key={preset.id} value={preset.id}>
-                          {preset.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={applySeedPreset}>
-                      Load Preset Into Builder
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={clearConfigs}>
-                      Clear All Configs
-                    </Button>
-                  </div>
-                  <div className="text-xs text-slate-600">
-                    PTT presets include shared overrides from PTT/fieldOverrides plus model-specific
-                    overrides.
-                  </div>
-                </div>
-              ),
-            },
-            {
-              id: 'management-schema',
-              label: 'Schema Input',
-              content: (
-                <div className="flex flex-col gap-3 h-full">
-                  <p className="text-sm text-slate-600">
-                    Update schema JSON, then rebuild the management model.
-                  </p>
-                  <div className="border rounded-md overflow-hidden grow min-h-90">
-                    <JSONInput
-                      field={{ id: 'management-schema-input', label: '', type: 'json' }}
-                      value={schemaInput as unknown as IValueType}
-                      onChange={(value) => {
-                        if (value !== null && typeof value === 'object') {
-                          setSchemaInput(value as unknown as JSONSchema6)
-                        }
-                      }}
-                    />
-                  </div>
-                  <Button size="sm" onClick={handleBuildFromSchema}>
-                    Build Model From Schema
-                  </Button>
-                </div>
-              ),
-            },
-            {
-              id: 'management-preview',
-              label: 'Preview',
-              content: (
-                <div className="flex flex-col gap-3 h-full">
-                  <p className="text-sm text-slate-600">
-                    Live form preview from current schema + selected JSON inputs.
-                  </p>
-                  {previewFormOverride !== undefined ? (
-                    <SchemaFormCreator
-                      id={model?.formId ?? 'management-preview'}
-                      label={model?.label ?? 'Management Preview'}
-                      schema={schemaInput}
-                      formOverrides={[previewFormOverride]}
-                      formFieldOverrides={[previewFieldOverrides]}
-                      formValueState={[formValues, setFormValues]}
-                      className="p-4"
-                    />
-                  ) : (
+            <Button size="xs" onClick={applySeedPreset}>
+              Load Preset Into Builder
+            </Button>
+            <Button size="xs" variant="outline" onClick={clearConfigs}>
+              Clear All Configs
+            </Button>
+            <Button size="xs" onClick={applyJsonInputsToBuilder}>
+              Apply JSON To Builder
+            </Button>
+            <Button
+              size="xs"
+              onClick={() => {
+                setFormOverrideDraft(undefined)
+                setFieldOverridesDraft(undefined)
+              }}
+            >
+              Reset To Generated
+            </Button>
+          </div>
+          <Tabs
+            className="flex flex-col h-full p-8 pt-0 grow"
+            defaultContentClassName="h-full overflow-auto p-4"
+            tabs={[
+              {
+                id: 'management-schema',
+                label: 'Schema Input',
+                content: (
+                  <div className="flex flex-col gap-3 h-full">
                     <p className="text-sm text-slate-600">
-                      Build a model first to preview the form.
+                      Update schema JSON, then rebuild the management model.
                     </p>
-                  )}
-                </div>
-              ),
-            },
-            {
-              id: 'management-json',
-              label: 'Form/Field JSON',
-              content: (
-                <div className="flex flex-col gap-3">
-                  <div className="border rounded p-2">
-                    <h3 className="font-semibold mb-2">Form Override</h3>
-                    <div className="min-h-90 border rounded overflow-hidden">
+                    <div className="border rounded-md overflow-hidden grow min-h-90">
                       <JSONInput
-                        field={{ id: 'management-form-override', label: '', type: 'json' }}
-                        value={formOverrideValue as IValueType}
+                        field={{ id: 'management-schema-input', label: '', type: 'json' }}
+                        value={schemaInput as unknown as IValueType}
                         onChange={(value) => {
-                          setFormOverrideDraft(value as unknown)
+                          if (value !== null && typeof value === 'object') {
+                            setSchemaInput(value as unknown as JSONSchema6)
+                          }
                         }}
                       />
                     </div>
+                    <Button size="sm" onClick={handleBuildFromSchema}>
+                      Build Model From Schema
+                    </Button>
                   </div>
+                ),
+              },
+              {
+                id: 'management-preview',
+                label: 'Preview',
+                content: (
+                  <div className="flex flex-col gap-3 h-full">
+                    <p className="text-sm text-slate-600">
+                      Live form preview from current schema + selected JSON inputs.
+                    </p>
+                    {previewFormOverride !== undefined ? (
+                      <SchemaFormCreator
+                        id={model?.formId ?? 'management-preview'}
+                        label={model?.label ?? 'Management Preview'}
+                        schema={schemaInput}
+                        formOverrides={[previewFormOverride]}
+                        formFieldOverrides={[previewFieldOverrides]}
+                        formValueState={[formValues, setFormValues]}
+                        className="p-4"
+                      />
+                    ) : (
+                      <p className="text-sm text-slate-600">
+                        Build a model first to preview the form.
+                      </p>
+                    )}
+                  </div>
+                ),
+              },
+              {
+                id: 'management-json',
+                label: 'Form/Field JSON',
+                content: (
+                  <div className="flex flex-col gap-3">
+                    <div className="border rounded p-2">
+                      <h3 className="font-semibold mb-2">Form Override</h3>
+                      <div className="min-h-90 border rounded overflow-hidden">
+                        <JSONInput
+                          field={{ id: 'management-form-override', label: '', type: 'json' }}
+                          value={formOverrideValue as IValueType}
+                          onChange={(value) => {
+                            setFormOverrideDraft(value as unknown)
+                          }}
+                        />
+                      </div>
+                    </div>
 
-                  <div className="border rounded p-2">
-                    <h3 className="font-semibold mb-2">Field Overrides</h3>
-                    <div className="min-h-90 border rounded overflow-hidden">
-                      <JSONInput
-                        field={{ id: 'management-field-overrides', label: '', type: 'json' }}
-                        value={fieldOverridesValue as IValueType}
-                        onChange={(value) => {
-                          setFieldOverridesDraft(value as unknown)
-                        }}
-                      />
+                    <div className="border rounded p-2">
+                      <h3 className="font-semibold mb-2">Field Overrides</h3>
+                      <div className="min-h-90 border rounded overflow-hidden">
+                        <JSONInput
+                          field={{ id: 'management-field-overrides', label: '', type: 'json' }}
+                          value={fieldOverridesValue as IValueType}
+                          onChange={(value) => {
+                            setFieldOverridesDraft(value as unknown)
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ),
-            },
-          ]}
-        />
+                ),
+              },
+            ]}
+          />
         </div>
       </OverlayEditor>
     </>
