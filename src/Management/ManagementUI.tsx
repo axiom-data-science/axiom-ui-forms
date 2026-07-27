@@ -1716,8 +1716,9 @@ const ManagementUI = (): ReactElement => {
   }
 
   const clearConfigs = (): void => {
-    setSchemaInput(sampleSchema)
-    setModel(createManagementModelFromSchema(sampleSchema))
+    const emptySchema: JSONSchema6 = { additionalProperties: true }
+    setSchemaInput(emptySchema)
+    setModel(createManagementModelFromSchema(emptySchema))
     setFormValues({})
     setFormOverrideDraft({})
     setFieldOverridesDraft([])
