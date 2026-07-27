@@ -35,7 +35,12 @@ import {
 } from '@/Management/types'
 import OverlayEditor from '@/Management/Components/OverlayEditor'
 import FieldNodeRow from '@/Management/Components/FieldNodeRow'
-import FieldOverrideEditors from '@/Management/Components/FieldOverrideEditors'
+import {
+  ConditionEditor,
+  ConditionSetEditor,
+  GeneralSettingsEditor,
+  TypeSpecificSettingsEditor,
+} from '@/Management/Components/FieldEditorsTabbed'
 import GroupNodeCard from '@/Management/Components/GroupNodeCard'
 import habSchema from '@/PTT/HAB/HABConfig.json'
 import habFormOverride from '@/PTT/HAB/habFormOverride'
@@ -2892,28 +2897,43 @@ const ManagementUI = (): ReactElement => {
                     ),
                   },
                   {
-                    id: 'field-overrides',
-                    label: 'Overrides',
+                    id: 'field-conditions',
+                    label: 'Conditions',
                     content: (
-                      <FieldOverrideEditors
+                      <ConditionEditor
                         fieldProp={selectedField.prop}
-                        effectiveType={selectedFieldEffectiveType}
                         conditions={selectedField.overrideConditions}
-                        conditionsSet={selectedField.overrideConditionsSet}
-                        generalSettings={selectedFieldSettingsSplit.general}
-                        typeSpecificSettings={selectedFieldSettingsSplit.typeSpecific}
                         onConditionsChange={(next) => {
                           updateSelectedField((field) => ({
                             ...field,
                             overrideConditions: next,
                           }))
                         }}
+                      />
+                    ),
+                  },
+                  {
+                    id: 'field-conditions-set',
+                    label: 'Condition Set',
+                    content: (
+                      <ConditionSetEditor
+                        fieldProp={selectedField.prop}
+                        conditionsSet={selectedField.overrideConditionsSet}
                         onConditionsSetChange={(next) => {
                           updateSelectedField((field) => ({
                             ...field,
                             overrideConditionsSet: next,
                           }))
                         }}
+                      />
+                    ),
+                  },
+                  {
+                    id: 'field-general-settings',
+                    label: 'General Settings',
+                    content: (
+                      <GeneralSettingsEditor
+                        generalSettings={selectedFieldSettingsSplit.general}
                         onGeneralSettingsChange={(nextGeneral) => {
                           updateSelectedField((field) => {
                             const split = splitFieldSettings(field.overrideSettings)
@@ -2923,6 +2943,16 @@ const ManagementUI = (): ReactElement => {
                             }
                           })
                         }}
+                      />
+                    ),
+                  },
+                  {
+                    id: 'field-type-settings',
+                    label: 'Type Settings',
+                    content: (
+                      <TypeSpecificSettingsEditor
+                        effectiveType={selectedFieldEffectiveType}
+                        typeSpecificSettings={selectedFieldSettingsSplit.typeSpecific}
                         onTypeSpecificSettingsChange={(nextTypeSpecific) => {
                           updateSelectedField((field) => {
                             const split = splitFieldSettings(field.overrideSettings)
@@ -2933,44 +2963,6 @@ const ManagementUI = (): ReactElement => {
                           })
                         }}
                       />
-                    ),
-                  },
-                  {
-                    id: 'field-output',
-                    label: 'Form Output',
-                    content: (
-                      <div className="flex flex-col gap-2 h-full">
-                        <p className="text-xs text-slate-600">Generated form field output</p>
-                        <div className="border rounded p-2 bg-slate-50 flex-1 overflow-auto font-mono text-xs whitespace-pre-wrap">
-                          {JSON.stringify(
-                            {
-                              prop: selectedField.prop,
-                              ...(selectedField.overrideType && {
-                                type: selectedField.overrideType,
-                              }),
-                              ...(selectedField.overrideLabel && {
-                                label: selectedField.overrideLabel,
-                              }),
-                              ...(selectedField.destPath && { destPath: selectedField.destPath }),
-                              ...(selectedField.overrideConditions && {
-                                conditions: selectedField.overrideConditions,
-                              }),
-                              ...(selectedField.overrideConditionsSet && {
-                                conditionsSet: selectedField.overrideConditionsSet,
-                              }),
-                              ...(selectedField.overrideSettings && {
-                                settings: selectedField.overrideSettings,
-                              }),
-                              ...(selectedField.overrideExtras &&
-                                Object.keys(selectedField.overrideExtras).length > 0 && {
-                                  ...selectedField.overrideExtras,
-                                }),
-                            },
-                            null,
-                            2
-                          )}
-                        </div>
-                      </div>
                     ),
                   },
                 ]}
