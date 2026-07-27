@@ -27,6 +27,7 @@ export interface IManagementFieldNode {
   overrideConditions?: IFormField[***REMOVED***conditions***REMOVED***]
   overrideConditionsSet?: IFormField[***REMOVED***conditionsSet***REMOVED***]
   overrideSettings?: IFormField[***REMOVED***settings***REMOVED***]
+  overrideConstraints?: Record<string, unknown>
   overrideExtras?: Record<string, unknown>
   destPath?: string
 }

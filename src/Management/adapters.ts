@@ -279,6 +279,7 @@ export const createOverridesFromModel = (model: IManagementModel): IManagementEx
         field.overrideConditions !== undefined ||
         field.overrideConditionsSet !== undefined ||
         field.overrideSettings !== undefined ||
+        field.overrideConstraints !== undefined ||
         field.destPath !== undefined ||
         (field.overrideExtras !== undefined && Object.keys(field.overrideExtras).length > 0)
     )
@@ -309,6 +310,13 @@ export const createOverridesFromModel = (model: IManagementModel): IManagementEx
 
       if (field.overrideSettings !== undefined) {
         result.settings = field.overrideSettings
+      }
+
+      if (
+        field.overrideConstraints !== undefined &&
+        Object.keys(field.overrideConstraints).length > 0
+      ) {
+        result.constraints = field.overrideConstraints
       }
 
       if (field.destPath !== undefined && field.destPath.trim() !== ***REMOVED******REMOVED***) {

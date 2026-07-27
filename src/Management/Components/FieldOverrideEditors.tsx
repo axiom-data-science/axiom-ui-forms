@@ -63,10 +63,7 @@ const updateRecordValue = (
 ): Record<string, unknown> => {
   const next = { ...current }
   const shouldDelete =
-    value === undefined ||
-    value === null ||
-    value === ***REMOVED******REMOVED*** ||
-    (!keepFalse && value === false)
+    value === undefined || value === null || value === ***REMOVED******REMOVED*** || (!keepFalse && value === false)
 
   if (shouldDelete) {
     delete next[key]
@@ -161,7 +158,12 @@ const FieldOverrideEditors = ({
     index: number,
     updater: (condition: IFieldCondition) => IFieldCondition
   ): void => {
-    const existing = conditionRows[index] ?? { field: fieldProp, operator: ***REMOVED***eq***REMOVED***, result: ***REMOVED***include***REMOVED***, value: ***REMOVED******REMOVED*** }
+    const existing = conditionRows[index] ?? {
+      field: fieldProp,
+      operator: ***REMOVED***eq***REMOVED***,
+      result: ***REMOVED***include***REMOVED***,
+      value: ***REMOVED******REMOVED***,
+    }
     const nextRows = conditionRows.slice()
     nextRows[index] = updater(existing)
 
@@ -253,7 +255,9 @@ const FieldOverrideEditors = ({
                 }}
               >
                 {conditionOperatorOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
             </label>
@@ -272,7 +276,9 @@ const FieldOverrideEditors = ({
                 }}
               >
                 {conditionResultOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
             </label>
@@ -314,7 +320,11 @@ const FieldOverrideEditors = ({
                 type={conditionValueKind === ***REMOVED***number***REMOVED*** ? ***REMOVED***number***REMOVED*** : ***REMOVED***text***REMOVED***}
                 value={conditionValueText}
                 onChange={(event) => {
-                  setSingleConditionValue(conditionValueKind, event.target.value, conditionValueBool)
+                  setSingleConditionValue(
+                    conditionValueKind,
+                    event.target.value,
+                    conditionValueBool
+                  )
                 }}
               />
             </label>
@@ -333,7 +343,7 @@ const FieldOverrideEditors = ({
               onConditionsSetChange({
                 logic: ***REMOVED***and***REMOVED***,
                 result: ***REMOVED***include***REMOVED***,
-                conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+                conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
               })
             }}
           >
@@ -346,7 +356,7 @@ const FieldOverrideEditors = ({
               onConditionsSetChange({
                 logic: ***REMOVED***or***REMOVED***,
                 result: ***REMOVED***include***REMOVED***,
-                conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+                conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
               })
             }}
           >
@@ -373,9 +383,10 @@ const FieldOverrideEditors = ({
                 onConditionsSetChange({
                   logic: event.target.value as ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***,
                   result: conditionsSet?.result ?? ***REMOVED***include***REMOVED***,
-                  conditions: conditionRows.length > 0
-                    ? conditionRows
-                    : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+                  conditions:
+                    conditionRows.length > 0
+                      ? conditionRows
+                      : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
                 })
               }}
             >
@@ -393,14 +404,17 @@ const FieldOverrideEditors = ({
                 onConditionsSetChange({
                   logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
                   result: event.target.value as IFieldConditionResult,
-                  conditions: conditionRows.length > 0
-                    ? conditionRows
-                    : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+                  conditions:
+                    conditionRows.length > 0
+                      ? conditionRows
+                      : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
                 })
               }}
             >
               {conditionResultOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </select>
           </label>
@@ -410,7 +424,6 @@ const FieldOverrideEditors = ({
           {conditionRows.map((row, index) => {
             const rowField = typeof row.field === ***REMOVED***string***REMOVED*** ? row.field : ***REMOVED******REMOVED***
             const rowOperator = row.operator ?? ***REMOVED***eq***REMOVED***
-            const rowResult = row.result ?? ***REMOVED***include***REMOVED***
             const rowValueKind = getValueKind(row.value)
             const rowValueText = getValueText(row.value)
             const rowValueBool = getValueBool(row.value)
@@ -445,25 +458,9 @@ const FieldOverrideEditors = ({
                       }}
                     >
                       {conditionOperatorOptions.map((option) => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="flex flex-col gap-1">
-                    Result
-                    <select
-                      className="border rounded px-2 py-1"
-                      value={rowResult}
-                      onChange={(event) => {
-                        updateConditionSetRow(index, (existing) => ({
-                          ...existing,
-                          result: event.target.value as IFieldConditionResult,
-                        }))
-                      }}
-                    >
-                      {conditionResultOptions.map((option) => (
-                        <option key={option} value={option}>{option}</option>
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
                       ))}
                     </select>
                   </label>
@@ -515,7 +512,11 @@ const FieldOverrideEditors = ({
                       type={rowValueKind === ***REMOVED***number***REMOVED*** ? ***REMOVED***number***REMOVED*** : ***REMOVED***text***REMOVED***}
                       value={rowValueText}
                       onChange={(event) => {
-                        const parsed = parseConditionValue(rowValueKind, event.target.value, rowValueBool)
+                        const parsed = parseConditionValue(
+                          rowValueKind,
+                          event.target.value,
+                          rowValueBool
+                        )
                         updateConditionSetRow(index, (existing) => ({
                           ...existing,
                           value: parsed,
@@ -547,7 +548,12 @@ const FieldOverrideEditors = ({
               onClick={() => {
                 const nextRows = [
                   ...conditionRows,
-                  { field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** } as IFieldCondition,
+                  {
+                    field: fieldProp,
+                    operator: ***REMOVED***eq***REMOVED***,
+                    value: ***REMOVED******REMOVED***,
+                    result: ***REMOVED***include***REMOVED***,
+                  } as IFieldCondition,
                 ]
                 onConditionsSetChange({
                   logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
@@ -564,7 +570,9 @@ const FieldOverrideEditors = ({
 
       <div className="border rounded p-2">
         <h4 className="text-sm font-semibold mb-1">General Settings</h4>
-        <p className="text-xs text-slate-600 mb-2">Shared settings (description presentation, label style, class name)</p>
+        <p className="text-xs text-slate-600 mb-2">
+          Shared settings (description presentation, label style, class name)
+        </p>
         <div className="mb-2 flex items-center gap-2">
           <Button
             size="xs"
@@ -594,9 +602,15 @@ const FieldOverrideEditors = ({
           Description Presentation
           <select
             className="border rounded px-2 py-1"
-            value={typeof generalSettings.descriptionPresentation === ***REMOVED***string***REMOVED*** ? generalSettings.descriptionPresentation : ***REMOVED******REMOVED***}
+            value={
+              typeof generalSettings.descriptionPresentation === ***REMOVED***string***REMOVED***
+                ? generalSettings.descriptionPresentation
+                : ***REMOVED******REMOVED***
+            }
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, ***REMOVED***descriptionPresentation***REMOVED***, event.target.value))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, ***REMOVED***descriptionPresentation***REMOVED***, event.target.value)
+              )
             }}
           >
             <option value="">(none)</option>
@@ -610,7 +624,9 @@ const FieldOverrideEditors = ({
             type="checkbox"
             checked={generalSettings.boldLabel === true}
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, ***REMOVED***boldLabel***REMOVED***, event.target.checked, true))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, ***REMOVED***boldLabel***REMOVED***, event.target.checked, true)
+              )
             }}
           />
           Bold label
@@ -621,7 +637,9 @@ const FieldOverrideEditors = ({
             type="checkbox"
             checked={generalSettings.smallLabel === true}
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, ***REMOVED***smallLabel***REMOVED***, event.target.checked, true))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, ***REMOVED***smallLabel***REMOVED***, event.target.checked, true)
+              )
             }}
           />
           Small label
@@ -633,7 +651,9 @@ const FieldOverrideEditors = ({
             className="border rounded px-2 py-1"
             value={typeof generalSettings.className === ***REMOVED***string***REMOVED*** ? generalSettings.className : ***REMOVED******REMOVED***}
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, ***REMOVED***className***REMOVED***, event.target.value))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, ***REMOVED***className***REMOVED***, event.target.value)
+              )
             }}
           />
         </label>
@@ -671,9 +691,14 @@ const FieldOverrideEditors = ({
               <input
                 className="border rounded px-2 py-1"
                 type="number"
-                value={typeof typeSpecificSettings.step === ***REMOVED***number***REMOVED*** ? typeSpecificSettings.step : ***REMOVED******REMOVED***}
+                value={
+                  typeof typeSpecificSettings.step === ***REMOVED***number***REMOVED*** ? typeSpecificSettings.step : ***REMOVED******REMOVED***
+                }
                 onChange={(event) => {
-                  setTypeSpecific(***REMOVED***step***REMOVED***, event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value))
+                  setTypeSpecific(
+                    ***REMOVED***step***REMOVED***,
+                    event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                  )
                 }}
               />
             </label>
@@ -692,7 +717,11 @@ const FieldOverrideEditors = ({
               <input
                 className="border rounded px-2 py-1"
                 type="number"
-                value={typeof typeSpecificSettings.nonNullDefaultValue === ***REMOVED***number***REMOVED*** ? typeSpecificSettings.nonNullDefaultValue : ***REMOVED******REMOVED***}
+                value={
+                  typeof typeSpecificSettings.nonNullDefaultValue === ***REMOVED***number***REMOVED***
+                    ? typeSpecificSettings.nonNullDefaultValue
+                    : ***REMOVED******REMOVED***
+                }
                 onChange={(event) => {
                   setTypeSpecific(
                     ***REMOVED***nonNullDefaultValue***REMOVED***,
@@ -757,7 +786,11 @@ const FieldOverrideEditors = ({
             Layout
             <select
               className="border rounded px-2 py-1"
-              value={typeof typeSpecificSettings.layout === ***REMOVED***string***REMOVED*** ? typeSpecificSettings.layout : ***REMOVED***vertical***REMOVED***}
+              value={
+                typeof typeSpecificSettings.layout === ***REMOVED***string***REMOVED***
+                  ? typeSpecificSettings.layout
+                  : ***REMOVED***vertical***REMOVED***
+              }
               onChange={(event) => {
                 setTypeSpecific(***REMOVED***layout***REMOVED***, event.target.value)
               }}
@@ -824,7 +857,9 @@ const FieldOverrideEditors = ({
               Height
               <input
                 className="border rounded px-2 py-1"
-                value={typeof typeSpecificSettings.height === ***REMOVED***string***REMOVED*** ? typeSpecificSettings.height : ***REMOVED******REMOVED***}
+                value={
+                  typeof typeSpecificSettings.height === ***REMOVED***string***REMOVED*** ? typeSpecificSettings.height : ***REMOVED******REMOVED***
+                }
                 onChange={(event) => {
                   setTypeSpecific(***REMOVED***height***REMOVED***, event.target.value)
                 }}
@@ -834,7 +869,11 @@ const FieldOverrideEditors = ({
               Enabled shapes field
               <input
                 className="border rounded px-2 py-1"
-                value={typeof typeSpecificSettings.enabledShapesField === ***REMOVED***string***REMOVED*** ? typeSpecificSettings.enabledShapesField : ***REMOVED******REMOVED***}
+                value={
+                  typeof typeSpecificSettings.enabledShapesField === ***REMOVED***string***REMOVED***
+                    ? typeSpecificSettings.enabledShapesField
+                    : ***REMOVED******REMOVED***
+                }
                 onChange={(event) => {
                   setTypeSpecific(***REMOVED***enabledShapesField***REMOVED***, event.target.value)
                 }}
@@ -845,7 +884,11 @@ const FieldOverrideEditors = ({
               <input
                 className="border rounded px-2 py-1"
                 type="number"
-                value={typeof typeSpecificSettings.maxLineStringPoints === ***REMOVED***number***REMOVED*** ? typeSpecificSettings.maxLineStringPoints : ***REMOVED******REMOVED***}
+                value={
+                  typeof typeSpecificSettings.maxLineStringPoints === ***REMOVED***number***REMOVED***
+                    ? typeSpecificSettings.maxLineStringPoints
+                    : ***REMOVED******REMOVED***
+                }
                 onChange={(event) => {
                   setTypeSpecific(
                     ***REMOVED***maxLineStringPoints***REMOVED***,
@@ -862,7 +905,11 @@ const FieldOverrideEditors = ({
             Key Field
             <input
               className="border rounded px-2 py-1"
-              value={typeof typeSpecificSettings.keyField === ***REMOVED***string***REMOVED*** ? typeSpecificSettings.keyField : ***REMOVED******REMOVED***}
+              value={
+                typeof typeSpecificSettings.keyField === ***REMOVED***string***REMOVED***
+                  ? typeSpecificSettings.keyField
+                  : ***REMOVED******REMOVED***
+              }
               onChange={(event) => {
                 setTypeSpecific(***REMOVED***keyField***REMOVED***, event.target.value)
               }}
@@ -876,7 +923,9 @@ const FieldOverrideEditors = ({
         effectiveType !== ***REMOVED***radio***REMOVED*** &&
         effectiveType !== ***REMOVED***geometry***REMOVED*** &&
         effectiveType !== ***REMOVED***objectList***REMOVED*** ? (
-          <p className="text-xs text-slate-500">No dedicated type-specific settings for this field type yet.</p>
+          <p className="text-xs text-slate-500">
+            No dedicated type-specific settings for this field type yet.
+          </p>
         ) : null}
       </div>
     </div>

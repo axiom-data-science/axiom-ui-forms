@@ -286,7 +286,6 @@ export const ConditionSetEditor = ({
     const existing = conditionRows[index] ?? {
       field: fieldProp,
       operator: ***REMOVED***eq***REMOVED***,
-      result: ***REMOVED***include***REMOVED***,
       value: ***REMOVED******REMOVED***,
     }
     const nextRows = conditionRows.slice()
@@ -295,6 +294,7 @@ export const ConditionSetEditor = ({
     onConditionsSetChange({
       logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
       result: conditionsSet?.result ?? ***REMOVED***include***REMOVED***,
+      newDefaultValue: conditionsSet?.newDefaultValue,
       conditions: nextRows,
     })
   }
@@ -309,6 +309,7 @@ export const ConditionSetEditor = ({
     onConditionsSetChange({
       logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
       result: conditionsSet?.result ?? ***REMOVED***include***REMOVED***,
+      newDefaultValue: conditionsSet?.newDefaultValue,
       conditions: nextRows,
     })
   }
@@ -324,7 +325,7 @@ export const ConditionSetEditor = ({
             onConditionsSetChange({
               logic: ***REMOVED***and***REMOVED***,
               result: ***REMOVED***include***REMOVED***,
-              conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+              conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
             })
           }}
         >
@@ -337,7 +338,7 @@ export const ConditionSetEditor = ({
             onConditionsSetChange({
               logic: ***REMOVED***or***REMOVED***,
               result: ***REMOVED***include***REMOVED***,
-              conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+              conditions: [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
             })
           }}
         >
@@ -364,10 +365,11 @@ export const ConditionSetEditor = ({
               onConditionsSetChange({
                 logic: event.target.value as ***REMOVED***and***REMOVED*** | ***REMOVED***or***REMOVED***,
                 result: conditionsSet?.result ?? ***REMOVED***include***REMOVED***,
+                newDefaultValue: conditionsSet?.newDefaultValue,
                 conditions:
                   conditionRows.length > 0
                     ? conditionRows
-                    : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+                    : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
               })
             }}
           >
@@ -385,10 +387,11 @@ export const ConditionSetEditor = ({
               onConditionsSetChange({
                 logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
                 result: event.target.value as IFieldConditionResult,
+                newDefaultValue: conditionsSet?.newDefaultValue,
                 conditions:
                   conditionRows.length > 0
                     ? conditionRows
-                    : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED***, result: ***REMOVED***include***REMOVED*** }],
+                    : [{ field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** }],
               })
             }}
           >
@@ -405,7 +408,6 @@ export const ConditionSetEditor = ({
         {conditionRows.map((row, index) => {
           const rowField = typeof row.field === ***REMOVED***string***REMOVED*** ? row.field : ***REMOVED******REMOVED***
           const rowOperator = row.operator ?? ***REMOVED***eq***REMOVED***
-          const rowResult = row.result ?? ***REMOVED***include***REMOVED***
           const rowValueKind = getValueKind(row.value)
           const rowValueText = getValueText(row.value)
           const rowValueBool = getValueBool(row.value)
@@ -440,26 +442,6 @@ export const ConditionSetEditor = ({
                     }}
                   >
                     {conditionOperatorOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  Result
-                  <select
-                    className="border rounded px-2 py-1"
-                    value={rowResult}
-                    onChange={(event) => {
-                      updateConditionSetRow(index, (existing) => ({
-                        ...existing,
-                        result: event.target.value as IFieldConditionResult,
-                      }))
-                    }}
-                  >
-                    {conditionResultOptions.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
@@ -546,16 +528,12 @@ export const ConditionSetEditor = ({
             onClick={() => {
               const nextRows = [
                 ...conditionRows,
-                {
-                  field: fieldProp,
-                  operator: ***REMOVED***eq***REMOVED***,
-                  value: ***REMOVED******REMOVED***,
-                  result: ***REMOVED***include***REMOVED***,
-                } as IFieldCondition,
+                { field: fieldProp, operator: ***REMOVED***eq***REMOVED***, value: ***REMOVED******REMOVED*** } as IFieldCondition,
               ]
               onConditionsSetChange({
                 logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
                 result: conditionsSet?.result ?? ***REMOVED***include***REMOVED***,
+                newDefaultValue: conditionsSet?.newDefaultValue,
                 conditions: nextRows,
               })
             }}
@@ -564,6 +542,29 @@ export const ConditionSetEditor = ({
           </Button>
         </div>
       </div>
+
+      <label className="flex flex-col gap-1 text-sm">
+        New Default Value
+        <input
+          className="border rounded px-2 py-1"
+          placeholder="Value to set when condition result applies"
+          value={
+            conditionsSet?.newDefaultValue !== undefined
+              ? typeof conditionsSet.newDefaultValue === ***REMOVED***string***REMOVED***
+                ? conditionsSet.newDefaultValue
+                : JSON.stringify(conditionsSet.newDefaultValue)
+              : ***REMOVED******REMOVED***
+          }
+          onChange={(event) => {
+            onConditionsSetChange({
+              logic: conditionsSet?.logic ?? ***REMOVED***and***REMOVED***,
+              result: conditionsSet?.result ?? ***REMOVED***include***REMOVED***,
+              newDefaultValue: event.target.value || undefined,
+              conditions: conditionRows.length > 0 ? conditionRows : [],
+            })
+          }}
+        />
+      </label>
     </div>
   )
 }
@@ -786,6 +787,212 @@ export const TypeSpecificSettingsEditor = ({
             <option value="vertical">vertical</option>
             <option value="horizontal">horizontal</option>
           </select>
+        </label>
+      ) : null}
+    </div>
+  )
+}
+
+export const ConstraintsEditor = ({
+  effectiveType,
+  constraints = {},
+  onConstraintsChange,
+}: {
+  effectiveType?: IFormField[***REMOVED***type***REMOVED***]
+  constraints?: Record<string, unknown>
+  onConstraintsChange: (next: Record<string, unknown>) => void
+}): ReactElement => {
+  const updateConstraint = (key: string, value: unknown): void => {
+    const next = { ...constraints }
+    if (value === undefined || value === null || value === ***REMOVED******REMOVED***) {
+      delete next[key]
+    } else {
+      next[key] = value
+    }
+    onConstraintsChange(next)
+  }
+
+  const type = effectiveType as string | undefined
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-xs text-slate-600">Constraints specific to the selected field type</p>
+
+      {type === ***REMOVED***string***REMOVED*** || type === ***REMOVED***long_text***REMOVED*** ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex flex-col gap-1">
+            Min Length
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.minLength === ***REMOVED***number***REMOVED*** ? constraints.minLength : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***minLength***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Max Length
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.maxLength === ***REMOVED***number***REMOVED*** ? constraints.maxLength : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***maxLength***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Pattern (Regex)
+            <input
+              className="border rounded px-2 py-1"
+              placeholder="e.g., ^[0-9]+$"
+              value={typeof constraints.pattern === ***REMOVED***string***REMOVED*** ? constraints.pattern : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(***REMOVED***pattern***REMOVED***, event.target.value)
+              }}
+            />
+          </label>
+        </div>
+      ) : null}
+
+      {type === ***REMOVED***number***REMOVED*** ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex flex-col gap-1">
+            Min Value
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.min === ***REMOVED***number***REMOVED*** ? constraints.min : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***min***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Max Value
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.max === ***REMOVED***number***REMOVED*** ? constraints.max : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***max***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Exclusive Min
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.exclusiveMin === ***REMOVED***number***REMOVED*** ? constraints.exclusiveMin : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***exclusiveMin***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Exclusive Max
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.exclusiveMax === ***REMOVED***number***REMOVED*** ? constraints.exclusiveMax : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***exclusiveMax***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+        </div>
+      ) : null}
+
+      {type === ***REMOVED***array***REMOVED*** || type === ***REMOVED***objectList***REMOVED*** ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex flex-col gap-1">
+            Min Items
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.minItems === ***REMOVED***number***REMOVED*** ? constraints.minItems : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***minItems***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Max Items
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={typeof constraints.maxItems === ***REMOVED***number***REMOVED*** ? constraints.maxItems : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(
+                  ***REMOVED***maxItems***REMOVED***,
+                  event.target.value === ***REMOVED******REMOVED*** ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+        </div>
+      ) : null}
+
+      {type === ***REMOVED***date***REMOVED*** || type === ***REMOVED***datetime***REMOVED*** ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex flex-col gap-1">
+            Min Date
+            <input
+              className="border rounded px-2 py-1"
+              type="date"
+              value={typeof constraints.minDate === ***REMOVED***string***REMOVED*** ? constraints.minDate : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(***REMOVED***minDate***REMOVED***, event.target.value)
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Max Date
+            <input
+              className="border rounded px-2 py-1"
+              type="date"
+              value={typeof constraints.maxDate === ***REMOVED***string***REMOVED*** ? constraints.maxDate : ***REMOVED******REMOVED***}
+              onChange={(event) => {
+                updateConstraint(***REMOVED***maxDate***REMOVED***, event.target.value)
+              }}
+            />
+          </label>
+        </div>
+      ) : null}
+
+      {!type || type === ***REMOVED***string***REMOVED*** || type === ***REMOVED***number***REMOVED*** ? (
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={constraints.required === true}
+            onChange={(event) => {
+              updateConstraint(***REMOVED***required***REMOVED***, event.target.checked || undefined)
+            }}
+          />
+          Required
         </label>
       ) : null}
     </div>
