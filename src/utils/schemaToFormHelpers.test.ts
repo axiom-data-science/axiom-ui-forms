@@ -225,6 +225,59 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(nameField?.excludeFromPayload).not.toBe(true)
       expect(ageField?.excludeFromPayload).not.toBe(true)
     })
+
+    it(***REMOVED***inherits title and description for objectList children from additionalProperties schema***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          list: {
+            type: ***REMOVED***object***REMOVED***,
+            additionalProperties: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: {
+                  type: ***REMOVED***string***REMOVED***,
+                  title: ***REMOVED***Name***REMOVED***,
+                  description: ***REMOVED***Name of the item***REMOVED***,
+                },
+                value: {
+                  type: ***REMOVED***number***REMOVED***,
+                  title: ***REMOVED***Value***REMOVED***,
+                  description: ***REMOVED***Value of the item***REMOVED***,
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***list***REMOVED***,
+                type: ***REMOVED***objectList***REMOVED***,
+                settings: { keyField: ***REMOVED***name***REMOVED*** },
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === ***REMOVED***list***REMOVED***) as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe(***REMOVED***objectList***REMOVED***)
+      expect(listField.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)?.label).toBe(***REMOVED***Name***REMOVED***)
+      expect(listField.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)?.description).toBe(
+        ***REMOVED***Name of the item***REMOVED***
+      )
+      expect(listField.fields?.find((f: any) => f.id === ***REMOVED***value***REMOVED***)?.label).toBe(***REMOVED***Value***REMOVED***)
+      expect(listField.fields?.find((f: any) => f.id === ***REMOVED***value***REMOVED***)?.description).toBe(
+        ***REMOVED***Value of the item***REMOVED***
+      )
+    })
   })
 
   describe(***REMOVED***getSchemaPaths***REMOVED***, () => {
@@ -254,6 +307,29 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       }
       const paths = getSchemaPaths(schema)
       expect(paths).toContain(***REMOVED***[]***REMOVED***)
+    })
+
+    it(***REMOVED***includes additionalProperties object child paths***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          list: {
+            type: ***REMOVED***object***REMOVED***,
+            additionalProperties: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+                value: { type: ***REMOVED***number***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const paths = getSchemaPaths(schema)
+      expect(paths).toContain(***REMOVED***list***REMOVED***)
+      expect(paths).toContain(***REMOVED***list.name***REMOVED***)
+      expect(paths).toContain(***REMOVED***list.value***REMOVED***)
     })
   })
 

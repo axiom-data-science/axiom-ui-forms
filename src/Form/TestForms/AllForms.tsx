@@ -10,6 +10,7 @@ import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInM
 import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
 import ObjectListKeyValueExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample***REMOVED***
+import ObjectListWithSchemaExample, { ObjectListKeyValueWithSchemaExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample***REMOVED***
 import ObjectWrapper from ***REMOVED***@/Form/TestForms/ObjectWrapper/ObjectWrapper***REMOVED***
 import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
 import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
@@ -68,6 +69,16 @@ const forms = [
     label: ***REMOVED***Object list with select***REMOVED***,
     path: ***REMOVED***object-list-with-select***REMOVED***,
     view: ObjectListExampleWithSelectAsKeyField,
+  },
+  {
+    label: ***REMOVED***Object list with schema***REMOVED***,
+    path: ***REMOVED***object-list-with-schema***REMOVED***,
+    view: ObjectListWithSchemaExample,
+  },
+  {
+    label: ***REMOVED***Object list with key/value and schema***REMOVED***,
+    path: ***REMOVED***object-list-with-key-value-and-schema***REMOVED***,
+    view: ObjectListKeyValueWithSchemaExample,
   },
   {
     label: ***REMOVED***Object wrapper***REMOVED***,
