@@ -492,6 +492,26 @@ const normalizeSectionOrder = (
   }
 }
 
+const pruneEmptyChildSectionListTypes = (model: IManagementModel): IManagementModel => {
+  const parentIdsWithChildren = new Set(
+    model.sections
+      .map((section) => section.parentSectionId)
+      .filter((parentId): parentId is string => parentId !== undefined)
+  )
+
+  return {
+    ...model,
+    sections: model.sections.map((section) => {
+      if (section.childListType === undefined) return section
+      if (parentIdsWithChildren.has(section.id)) return section
+      return {
+        ...section,
+        childListType: undefined,
+      }
+    }),
+  }
+}
+
 const moveSectionToParentAtIndex = (
   model: IManagementModel,
   dragItem: ISectionDragItem,
@@ -1628,6 +1648,73 @@ const ManagementUI = (): ReactElement => {
     setModel(nextModel)
   }
 
+  const deleteGroup = (groupId: string): void => {
+    if (model === null) return
+
+    const target = model.groups.find((group) => group.id === groupId)
+    if (target === undefined) return
+
+    const groupIdsToDelete = new Set<string>([groupId])
+    const fieldIdsToDelete = new Set<string>()
+    let changed = true
+
+    while (changed) {
+      changed = false
+
+      model.groups.forEach((group) => {
+        const isChildOfDeletedGroup =
+          group.parentRef.startsWith(***REMOVED***group:***REMOVED***) &&
+          groupIdsToDelete.has(group.parentRef.replace(***REMOVED***group:***REMOVED***, ***REMOVED******REMOVED***))
+        const isChildOfDeletedField =
+          group.parentRef.startsWith(***REMOVED***field:***REMOVED***) &&
+          fieldIdsToDelete.has(group.parentRef.replace(***REMOVED***field:***REMOVED***, ***REMOVED******REMOVED***))
+
+        if ((isChildOfDeletedGroup || isChildOfDeletedField) && !groupIdsToDelete.has(group.id)) {
+          groupIdsToDelete.add(group.id)
+          changed = true
+        }
+      })
+
+      model.fields.forEach((field) => {
+        const isChildOfDeletedGroup =
+          field.parentRef.startsWith(***REMOVED***group:***REMOVED***) &&
+          groupIdsToDelete.has(field.parentRef.replace(***REMOVED***group:***REMOVED***, ***REMOVED******REMOVED***))
+        const isChildOfDeletedField =
+          field.parentRef.startsWith(***REMOVED***field:***REMOVED***) &&
+          fieldIdsToDelete.has(field.parentRef.replace(***REMOVED***field:***REMOVED***, ***REMOVED******REMOVED***))
+
+        if ((isChildOfDeletedGroup || isChildOfDeletedField) && !fieldIdsToDelete.has(field.id)) {
+          fieldIdsToDelete.add(field.id)
+          changed = true
+        }
+      })
+    }
+
+    let nextModel: IManagementModel = {
+      ...model,
+      groups: model.groups.filter((group) => !groupIdsToDelete.has(group.id)),
+      fields: model.fields.filter((field) => !fieldIdsToDelete.has(field.id)),
+    }
+
+    const parentRefs = new Set<string>([
+      ...nextModel.fields.map((field) => field.parentRef),
+      ...nextModel.groups.map((group) => group.parentRef),
+    ])
+    parentRefs.forEach((parentRef) => {
+      nextModel = normalizeSiblingOrder(nextModel, parentRef)
+    })
+
+    if (selectedGroupId !== undefined && groupIdsToDelete.has(selectedGroupId)) {
+      setSelectedGroupId(undefined)
+    }
+    if (selectedFieldId !== undefined && fieldIdsToDelete.has(selectedFieldId)) {
+      setSelectedFieldId(undefined)
+    }
+
+    nextModel = normalizeSiblingOrder(nextModel, target.parentRef)
+    setModel(nextModel)
+  }
+
   const deleteSection = (sectionId: string): void => {
     if (model === null) return
 
@@ -1696,6 +1783,8 @@ const ManagementUI = (): ReactElement => {
     rootParents.forEach((parentId) => {
       nextModel = normalizeSectionOrder(nextModel, parentId)
     })
+
+    nextModel = pruneEmptyChildSectionListTypes(nextModel)
 
     if (selectedSectionId !== undefined && sectionIdsToDelete.has(selectedSectionId)) {
       setSelectedSectionId(undefined)
@@ -2247,6 +2336,9 @@ const ManagementUI = (): ReactElement => {
                 }}
                 onEdit={() => {
                   setSelectedGroupId(group.id)
+                }}
+                onDelete={() => {
+                  deleteGroup(group.id)
                 }}
                 isCollapsed={groupChildrenCollapsed}
                 onToggleCollapsed={

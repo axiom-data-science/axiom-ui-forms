@@ -1,5 +1,5 @@
 import React from ***REMOVED***react***REMOVED***
-import { fireEvent, render, screen } from ***REMOVED***@testing-library/react***REMOVED***
+import { fireEvent, render, screen, waitFor } from ***REMOVED***@testing-library/react***REMOVED***
 import { describe, expect, it, vi } from ***REMOVED***vitest***REMOVED***
 import ManagementUI from ***REMOVED***@/Management/ManagementUI***REMOVED***
 
@@ -57,5 +57,28 @@ describe(***REMOVED***ManagementUI clear configs regression***REMOVED***, () => 
     expect(afterAdd.fields).toHaveLength(1)
     expect(afterAdd.fields[0]).toEqual({ prop: ***REMOVED******REMOVED*** })
     expect(afterAddRaw).not.toEqual(afterClearRaw)
+  })
+
+  it(***REMOVED***clears child section type badge when last child section is deleted***REMOVED***, async () => {
+    const { container } = render(<ManagementUI />)
+
+    const rootSection = container.querySelector(***REMOVED***#editor-section-section-1***REMOVED***)
+    expect(rootSection).not.toBeNull()
+
+    const rootButtons = Array.from(rootSection?.querySelectorAll(***REMOVED***button***REMOVED***) ?? [])
+    fireEvent.click(rootButtons[1])
+
+    expect(rootSection?.querySelector(***REMOVED***span.bg-indigo-100***REMOVED***)).not.toBeNull()
+
+    const childSection = container.querySelector(***REMOVED***#editor-section-section-2***REMOVED***)
+    expect(childSection).not.toBeNull()
+
+    const childButtons = Array.from(childSection?.querySelectorAll(***REMOVED***button***REMOVED***) ?? [])
+    fireEvent.click(childButtons[3])
+
+    await waitFor(() => {
+      expect(container.querySelector(***REMOVED***#editor-section-section-2***REMOVED***)).toBeNull()
+      expect(container.querySelector(***REMOVED***#editor-section-section-1 span.bg-indigo-100***REMOVED***)).toBeNull()
+    })
   })
 })
