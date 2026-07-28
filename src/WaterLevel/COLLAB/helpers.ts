@@ -4,7 +4,7 @@ import {
   type IFormFieldOverride,
 } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { type IMetadataFormSection, type IMetadataField } from ***REMOVED***@/WaterLevel/COLLAB/types***REMOVED***
-import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
+import { type JSONSchema6, type JSONSchema6Definition } from ***REMOVED***json-schema***REMOVED***
 
 const COLLAB_ROOT =
   ***REMOVED***https://docs.google.com/spreadsheets/d/e/2PACX-1vRcD83QFtU6UeW5KwMt0qDYWtLoDWzRbw1dKZI5ntOhevndBL1CyxtSvBXgg7vREdmVCvDgnw4fbSrq/pub?output=tsv***REMOVED***
@@ -136,12 +136,111 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
   return prop
 }
 
+const setSchemaPropertyByIdPath = (
+  properties: Record<string, JSONSchema6Definition>,
+  idPath: string,
+  prop: JSONSchema6
+): void => {
+  const pathParts = idPath
+    .split(***REMOVED***.***REMOVED***)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
+
+  if (pathParts.length === 0) {
+    return
+  }
+
+  let currentProps = properties
+  for (let i = 0; i < pathParts.length - 1; i += 1) {
+    const part = pathParts[i]
+    const existing = currentProps[part]
+
+    if (existing === undefined || typeof existing === ***REMOVED***boolean***REMOVED***) {
+      currentProps[part] = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {},
+      }
+    } else if (existing.type !== ***REMOVED***object***REMOVED*** || existing.properties === undefined) {
+      currentProps[part] = {
+        ...existing,
+        type: ***REMOVED***object***REMOVED***,
+        properties: existing.properties ?? {},
+      }
+    }
+
+    currentProps = (currentProps[part] as JSONSchema6).properties as Record<
+      string,
+      JSONSchema6Definition
+    >
+  }
+
+  const leaf = pathParts[pathParts.length - 1]
+  currentProps[leaf] = prop
+}
+
+const contributorsSpecialCase = (): JSONSchema6 => {
+  return {
+    "type": "object",
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["custodian", "distributor", "publisher"],
+        },
+         "name": {
+            "type": "string",
+            "title": "Name",
+          },
+          "phone": {
+            "type": "string",
+            "format": "phone",
+            "title": "Telephone (primary)",
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+          },
+          "url": {
+            "type": "string",
+            "title": "URL",
+          },
+          "affiliation": {
+            "type": "string",
+            "title": "Organization"
+          }
+      }
+    }
+  }
+}
+
+const getContributorRootId = (id: string): ***REMOVED***contributor***REMOVED*** | ***REMOVED***contributors***REMOVED*** | undefined => {
+  const rootId = id.trim().split(***REMOVED***.***REMOVED***)[0]
+  if (rootId === ***REMOVED***contributor***REMOVED*** || rootId === ***REMOVED***contributors***REMOVED***) {
+    return rootId
+  }
+  return undefined
+}
+
+const isContributorFieldId = (id: string): boolean => getContributorRootId(id) !== undefined
+
+const setContributorsSpecialCase = (
+  properties: Record<string, JSONSchema6Definition>,
+  rootKey: ***REMOVED***contributor***REMOVED*** | ***REMOVED***contributors***REMOVED***
+): void => {
+  if (properties[rootKey] === undefined) {
+    properties[rootKey] = contributorsSpecialCase()
+  }
+}
+
 export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
   const schema: JSONSchema6 = {
     type: ***REMOVED***object***REMOVED***,
     $schema: ***REMOVED***http://json-schema.org/draft-06/schema#***REMOVED***,
     title: ***REMOVED***COLLAB Water Level Metadata***REMOVED***,
   }
+  schema.properties = schema.properties ?? {}
 
   const byPath: Record<string, IMetadataField[]> = {}
   fields.forEach((f) => {
@@ -155,9 +254,17 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
   Object.entries(byPath).forEach(([path, fields]) => {
     if (path === ***REMOVED******REMOVED***) {
       fields.forEach((f) => {
+        const contributorRoot = getContributorRootId(f.id)
+        if (contributorRoot !== undefined) {
+          setContributorsSpecialCase(
+            schema.properties as Record<string, JSONSchema6Definition>,
+            contributorRoot
+          )
+          return
+        }
         const prop = fieldToSchemaProperty(f)
         schema.properties = schema.properties ?? {}
-        schema.properties[f.id] = prop
+        setSchemaPropertyByIdPath(schema.properties, f.id, prop)
       })
     } else {
       const pathParts = path.split(***REMOVED***/***REMOVED***).filter((p) => p)
@@ -165,7 +272,6 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
       pathParts.forEach((part, index) => {
         const isMultiple = part.match(/\[\]$/)
         const lastIndex = index >= pathParts.length - 1
-        const isObject = fields.length > 1
         const cleanPart = (isMultiple ? part.slice(0, -2) : part).trim()
 
         if (isMultiple && p[cleanPart] === undefined) {
@@ -189,15 +295,35 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
             p[cleanPart].type === ***REMOVED***array***REMOVED***
               ? (p[cleanPart].items as Record<string, JSONSchema6>)
               : (p[cleanPart].properties as Record<string, JSONSchema6>)
-          if (!isObject && isMultiple) {
-            propsOb[fields[0].id] = fieldToSchemaProperty(fields[0])
+
+          const propsObRecord = propsOb as Record<string, JSONSchema6Definition>
+          const contributorFields = fields.filter((f) => isContributorFieldId(f.id))
+          if (contributorFields.length > 0) {
+            const contributorRoot = getContributorRootId(contributorFields[0].id) ?? ***REMOVED***contributor***REMOVED***
+            setContributorsSpecialCase(propsObRecord, contributorRoot)
+          }
+
+          const nonContributorFields = fields.filter((f) => !isContributorFieldId(f.id))
+          if (nonContributorFields.length === 0) {
+            return
+          }
+
+          const shouldBeSingleProperty = nonContributorFields.length === 1
+          if (shouldBeSingleProperty) {
+            const onlyField = nonContributorFields[0]
+            const propsObRecord = propsOb as Record<string, JSONSchema6Definition>
+            setSchemaPropertyByIdPath(propsObRecord, onlyField.id, fieldToSchemaProperty(onlyField))
           } else {
-            fields.forEach((f) => {
+            nonContributorFields.forEach((f) => {
               const prop = fieldToSchemaProperty(f, path)
               const propsObRecord = propsOb as Record<string, any>
               propsObRecord.properties = propsObRecord.properties ?? {}
               propsObRecord.type = ***REMOVED***object***REMOVED***
-              propsObRecord.properties[f.id] = prop
+              setSchemaPropertyByIdPath(
+                propsObRecord.properties as Record<string, JSONSchema6Definition>,
+                f.id,
+                prop
+              )
             })
           }
         } else {
