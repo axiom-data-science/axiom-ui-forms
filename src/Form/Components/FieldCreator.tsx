@@ -311,6 +311,8 @@ export const ObjectListCreator = ({
   const onlyShowKeyUntilUniqueEntered =
     objListField.settings?.onlyShowKeyUntilUniqueEntered === true
   const showInitialObject = objListField.settings?.showInitialObject === true
+  const excludeKeyFieldFromValue =
+    objListField.settings?.excludeKeyFieldFromValue === true
   const didInitializeInitialObject = useRef(false)
 
   if (!keyField) {
@@ -368,7 +370,12 @@ export const ObjectListCreator = ({
   const toStoredItemValue = useCallback(
     (keyValue: string, itemData: ICompositeValueType): IValueType | IValueType[] | undefined => {
       if (valueField === undefined) {
-        return itemData
+        if (!excludeKeyFieldFromValue) {
+          return itemData
+        }
+        const storedItem = cloneObject(itemData)
+        delete storedItem[keyField]
+        return storedItem
       }
       if (itemData[valueField] !== undefined) {
         return itemData[valueField]
@@ -376,7 +383,7 @@ export const ObjectListCreator = ({
       // Preserve existing key/value entries when value field is missing from edited object.
       return objValue[keyValue]
     },
-    [objValue, valueField]
+    [excludeKeyFieldFromValue, keyField, objValue, valueField]
   )
 
   const toRenderableItemValue = useCallback(

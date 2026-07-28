@@ -276,4 +276,47 @@ describe('FieldCreator objectList valueField mode', () => {
     })
     expect(screen.queryByRole('button', { name: /add first item/i })).toBeNull()
   })
+
+  it('omits keyField from stored payload when excludeKeyFieldFromValue is true', () => {
+    const objectListField: IFormField = {
+      id: 'servers',
+      type: 'objectList',
+      label: 'Servers',
+      settings: {
+        keyField: 'hostname',
+        excludeKeyFieldFromValue: true,
+        showInitialObject: true,
+      },
+      fields: [
+        { id: 'hostname', type: 'text', label: 'Hostname' },
+        { id: 'ip', type: 'text', label: 'IP Address' },
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {},
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId('mock-input-hostname'), {
+      target: { value: 'alpha' },
+    })
+    rerender(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId('mock-input-ip'), {
+      target: { value: '10.0.0.1' },
+    })
+
+    expect(setFormValuesMock).toHaveBeenCalled()
+    const latestFormValues =
+      setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
+    expect((latestFormValues.servers as any).alpha.ip).toBe('10.0.0.1')
+    expect((latestFormValues.servers as any).alpha.hostname).toBeUndefined()
+  })
 })
