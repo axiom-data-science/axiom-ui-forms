@@ -147,4 +147,99 @@ describe('FieldCreator objectList valueField mode', () => {
     })
     expect((latestFormValues.servers as any).alpha).toBeUndefined()
   })
+
+  it('shows only key field until a unique key is entered when onlyShowKeyUntilUniqueEntered is true', () => {
+    const objectListField: IFormField = {
+      id: 'servers',
+      type: 'objectList',
+      label: 'Servers',
+      settings: {
+        keyField: 'hostname',
+        valueField: 'ip',
+        onlyShowKeyUntilUniqueEntered: true,
+      },
+      fields: [
+        { id: 'hostname', type: 'text', label: 'Hostname' },
+        { id: 'ip', type: 'text', label: 'IP Address' },
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {},
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /add first item/i }))
+
+    expect(screen.getByTestId('mock-input-hostname')).toBeInTheDocument()
+    expect(screen.queryByTestId('mock-input-ip')).toBeNull()
+
+    fireEvent.change(screen.getByTestId('mock-input-hostname'), {
+      target: { value: 'alpha' },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getByTestId('mock-input-ip')).toBeInTheDocument()
+  })
+
+  it('keeps pending duplicate rows key-only until the key becomes unique', () => {
+    const objectListField: IFormField = {
+      id: 'servers',
+      type: 'objectList',
+      label: 'Servers',
+      settings: {
+        keyField: 'hostname',
+        valueField: 'ip',
+        onlyShowKeyUntilUniqueEntered: true,
+      },
+      fields: [
+        { id: 'hostname', type: 'text', label: 'Hostname' },
+        { id: 'ip', type: 'text', label: 'IP Address' },
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {
+        alpha: '10.0.0.1',
+      },
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    expect(screen.getAllByTestId('mock-input-ip')).toHaveLength(1)
+
+    fireEvent.click(screen.getByRole('button', { name: /^add/i }))
+
+    const hostnameInputs = screen.getAllByTestId('mock-input-hostname')
+    expect(hostnameInputs).toHaveLength(2)
+
+    fireEvent.change(hostnameInputs[1], {
+      target: { value: 'alpha' },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getAllByTestId('mock-input-ip')).toHaveLength(1)
+
+    const updatedHostnameInputs = screen.getAllByTestId('mock-input-hostname')
+    fireEvent.change(updatedHostnameInputs[1], {
+      target: { value: 'bravo' },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getAllByTestId('mock-input-ip')).toHaveLength(2)
+  })
 })
