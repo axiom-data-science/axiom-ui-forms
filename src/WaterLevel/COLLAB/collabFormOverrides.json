@@ -163,109 +163,11 @@
       "description": "List of contributors to the resource..",
       "fields": [
         {
-          "id": "contributors",
+          "prop": "contributor",
           "type": "objectList",
           "settings": {
             "keyField": "type"
-          },
-          "destPath": "contributors",
-          "layout": "grid2",
-          "fields": [
-            {
-              "prop": "type",
-              "destPath": "type",
-              "type": "select",
-              "options": [
-                {
-                  "label": "Custodian",
-                  "value": "custodian"
-                },
-                {
-                  "label": "Owner",
-                  "value": "owner"
-                },
-                {
-                  "label": "Publisher",
-                  "value": "publisher"
-                },
-                {
-                  "label": "Processor",
-                  "value": "processor"
-                },
-                {
-                  "label": "Distributor",
-                  "value": "distributor"
-                },
-                {
-                  "label": "Funder",
-                  "value": "funder"
-                },
-                {
-                  "label": "Community POC",
-                  "value": "community_poc"
-                }
-              ]
-            },
-          {
-          "id": "contributor-wrapper",
-          "type": "objectWrapper",
-          "label": "",
-          "layout": "grid3",
-          "settings": {
-            "boldLabel": true
-          },
-          "fields": [
-            {
-              "prop": "name",
-              "destPath": "name",
-              "type": "text",
-              "description": "",
-              "label": "Name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "phone",
-              "type": "text",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "Phone"
-            },
-            {
-              "prop": "email",
-              "type": "text",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "Email"
-            },
-            {
-              "prop": "url",
-              "type": "text",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "URL"
-            },
-            {
-              "prop": "affiliation",
-              "type": "text",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "Organization"
-            }
-          ]
-        }
-
-          ]
+          }
         }
 
       ]
