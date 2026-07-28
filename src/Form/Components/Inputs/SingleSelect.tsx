@@ -20,7 +20,13 @@ const SingleSelectInput = ({
           className={className}
           label={<FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />}
           testId={field.id}
-          options={field.options}
+          options={field.options.map((option) => (
+              {
+                label: option.label,
+                value: option.value
+              }
+            )
+          )}
           includePrompt={field?.settings?.allowNull !== false}
           value={initialValue !== undefined && initialValue !== null ? String(initialValue) : ***REMOVED******REMOVED***}
           onChange={(e) => {

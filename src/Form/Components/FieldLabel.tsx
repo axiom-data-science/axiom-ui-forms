@@ -207,6 +207,7 @@ export const FieldDescriptionText = ({
   disabled?: boolean
 }): ReactElement => {
   const [showModal, setShowModal] = useState(false)
+  const isBold = (field.settings as {boldDescription?: boolean} | undefined)?.boldDescription ?? false
   const hasLongDescription =
     field.long_description !== undefined &&
     field.long_description !== null &&
@@ -228,7 +229,7 @@ export const FieldDescriptionText = ({
   return (
     <>
       {(hasDescription || hasLongDescription) && (
-        <p className="text-xs pb-2">
+        <p className={`text-xs pb-2 ${isBold ? ***REMOVED***font-bold***REMOVED*** : ***REMOVED******REMOVED***}`}>
           <InlineMarkdown>{field.description}</InlineMarkdown>
           {longDescriptionButton}
         </p>

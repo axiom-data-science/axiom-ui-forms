@@ -153,6 +153,7 @@ interface INumberValueInput extends IFormFieldRoot {
     nonNullDefaultValue?: number
     invertForDisplay?: boolean
     boldLabel?: boolean
+    boldDescription?: boolean
     smallLabel?: boolean
     className?: string
   }
@@ -185,7 +186,8 @@ export interface IJSONField extends IFormFieldRoot {
 interface ISelectOption {
   label: string
   value: string | number
-  [key: string]: string | number | boolean | Record<string, unknown>
+  description?: string
+  [key: string]: string | number | boolean | Record<string, unknown> | undefined
 }
 
 interface ISelectableInput extends IFormFieldRoot {
@@ -390,6 +392,10 @@ export interface IFormSection {
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
   tabs?: IFormLayoutTab[]
+  settings?: {
+    boldDescription?: boolean
+    className?: string
+  }
 }
 
 export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {}

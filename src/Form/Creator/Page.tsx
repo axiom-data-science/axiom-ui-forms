@@ -173,10 +173,11 @@ export const ActivePage = ({
               label: formSection.description,
               type: ***REMOVED***text***REMOVED***,
               settings: {
-                descriptionPresentation: ***REMOVED***tooltip***REMOVED***
+                descriptionPresentation: ***REMOVED***tooltip***REMOVED***,
+                ...formSection.settings
               }
             }}
-              textClassName=***REMOVED***font-normal***REMOVED***
+              textClassName={`${formSection?.settings?.boldDescription ? ***REMOVED***font-bold***REMOVED*** : ***REMOVED***font-normal***REMOVED***}`}
 
             />
 
@@ -259,12 +260,16 @@ const PageLayoutContent = ({
         />
       )}
     </div>
+    {
+      level === 0 &&
+    
       <SmallNavComponent
         sections={sections}
         sectionStatus={sectionStatus}
         level={level}
         SubmitButton={SubmitButton}
       />
+    }
     </div>
   )
 }
