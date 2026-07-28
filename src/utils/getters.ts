@@ -220,7 +220,7 @@ export function getPathFromField(field: IFormField): string | undefined {
  * @param formSection - The form section to get the fields from
  * @returns An array of fields from the given form section
  */
-export function getFieldsFromFormSection(formSection: IFormSection): IFormField[] {
+export function getFieldsFromFormSection(formSection: IFormSection | IForm): IFormField[] {
   const pageFields = formSection?.pages?.map((p) => getFieldsFromFormSection(p)).flat(1)
   const wizardFields = formSection?.wizard_steps?.map((p) => getFieldsFromFormSection(p)).flat(1)
   const tabFields = formSection?.tabs?.map((t) => getFieldsFromFormSection(t)).flat(1)
