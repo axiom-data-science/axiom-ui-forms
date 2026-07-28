@@ -310,6 +310,8 @@ export const ObjectListCreator = ({
   const valueField = objListField.settings?.valueField as string | undefined
   const onlyShowKeyUntilUniqueEntered =
     objListField.settings?.onlyShowKeyUntilUniqueEntered === true
+  const showInitialObject = objListField.settings?.showInitialObject === true
+  const didInitializeInitialObject = useRef(false)
 
   if (!keyField) {
     return (
@@ -490,6 +492,36 @@ export const ObjectListCreator = ({
     ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: toRenderableItemValue(k, v), isPending: false })),
     ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true })),
   ]
+
+  const createPendingItem = (itemOverride?: ICompositeValueType): {
+    tempKey: string
+    data: ICompositeValueType
+  } => {
+    const tempKey = String(new Date().getTime())
+    const newItem =
+      itemOverride !== undefined
+        ? cloneObject(itemOverride)
+        : ((getNewDefaultElement() ?? {}) as ICompositeValueType)
+    ;(newItem as any)._id = tempKey
+    return { tempKey, data: newItem }
+  }
+
+  useEffect(() => {
+    if (didInitializeInitialObject.current || !showInitialObject) {
+      return
+    }
+
+    const hasCommittedItems = Object.keys(objValue).length > 0
+    const hasPendingItems = pendingItems.length > 0
+    if (hasCommittedItems || hasPendingItems) {
+      didInitializeInitialObject.current = true
+      return
+    }
+
+    const firstPending = createPendingItem()
+    setPendingItems([firstPending])
+    didInitializeInitialObject.current = true
+  }, [objValue, pendingItems, showInitialObject])
 
   const shouldShowOnlyKeyField = ({
     currentKey,
@@ -720,10 +752,8 @@ export const ObjectListCreator = ({
                   size="xs"
                   className={toolButtonClass}
                   onClick={() => {
-                    const tempKey = String(new Date().getTime())
-                    const newItem = getNewDefaultElement() ?? {}
-                    ;(newItem as any)._id = tempKey
-                    setPendingItems(prev => [...prev, { tempKey, data: newItem as ICompositeValueType }])
+                    const pendingItem = createPendingItem()
+                    setPendingItems(prev => [...prev, pendingItem])
                   }}
                 >
                   Add <PlusIcon className="inline ml-2" />
@@ -732,12 +762,11 @@ export const ObjectListCreator = ({
                   size="xs"
                   className={toolButtonClass}
                   onClick={() => {
-                    const tempKey = String(new Date().getTime())
                     const newItem = cloneObject(itemValue) as ICompositeValueType
-                    ;(newItem as any)._id = tempKey
                     // Clear keyField so the duplicate starts without a key (pending state)
                     delete newItem[keyField]
-                    setPendingItems(prev => [...prev, { tempKey, data: newItem }])
+                    const pendingItem = createPendingItem(newItem)
+                    setPendingItems(prev => [...prev, pendingItem])
                   }}
                 >
                   Duplicate <CopyIcon className="inline ml-2" />
@@ -770,10 +799,8 @@ export const ObjectListCreator = ({
         <Button
           size="sm"
           onClick={() => {
-            const tempKey = String(new Date().getTime())
-            const newItem = getNewDefaultElement() ?? {}
-            ;(newItem as any)._id = tempKey
-            setPendingItems([{ tempKey, data: newItem as ICompositeValueType }])
+            const pendingItem = createPendingItem()
+            setPendingItems([pendingItem])
           }}
           className="mt-4"
         >

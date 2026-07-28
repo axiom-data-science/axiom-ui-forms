@@ -1,6 +1,6 @@
 import React from ***REMOVED***react***REMOVED***
 import { describe, it, expect, vi, beforeEach } from ***REMOVED***vitest***REMOVED***
-import { fireEvent, render, screen } from ***REMOVED***@testing-library/react***REMOVED***
+import { fireEvent, render, screen, waitFor } from ***REMOVED***@testing-library/react***REMOVED***
 import FieldCreator from ***REMOVED***./FieldCreator***REMOVED***
 import { type IForm, type IFormField, type IFormValues } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
@@ -241,5 +241,39 @@ describe(***REMOVED***FieldCreator objectList valueField mode***REMOVED***, () =
     rerender(<FieldCreator field={objectListField} />)
 
     expect(screen.getAllByTestId(***REMOVED***mock-input-ip***REMOVED***)).toHaveLength(2)
+  })
+
+  it(***REMOVED***auto-shows initial object row when showInitialObject is true***REMOVED***, async () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***servers***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***Servers***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***hostname***REMOVED***,
+        valueField: ***REMOVED***ip***REMOVED***,
+        showInitialObject: true,
+      },
+      fields: [
+        { id: ***REMOVED***hostname***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Hostname***REMOVED*** },
+        { id: ***REMOVED***ip***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***IP Address***REMOVED*** },
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {},
+    }
+
+    render(<FieldCreator field={objectListField} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId(***REMOVED***mock-input-hostname***REMOVED***)).toBeInTheDocument()
+      expect(screen.getByTestId(***REMOVED***mock-input-ip***REMOVED***)).toBeInTheDocument()
+    })
+    expect(screen.queryByRole(***REMOVED***button***REMOVED***, { name: /add first item/i })).toBeNull()
   })
 })

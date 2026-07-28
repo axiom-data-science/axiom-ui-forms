@@ -35,7 +35,8 @@ const formOverride = {
             "label": "List" , 
             "type": "objectList", 
             "settings": {
-                "keyField": "name"
+                "keyField": "name",
+                "showInitialObject": true
             }
         }
     ]
