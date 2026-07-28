@@ -514,12 +514,14 @@ const mergeFormField = ({
   formFieldsOverrideMap,
   schemaFieldMap,
   schemaForm,
+  containerPathPrefix,
 }: {
   field?: IFormField
   fieldOverride?: IFormFieldOverride
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
   schemaFieldMap: Record<string, IFormField>
   schemaForm: IForm
+  containerPathPrefix?: string
 }): IFormField => {
   const normalizePath = (value?: string): string | undefined => value?.replace(/\[\]/g, ***REMOVED******REMOVED***)
 
@@ -527,6 +529,7 @@ const mergeFormField = ({
   const normalizedOverridePath = normalizePath(rawOverridePath)
   const fieldPath = field ? makeJsonPath(field) : undefined
   const path = normalizedOverridePath ?? fieldPath
+  const childPathPrefix = path ?? containerPathPrefix
   const formFieldOverrides = mergeObjects<IFormFieldOverride>(
     formFieldsOverrideMap
       .map((overrides) =>
@@ -572,10 +575,16 @@ const mergeFormField = ({
     mergedField.id ??
     (path !== undefined ? path.split(***REMOVED***.***REMOVED***).pop() : (fieldOverride?.prop ?? field?.id))
   const id = mergedField.id ?? fieldOverride?.prop ?? makeFormFieldId([path?.split(***REMOVED***.***REMOVED***)[0]])
-  if (mergedField.type === ***REMOVED***object***REMOVED*** || mergedField.type === ***REMOVED***objectWrapper***REMOVED***) {
+  if (
+    mergedField.type === ***REMOVED***object***REMOVED*** ||
+    mergedField.type === ***REMOVED***objectWrapper***REMOVED*** ||
+    mergedField.type === ***REMOVED***objectList***REMOVED***
+  ) {
     // attached to the schema field. defaults not overrides
     const fieldFields =
-      field?.type === ***REMOVED***object***REMOVED*** || field?.type === ***REMOVED***objectWrapper***REMOVED*** ? (field.fields ?? []) : []
+      field?.type === ***REMOVED***object***REMOVED*** || field?.type === ***REMOVED***objectWrapper***REMOVED*** || field?.type === ***REMOVED***objectList***REMOVED***
+        ? (field.fields ?? [])
+        : []
     const fieldFieldsMap = Object.fromEntries(fieldFields.map((f) => [getPathFromField(f), f]))
     /* if (fieldPages !== undefined) {
       mergedField.pages = fieldPages
@@ -587,11 +596,11 @@ const mergeFormField = ({
     // attached to the field override. overrides
     const overrideFields = (fieldOverride as IObjectFormFieldOverride)?.fields ?? []
     // Read tabs from the override regardless of whether `type` is explicitly set on the
-    // override — we are already inside the mergedField.type === ***REMOVED***object***REMOVED*** branch, so the
-    // merged type is confirmed to be an object. An override that specifies tabs but omits
-    // `type` is perfectly valid (type comes from the schema field).
+    // override — we are already inside the mergedField.type container branch, so the
+    // merged type is confirmed to be an object-like container.
     const overrideFieldTabs = (fieldOverride as IObjectFormFieldOverride)?.tabs
-    // const overrideFieldPages = fieldOverride?.type === ***REMOVED***object***REMOVED*** ? fieldOverride.pages : undefined
+    const overrideFieldPages = (fieldOverride as IObjectFormFieldOverride)?.pages
+    const overrideFieldWizardSteps = (fieldOverride as IObjectFormFieldOverride)?.wizard_steps
     const buildOverrideMap = (
       fieldsToMap: unknown[]
     ): Record<string, IFormFieldOverride> => {
@@ -617,7 +626,25 @@ const mergeFormField = ({
     // Same as overrideFieldTabs above — read tabs from formFieldOverrides regardless of
     // whether `type` is explicitly set.
     const formOverrideFieldTabs = (formFieldOverrides as any)?.tabs
+    const formOverrideFieldPages = (formFieldOverrides as any)?.pages
+    const formOverrideFieldWizardSteps = (formFieldOverrides as any)?.wizard_steps
     const formOverrideFieldsMap = buildOverrideMap(formOverrideFields)
+
+    // If overrides define only structural children (id/type without prop), treat those
+    // as the explicit child layout and avoid auto-injecting schema siblings at this level.
+    // This prevents duplicates such as wrapper + raw schema fields rendered together.
+    const hasStructuralOnlyChildOverride = overrideFields.some((candidate) => {
+      const fieldLike = candidate as { prop?: string; id?: string; type?: string }
+      return (
+        fieldLike.prop === undefined &&
+        fieldLike.id !== undefined &&
+        (fieldLike.type === ***REMOVED***object***REMOVED*** ||
+          fieldLike.type === ***REMOVED***objectWrapper***REMOVED*** ||
+          fieldLike.type === ***REMOVED***objectList***REMOVED*** ||
+          fieldLike.type === ***REMOVED***section***REMOVED*** ||
+          fieldLike.type === ***REMOVED***page***REMOVED***)
+      )
+    })
 
     const getOverrideByKey = (
       map: Record<string, IFormFieldOverride>,
@@ -636,11 +663,18 @@ const mergeFormField = ({
 
     const allKeys = Array.from(
       new Set(
-        Object.keys({
-          ...fieldFieldsMap,
-          ...overrideFieldsMap,
-          ...formOverrideFieldsMap,
-        }).map((k) => normalizePath(k) ?? k)
+        Object.keys(
+          hasStructuralOnlyChildOverride
+            ? {
+                ...overrideFieldsMap,
+                ...formOverrideFieldsMap,
+              }
+            : {
+                ...fieldFieldsMap,
+                ...overrideFieldsMap,
+                ...formOverrideFieldsMap,
+              }
+        ).map((k) => normalizePath(k) ?? k)
       )
     )
 
@@ -650,18 +684,36 @@ const mergeFormField = ({
       // "key" here is the full path (e.g. "testObject.field1"), so we strip the parent prefix
       // to get the leaf name and build the bracket-notation key correctly
       const isArrayItems = (mergedField as any).multiple === true
-      const leafKey = isArrayItems && path ? key.replace(new RegExp(`^${path}\\.`), ***REMOVED******REMOVED***) : key
-      const arrayBracketKey = isArrayItems && path ? `${path}[].${leafKey}` : undefined
-      const arrayDotKey = isArrayItems && path ? `${path}.${leafKey}` : undefined
+      const leafKey =
+        isArrayItems && childPathPrefix
+          ? key.replace(new RegExp(`^${childPathPrefix}\\.`), ***REMOVED******REMOVED***)
+          : key
+      const fullKey =
+        childPathPrefix !== undefined && !key.startsWith(`${childPathPrefix}.`)
+          ? `${childPathPrefix}.${leafKey}`
+          : key
+      const fullBracketKey =
+        childPathPrefix !== undefined && !key.startsWith(`${childPathPrefix}[].`)
+          ? `${childPathPrefix}[].${leafKey}`
+          : key
+      const arrayBracketKey =
+        isArrayItems && childPathPrefix ? `${childPathPrefix}[].${leafKey}` : undefined
+      const arrayDotKey = isArrayItems && childPathPrefix ? `${childPathPrefix}.${leafKey}` : undefined
       const fieldOverride = mergeObjects<IFormFieldOverride>(
         [
-          getOverrideByKey(overrideFieldsMap, key, arrayBracketKey, arrayDotKey),
-          getOverrideByKey(formOverrideFieldsMap, key, arrayBracketKey, arrayDotKey),
+          getOverrideByKey(overrideFieldsMap, key, arrayBracketKey, arrayDotKey) ??
+            getOverrideByKey(overrideFieldsMap, fullKey, arrayBracketKey, arrayDotKey) ??
+            getOverrideByKey(overrideFieldsMap, fullBracketKey, arrayBracketKey, arrayDotKey),
+          getOverrideByKey(formOverrideFieldsMap, key, arrayBracketKey, arrayDotKey) ??
+            getOverrideByKey(formOverrideFieldsMap, fullKey, arrayBracketKey, arrayDotKey) ??
+            getOverrideByKey(formOverrideFieldsMap, fullBracketKey, arrayBracketKey, arrayDotKey),
           mergeObjects<IFormFieldOverride>(
             formFieldsOverrideMap
               .map(
                 (overrides) =>
                   overrides[key] ??
+                  overrides[fullKey] ??
+                  overrides[fullBracketKey] ??
                   (arrayBracketKey !== undefined ? overrides[arrayBracketKey] : undefined) ??
                   (arrayDotKey !== undefined ? overrides[arrayDotKey] : undefined)
               )
@@ -669,16 +721,46 @@ const mergeFormField = ({
           ),
         ].filter((d): d is IFormFieldOverride => d !== undefined)
       )
+
+      const schemaFieldByContainerPath =
+        childPathPrefix !== undefined
+          ? schemaFieldMap[`${childPathPrefix}.${leafKey}`] ??
+            schemaFieldMap[`${childPathPrefix}[].${leafKey}`]
+          : undefined
+
+      const schemaFieldByFallbackMatch =
+        schemaFieldByContainerPath === undefined && childPathPrefix !== undefined
+          ? (() => {
+              const normalizedPathPrefix = `${childPathPrefix}.`
+              const suffix = `.${leafKey}`
+              return Object.entries(schemaFieldMap).find(([schemaPath]) => {
+                const normalized = normalizePath(schemaPath) ?? schemaPath
+                return normalized.startsWith(normalizedPathPrefix) && normalized.endsWith(suffix)
+              })?.[1]
+            })()
+          : undefined
+
       return mergeFormField({
-        field: fieldFieldsMap[key] ?? schemaFieldMap[key],
+        field:
+          fieldFieldsMap[key] ??
+          schemaFieldMap[key] ??
+          schemaFieldByContainerPath ??
+          schemaFieldByFallbackMatch,
         fieldOverride,
         formFieldsOverrideMap,
         schemaFieldMap,
         schemaForm,
+        containerPathPrefix:
+          mergedField.type === ***REMOVED***objectWrapper***REMOVED*** || (mergedField as any).skip_path === true
+            ? childPathPrefix
+            : path,
       })
     })
 
     const mergedTabs = formOverrideFieldTabs ?? overrideFieldTabs
+    const mergedPages = formOverrideFieldPages ?? overrideFieldPages
+    const mergedWizardSteps = formOverrideFieldWizardSteps ?? overrideFieldWizardSteps
+
     mergedField.tabs =
       mergedTabs !== undefined
         ? (mergeFormSections({
@@ -686,6 +768,22 @@ const mergeFormField = ({
             schemaForm,
             formFieldsOverrideMap,
           }) as IFormLayoutTab[])
+        : undefined
+    mergedField.pages =
+      mergedPages !== undefined
+        ? (mergeFormSections({
+            sectionOverrides: mergedPages as IFormSectionOverride[],
+            schemaForm,
+            formFieldsOverrideMap,
+          }) as IPage[])
+        : undefined
+    mergedField.wizard_steps =
+      mergedWizardSteps !== undefined
+        ? (mergeFormSections({
+            sectionOverrides: mergedWizardSteps as IFormSectionOverride[],
+            schemaForm,
+            formFieldsOverrideMap,
+          }) as IWizardStep[])
         : undefined
   }
 

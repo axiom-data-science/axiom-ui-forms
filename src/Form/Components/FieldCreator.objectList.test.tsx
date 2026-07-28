@@ -54,6 +54,27 @@ vi.mock(***REMOVED***@/Form/Components/Inputs/inputMap***REMOVED***, () => ({
         onChange={(e) => onChange?.(e.target.value)}
       />
     ),
+    objectWrapper: ({ field, value, onChange, disabled }: any) => {
+      const objectValue = typeof value === ***REMOVED***object***REMOVED*** && value !== null ? value : {}
+      return (
+        <div data-testid={`mock-wrapper-${field.id}`}>
+          {(field.fields ?? []).map((child: any) => (
+            <input
+              key={child.id}
+              data-testid={`mock-input-${child.id}`}
+              value={String(objectValue[child.id] ?? ***REMOVED******REMOVED***)}
+              disabled={disabled}
+              onChange={(e) =>
+                onChange?.({
+                  ...objectValue,
+                  [child.id]: e.target.value,
+                })
+              }
+            />
+          ))}
+        </div>
+      )
+    },
   },
 }))
 
@@ -318,5 +339,62 @@ describe(***REMOVED***FieldCreator objectList valueField mode***REMOVED***, () =
       setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
     expect((latestFormValues.servers as any).alpha.ip).toBe(***REMOVED***10.0.0.1***REMOVED***)
     expect((latestFormValues.servers as any).alpha.hostname).toBeUndefined()
+  })
+
+  it(***REMOVED***commits values for wrapper-layout objectList entries to formValues***REMOVED***, () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***list***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***List***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***name***REMOVED***,
+        showInitialObject: true,
+        excludeKeyFieldFromValue: true,
+      },
+      fields: [
+        {
+          id: ***REMOVED***wrapper***REMOVED***,
+          type: ***REMOVED***objectWrapper***REMOVED***,
+          layout: ***REMOVED***grid2***REMOVED***,
+          fields: [
+            { id: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED*** },
+            { id: ***REMOVED***value***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Value***REMOVED*** },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      list: {},
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId(***REMOVED***mock-input-name***REMOVED***), {
+      target: { value: ***REMOVED***alpha***REMOVED*** },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId(***REMOVED***mock-input-value***REMOVED***), {
+      target: { value: ***REMOVED***42***REMOVED*** },
+    })
+
+    expect(setFormValuesMock).toHaveBeenCalled()
+    const latestFormValues =
+      setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
+
+    expect(latestFormValues).toEqual({
+      list: {
+        alpha: {
+          value: ***REMOVED***42***REMOVED***,
+        },
+      },
+    })
   })
 })

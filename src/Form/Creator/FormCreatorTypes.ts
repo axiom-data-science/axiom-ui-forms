@@ -295,6 +295,9 @@ export interface IObjectField extends Omit<IValidContainerField, ***REMOVED***fi
 
 export interface IObjectListField extends Omit<IValidContainerField, ***REMOVED***fields***REMOVED***> {
   type: ***REMOVED***objectList***REMOVED***
+  tabs?: IFormLayoutTab[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
   settings: {
     keyField: string
     valueField?: string
@@ -425,9 +428,11 @@ export interface IForm {
   settings?: IFormSettings
 }
 
+type IContainerFieldOverrideBase = Partial<IObjectField | IObjectWrapperField | IObjectListField>
+
 export type IFormFieldOverride = (Partial<IFormField> & { prop: string }) | IObjectFormFieldOverride
 export type IObjectFormFieldOverride = Omit<
-  Partial<IObjectField>,
+  IContainerFieldOverrideBase,
   ***REMOVED***fields***REMOVED*** | ***REMOVED***tabs***REMOVED*** | ***REMOVED***pages***REMOVED*** | ***REMOVED***wizard_steps***REMOVED***
 > & {
   fields?: IFormFieldOverride[]

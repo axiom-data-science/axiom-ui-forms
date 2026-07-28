@@ -278,6 +278,129 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
         ***REMOVED***Value of the item***REMOVED***
       )
     })
+
+    it(***REMOVED***supports nested objectList display overrides with prop-based children***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          list: {
+            type: ***REMOVED***object***REMOVED***,
+            additionalProperties: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: {
+                  type: ***REMOVED***string***REMOVED***,
+                  title: ***REMOVED***Name***REMOVED***,
+                },
+                value: {
+                  type: ***REMOVED***number***REMOVED***,
+                  title: ***REMOVED***Value***REMOVED***,
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***list***REMOVED***,
+                type: ***REMOVED***objectList***REMOVED***,
+                settings: {
+                  keyField: ***REMOVED***name***REMOVED***,
+                },
+                fields: [
+                  {
+                    id: ***REMOVED***wrapper***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    layout: ***REMOVED***grid2***REMOVED***,
+                    fields: [
+                      { prop: ***REMOVED***name***REMOVED***, label: ***REMOVED***Display Name***REMOVED*** },
+                      { prop: ***REMOVED***value***REMOVED***, label: ***REMOVED***Display Value***REMOVED*** },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === ***REMOVED***list***REMOVED***) as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe(***REMOVED***objectList***REMOVED***)
+
+      const wrapper = listField.fields?.find((f: any) => f.id === ***REMOVED***wrapper***REMOVED***)
+      expect(wrapper).toBeDefined()
+      expect(wrapper.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+
+      const nestedName = wrapper.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)
+      const nestedValue = wrapper.fields?.find((f: any) => f.id === ***REMOVED***value***REMOVED***)
+      expect(nestedName?.label).toBe(***REMOVED***Display Name***REMOVED***)
+      expect(nestedValue?.label).toBe(***REMOVED***Display Value***REMOVED***)
+    })
+
+    it(***REMOVED***does not duplicate objectList schema children when using id-only wrapper layout***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          list: {
+            type: ***REMOVED***object***REMOVED***,
+            additionalProperties: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Name***REMOVED*** },
+                value: { type: ***REMOVED***number***REMOVED***, title: ***REMOVED***Value***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***list***REMOVED***,
+                type: ***REMOVED***objectList***REMOVED***,
+                settings: { keyField: ***REMOVED***name***REMOVED*** },
+                fields: [
+                  {
+                    id: ***REMOVED***wrapper***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    layout: ***REMOVED***grid2***REMOVED***,
+                    fields: [{ prop: ***REMOVED***name***REMOVED*** }, { prop: ***REMOVED***value***REMOVED*** }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === ***REMOVED***list***REMOVED***) as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe(***REMOVED***objectList***REMOVED***)
+
+      const childIds = (listField.fields ?? []).map((f: any) => f.id)
+      expect(childIds).toEqual([***REMOVED***wrapper***REMOVED***])
+
+      const wrapper = listField.fields?.[0]
+      expect(wrapper?.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+      expect(wrapper?.fields?.map((f: any) => f.id)).toEqual([***REMOVED***name***REMOVED***, ***REMOVED***value***REMOVED***])
+      const nestedName = wrapper?.fields?.find((f: any) => f.id === ***REMOVED***name***REMOVED***)
+      const nestedValue = wrapper?.fields?.find((f: any) => f.id === ***REMOVED***value***REMOVED***)
+      expect(nestedName).toBeDefined()
+      expect(nestedValue).toBeDefined()
+      expect(nestedName?.excludeFromPayload === true).toBe(false)
+      expect(nestedValue?.excludeFromPayload === true).toBe(false)
+    })
   })
 
   describe(***REMOVED***getSchemaPaths***REMOVED***, () => {
@@ -802,6 +925,65 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(itemField.tabs?.length).toBe(2)
       expect(itemField.tabs?.[0]?.layout).toBe(***REMOVED***grid2***REMOVED***)
       expect(itemField.tabs?.[1]?.layout).toBeUndefined()
+    })
+
+    it(***REMOVED***supports pages and wizard_steps on objectList containers with prop-based child fields***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          list: {
+            type: ***REMOVED***object***REMOVED***,
+            additionalProperties: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+                value: { type: ***REMOVED***number***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***list***REMOVED***,
+                type: ***REMOVED***objectList***REMOVED***,
+                settings: { keyField: ***REMOVED***name***REMOVED*** },
+                pages: [
+                  {
+                    id: ***REMOVED***details***REMOVED***,
+                    label: ***REMOVED***Details***REMOVED***,
+                    fields: [{ prop: ***REMOVED***list.name***REMOVED***, label: ***REMOVED***Name Label***REMOVED*** }],
+                  },
+                ],
+                wizard_steps: [
+                  {
+                    id: ***REMOVED***measure***REMOVED***,
+                    label: ***REMOVED***Measure***REMOVED***,
+                    fields: [{ prop: ***REMOVED***list.value***REMOVED***, label: ***REMOVED***Value Label***REMOVED*** }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === ***REMOVED***list***REMOVED***) as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe(***REMOVED***objectList***REMOVED***)
+
+      expect(listField.pages?.length).toBe(1)
+      expect(listField.pages?.[0]?.fields?.[0]?.id).toBe(***REMOVED***name***REMOVED***)
+      expect(listField.pages?.[0]?.fields?.[0]?.label).toBe(***REMOVED***Name Label***REMOVED***)
+
+      expect(listField.wizard_steps?.length).toBe(1)
+      expect(listField.wizard_steps?.[0]?.fields?.[0]?.id).toBe(***REMOVED***value***REMOVED***)
+      expect(listField.wizard_steps?.[0]?.fields?.[0]?.label).toBe(***REMOVED***Value Label***REMOVED***)
     })
   })
 })

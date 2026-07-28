@@ -10,6 +10,8 @@ import {
   getFormPayload
 } from ***REMOVED***./getters***REMOVED***
 import { type IFormSection, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { overridesAndSchemaToFormObject } from ***REMOVED***./schemaToFormHelpers***REMOVED***
+import type { JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
 describe(***REMOVED***getters.ts***REMOVED***, () => {
   describe(***REMOVED***makeJsonPath***REMOVED***, () => {
@@ -302,6 +304,68 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         servers: {
           alpha: ***REMOVED***10.0.0.1***REMOVED***,
           beta: ***REMOVED***10.0.0.2***REMOVED***,
+        },
+      })
+    })
+
+    it(***REMOVED***should emit objectList payload from wrapper layout without keyField when excludeKeyFieldFromValue is true***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          list: {
+            type: ***REMOVED***object***REMOVED***,
+            additionalProperties: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+                value: { type: ***REMOVED***number***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***list***REMOVED***,
+                type: ***REMOVED***objectList***REMOVED***,
+                settings: {
+                  keyField: ***REMOVED***name***REMOVED***,
+                  excludeKeyFieldFromValue: true,
+                },
+                fields: [
+                  {
+                    id: ***REMOVED***wrapper***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    layout: ***REMOVED***grid2***REMOVED***,
+                    fields: [{ prop: ***REMOVED***name***REMOVED*** }, { prop: ***REMOVED***value***REMOVED*** }],
+                  },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const formValues = {
+        list: {
+          alpha: {
+            name: ***REMOVED***alpha***REMOVED***,
+            value: 42,
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        list: {
+          alpha: {
+            value: 42,
+          },
         },
       })
     })
