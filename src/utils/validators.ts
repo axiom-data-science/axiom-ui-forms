@@ -1,5 +1,5 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult, type ICheckConditionResult, IForm } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult, type ICheckConditionResult, type IForm } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getValueFromRelativePath } from '@/utils/getters'
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
