@@ -224,7 +224,7 @@ export function cleanUnusedDependenciesFromFormValues(
   form: IForm,
   formValues: IFormValues
 ): IFormValues {
-  const fields = getFieldsFromFormSection(form)
+  const fields = getFieldsFromFormSection(form as IFormSection)
   const newFormValues = cleanFormValuesLevel(formValues, fields)
   return newFormValues
 }

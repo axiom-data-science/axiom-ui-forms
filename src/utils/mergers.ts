@@ -65,7 +65,7 @@ export const groupOverrideFieldsByProp = (
  */
 export const buildFieldMapFromForm = (form: IForm | IFormSection): Record<string, IFormField> => {
   const formCopy = copyAndAddPathToFields(form)
-  const fields = getFieldsFromFormSection(formCopy)
+  const fields = getFieldsFromFormSection(formCopy as IFormSection)
   return Object.fromEntries(fields.map(field => [getPathFromField(field), field]))
 }
 
@@ -94,7 +94,7 @@ export const mergeField = ({
           fieldOverrides
         })
         : null
-    }).filter(f => f !== null) as IFormField[]
+    }).filter(f => f !== null)
   }
   // Handle array fields (multiple: true) - apply overrides to nested item properties
   if ((mergedField as any).multiple === true && (mergedField as any).fields !== undefined) {
@@ -130,7 +130,7 @@ export const mergeField = ({
       }
       
       return f
-    }).filter((f: IFormField | null) => f !== null) as IFormField[]
+    }).filter((f: IFormField | null) => f !== null)
   }
   return mergedField
 }

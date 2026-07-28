@@ -95,7 +95,7 @@ export const SchemaFormCreator = ({
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
 
-  const gatherSectionFields = (section: IFormSection): IFormField[] => {
+  const gatherSectionFields = (section: IFormSection | IForm): IFormField[] => {
     const direct = section.fields ?? []
     const fromPages = (section.pages ?? []).flatMap(p => gatherSectionFields(p))
     const fromWizard = (section.wizard_steps ?? []).flatMap(ws => gatherSectionFields(ws))

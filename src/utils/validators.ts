@@ -1,5 +1,5 @@
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult, type ICheckConditionResult } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormValues, type IFormField, type IFormSection, type IFieldCondition, type IValueType, type IFieldConditionOperator, type IFieldConditionResult, type ICheckConditionResult, IForm } from '@/Form/Creator/FormCreatorTypes'
 import { getFieldsFromFormSection, getFieldValue, getValueFromRelativePath } from '@/utils/getters'
 
 const compare = (val: IValueType | IValueType[], operator: IFieldConditionOperator, compareTo: string | number | boolean): boolean => {
@@ -115,7 +115,7 @@ const testField = (field: IFormField, formValues: IFormValues): boolean => {
   return val !== undefined && val !== null && val !== ''
 }
 
-export const calculateSectionStatus = (sections: IFormSection[], formValues: IFormValues): IFormSectionStatus => {
+export const calculateSectionStatus = (sections: IFormSection[] | IForm[], formValues: IFormValues): IFormSectionStatus => {
   return Object.fromEntries(sections.map(s => {
     const fields = getFieldsFromFormSection(s).filter(f => f.type !== 'object')
     const total = fields.length
