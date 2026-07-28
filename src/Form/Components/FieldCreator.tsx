@@ -308,6 +308,8 @@ export const ObjectListCreator = ({
   const objListField = field as any // IObjectListField
   const keyField = objListField.settings?.keyField
   const valueField = objListField.settings?.valueField as string | undefined
+  const onlyShowKeyUntilUniqueEntered =
+    objListField.settings?.onlyShowKeyUntilUniqueEntered === true
 
   if (!keyField) {
     return (
@@ -489,6 +491,35 @@ export const ObjectListCreator = ({
     ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true })),
   ]
 
+  const shouldShowOnlyKeyField = ({
+    currentKey,
+    itemValue,
+    isPending,
+  }: {
+    currentKey: string
+    itemValue: ICompositeValueType
+    isPending: boolean
+  }): boolean => {
+    if (!onlyShowKeyUntilUniqueEntered) {
+      return false
+    }
+
+    const keyValue = String(itemValue[keyField] ?? ***REMOVED******REMOVED***)
+    if (keyValue === ***REMOVED******REMOVED***) {
+      return true
+    }
+
+    if (!isPending && keyValue === currentKey) {
+      return false
+    }
+
+    const hasDuplicate = isPending
+      ? isKeyDuplicate(keyValue, { excludeTempKey: currentKey })
+      : isKeyDuplicate(keyValue, { excludeCommittedKey: currentKey })
+
+    return hasDuplicate
+  }
+
   const InputComponent = {
     ...inputMap,
     ...(inputOverrides ?? {}),
@@ -502,6 +533,14 @@ export const ObjectListCreator = ({
           // Use _id for stable React key if it exists, otherwise fallback to currentKey
           const itemId = (itemValue as any)?._id || currentKey
           const itemError = itemErrors[currentKey]
+          const showOnlyKeyField = shouldShowOnlyKeyField({
+            currentKey,
+            itemValue,
+            isPending,
+          })
+          const fieldsToRender = showOnlyKeyField
+            ? objListField.fields?.filter((childField: IFormField) => childField.id === keyField)
+            : objListField.fields
           
           return (
             <div key={itemId} className={`flex flex-col gap-2 py-2 ${getFieldWrapperClass(field)}`}>
@@ -511,7 +550,7 @@ export const ObjectListCreator = ({
               </p>
             )}
             <div className="flex flex-col gap-4">
-              {objListField.fields?.map((childField: IFormField) => {
+              {fieldsToRender?.map((childField: IFormField) => {
                 const key = `${field.id}-${itemId}-${childField.id}`
                 
                 // For skip_path fields (objectWrapper or object with skip_path=true),

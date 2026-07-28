@@ -147,4 +147,99 @@ describe(***REMOVED***FieldCreator objectList valueField mode***REMOVED***, () =
     })
     expect((latestFormValues.servers as any).alpha).toBeUndefined()
   })
+
+  it(***REMOVED***shows only key field until a unique key is entered when onlyShowKeyUntilUniqueEntered is true***REMOVED***, () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***servers***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***Servers***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***hostname***REMOVED***,
+        valueField: ***REMOVED***ip***REMOVED***,
+        onlyShowKeyUntilUniqueEntered: true,
+      },
+      fields: [
+        { id: ***REMOVED***hostname***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Hostname***REMOVED*** },
+        { id: ***REMOVED***ip***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***IP Address***REMOVED*** },
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {},
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    fireEvent.click(screen.getByRole(***REMOVED***button***REMOVED***, { name: /add first item/i }))
+
+    expect(screen.getByTestId(***REMOVED***mock-input-hostname***REMOVED***)).toBeInTheDocument()
+    expect(screen.queryByTestId(***REMOVED***mock-input-ip***REMOVED***)).toBeNull()
+
+    fireEvent.change(screen.getByTestId(***REMOVED***mock-input-hostname***REMOVED***), {
+      target: { value: ***REMOVED***alpha***REMOVED*** },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getByTestId(***REMOVED***mock-input-ip***REMOVED***)).toBeInTheDocument()
+  })
+
+  it(***REMOVED***keeps pending duplicate rows key-only until the key becomes unique***REMOVED***, () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***servers***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***Servers***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***hostname***REMOVED***,
+        valueField: ***REMOVED***ip***REMOVED***,
+        onlyShowKeyUntilUniqueEntered: true,
+      },
+      fields: [
+        { id: ***REMOVED***hostname***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Hostname***REMOVED*** },
+        { id: ***REMOVED***ip***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***IP Address***REMOVED*** },
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {
+        alpha: ***REMOVED***10.0.0.1***REMOVED***,
+      },
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    expect(screen.getAllByTestId(***REMOVED***mock-input-ip***REMOVED***)).toHaveLength(1)
+
+    fireEvent.click(screen.getByRole(***REMOVED***button***REMOVED***, { name: /^add/i }))
+
+    const hostnameInputs = screen.getAllByTestId(***REMOVED***mock-input-hostname***REMOVED***)
+    expect(hostnameInputs).toHaveLength(2)
+
+    fireEvent.change(hostnameInputs[1], {
+      target: { value: ***REMOVED***alpha***REMOVED*** },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getAllByTestId(***REMOVED***mock-input-ip***REMOVED***)).toHaveLength(1)
+
+    const updatedHostnameInputs = screen.getAllByTestId(***REMOVED***mock-input-hostname***REMOVED***)
+    fireEvent.change(updatedHostnameInputs[1], {
+      target: { value: ***REMOVED***bravo***REMOVED*** },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getAllByTestId(***REMOVED***mock-input-ip***REMOVED***)).toHaveLength(2)
+  })
 })
