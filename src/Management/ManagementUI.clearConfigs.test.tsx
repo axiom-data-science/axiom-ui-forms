@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import ManagementUI from '@/Management/ManagementUI'
 
@@ -57,5 +57,28 @@ describe('ManagementUI clear configs regression', () => {
     expect(afterAdd.fields).toHaveLength(1)
     expect(afterAdd.fields[0]).toEqual({ prop: '' })
     expect(afterAddRaw).not.toEqual(afterClearRaw)
+  })
+
+  it('clears child section type badge when last child section is deleted', async () => {
+    const { container } = render(<ManagementUI />)
+
+    const rootSection = container.querySelector('#editor-section-section-1')
+    expect(rootSection).not.toBeNull()
+
+    const rootButtons = Array.from(rootSection?.querySelectorAll('button') ?? [])
+    fireEvent.click(rootButtons[1])
+
+    expect(rootSection?.querySelector('span.bg-indigo-100')).not.toBeNull()
+
+    const childSection = container.querySelector('#editor-section-section-2')
+    expect(childSection).not.toBeNull()
+
+    const childButtons = Array.from(childSection?.querySelectorAll('button') ?? [])
+    fireEvent.click(childButtons[3])
+
+    await waitFor(() => {
+      expect(container.querySelector('#editor-section-section-2')).toBeNull()
+      expect(container.querySelector('#editor-section-section-1 span.bg-indigo-100')).toBeNull()
+    })
   })
 })
