@@ -14,17 +14,18 @@ type FileTypeFlags = {
   isText: boolean
 }
 
-const getFileTypeFlags = (file: File): FileTypeFlags => {
-  const lowerName = file.name.toLowerCase()
+const getFileTypeFlags = (file?: File | null): FileTypeFlags => {
+  const lowerName = file?.name.toLowerCase() ?? ''
+  const type = file?.type ?? ''
 
   return {
     lowerName,
-    isImage: file.type.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(lowerName),
-    isVideo: file.type.startsWith('video/') || /\.(mp4|webm|ogg|mov|m4v)$/i.test(lowerName),
-    isAudio: file.type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|flac|aac)$/i.test(lowerName),
-    isPdf: file.type === 'application/pdf' || lowerName.endsWith('.pdf'),
-    isCsv: Boolean(file.type.match(/csv/)) || lowerName.endsWith('.csv'),
-    isText: file.type.startsWith('text/') || /\.(txt|md|csv|log)$/i.test(lowerName)
+    isImage: type.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(lowerName),
+    isVideo: type.startsWith('video/') || /\.(mp4|webm|ogg|mov|m4v)$/i.test(lowerName),
+    isAudio: type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|flac|aac)$/i.test(lowerName),
+    isPdf: type === 'application/pdf' || lowerName.endsWith('.pdf'),
+    isCsv: Boolean(type.match(/csv/)) || lowerName.endsWith('.csv'),
+    isText: type.startsWith('text/') || /\.(txt|md|csv|log)$/i.test(lowerName)
   }
 }
 
@@ -258,12 +259,14 @@ const FileUpload = ({
             )}
           </div>
         )}
-        {file && (
+        {(file || fileRef) && (
           <>
           <span className="text-sm text-gray-700">
             <span className="bg-slate-200 p-2 my-2 inline-flex items-baseline gap-2 rounded-md shadow-md">
-              <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} /> {file.name}{' '}{file.size ? <span className='text-slate-500 text-xs border-b border-slate-400 border-dashed'>{(file.size / 1024).toFixed(2)} KB</span> : ''}
-              <span className='bg-slate-400 text-white text-xs p-1 rounded-md shadow-sm'>{file.type}</span>
+              <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} /> {file?.name ?? fileRef}{' '}{file?.size ? <span className='text-slate-500 text-xs border-b border-slate-400 border-dashed'>{(file.size / 1024).toFixed(2)} KB</span> : ''}
+              {
+                file?.type && <span className='bg-slate-400 text-white text-xs p-1 rounded-md shadow-sm'>{file.type}</span>
+              }
             </span>
             {!fileRef && (
               <CloudUpload
@@ -286,11 +289,13 @@ const FileUpload = ({
               }}
             />
           </span>
-          <FileUploadPreview file={file} csvData={csvData} fileType={fileType ?? getFileTypeFlags(file)} />
+          {file &&
+            <FileUploadPreview file={file} csvData={csvData} fileType={fileType ?? getFileTypeFlags(file)} />
+          }
           </>
         )}
       </label>
-      {fileRef && (
+      {/* {fileRef && (
         <div className="flex flex-row gap-2">
           {!file && (
             <X
@@ -308,7 +313,7 @@ const FileUpload = ({
             />
           )}
         </div>
-      )}
+      )} */}
     </div>
   )
 }
