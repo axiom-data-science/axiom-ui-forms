@@ -278,6 +278,129 @@ describe('schemaToFormHelpers', () => {
         'Value of the item'
       )
     })
+
+    it('supports nested objectList display overrides with prop-based children', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  title: 'Name',
+                },
+                value: {
+                  type: 'number',
+                  title: 'Value',
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: {
+                  keyField: 'name',
+                },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    layout: 'grid2',
+                    fields: [
+                      { prop: 'name', label: 'Display Name' },
+                      { prop: 'value', label: 'Display Value' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+
+      const wrapper = listField.fields?.find((f: any) => f.id === 'wrapper')
+      expect(wrapper).toBeDefined()
+      expect(wrapper.type).toBe('objectWrapper')
+
+      const nestedName = wrapper.fields?.find((f: any) => f.id === 'name')
+      const nestedValue = wrapper.fields?.find((f: any) => f.id === 'value')
+      expect(nestedName?.label).toBe('Display Name')
+      expect(nestedValue?.label).toBe('Display Value')
+    })
+
+    it('does not duplicate objectList schema children when using id-only wrapper layout', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', title: 'Name' },
+                value: { type: 'number', title: 'Value' },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: { keyField: 'name' },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    layout: 'grid2',
+                    fields: [{ prop: 'name' }, { prop: 'value' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+
+      const childIds = (listField.fields ?? []).map((f: any) => f.id)
+      expect(childIds).toEqual(['wrapper'])
+
+      const wrapper = listField.fields?.[0]
+      expect(wrapper?.type).toBe('objectWrapper')
+      expect(wrapper?.fields?.map((f: any) => f.id)).toEqual(['name', 'value'])
+      const nestedName = wrapper?.fields?.find((f: any) => f.id === 'name')
+      const nestedValue = wrapper?.fields?.find((f: any) => f.id === 'value')
+      expect(nestedName).toBeDefined()
+      expect(nestedValue).toBeDefined()
+      expect(nestedName?.excludeFromPayload === true).toBe(false)
+      expect(nestedValue?.excludeFromPayload === true).toBe(false)
+    })
   })
 
   describe('getSchemaPaths', () => {
@@ -802,6 +925,65 @@ describe('schemaToFormHelpers', () => {
       expect(itemField.tabs?.length).toBe(2)
       expect(itemField.tabs?.[0]?.layout).toBe('grid2')
       expect(itemField.tabs?.[1]?.layout).toBeUndefined()
+    })
+
+    it('supports pages and wizard_steps on objectList containers with prop-based child fields', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: { keyField: 'name' },
+                pages: [
+                  {
+                    id: 'details',
+                    label: 'Details',
+                    fields: [{ prop: 'list.name', label: 'Name Label' }],
+                  },
+                ],
+                wizard_steps: [
+                  {
+                    id: 'measure',
+                    label: 'Measure',
+                    fields: [{ prop: 'list.value', label: 'Value Label' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+
+      expect(listField.pages?.length).toBe(1)
+      expect(listField.pages?.[0]?.fields?.[0]?.id).toBe('name')
+      expect(listField.pages?.[0]?.fields?.[0]?.label).toBe('Name Label')
+
+      expect(listField.wizard_steps?.length).toBe(1)
+      expect(listField.wizard_steps?.[0]?.fields?.[0]?.id).toBe('value')
+      expect(listField.wizard_steps?.[0]?.fields?.[0]?.label).toBe('Value Label')
     })
   })
 })

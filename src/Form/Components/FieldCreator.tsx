@@ -370,10 +370,11 @@ export const ObjectListCreator = ({
   const toStoredItemValue = useCallback(
     (keyValue: string, itemData: ICompositeValueType): IValueType | IValueType[] | undefined => {
       if (valueField === undefined) {
-        if (!excludeKeyFieldFromValue) {
-          return itemData
-        }
         const storedItem = cloneObject(itemData)
+        delete (storedItem as any)._id
+        if (!excludeKeyFieldFromValue) {
+          return storedItem
+        }
         delete storedItem[keyField]
         return storedItem
       }

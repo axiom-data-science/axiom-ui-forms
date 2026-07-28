@@ -10,6 +10,8 @@ import {
   getFormPayload
 } from './getters'
 import { type IFormSection, type IFormField } from '@/Form/Creator/FormCreatorTypes'
+import { overridesAndSchemaToFormObject } from './schemaToFormHelpers'
+import type { JSONSchema6 } from 'json-schema'
 
 describe('getters.ts', () => {
   describe('makeJsonPath', () => {
@@ -302,6 +304,68 @@ describe('getters.ts', () => {
         servers: {
           alpha: '10.0.0.1',
           beta: '10.0.0.2',
+        },
+      })
+    })
+
+    it('should emit objectList payload from wrapper layout without keyField when excludeKeyFieldFromValue is true', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: {
+                  keyField: 'name',
+                  excludeKeyFieldFromValue: true,
+                },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    layout: 'grid2',
+                    fields: [{ prop: 'name' }, { prop: 'value' }],
+                  },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const formValues = {
+        list: {
+          alpha: {
+            name: 'alpha',
+            value: 42,
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        list: {
+          alpha: {
+            value: 42,
+          },
         },
       })
     })

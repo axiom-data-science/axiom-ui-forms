@@ -54,6 +54,27 @@ vi.mock('@/Form/Components/Inputs/inputMap', () => ({
         onChange={(e) => onChange?.(e.target.value)}
       />
     ),
+    objectWrapper: ({ field, value, onChange, disabled }: any) => {
+      const objectValue = typeof value === 'object' && value !== null ? value : {}
+      return (
+        <div data-testid={`mock-wrapper-${field.id}`}>
+          {(field.fields ?? []).map((child: any) => (
+            <input
+              key={child.id}
+              data-testid={`mock-input-${child.id}`}
+              value={String(objectValue[child.id] ?? '')}
+              disabled={disabled}
+              onChange={(e) =>
+                onChange?.({
+                  ...objectValue,
+                  [child.id]: e.target.value,
+                })
+              }
+            />
+          ))}
+        </div>
+      )
+    },
   },
 }))
 
@@ -318,5 +339,62 @@ describe('FieldCreator objectList valueField mode', () => {
       setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
     expect((latestFormValues.servers as any).alpha.ip).toBe('10.0.0.1')
     expect((latestFormValues.servers as any).alpha.hostname).toBeUndefined()
+  })
+
+  it('commits values for wrapper-layout objectList entries to formValues', () => {
+    const objectListField: IFormField = {
+      id: 'list',
+      type: 'objectList',
+      label: 'List',
+      settings: {
+        keyField: 'name',
+        showInitialObject: true,
+        excludeKeyFieldFromValue: true,
+      },
+      fields: [
+        {
+          id: 'wrapper',
+          type: 'objectWrapper',
+          layout: 'grid2',
+          fields: [
+            { id: 'name', type: 'text', label: 'Name' },
+            { id: 'value', type: 'text', label: 'Value' },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      list: {},
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId('mock-input-name'), {
+      target: { value: 'alpha' },
+    })
+
+    rerender(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId('mock-input-value'), {
+      target: { value: '42' },
+    })
+
+    expect(setFormValuesMock).toHaveBeenCalled()
+    const latestFormValues =
+      setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
+
+    expect(latestFormValues).toEqual({
+      list: {
+        alpha: {
+          value: '42',
+        },
+      },
+    })
   })
 })
