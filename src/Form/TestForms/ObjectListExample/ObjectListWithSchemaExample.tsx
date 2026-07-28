@@ -36,8 +36,20 @@ const formOverride = {
             "type": "objectList", 
             "settings": {
                 "keyField": "name",
-                "showInitialObject": true
-            }
+                "showInitialObject": true,
+                "excludeKeyFieldFromValue": true
+            },
+            "fields": [
+                {
+                    "id": "wrapper",
+                    "type": "objectWrapper",
+                    "layout": "grid2",
+                    "fields": [
+                        {"prop": "name"},
+                        {"prop": "value"}
+                    ]
+                }
+            ]
         }
     ]
 } as IFormOverride

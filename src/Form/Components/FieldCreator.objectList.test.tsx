@@ -276,4 +276,47 @@ describe(***REMOVED***FieldCreator objectList valueField mode***REMOVED***, () =
     })
     expect(screen.queryByRole(***REMOVED***button***REMOVED***, { name: /add first item/i })).toBeNull()
   })
+
+  it(***REMOVED***omits keyField from stored payload when excludeKeyFieldFromValue is true***REMOVED***, () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***servers***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***Servers***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***hostname***REMOVED***,
+        excludeKeyFieldFromValue: true,
+        showInitialObject: true,
+      },
+      fields: [
+        { id: ***REMOVED***hostname***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Hostname***REMOVED*** },
+        { id: ***REMOVED***ip***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***IP Address***REMOVED*** },
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {},
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId(***REMOVED***mock-input-hostname***REMOVED***), {
+      target: { value: ***REMOVED***alpha***REMOVED*** },
+    })
+    rerender(<FieldCreator field={objectListField} />)
+
+    fireEvent.change(screen.getByTestId(***REMOVED***mock-input-ip***REMOVED***), {
+      target: { value: ***REMOVED***10.0.0.1***REMOVED*** },
+    })
+
+    expect(setFormValuesMock).toHaveBeenCalled()
+    const latestFormValues =
+      setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
+    expect((latestFormValues.servers as any).alpha.ip).toBe(***REMOVED***10.0.0.1***REMOVED***)
+    expect((latestFormValues.servers as any).alpha.hostname).toBeUndefined()
+  })
 })
