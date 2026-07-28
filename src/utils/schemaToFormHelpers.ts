@@ -121,6 +121,37 @@ const makeLabel = (options: Array<string | number | undefined | null>): string |
     .join(' ')
 }
 
+type SchemaWithProperties = JSONSchema6 & { properties: Record<string, JSONSchema6Definition> }
+type TraversableSchema = JSONSchema6 | JSONSchema6Definition | undefined
+
+const hasSchemaProperties = (schema: TraversableSchema): schema is SchemaWithProperties => {
+  return (
+    typeof schema === 'object' &&
+    schema !== null &&
+    !Array.isArray(schema) &&
+    'properties' in schema &&
+    typeof (schema as { properties?: unknown }).properties === 'object' &&
+    (schema as { properties?: unknown }).properties !== null
+  )
+}
+
+const isObjectLikeSchema = (schema: TraversableSchema): boolean => {
+  return schema !== undefined && hasSchemaProperties(schema) && (schema.type === undefined || schema.type === 'object')
+}
+
+const getAdditionalPropertiesSchema = (schema: TraversableSchema): JSONSchema6 | undefined => {
+  if (schema === undefined || typeof schema === 'boolean') {
+    return undefined
+  }
+  if (
+    schema.additionalProperties !== undefined &&
+    typeof schema.additionalProperties !== 'boolean'
+  ) {
+    return schema.additionalProperties
+  }
+  return undefined
+}
+
 const getFieldType = (schema: JSONSchema6): IFormFieldType => {
   const schemaType = schema.type
   if (schemaType === 'string' || schemaType === 'number' || schemaType === 'integer') {
@@ -148,6 +179,7 @@ const getFieldType = (schema: JSONSchema6): IFormFieldType => {
     return 'boolean'
   } else if (
     schemaType === 'object' ||
+    isObjectLikeSchema(schema) ||
     (schemaType === undefined &&
       (schema.oneOf !== undefined || schema.anyOf !== undefined || schema.allOf !== undefined))
   ) {
@@ -364,13 +396,15 @@ const schemaToFormField = ({
   }
   if (type === 'object') {
     // const anyOfAsProps = schemaField.anyOf !== undefined && schemaField.anyOf.filter(d => typeof d !== 'boolean' && d.type !== 'null').length > 0
-    const properties = schemaField.properties ?? {}
+    const additionalPropertiesSchema = getAdditionalPropertiesSchema(schemaField)
+    const properties = schemaField.properties ?? additionalPropertiesSchema?.properties ?? {}
+    const propertyOwnerSchema = schemaField.properties !== undefined ? schemaField : additionalPropertiesSchema
     const fields: IFormField[] = []
     for (const key in properties) {
       if (properties[key] !== undefined && typeof properties[key] !== 'boolean') {
         fields.push(
           schemaToFormField({
-            schema: schemaField,
+            schema: propertyOwnerSchema ?? schemaField,
             property: key,
             schemaField: properties[key],
             path: path.slice(),
@@ -992,26 +1026,70 @@ export const schemaToFormObject = (schema: JSONSchema6): IForm => {
 
 export const buildFieldMapFromForm = (form: IForm): Record<string, IFormField> => {
   const formCopy = copyAndAddPathToFields(form)
-  const fields = getFieldsFromFormSection(formCopy)
+  const fields = getFieldsFromFormSection(formCopy as IFormSection)
   return Object.fromEntries(fields.map((field) => [getPathFromField(field), field]))
 }
 
-export const getSchemaPaths = (schema: any, prefix = ''): string[] => {
+const getSchemaTypeLabel = (schema: JSONSchema6): string => {
+  if (typeof schema.type === 'string') {
+    return schema.type
+  }
+  if (Array.isArray(schema.type)) {
+    return schema.type[0] ?? 'object'
+  }
+  return 'object'
+}
+
+export const getSchemaPaths = (schema: TraversableSchema, prefix = ''): string[] => {
+  if (schema === undefined || typeof schema === 'boolean') {
+    return []
+  }
+
   let paths: string[] = []
 
-  if (schema.type === 'object' && schema.properties) {
-    for (const key of Object.keys(schema.properties)) {
-      const newPrefix = prefix ? `${prefix}.${key}` : key
-      paths.push(newPrefix)
-      paths = paths.concat(getSchemaPaths(schema.properties[key], newPrefix))
+  const additionalProperties = getAdditionalPropertiesSchema(schema)
+  const hasDirectProperties = hasSchemaProperties(schema)
+  const hasAdditionalObjectProperties = hasSchemaProperties(additionalProperties)
+
+  if ((schema?.type === 'object' || schema?.type === undefined) && (hasDirectProperties || hasAdditionalObjectProperties)) {
+    if (hasDirectProperties) {
+      for (const key of Object.keys(schema.properties)) {
+        const propSchema = schema.properties[key]
+        if (propSchema === undefined || typeof propSchema === 'boolean') {
+          continue
+        }
+        const newPrefix = prefix ? `${prefix}.${key}` : key
+        paths.push(newPrefix)
+        paths = paths.concat(getSchemaPaths(propSchema, newPrefix))
+      }
+    }
+
+    if (hasAdditionalObjectProperties) {
+      for (const key of Object.keys(additionalProperties.properties)) {
+        const newPrefix = prefix ? `${prefix}.${key}` : key
+        paths.push(newPrefix)
+        const additionalProp = additionalProperties.properties[key]
+        if (additionalProp !== undefined && typeof additionalProp !== 'boolean') {
+          paths = paths.concat(getSchemaPaths(additionalProp, newPrefix))
+        }
+      }
     }
   } else if (schema.type === 'array' && schema.items) {
     const arrayPrefix = `${prefix}[]`
     paths.push(arrayPrefix)
-    paths = paths.concat(getSchemaPaths(schema.items, arrayPrefix))
-  } else if (schema.oneOf || schema.anyOf || schema.allOf) {
-    for (const subSchema of schema.oneOf || schema.anyOf || schema.allOf) {
-      if (subSchema.properties) {
+    if (Array.isArray(schema.items)) {
+      for (const itemSchema of schema.items) {
+        if (itemSchema !== undefined && typeof itemSchema !== 'boolean') {
+          paths = paths.concat(getSchemaPaths(itemSchema, arrayPrefix))
+        }
+      }
+    } else if (typeof schema.items !== 'boolean') {
+      paths = paths.concat(getSchemaPaths(schema.items, arrayPrefix))
+    }
+  } else if (schema.oneOf ?? schema.anyOf ?? schema.allOf) {
+    const composedSchemas = schema.oneOf ?? schema.anyOf ?? schema.allOf
+    for (const subSchema of composedSchemas ?? []) {
+      if (hasSchemaProperties(subSchema)) {
         paths = paths.concat(getSchemaPaths(subSchema, prefix))
       }
     }
@@ -1021,22 +1099,54 @@ export const getSchemaPaths = (schema: any, prefix = ''): string[] => {
 }
 
 export const getSchemaPathDescriptors = (
-  schema: any,
+  schema: TraversableSchema,
   prefix = ''
 ): Array<{ path: string; type: string; required: boolean }> => {
+  if (schema === undefined || typeof schema === 'boolean') {
+    return []
+  }
+
   let pathDescriptors: Array<{ path: string; type: string; required: boolean }> = []
 
-  if (schema.type === 'object' && schema.properties) {
-    for (const key of Object.keys(schema.properties)) {
-      const newPrefix = prefix ? `${prefix}.${key}` : key
-      pathDescriptors.push({
-        path: newPrefix,
-        type: schema.properties[key].type ?? 'object',
-        required: schema.required ? schema.required.includes(key) : false,
-      })
-      pathDescriptors = pathDescriptors.concat(
-        getSchemaPathDescriptors(schema.properties[key], newPrefix)
-      )
+  const additionalProperties = getAdditionalPropertiesSchema(schema)
+  const hasDirectProperties = hasSchemaProperties(schema)
+  const hasAdditionalObjectProperties = hasSchemaProperties(additionalProperties)
+
+  if ((schema?.type === 'object' || schema?.type === undefined) && (hasDirectProperties || hasAdditionalObjectProperties)) {
+    if (hasDirectProperties) {
+      for (const key of Object.keys(schema.properties)) {
+        const propSchema = schema.properties[key]
+        if (propSchema === undefined || typeof propSchema === 'boolean') {
+          continue
+        }
+        const newPrefix = prefix ? `${prefix}.${key}` : key
+        pathDescriptors.push({
+          path: newPrefix,
+          type: getSchemaTypeLabel(propSchema),
+          required: schema.required ? schema.required.includes(key) : false,
+        })
+        pathDescriptors = pathDescriptors.concat(
+          getSchemaPathDescriptors(propSchema, newPrefix)
+        )
+      }
+    }
+
+    if (hasAdditionalObjectProperties) {
+      for (const key of Object.keys(additionalProperties.properties)) {
+        const newPrefix = prefix ? `${prefix}.${key}` : key
+        const additionalProp = additionalProperties.properties[key]
+        if (additionalProp === undefined || typeof additionalProp === 'boolean') {
+          continue
+        }
+        pathDescriptors.push({
+          path: newPrefix,
+          type: getSchemaTypeLabel(additionalProp),
+          required: additionalProperties.required ? additionalProperties.required.includes(key) : false,
+        })
+        pathDescriptors = pathDescriptors.concat(
+          getSchemaPathDescriptors(additionalProp, newPrefix)
+        )
+      }
     }
   } else if (schema.type === 'array' && schema.items) {
     const arrayPrefix = `${prefix}[]`
@@ -1045,10 +1155,23 @@ export const getSchemaPathDescriptors = (
       type: schema.type,
       required: schema.required ? schema.required.includes(prefix) : false,
     })
-    pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(schema.items, arrayPrefix))
-  } else if (schema.oneOf || schema.anyOf || schema.allOf) {
-    for (const subSchema of schema.oneOf || schema.anyOf || schema.allOf) {
-      if (subSchema.properties) {
+    if (Array.isArray(schema.items)) {
+      for (const itemSchema of schema.items) {
+        if (itemSchema !== undefined && typeof itemSchema !== 'boolean') {
+          pathDescriptors = pathDescriptors.concat(
+            getSchemaPathDescriptors(itemSchema, arrayPrefix)
+          )
+        }
+      }
+    } else if (typeof schema.items !== 'boolean') {
+      pathDescriptors = pathDescriptors.concat(
+        getSchemaPathDescriptors(schema.items, arrayPrefix)
+      )
+    }
+  } else if (schema.oneOf ?? schema.anyOf ?? schema.allOf) {
+    const composedSchemas = schema.oneOf ?? schema.anyOf ?? schema.allOf
+    for (const subSchema of composedSchemas ?? []) {
+      if (hasSchemaProperties(subSchema)) {
         pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(subSchema, prefix))
       }
     }

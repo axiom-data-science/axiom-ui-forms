@@ -225,6 +225,59 @@ describe('schemaToFormHelpers', () => {
       expect(nameField?.excludeFromPayload).not.toBe(true)
       expect(ageField?.excludeFromPayload).not.toBe(true)
     })
+
+    it('inherits title and description for objectList children from additionalProperties schema', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  title: 'Name',
+                  description: 'Name of the item',
+                },
+                value: {
+                  type: 'number',
+                  title: 'Value',
+                  description: 'Value of the item',
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: { keyField: 'name' },
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+      expect(listField.fields?.find((f: any) => f.id === 'name')?.label).toBe('Name')
+      expect(listField.fields?.find((f: any) => f.id === 'name')?.description).toBe(
+        'Name of the item'
+      )
+      expect(listField.fields?.find((f: any) => f.id === 'value')?.label).toBe('Value')
+      expect(listField.fields?.find((f: any) => f.id === 'value')?.description).toBe(
+        'Value of the item'
+      )
+    })
   })
 
   describe('getSchemaPaths', () => {
@@ -254,6 +307,29 @@ describe('schemaToFormHelpers', () => {
       }
       const paths = getSchemaPaths(schema)
       expect(paths).toContain('[]')
+    })
+
+    it('includes additionalProperties object child paths', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
+      }
+
+      const paths = getSchemaPaths(schema)
+      expect(paths).toContain('list')
+      expect(paths).toContain('list.name')
+      expect(paths).toContain('list.value')
     })
   })
 
