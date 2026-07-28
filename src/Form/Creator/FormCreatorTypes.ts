@@ -46,7 +46,6 @@ export type IFormField =
   | IFormFieldSection
   | ICustomField
   | IFileUploadInput
-  | ISelectOrTextInput
 
 export type IFormFieldType =
   | ***REMOVED***text***REMOVED***
@@ -115,6 +114,8 @@ type IFieldConstraints = Record<string, unknown>
 interface IFormFieldSettingsBase {
   [key: string]: unknown
   descriptionPresentation?: ***REMOVED***inline***REMOVED*** | ***REMOVED***tooltip***REMOVED***
+  boldLabel?: boolean
+  boldDescription?: boolean
 }
 
 interface IFormFieldRoot {
@@ -152,8 +153,6 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
     invertForDisplay?: boolean
-    boldLabel?: boolean
-    boldDescription?: boolean
     smallLabel?: boolean
     className?: string
   }
@@ -203,9 +202,7 @@ interface ISelectableInput extends IFormFieldRoot {
   }
 }
 
-interface ISelectOrTextInput extends ISelectableInput {
-  type: ***REMOVED***selectOrText***REMOVED***
-}
+
 
 interface IFileUploadInput extends IFormFieldRoot {
   type: ***REMOVED***fileUpload***REMOVED*** | ***REMOVED***file_upload***REMOVED***
@@ -224,7 +221,10 @@ interface IMultiSelectableInput extends ISelectableInput {
 }
 
 export interface ISelectField extends ISingleSelectableInput {
-  type: ***REMOVED***select***REMOVED*** | ***REMOVED***stateSelector***REMOVED***
+  type: ***REMOVED***select***REMOVED*** | ***REMOVED***stateSelector***REMOVED*** | ***REMOVED***selectOrText***REMOVED***
+  settings?: IFormFieldSettingsBase & {
+    showDescriptionForSelected?: boolean
+  }
 }
 
 export interface IRadioField extends ISingleSelectableInput {
@@ -297,7 +297,8 @@ export interface IObjectListField extends Omit<IValidContainerField, ***REMOVED*
   type: ***REMOVED***objectList***REMOVED***
   settings: {
     keyField: string
-    valueField?: string
+    valueField?: string,
+    onlyShowKeyUntilUniqueEntered?: boolean
   }
   fields: IFormField[]
 }
