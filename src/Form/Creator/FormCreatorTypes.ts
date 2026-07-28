@@ -46,7 +46,6 @@ export type IFormField =
   | IFormFieldSection
   | ICustomField
   | IFileUploadInput
-  | ISelectOrTextInput
 
 export type IFormFieldType =
   | 'text'
@@ -115,6 +114,8 @@ type IFieldConstraints = Record<string, unknown>
 interface IFormFieldSettingsBase {
   [key: string]: unknown
   descriptionPresentation?: 'inline' | 'tooltip'
+  boldLabel?: boolean
+  boldDescription?: boolean
 }
 
 interface IFormFieldRoot {
@@ -152,8 +153,6 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
     invertForDisplay?: boolean
-    boldLabel?: boolean
-    boldDescription?: boolean
     smallLabel?: boolean
     className?: string
   }
@@ -203,9 +202,7 @@ interface ISelectableInput extends IFormFieldRoot {
   }
 }
 
-interface ISelectOrTextInput extends ISelectableInput {
-  type: 'selectOrText'
-}
+
 
 interface IFileUploadInput extends IFormFieldRoot {
   type: 'fileUpload' | 'file_upload'
@@ -224,7 +221,10 @@ interface IMultiSelectableInput extends ISelectableInput {
 }
 
 export interface ISelectField extends ISingleSelectableInput {
-  type: 'select' | 'stateSelector'
+  type: 'select' | 'stateSelector' | 'selectOrText'
+  settings?: IFormFieldSettingsBase & {
+    showDescriptionForSelected?: boolean
+  }
 }
 
 export interface IRadioField extends ISingleSelectableInput {
@@ -297,7 +297,8 @@ export interface IObjectListField extends Omit<IValidContainerField, 'fields'> {
   type: 'objectList'
   settings: {
     keyField: string
-    valueField?: string
+    valueField?: string,
+    onlyShowKeyUntilUniqueEntered?: boolean
   }
   fields: IFormField[]
 }
