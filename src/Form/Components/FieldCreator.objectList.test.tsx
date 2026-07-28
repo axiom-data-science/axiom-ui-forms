@@ -1,6 +1,6 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import FieldCreator from './FieldCreator'
 import { type IForm, type IFormField, type IFormValues } from '@/Form/Creator/FormCreatorTypes'
 
@@ -241,5 +241,39 @@ describe('FieldCreator objectList valueField mode', () => {
     rerender(<FieldCreator field={objectListField} />)
 
     expect(screen.getAllByTestId('mock-input-ip')).toHaveLength(2)
+  })
+
+  it('auto-shows initial object row when showInitialObject is true', async () => {
+    const objectListField: IFormField = {
+      id: 'servers',
+      type: 'objectList',
+      label: 'Servers',
+      settings: {
+        keyField: 'hostname',
+        valueField: 'ip',
+        showInitialObject: true,
+      },
+      fields: [
+        { id: 'hostname', type: 'text', label: 'Hostname' },
+        { id: 'ip', type: 'text', label: 'IP Address' },
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {},
+    }
+
+    render(<FieldCreator field={objectListField} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-input-hostname')).toBeInTheDocument()
+      expect(screen.getByTestId('mock-input-ip')).toBeInTheDocument()
+    })
+    expect(screen.queryByRole('button', { name: /add first item/i })).toBeNull()
   })
 })

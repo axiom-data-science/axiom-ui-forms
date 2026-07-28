@@ -297,8 +297,10 @@ export interface IObjectListField extends Omit<IValidContainerField, 'fields'> {
   type: 'objectList'
   settings: {
     keyField: string
-    valueField?: string,
+    valueField?: string
     onlyShowKeyUntilUniqueEntered?: boolean
+    showInitialObject?: boolean
+    excludeKeyFieldFromValue?: boolean
   }
   fields: IFormField[]
 }
