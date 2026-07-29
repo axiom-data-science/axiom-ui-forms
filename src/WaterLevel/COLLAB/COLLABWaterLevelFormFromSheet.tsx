@@ -13,6 +13,8 @@ import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***
 import { getFieldsFromFormSection } from ***REMOVED***@/utils/getters***REMOVED***
 import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { pick } from ***REMOVED***lodash-es***REMOVED***
+import { useSearchParams } from ***REMOVED***react-router-dom***REMOVED***
+import { CaretDownIcon, CaretUpIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 
 const inputOverrides = {
   ***REMOVED***custom:file_upload***REMOVED***: FileUpload
@@ -56,6 +58,7 @@ const CollabedWatterLevelFormSheetSchemaOnly = (
     formSectionOverrides: IFormSectionOverride[]
   }
 ): ReactElement => {
+  const [searchParams] = useSearchParams()
   const schemaState = useState<JSONSchema6 | undefined>(schema)
   const fieldOverridesFromSections = formSectionOverrides.map(s => getFieldsFromFormSection(s as IFormSection)).flat()
     .map(f => {
@@ -86,6 +89,7 @@ const keys1 = new Set(allSchemaOnlyFields.map(f => f.id))
 const keys2 = new Set(allCombinedFields.map(f => f.id))
 const missingInCombined = [...keys1].filter(k => !keys2.has(k))
 const addedInCombined = [...keys2].filter(k => !keys1.has(k))
+const [showDebug, setShowDebug] = useState(false)
 
   
 
@@ -101,19 +105,31 @@ const addedInCombined = [...keys2].filter(k => !keys1.has(k))
       urlNavigable={true}
     />
     { (missingInCombined.length > 0 || addedInCombined.length > 0) &&
-    <div className=***REMOVED***fixed bottom-4 left-4 w-90 bg-white/90 z-80 shadow-md p-4 border-2 border-slate-200 rounded-md***REMOVED***>
-      <h3 className=***REMOVED***text-lg font-bold mb-2***REMOVED***>Missing fields in combined form:</h3>
+    <div className={`fixed bottom-0 left-0 ${showDebug ? ***REMOVED***w-90***REMOVED*** : ***REMOVED***w-40***REMOVED***} bg-white/90 z-80 shadow-md border-2 border-slate-200`}>
+      <h4 className=***REMOVED***p-2 bg-slate-600 text-xs text-white cursor-pointer flex flex-row gap-2 items-center***REMOVED*** onClick={() => setShowDebug(!showDebug)}>
+        {showDebug ? <CaretDownIcon />: <CaretUpIcon />} Debug info <span className=***REMOVED***text-[10px] py-1 px-2 bg-slate-600 text-white rounded-lg***REMOVED***>{missingInCombined.length + addedInCombined.length}</span>
+      </h4>
+      {
+        showDebug &&
+      <div className=***REMOVED***p-4 flex flex-col gap-4 text-xs***REMOVED***>
+      <div>
+      <h3 className=***REMOVED***font-bold mb-2***REMOVED***>Missing fields in combined form:</h3>
       <ul className=***REMOVED***list-disc pl-5 max-h-50 overflow-auto***REMOVED***>
         {missingInCombined.map((fieldId) => (
           <li key={fieldId} className=***REMOVED***text-sm text-red-600***REMOVED***>{fieldId}</li>
         ))}
       </ul>
-      <h3 className=***REMOVED***text-lg font-bold mb-2***REMOVED***>Additional fields in combined form:</h3>
+      </div>
+      <div>
+      <h3 className=***REMOVED***font-bold mb-2***REMOVED***>Additional fields in combined form:</h3>
       <ul className=***REMOVED***list-disc pl-5 max-h-50 overflow-auto***REMOVED***>
         {addedInCombined.map((fieldId) => (
           <li key={fieldId} className=***REMOVED***text-sm text-green-600***REMOVED***>{fieldId}</li>
         ))}
       </ul>
+      </div>
+      </div>
+    }
     </div>
     }
     </>
