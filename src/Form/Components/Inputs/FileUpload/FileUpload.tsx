@@ -4,6 +4,15 @@ import { useEffect, useState, useRef, type ReactElement } from ***REMOVED***reac
 import { Loader, Table, Tooltip, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
+type IStoredFileEntry = {
+  file: File
+  fileData: string | ArrayBuffer | undefined | null
+  csvData: ParsedCSV | null
+}
+
+// Session-only memory cache: survives component unmount/remount, resets on browser reload.
+const inMemoryFileStore = new Map<string, IStoredFileEntry>()
+
 type FileTypeFlags = {
   lowerName: string
   isImage: boolean
@@ -14,8 +23,8 @@ type FileTypeFlags = {
   isText: boolean
 }
 
-const getFileTypeFlags = (file?: File | null): FileTypeFlags => {
-  const lowerName = file?.name.toLowerCase() ?? ***REMOVED******REMOVED***
+const getFileTypeFlags = (file?: File | null, fileName?: string | null): FileTypeFlags => {
+  const lowerName = (file?.name ?? fileName ?? ***REMOVED******REMOVED***).toLowerCase()
   const type = file?.type ?? ***REMOVED******REMOVED***
 
   return {
@@ -92,16 +101,22 @@ const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | 
 
 const FileUploadPreview = ({
   file,
+  previewUrl,
   csvData,
   fileType,
 }: {
-  file: File
+  file?: File | null
+  previewUrl?: string | null
   csvData: ParsedCSV | null
   fileType: FileTypeFlags
 }) => {
   const [fileUrl, setFileUrl] = useState(***REMOVED******REMOVED***)
 
   useEffect(() => {
+    if (!file) {
+      setFileUrl(***REMOVED******REMOVED***)
+      return
+    }
     const objectUrl = URL.createObjectURL(file)
     setFileUrl(objectUrl)
 
@@ -110,35 +125,46 @@ const FileUploadPreview = ({
     }
   }, [file])
 
+  const resolvedPreviewUrl = file ? fileUrl : (previewUrl ?? ***REMOVED******REMOVED***)
+
   return (
     <>
       {
-        fileType.isImage ? (
+        fileType.isImage && resolvedPreviewUrl ? (
           <img
-            src={fileUrl}
+            src={resolvedPreviewUrl}
             alt="Uploaded file preview"
             className="mt-2 max-h-100 rounded-md shadow-lg"
           />
-        ) : fileType.isVideo ? (
+        ) : fileType.isVideo && resolvedPreviewUrl ? (
           <video
-            src={fileUrl}
+            src={resolvedPreviewUrl}
             controls
             className="mt-2 max-h-100 rounded-md shadow-lg"
           />
-        ) : fileType.isAudio ? (
+        ) : fileType.isAudio && resolvedPreviewUrl ? (
           <audio
-            src={fileUrl}
+            src={resolvedPreviewUrl}
             controls
             className="mt-2 max-h-100 rounded-md"
           />
-        ) : fileType.isPdf ? (
+        ) : fileType.isPdf && resolvedPreviewUrl ? (
           <iframe
-            src={fileUrl}
+            src={resolvedPreviewUrl}
             title="Uploaded PDF preview"
             className="mt-2 h-125 w-full rounded-md border border-slate-200 shadow-lg"
           />
-        ) : fileType.isCsv ?  (
+        ) : fileType.isCsv && file ?  (
           <CSVPreview file={file} parsedData={csvData} />
+        ) : resolvedPreviewUrl ? (
+          <a
+            className="mt-2 text-sm text-blue-700 underline"
+            href={resolvedPreviewUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open uploaded file preview
+          </a>
         ) : null
       }
     </>
@@ -150,13 +176,16 @@ const FileUpload = ({
   value,
   onChange,
   acceptFileTypes,
-  onFileUploaded,
+  onFileUpload,
+  getPreviewUrl,
 }: IFieldInputProps & {
   acceptFileTypes?: string[]
-  onFileUploaded?: (
+  onFileUpload?: (
+    fileName: string,
     fileData: string | ArrayBuffer | undefined | null,
-    csvData: ParsedCSV | null
-  ) => void
+    parsedCsvData: ParsedCSV | null
+  ) => void | Promise<void>
+  getPreviewUrl?: (fileName: string) => string | null | undefined | Promise<string | null | undefined>
 }): ReactElement => {
   const [file, setFile] = useState<File | null>(null)
   const [fileRef, setFileRef] = useState<string | null>(
@@ -165,9 +194,12 @@ const FileUpload = ({
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [csvData, setCsvData] = useState<ParsedCSV | null>(null)
-  const fileType = file ? getFileTypeFlags(file) : null
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const fileType = (file || fileRef) ? getFileTypeFlags(file, fileRef) : null
+  const displayFileName = file?.name ?? fileRef ?? ***REMOVED******REMOVED***
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const settingsAcceptedFileTypes = (field.settings as { acceptedFileTypes?: string[] | string })?.acceptedFileTypes
+  const settingsAcceptedFileTypes =
+    (field.settings as { acceptedFileTypes?: string[] | string } | undefined)?.acceptedFileTypes
   const settingsAcceptedFileTypesArray = Array.isArray(settingsAcceptedFileTypes)
     ? settingsAcceptedFileTypes
     : settingsAcceptedFileTypes
@@ -175,39 +207,83 @@ const FileUpload = ({
       : undefined
   const acceptFileTypeToUse = settingsAcceptedFileTypesArray ?? acceptFileTypes
 
+  useEffect(() => {
+    setFileRef(value !== null && value !== undefined ? String(value) : null)
+  }, [value])
+
+  useEffect(() => {
+    if (!fileRef || file) {
+      return
+    }
+
+    let mounted = true
+
+    const restorePreviewState = async (): Promise<void> => {
+      if (getPreviewUrl) {
+        const serviceUrl = await getPreviewUrl(fileRef)
+        if (mounted) {
+          setPreviewUrl(serviceUrl ?? null)
+        }
+        return
+      }
+
+      const cached = inMemoryFileStore.get(fileRef)
+      if (cached && mounted) {
+        setFile(cached.file)
+        setCsvData(cached.csvData)
+      }
+    }
+
+    restorePreviewState().catch((e) => {
+      if (mounted) {
+        setError(`Could not load file preview. ${(e as Error)?.message ?? ***REMOVED******REMOVED***}`)
+      }
+    })
+
+    return () => {
+      mounted = false
+    }
+  }, [file, fileRef, getPreviewUrl])
+
+  const readFileData = async (_file: File, isCsv: boolean): Promise<string | ArrayBuffer> => {
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        resolve(event.target?.result as string | ArrayBuffer)
+      }
+      reader.onerror = () => reject(reader.error)
+
+      if (isCsv) {
+        reader.readAsText(_file)
+      } else {
+        reader.readAsArrayBuffer(_file)
+      }
+    })
+  }
+
   const onUpload = async (f?: File | null) => {
     const _file = f ?? file
     setCsvData(null)
     if (!_file) return
     setUploading(true)
     try {
-      const reader = new FileReader()
-
       const { isCsv } = getFileTypeFlags(_file)
+      const fileData = await readFileData(_file, isCsv)
+      const parsedCsvData = isCsv && typeof fileData === ***REMOVED***string***REMOVED*** ? parseCSV(fileData) : null
 
-      // This event fires when the file reading is complete
-      reader.onload = function (event) {
-        const result = event.target?.result
-        if (isCsv && typeof result === ***REMOVED***string***REMOVED***) {
-          // Parse uploaded CSV text into preview rows/headers.
-          const text = result
-          const data = parseCSV(text)
-          setCsvData(data)
-          if (onFileUploaded) {
-            onFileUploaded(text, data)
-          }
-        } else if (onFileUploaded) {
-          onFileUploaded(result, null)
-        }
-      }
+      setCsvData(parsedCsvData)
+      setPreviewUrl(null)
 
-      if (isCsv) {
-        // Read CSV uploads as text for parsing.
-        reader.readAsText(_file)
+      if (onFileUpload) {
+        await onFileUpload(_file.name, fileData, parsedCsvData)
       } else {
-        // Read non-CSV uploads as binary for downstream consumers.
-        reader.readAsArrayBuffer(_file)
+        inMemoryFileStore.set(_file.name, {
+          file: _file,
+          fileData,
+          csvData: parsedCsvData,
+        })
       }
+
       // Clear the input value so the same file can be selected again
       setFileRef(_file.name)
       if (onChange) {
@@ -245,43 +321,49 @@ const FileUpload = ({
           onChange={handleFileChange}
           accept={acceptFileTypeToUse ? acceptFileTypeToUse.join(***REMOVED***, ***REMOVED***) : undefined}
         />
-        {!fileRef && (
+        {!fileRef && !uploading && (
           <div
             className={`${utils.createButtonClass({
               size: ***REMOVED***sm***REMOVED***,
               variant: ***REMOVED***create***REMOVED***,
             })} px-4 py-2 rounded-lg cursor-pointer inline-block ${file !== null ? ***REMOVED***bg-slate-200 text-slate-400***REMOVED*** : ***REMOVED******REMOVED***}`}
           >
-            {uploading ? (
-              <span className="flex flex-row gap-1">Uploading ...</span>
-            ) : (
-              ***REMOVED***Browse Files***REMOVED***
-            )}
+            Browse Files
           </div>
         )}
         {(file || fileRef) && (
           <>
-          <span className="text-sm text-gray-700">
-            <span className="bg-slate-200 p-2 my-2 inline-flex items-baseline gap-2 rounded-md shadow-md">
-              <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} /> {file?.name ?? fileRef}{***REMOVED*** ***REMOVED***}{file?.size ? <span className=***REMOVED***text-slate-500 text-xs border-b border-slate-400 border-dashed***REMOVED***>{(file.size / 1024).toFixed(2)} KB</span> : ***REMOVED******REMOVED***}
+          <span className="my-2 inline-flex max-w-full flex-nowrap items-center gap-2 text-sm text-gray-700">
+            <span className="inline-flex min-w-0 items-baseline gap-2 rounded-md bg-slate-200 p-2 shadow-md">
+              <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} />
+              <Tooltip content={displayFileName} dark={true}>
+                <span className=***REMOVED***inline-block max-w-[60vw] truncate whitespace-nowrap align-bottom sm:max-w-88***REMOVED***>
+                  {displayFileName}
+                </span>
+              </Tooltip>
+              {file?.size ? <span className=***REMOVED***whitespace-nowrap text-xs text-slate-500 border-b border-slate-400 border-dashed***REMOVED***>{(file.size / 1024).toFixed(2)} KB</span> : ***REMOVED******REMOVED***}
               {
-                file?.type && <span className=***REMOVED***bg-slate-400 text-white text-xs p-1 rounded-md shadow-sm***REMOVED***>{file.type}</span>
+                file?.type && <span className=***REMOVED***whitespace-nowrap rounded-md bg-slate-400 p-1 text-xs text-white shadow-sm***REMOVED***>{file.type}</span>
               }
             </span>
             {!fileRef && (
               <CloudUpload
-                className="inline-block ml-1 cursor-pointer"
+                className="inline-block cursor-pointer shrink-0"
                 onClick={() => onUpload()}
               />
             )}
             <X
-              className="inline-block ml-1 cursor-pointer"
+              className="inline-block cursor-pointer shrink-0"
               onClick={(e) => {
                 e.stopPropagation()
                 e.preventDefault()
+                if (fileRef) {
+                  inMemoryFileStore.delete(fileRef)
+                }
                 setFile(null)
                 setFileRef(null)
                 setCsvData(null)
+                setPreviewUrl(null)
                 onChange(null)
                 if (fileInputRef.current) {
                   fileInputRef.current.value = ***REMOVED******REMOVED***
@@ -289,8 +371,13 @@ const FileUpload = ({
               }}
             />
           </span>
-          {file &&
-            <FileUploadPreview file={file} csvData={csvData} fileType={fileType ?? getFileTypeFlags(file)} />
+          {(file || previewUrl) && fileType &&
+            <FileUploadPreview
+              file={file}
+              previewUrl={previewUrl}
+              csvData={csvData}
+              fileType={fileType}
+            />
           }
           </>
         )}

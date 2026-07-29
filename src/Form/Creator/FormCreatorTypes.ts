@@ -202,12 +202,11 @@ interface ISelectableInput extends IFormFieldRoot {
   }
 }
 
-
-
 interface IFileUploadInput extends IFormFieldRoot {
   type: ***REMOVED***fileUpload***REMOVED*** | ***REMOVED***file_upload***REMOVED***
   settings?: IFormFieldSettingsBase & {
     acceptFileTypes?: string[]
+    acceptedFileTypes?: string[] | string
   }
 }
 interface ICustomField extends IFormFieldRoot, ISelectableInput {
