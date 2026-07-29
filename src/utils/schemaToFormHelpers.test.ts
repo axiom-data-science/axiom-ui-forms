@@ -353,8 +353,16 @@ describe('schemaToFormHelpers', () => {
             additionalProperties: {
               type: 'object',
               properties: {
-                name: { type: 'string', title: 'Name' },
-                value: { type: 'number', title: 'Value' },
+                name: {
+                  type: 'string',
+                  title: 'Name',
+                  description: 'Name of the item',
+                },
+                value: {
+                  type: 'number',
+                  title: 'Value',
+                  description: 'Value of the item',
+                },
               },
             },
           },
@@ -398,6 +406,10 @@ describe('schemaToFormHelpers', () => {
       const nestedValue = wrapper?.fields?.find((f: any) => f.id === 'value')
       expect(nestedName).toBeDefined()
       expect(nestedValue).toBeDefined()
+      expect(nestedName?.label).toBe('Name')
+      expect(nestedName?.description).toBe('Name of the item')
+      expect(nestedValue?.label).toBe('Value')
+      expect(nestedValue?.description).toBe('Value of the item')
       expect(nestedName?.excludeFromPayload === true).toBe(false)
       expect(nestedValue?.excludeFromPayload === true).toBe(false)
     })
