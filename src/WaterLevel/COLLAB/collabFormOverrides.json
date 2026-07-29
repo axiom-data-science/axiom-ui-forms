@@ -27,7 +27,6 @@
         },
         {
           "prop": "previous-site-log",
-          "type": "file_upload",
           "conditions": {
             "field": "update-or-new-station",
             "value": "Update"
@@ -53,6 +52,28 @@
         {
           "prop": "creator.name",
           "label": "Name"
+        },
+                {
+          "id": "creator2",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "horizontal",
+          "fields": [
+            {
+              "prop": "creator.institution",
+              "label": "Organization",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.sector",
+              "label": "Sector",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
         },
         {
           "prop": "creator.address",
@@ -84,6 +105,7 @@
             {
               "prop": "creator.country",
               "label": "Country",
+              "defaultValue": "United States",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
@@ -111,44 +133,8 @@
               }
             },
             {
-              "prop": "creator.institution_url",
-              "label": "Institution URL",
-              "settings": {
-                "descriptionPresentation": "tooltip"
-              }
-            },
-            {
               "prop": "creator.url",
               "label": "URL",
-              "settings": {
-                "descriptionPresentation": "tooltip"
-              }
-            }
-          ]
-        },
-        {
-          "id": "creator2",
-          "label": "",
-          "type": "objectWrapper",
-          "layout": "horizontal",
-          "fields": [
-            {
-              "prop": "creator.institution",
-              "label": "Institution",
-              "settings": {
-                "descriptionPresentation": "tooltip"
-              }
-            },
-            {
-              "prop": "creator.sector",
-              "label": "Sector",
-              "settings": {
-                "descriptionPresentation": "tooltip"
-              }
-            },
-            {
-              "prop": "creator.type",
-              "label": "Type",
               "settings": {
                 "descriptionPresentation": "tooltip"
               }
@@ -160,305 +146,37 @@
     {
       "id": "contributors-list",
       "label": "Contributors List",
-      "description": "List of contributors to the resource..",
+      "description": "- **Custodian:** Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n- **Community Point of Contact:** Name of community contact, if applicable. This information is not reported to ERDDAP. It is only recorded for RA project tracking purposes. \n- **Owner:** Party that owns the resource\n- **Data Publisher:** Party who published the resource\n- **Data Processor:** Party that has processed the data in a manner such that the resource has been modified\n- **Funder:** Party providing monetary support for the resource\n- **Distributor:** Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nYou may enter the same information for multiple roles. Use the ***REMOVED***Duplicate***REMOVED*** button to copy information from a role and create a new one. Each role can only be entered once",
       "fields": [
         {
           "prop": "contributor",
           "type": "objectList",
+          "label": "",
           "settings": {
-            "keyField": "type"
-          }
+            "keyField": "role",
+            "showInitialObject": true,
+            "excludeKeyFieldFromValue": true,
+            "boldLabel": true
+          },
+          "fields": [
+            {"prop": "role", "type": "select"},
+            {
+              "id": "contributor-fields",
+              "label": "",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "fields": [
+                {"prop": "name"},
+                {"prop": "phone"},
+                {"prop": "email"},
+                {"prop": "url"},
+                {"prop": "affiliation"}
+              ]
+            }
+
+          ]
         }
 
-      ]
-    },
-    {
-      "id": "contributors",
-      "label": "Contributors",
-      "fields": [
-        {
-          "id": "custodian-wrapper",
-          "type": "objectWrapper",
-          "label": "Custodian",
-          "layout": "grid3",
-          "description": "Custodian is party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource",
-          "settings": {
-            "boldLabel": true
-          },
-          "fields": [
-            {
-              "prop": "contributor.custodian.name",
-              "description": "",
-              "label": "Name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.custodian.phone",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "Phone"
-            },
-            {
-              "prop": "contributor.custodian.email",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "Email"
-            },
-            {
-              "prop": "contributor.custodian.url",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "URL"
-            },
-            {
-              "prop": "contributor.custodian.affiliation",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "label": "Organization"
-            }
-          ]
-        },
-        {
-          "id": "owner-wrapper",
-          "type": "objectWrapper",
-          "label": "Owner",
-          "description": "Party that owns the resource",
-          "layout": "grid3",
-          "fields": [
-            {
-              "prop": "contributor.owner.name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.owner.email",
-              "label": "Email",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.owner.url",
-              "label": "URL",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ],
-          "settings": {
-            "boldLabel": true
-          }
-        },
-        {
-          "id": "data-publisher",
-          "label": "Data Publisher",
-          "description": "Party who published the resource",
-          "type": "objectWrapper",
-          "layout": "grid3",
-          "fields": [
-            {
-              "prop": "contributor.publisher.name",
-              "label": "Name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.publisher.email",
-              "label": "E-mail",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.publisher.url",
-              "label": "URL",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ],
-          "settings": {
-            "boldLabel": true
-          }
-        },
-        {
-          "id": "data-processor",
-          "label": "Data Processor",
-          "description": "Party that has processed the data in a manner such that the resource has been modified",
-          "type": "objectWrapper",
-          "layout": "grid3",
-          "fields": [
-            {
-              "prop": "contributor.processor.name",
-              "label": "Name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.processor.email",
-              "label": "E-mail",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.processor.url",
-              "label": "URL",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ],
-          "settings": {
-            "boldLabel": true
-          }
-        },
-        {
-          "id": "distributor",
-          "label": "Distributor",
-          "description": "Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.",
-          "layout": "grid3",
-          "settings": {
-            "boldLabel": true
-          },
-          "type": "objectWrapper",
-          "fields": [
-            {
-              "prop": "contributor.distributor.name",
-              "label": "Name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.distributor.email",
-              "label": "E-mail",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.distributor.url",
-              "label": "URL",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ]
-        },
-        {
-          "id": "funder",
-          "label": "Funder",
-          "description": "Party providing monetary support for the resource",
-          "layout": "grid3",
-          "settings": {
-            "boldLabel": true
-          },
-          "type": "objectWrapper",
-          "fields": [
-            {
-              "prop": "contributor.funder.name",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.funder.email",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.funder.url",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ]
-        },
-        {
-          "id": "poc_contact",
-          "label": "Community POC",
-          "description": "Name of community contact, if applicable. This information is not reported to ERDDAP. It is only recorded for RA project tracking purposes.",
-          "type": "objectWrapper",
-          "layout": "grid3",
-          "fields": [
-            {
-              "prop": "contributor.community_poc.name",
-              "label": "Name",
-              "description": "",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.community_poc.phone",
-              "label": "Phone",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.community_poc.email",
-              "label": "Email",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "contributor.community_poc.affiliation",
-              "label": "Organization",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ],
-          "settings": {
-            "boldLabel": true
-          }
-        }
-      ]
-    },
-    {
-      "id": "data-management",
-      "label": "Data Management",
-      "fields": [
-        {
-          "prop": "portal-link"
-        }
       ]
     },
     {
@@ -467,6 +185,7 @@
       "fields": [
         {
           "id": "station-wrapper",
+          "label": "Station",
           "type": "objectWrapper",
           "layout": "grid3",
           "settings": {
@@ -490,7 +209,7 @@
             {
               "prop": "platform",
               "type": "select",
-              "defaultValue": "fixed",
+              "defaultValue": "station",
               "label": "Platform",
               "settings": {
                 "descriptionPresentation": "tooltip",
@@ -498,8 +217,8 @@
               },
               "options": [
                 {
-                  "label": "Fixed",
-                  "value": "fixed"
+                  "label": "Station",
+                  "value": "station"
                 },
                 {
                   "label": "Buoy",
@@ -581,7 +300,6 @@
             },
             {
               "prop": "station-coops-id",
-              "description": "Provided by CO-OPS. Only provide if known/established. Do not create. CO-OPS station IDs can be found [here](https://tidesandcurrents.noaa.gov/stations.html?type=Water+Level).",
               "conditions": {
                 "field": "is-coops-station",
                 "value": true
@@ -714,12 +432,6 @@
                   "prop": "sensors[].geophysical_variable:accuracy"
                 },
                 {
-                  "prop": "sensors[].telemetry-method"
-                },
-                {
-                  "prop": "sensors[].date-removed"
-                },
-                {
                   "prop": "sensors[].is-station-surveyed"
                 }
               ]
@@ -766,12 +478,11 @@
                 {
                   "id": "prior-wrapper",
                   "type": "objectWrapper",
-                  "label": "Prior installation",
+                  "label": "Prior CO-OPS installation",
                   "layout": "grid2",
                   "fields": [
                     {
                       "prop": "sensors[].prior-wmo-id",
-                      "label": "WMO ID",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
@@ -779,13 +490,15 @@
                     },
                     {
                       "prop": "sensors[].prior-wmo-coordinates",
-                      "label": "WMO Coordinates",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
                       }
                     }
                   ]
+                },
+                {
+                  "prop": "sensors[].telemetry-method"
                 },
                 {
                   "id": "modem-wrapper",
@@ -817,6 +530,9 @@
               "id": "marker-information-and-stamping",
               "label": "Marker information and stamping",
               "fields": [
+                {
+                  "prop": "sensors[].bench-mark-descriptions"
+                },
                 {
                   "prop": "sensors[].marker-stamping"
                 },
@@ -926,7 +642,14 @@
           },
           "fields": [
             {
-              "prop": "computational-tool",
+              "prop": "computation-tool",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computation-period",
               "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
@@ -1011,6 +734,13 @@
             {
               "prop": "sensor-offset",
               "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "reference-datum",
+                "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
               }
@@ -1155,19 +885,11 @@
       "label": "Collocation Information",
       "fields": [
         {
-          "prop": "is-collocation"
+          "prop": "is-collocation",
+          "type": "boolean"
         },
         {
           "prop": "additional-colocation-information"
-        }
-      ]
-    },
-    {
-      "id": "ecc",
-      "label": "ECC",
-      "fields": [
-        {
-          "prop": "ecc-url"
         }
       ]
     },
@@ -1180,19 +902,13 @@
         },
         {
           "prop": "benchmarks-photo",
-          "type": "file_upload",
           "multiple": true
         },
         {
-          "prop": "dcp"
+          "prop": "underwater-components"
         },
         {
-          "prop": "underwater-components",
-          "type": "file_upload"
-        },
-        {
-          "prop": "vicinity",
-          "type": "file_upload"
+          "prop": "vicinity"
         }
       ]
     },
@@ -1201,20 +917,16 @@
       "label": "Attachments",
       "fields": [
         {
-          "prop": "bench-mark-descriptions",
-          "type": "long_text"
+          "prop": "bench-mark-diagram"
         },
         {
-          "prop": "bench-mark-diagram",
-          "type": "file_upload"
+          "prop": "sensor-test-worksheet"
         },
         {
-          "prop": "sensor-test-worksheet",
-          "type": "file_upload"
+          "prop": "sensor-elevation-drawing"
         },
         {
-          "prop": "sensor-elevation-drawing",
-          "type": "file_upload"
+          "prop": "other-attachment"
         },
         {
           "prop": "license",

@@ -184,9 +184,43 @@ const contributorsSpecialCase = (): JSONSchema6 => {
     "additionalProperties": {
       "type": "object",
       "properties": {
-        "type": {
+        "role": {
           "type": "string",
-          "enum": ["custodian", "distributor", "publisher"],
+          "title": "Contributor role",
+          "enum": [
+            {
+              "const": "custodian",
+              "title": "Custodian"
+            },
+            {
+              "const": "community_poc",
+              "title": "Community Point of Contact"
+            },
+            {
+              "const": "owner",
+              "title": "Owner"
+            },
+            {
+              "const": "publisher",
+              "title": "Data Publisher"
+            },
+            {
+              "const": "distributor",
+              "title": "Distributor"
+            },
+            {
+              "const": "funder",
+              "title": "Funder"
+            },
+            {
+              "const": "funder2",
+              "title": "Funder 2"
+            },
+            {
+              "const": "funder3",
+              "title": "Funder 3"
+            }
+          ],
         },
          "name": {
             "type": "string",
@@ -232,6 +266,76 @@ const setContributorsSpecialCase = (
   if (properties[rootKey] === undefined) {
     properties[rootKey] = contributorsSpecialCase()
   }
+}
+
+const isRequiredMetadataField = (field: IMetadataField): boolean => {
+  const requirementStatus =
+    typeof field.requirement_status === ***REMOVED***string***REMOVED*** ? field.requirement_status.trim().toLowerCase() : ***REMOVED******REMOVED***
+  return requirementStatus === ***REMOVED***required***REMOVED***
+}
+
+const markSchemaFieldRequired = (schema: JSONSchema6, field: IMetadataField): void => {
+  const idPathParts = field.id
+    .split(***REMOVED***.***REMOVED***)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
+
+  if (idPathParts.length === 0) {
+    return
+  }
+
+  let currentSchema: JSONSchema6 = schema
+  const metadataPath = (field.path ?? ***REMOVED******REMOVED***).trim()
+
+  if (metadataPath !== ***REMOVED******REMOVED***) {
+    const pathParts = metadataPath.split(***REMOVED***/***REMOVED***).filter((part) => part.trim() !== ***REMOVED******REMOVED***)
+
+    for (const rawPart of pathParts) {
+      const isArrayPart = rawPart.endsWith(***REMOVED***[]***REMOVED***)
+      const cleanPart = isArrayPart ? rawPart.slice(0, -2).trim() : rawPart.trim()
+      const nextDefinition = currentSchema.properties?.[cleanPart]
+
+      if (nextDefinition === undefined || typeof nextDefinition === ***REMOVED***boolean***REMOVED***) {
+        return
+      }
+
+      const nextSchema = nextDefinition
+      if (isArrayPart) {
+        const arrayItems = nextSchema.items
+        if (arrayItems === undefined || Array.isArray(arrayItems) || typeof arrayItems === ***REMOVED***boolean***REMOVED***) {
+          return
+        }
+        currentSchema = arrayItems
+      } else {
+        currentSchema = nextSchema
+      }
+    }
+  }
+
+  for (let i = 0; i < idPathParts.length - 1; i += 1) {
+    const part = idPathParts[i]
+    const nextDefinition =
+      currentSchema.properties?.[part] ?? (currentSchema as unknown as Record<string, JSONSchema6Definition>)[part]
+
+    if (nextDefinition === undefined || typeof nextDefinition === ***REMOVED***boolean***REMOVED***) {
+      return
+    }
+
+    currentSchema = nextDefinition
+  }
+
+  const leafKey = idPathParts[idPathParts.length - 1]
+  const hasLeaf =
+    currentSchema.properties?.[leafKey] !== undefined ||
+    (currentSchema as unknown as Record<string, JSONSchema6Definition>)[leafKey] !== undefined
+
+  if (!hasLeaf) {
+    return
+  }
+
+  const requiredSet = new Set(currentSchema.required ?? [])
+  requiredSet.add(leafKey)
+  currentSchema.required = Array.from(requiredSet)
 }
 
 export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
@@ -331,6 +435,11 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
         }
       })
     }
+  })
+
+  // Apply required flags after schema structure is fully built.
+  fields.filter((field) => isRequiredMetadataField(field)).forEach((field) => {
+    markSchemaFieldRequired(schema, field)
   })
 
   /* fields.forEach(f => {
@@ -440,7 +549,7 @@ export const parseFormSections = (
           const objectFieldWithTabs: IObjectFormFieldOverride = {
             prop: path,
             type: ***REMOVED***object***REMOVED***,
-            multiple: true,
+            // multiple: true,
             tabs,
           }
           section.fields = [objectFieldWithTabs]

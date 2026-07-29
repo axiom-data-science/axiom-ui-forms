@@ -130,4 +130,61 @@ describe(***REMOVED***parseMetadataFieldsIntoSchema***REMOVED***, () => {
     expect(contributor?.additionalProperties?.type).toBe(***REMOVED***object***REMOVED***)
     expect(contributor?.additionalProperties?.properties?.name?.title).toBe(***REMOVED***Name***REMOVED***)
   })
+
+  it(***REMOVED***marks root fields as required when requirement_status is required***REMOVED***, () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: ***REMOVED***station_id***REMOVED***,
+        label: ***REMOVED***Station ID***REMOVED***,
+        requirement_status: ***REMOVED***required***REMOVED***,
+        path: ***REMOVED******REMOVED***,
+      }),
+      makeField({
+        id: ***REMOVED***station_name***REMOVED***,
+        label: ***REMOVED***Station Name***REMOVED***,
+        requirement_status: ***REMOVED***optional***REMOVED***,
+        path: ***REMOVED******REMOVED***,
+      }),
+    ])
+
+    expect(schema.required).toContain(***REMOVED***station_id***REMOVED***)
+    expect(schema.required).not.toContain(***REMOVED***station_name***REMOVED***)
+  })
+
+  it(***REMOVED***marks nested dot-path fields as required on their parent object***REMOVED***, () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: ***REMOVED***station.location.lat***REMOVED***,
+        label: ***REMOVED***Latitude***REMOVED***,
+        response_type: ***REMOVED***Number***REMOVED***,
+        requirement_status: ***REMOVED***required***REMOVED***,
+        path: ***REMOVED******REMOVED***,
+      }),
+      makeField({
+        id: ***REMOVED***station.location.lon***REMOVED***,
+        label: ***REMOVED***Longitude***REMOVED***,
+        response_type: ***REMOVED***Number***REMOVED***,
+        requirement_status: ***REMOVED***optional***REMOVED***,
+        path: ***REMOVED******REMOVED***,
+      }),
+    ])
+
+    const location = (schema.properties?.station as any)?.properties?.location
+    expect(location?.required).toContain(***REMOVED***lat***REMOVED***)
+    expect(location?.required).not.toContain(***REMOVED***lon***REMOVED***)
+  })
+
+  it(***REMOVED***marks required fields under metadata path groups***REMOVED***, () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: ***REMOVED***sensor.specs.model***REMOVED***,
+        label: ***REMOVED***Sensor Model***REMOVED***,
+        requirement_status: ***REMOVED***required***REMOVED***,
+        path: ***REMOVED***/instrument***REMOVED***,
+      }),
+    ])
+
+    const specs = (schema.properties?.instrument as any)?.properties?.sensor?.properties?.specs
+    expect(specs?.required).toContain(***REMOVED***model***REMOVED***)
+  })
 })

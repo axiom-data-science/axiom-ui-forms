@@ -1,6 +1,6 @@
 import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import { type IFormOverride, type IFormFieldOverride, IFormSectionOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormOverride, type IFormFieldOverride, IFormSectionOverride, IFormSection } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormWithEditorOverlay from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
 
 import fieldOverrides from ***REMOVED***./collabFieldOverrides.json***REMOVED***
@@ -12,6 +12,7 @@ import FileUpload from ***REMOVED***@/Form/Components/Inputs/FileUpload/FileUplo
 import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import { getFieldsFromFormSection } from ***REMOVED***@/utils/getters***REMOVED***
 import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { pick } from ***REMOVED***lodash-es***REMOVED***
 
 const inputOverrides = {
   ***REMOVED***custom:file_upload***REMOVED***: FileUpload
@@ -48,13 +49,25 @@ const CollabWatterLevelFormSheet = (
 
 const CollabedWatterLevelFormSheetSchemaOnly = (
   {
-    schema
+    schema,
+    formSectionOverrides
   }: {
     schema: JSONSchema6
+    formSectionOverrides: IFormSectionOverride[]
   }
 ): ReactElement => {
   const schemaState = useState<JSONSchema6 | undefined>(schema)
-  const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
+  const fieldOverridesFromSections = formSectionOverrides.map(s => getFieldsFromFormSection(s as IFormSection)).flat()
+    .map(f => {
+      const fO = f as IFormFieldOverride
+      const fieldO: Pick<IFormFieldOverride, ***REMOVED***prop***REMOVED*** | ***REMOVED***type***REMOVED***> = pick(fO, [***REMOVED***prop***REMOVED***, ***REMOVED***type***REMOVED***])
+      return fieldO
+    })
+    .filter(f => {
+      return !f.prop || !f.prop.match(/^contributor/)
+    }) as IFormFieldOverride[]
+  console.log(***REMOVED***fieldOverridesFromSections***REMOVED***, fieldOverridesFromSections)
+  const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverridesFromSections)
   const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
   
   const schemaOnlyForm = schemaToFormObject(cloneObject(schema))
@@ -69,7 +82,6 @@ const CollabedWatterLevelFormSheetSchemaOnly = (
 })
 
 const allCombinedFields = getFieldsFromFormSection(combinedForm).filter(f => !(f as {skip_path?: boolean}).skip_path)
-console.log(***REMOVED***allCombinedFields***REMOVED***, allCombinedFields)
 const keys1 = new Set(allSchemaOnlyFields.map(f => f.id))
 const keys2 = new Set(allCombinedFields.map(f => f.id))
 const missingInCombined = [...keys1].filter(k => !keys2.has(k))
@@ -125,7 +137,7 @@ const CollabWatterLevelFormSheetLoader = ({useSchemaOnly}: {useSchemaOnly?: bool
       {
         data !== undefined && (
           useSchemaOnly
-            ? <CollabedWatterLevelFormSheetSchemaOnly schema={data.schema} />
+            ? <CollabedWatterLevelFormSheetSchemaOnly schema={data.schema} formSectionOverrides={data.formSectionOverrides} />
             : <CollabWatterLevelFormSheet schema={data.schema} formSectionOverrides={data.formSectionOverrides} />
         )
       }
