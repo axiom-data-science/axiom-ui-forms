@@ -20,6 +20,7 @@ export interface IMetadataField {
     | 'Email'
     | 'Phone number'
     | 'Boolean'
+    | 'Attachment/upload'
     | null
     | string
   filter_control: 'Y' | 'N' | 'Update' | string | null

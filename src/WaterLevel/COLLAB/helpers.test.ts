@@ -130,4 +130,61 @@ describe('parseMetadataFieldsIntoSchema', () => {
     expect(contributor?.additionalProperties?.type).toBe('object')
     expect(contributor?.additionalProperties?.properties?.name?.title).toBe('Name')
   })
+
+  it('marks root fields as required when requirement_status is required', () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: 'station_id',
+        label: 'Station ID',
+        requirement_status: 'required',
+        path: '',
+      }),
+      makeField({
+        id: 'station_name',
+        label: 'Station Name',
+        requirement_status: 'optional',
+        path: '',
+      }),
+    ])
+
+    expect(schema.required).toContain('station_id')
+    expect(schema.required).not.toContain('station_name')
+  })
+
+  it('marks nested dot-path fields as required on their parent object', () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: 'station.location.lat',
+        label: 'Latitude',
+        response_type: 'Number',
+        requirement_status: 'required',
+        path: '',
+      }),
+      makeField({
+        id: 'station.location.lon',
+        label: 'Longitude',
+        response_type: 'Number',
+        requirement_status: 'optional',
+        path: '',
+      }),
+    ])
+
+    const location = (schema.properties?.station as any)?.properties?.location
+    expect(location?.required).toContain('lat')
+    expect(location?.required).not.toContain('lon')
+  })
+
+  it('marks required fields under metadata path groups', () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: 'sensor.specs.model',
+        label: 'Sensor Model',
+        requirement_status: 'required',
+        path: '/instrument',
+      }),
+    ])
+
+    const specs = (schema.properties?.instrument as any)?.properties?.sensor?.properties?.specs
+    expect(specs?.required).toContain('model')
+  })
 })
