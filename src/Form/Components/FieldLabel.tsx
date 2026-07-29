@@ -229,10 +229,10 @@ export const FieldDescriptionText = ({
   return (
     <>
       {(hasDescription || hasLongDescription) && (
-        <p className={`text-xs pb-2 ${isBold ? ***REMOVED***font-bold***REMOVED*** : ***REMOVED******REMOVED***}`}>
+        <div className={`text-xs pb-2 ${isBold ? ***REMOVED***font-bold***REMOVED*** : ***REMOVED******REMOVED***}`}>
           <InlineMarkdown>{field.description}</InlineMarkdown>
           {longDescriptionButton}
-        </p>
+        </div>
       )}
       {showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />}
     </>
@@ -258,7 +258,7 @@ export const FieldLabel = ({
   return (
     <>
       {field.label !== undefined && field.label !== null && (
-        <p className="pb-2">
+        <div className="pb-2">
           <FieldLabelText
             field={field}
             disabled={disabled}
@@ -274,7 +274,7 @@ export const FieldLabel = ({
           ) : (
             <></>
           )}
-        </p>
+        </div>
       )}
       {descriptionPresentation === ***REMOVED***inline***REMOVED*** ||
       descriptionPresentation === ***REMOVED***default***REMOVED*** ? (

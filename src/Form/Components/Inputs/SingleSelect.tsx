@@ -33,6 +33,18 @@ const SingleSelectInput = ({
             onChange(e?.value)
           }}
         />
+        {
+          field?.settings?.showDescriptionForSelected && field.options.find((option) => option.value === value)?.description && (
+            <FieldLabel
+              field={{
+                ...field,
+                label: ***REMOVED******REMOVED***,
+                description: field.options.find((option) => option.value === value)?.description
+              }}
+              disabled={disabled}
+            />
+          )
+        }
       </>
     )
   }
