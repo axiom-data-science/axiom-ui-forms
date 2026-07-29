@@ -15,7 +15,7 @@ const SelectOrTextInput = ({
   const initialValue = value !== undefined ? value : ''
   const selectField = field as ISelectField
   const options = selectField.options !== undefined ? selectField.options : []
-  if(options.length && !options.find((option) => option.value === 'other')) {
+  if(options.length && !options.find((option) => String(option.value).toLowerCase() === 'other')) {
     options.push({ label: 'Other', value: 'other' })
   }
   const otherOption = options.find((option) => String(option.value).toLowerCase() === 'other')
