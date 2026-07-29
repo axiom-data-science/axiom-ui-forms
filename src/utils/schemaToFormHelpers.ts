@@ -698,7 +698,8 @@ const mergeFormField = ({
           : key
       const arrayBracketKey =
         isArrayItems && childPathPrefix ? `${childPathPrefix}[].${leafKey}` : undefined
-      const arrayDotKey = isArrayItems && childPathPrefix ? `${childPathPrefix}.${leafKey}` : undefined
+      const arrayDotKey =
+        isArrayItems && childPathPrefix ? `${childPathPrefix}.${leafKey}` : undefined
       const fieldOverride = mergeObjects<IFormFieldOverride>(
         [
           getOverrideByKey(overrideFieldsMap, key, arrayBracketKey, arrayDotKey) ??

@@ -353,8 +353,16 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
             additionalProperties: {
               type: ***REMOVED***object***REMOVED***,
               properties: {
-                name: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Name***REMOVED*** },
-                value: { type: ***REMOVED***number***REMOVED***, title: ***REMOVED***Value***REMOVED*** },
+                name: {
+                  type: ***REMOVED***string***REMOVED***,
+                  title: ***REMOVED***Name***REMOVED***,
+                  description: ***REMOVED***Name of the item***REMOVED***,
+                },
+                value: {
+                  type: ***REMOVED***number***REMOVED***,
+                  title: ***REMOVED***Value***REMOVED***,
+                  description: ***REMOVED***Value of the item***REMOVED***,
+                },
               },
             },
           },
@@ -398,6 +406,10 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       const nestedValue = wrapper?.fields?.find((f: any) => f.id === ***REMOVED***value***REMOVED***)
       expect(nestedName).toBeDefined()
       expect(nestedValue).toBeDefined()
+      expect(nestedName?.label).toBe(***REMOVED***Name***REMOVED***)
+      expect(nestedName?.description).toBe(***REMOVED***Name of the item***REMOVED***)
+      expect(nestedValue?.label).toBe(***REMOVED***Value***REMOVED***)
+      expect(nestedValue?.description).toBe(***REMOVED***Value of the item***REMOVED***)
       expect(nestedName?.excludeFromPayload === true).toBe(false)
       expect(nestedValue?.excludeFromPayload === true).toBe(false)
     })

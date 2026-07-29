@@ -13,12 +13,12 @@ const schema = {
                 "type": "object",
                 "properties": {
                     "name": {
-                        "title": "Name",
+                        "title": "Name (from schema)",
                         "description": "Name of the item",
                         "type": "string"
                     },
                     "value": {
-                        "title": "Value",
+                        "title": "Value (from schema)",
                         "description": "Value of the item",
                         "type": "number"
                     }
@@ -42,6 +42,7 @@ const formOverride = {
             "fields": [
                 {
                     "id": "wrapper",
+                    "label": "Item",
                     "type": "objectWrapper",
                     "layout": "grid2",
                     "fields": [
