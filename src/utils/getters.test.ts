@@ -369,5 +369,174 @@ describe('getters.ts', () => {
         },
       })
     })
+
+    it('should include flattened skip_path child values for multiple object items', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'variable_converter',
+            type: 'object',
+            multiple: true,
+            fields: [
+              {
+                id: 'split_operator',
+                type: 'object',
+                skip_path: true,
+                fields: [
+                  { id: 'source_variable', type: 'text' },
+                  { id: 'converter_type', type: 'text' },
+                ],
+              },
+              {
+                id: 'drop_columns',
+                type: 'object',
+                skip_path: true,
+                fields: [
+                  { id: 'column_names', type: 'text', multiple: true },
+                  { id: 'converter_type', type: 'text' },
+                ],
+              },
+              {
+                id: 'output_variables',
+                type: 'object',
+                multiple: true,
+                fields: [
+                  { id: 'index', type: 'number' },
+                  { id: 'output_variable', type: 'text' },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            converter_type: 'split',
+            column_names: ['unused'],
+            output_variables: [
+              { index: 0, output_variable: 'u' },
+              { index: 1, output_variable: 'v' },
+            ],
+          },
+          {
+            converter_type: 'drop',
+            column_names: ['a', 'b'],
+            output_variables: [
+              { index: 0, output_variable: 'depth' },
+            ],
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            converter_type: 'split',
+            column_names: ['unused'],
+            output_variables: [
+              { index: 0, output_variable: 'u' },
+              { index: 1, output_variable: 'v' },
+            ],
+          },
+          {
+            converter_type: 'drop',
+            column_names: ['a', 'b'],
+            output_variables: [
+              { index: 0, output_variable: 'depth' },
+            ],
+          },
+        ],
+      })
+    })
+
+    it('should support n-level nested payload extraction with skip_path at arbitrary non-multiple levels', () => {
+      const form = {
+        id: 'deep-form',
+        label: 'Deep Form',
+        fields: [
+          {
+            id: 'variable_converter',
+            type: 'object',
+            multiple: true,
+            fields: [
+              {
+                id: 'split_operator',
+                type: 'object',
+                skip_path: true,
+                fields: [
+                  { id: 'source_variable', type: 'text' },
+                  {
+                    id: 'details',
+                    type: 'object',
+                    fields: [
+                      {
+                        id: 'meta',
+                        type: 'object',
+                        skip_path: true,
+                        fields: [
+                          { id: 'units', type: 'text' },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'output_variables',
+                    type: 'object',
+                    multiple: true,
+                    fields: [
+                      { id: 'index', type: 'number' },
+                      {
+                        id: 'shape',
+                        type: 'object',
+                        skip_path: true,
+                        fields: [{ id: 'output_variable', type: 'text' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            details: {
+              units: 'degC',
+            },
+            output_variables: [
+              { index: 0, output_variable: 'temp_surface' },
+              { index: 1, output_variable: 'temp_bottom' },
+            ],
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            details: {
+              units: 'degC',
+            },
+            output_variables: [
+              { index: 0, output_variable: 'temp_surface' },
+              { index: 1, output_variable: 'temp_bottom' },
+            ],
+          },
+        ],
+      })
+    })
   })
 })
