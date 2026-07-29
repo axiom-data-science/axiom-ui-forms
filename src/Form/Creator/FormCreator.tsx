@@ -15,6 +15,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { useAtom } from 'jotai'
 import { type JSONSchema6 } from 'json-schema'
 import debounce from 'lodash-es/debounce'
+import isEqual from 'lodash-es/isEqual'
 import React, { type ReactNode, useContext, type ReactElement, useState, useEffect, useMemo, useCallback } from 'react'
 import errorRenderer from '@/utils/errorRenderer'
 
@@ -137,6 +138,17 @@ const FormCreator = ({
     ...seedFormValuesWithDefaults(activeForm),
     ...initialFormValues
   }))
+
+  useEffect(() => {
+    const valuesWithDefaults = {
+      ...seedFormValuesWithDefaults(activeForm),
+      ...formValues,
+    }
+
+    if (!isEqual(valuesWithDefaults, formValues)) {
+      setFormValues(valuesWithDefaults)
+    }
+  }, [activeForm, formValues, setFormValues])
 
   const [layout, setLayout] = useAtom(layoutAtom)
   const updateLayoutValue = useCallback((): void => {
