@@ -231,6 +231,81 @@ export function getFieldsFromFormSection(formSection: IFormSection | IForm): IFo
   return fields
 }
 
+const buildPayloadFromScopedFields = (
+  fields: IFormField[] | undefined,
+  scopedValues: IFormValues
+): IFormValues => {
+  const scopedPayload: IFormValues = {}
+  if (!fields) {
+    return scopedPayload
+  }
+
+  fields.forEach((field) => {
+    if (field.excludeFromPayload === true) {
+      return
+    }
+
+    const isObjectField = field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***
+    if (!isObjectField) {
+      const value = scopedValues[field.id]
+      if (value !== undefined) {
+        scopedPayload[field.id] = value
+      }
+      return
+    }
+
+    const childFields = getChildFields(field)
+    const isSkipPathContainer =
+      field.type === ***REMOVED***objectWrapper***REMOVED*** || (field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true)
+
+    if (isSkipPathContainer) {
+      // skip_path containers flatten descendants into the current scope.
+      // multiple+skip_path is unsupported in this form model; skip extraction if encountered.
+      if (getFieldMultiple(field)) {
+        return
+      }
+
+      const flattenedPayload = buildPayloadFromScopedFields(childFields, scopedValues)
+      Object.assign(scopedPayload, flattenedPayload)
+      return
+    }
+
+    const fieldValue = scopedValues[field.id]
+    if (getFieldMultiple(field)) {
+      if (!Array.isArray(fieldValue)) {
+        return
+      }
+
+      const arrayPayload = fieldValue
+        .map((item) => {
+          if (typeof item !== ***REMOVED***object***REMOVED*** || item === null || Array.isArray(item)) {
+            return undefined
+          }
+
+          const itemPayload = buildPayloadFromScopedFields(childFields, item as IFormValues)
+          return Object.keys(itemPayload).length > 0 ? itemPayload : undefined
+        })
+        .filter((v) => v !== undefined) as IFormValues[]
+
+      if (arrayPayload.length > 0) {
+        scopedPayload[field.id] = arrayPayload
+      }
+      return
+    }
+
+    if (typeof fieldValue !== ***REMOVED***object***REMOVED*** || fieldValue === null || Array.isArray(fieldValue)) {
+      return
+    }
+
+    const nestedPayload = buildPayloadFromScopedFields(childFields, fieldValue as IFormValues)
+    if (Object.keys(nestedPayload).length > 0) {
+      scopedPayload[field.id] = nestedPayload
+    }
+  })
+
+  return scopedPayload
+}
+
 /**
  * Extracts form payload, excluding fields marked with excludeFromPayload=true.
  *
@@ -270,68 +345,15 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
     if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED***) && field.fields) {
       // Check for multiple object first (array of objects with nested structure)
       if (getFieldMultiple(field) && Array.isArray(value)) {
-        const arrayPayload = (value as IFormValues[]).map((item) => {
-          const itemPayload: IFormValues = {}
-          if (field.fields) {
-            field.fields.forEach((childField) => {
-              if (childField.excludeFromPayload !== true) {
-                // For skip_path fields (like objectWrapper), merge children flat into itemPayload
-                if (
-                  (childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) &&
-                  childField.skip_path === true &&
-                  childField.fields
-                ) {
-                  const childItem = item[childField.id]
-                  if (
-                    typeof childItem === ***REMOVED***object***REMOVED*** &&
-                    childItem !== null &&
-                    !Array.isArray(childItem)
-                  ) {
-                    childField.fields.forEach((grandchildField) => {
-                      if (grandchildField.excludeFromPayload !== true) {
-                        const grandchildId = grandchildField.id
-                        if ((childItem as IFormValues)[grandchildId] !== undefined) {
-                          itemPayload[grandchildId] = (childItem as IFormValues)[grandchildId]
-                        }
-                      }
-                    })
-                  }
-                }
-                // For non-skip_path nested objects, build nested payload
-                else if (
-                  (childField.type === ***REMOVED***object***REMOVED*** || childField.type === ***REMOVED***objectWrapper***REMOVED***) &&
-                  childField.fields
-                ) {
-                  const nestedPayload: IFormValues = {}
-                  const childItem = item[childField.id]
-                  if (
-                    typeof childItem === ***REMOVED***object***REMOVED*** &&
-                    childItem !== null &&
-                    !Array.isArray(childItem)
-                  ) {
-                    childField.fields.forEach((grandchildField) => {
-                      if (grandchildField.excludeFromPayload !== true) {
-                        const grandchildId = grandchildField.id
-                        if ((childItem as IFormValues)[grandchildId] !== undefined) {
-                          nestedPayload[grandchildId] = (childItem as IFormValues)[grandchildId]
-                        }
-                      }
-                    })
-                  }
-                  if (Object.keys(nestedPayload).length > 0) {
-                    itemPayload[childField.id] = nestedPayload
-                  }
-                } else {
-                  const childFieldId = childField.id
-                  if (item[childFieldId] !== undefined) {
-                    itemPayload[childFieldId] = item[childFieldId]
-                  }
-                }
-              }
-            })
-          }
-          return itemPayload
-        })
+        const arrayPayload = (value as IFormValues[])
+          .map((item) => {
+            if (typeof item !== ***REMOVED***object***REMOVED*** || item === null || Array.isArray(item)) {
+              return undefined
+            }
+            const itemPayload = buildPayloadFromScopedFields(field.fields, item)
+            return Object.keys(itemPayload).length > 0 ? itemPayload : undefined
+          })
+          .filter((v) => v !== undefined) as IFormValues[]
         set(payload, path, arrayPayload)
       } else if (field.skip_path) {
         // For skip_path objects, process children at current level (no-op in this function)

@@ -369,5 +369,174 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         },
       })
     })
+
+    it(***REMOVED***should include flattened skip_path child values for multiple object items***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***variable_converter***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            multiple: true,
+            fields: [
+              {
+                id: ***REMOVED***split_operator***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                skip_path: true,
+                fields: [
+                  { id: ***REMOVED***source_variable***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                  { id: ***REMOVED***converter_type***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                ],
+              },
+              {
+                id: ***REMOVED***drop_columns***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                skip_path: true,
+                fields: [
+                  { id: ***REMOVED***column_names***REMOVED***, type: ***REMOVED***text***REMOVED***, multiple: true },
+                  { id: ***REMOVED***converter_type***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                ],
+              },
+              {
+                id: ***REMOVED***output_variables***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                multiple: true,
+                fields: [
+                  { id: ***REMOVED***index***REMOVED***, type: ***REMOVED***number***REMOVED*** },
+                  { id: ***REMOVED***output_variable***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        variable_converter: [
+          {
+            source_variable: ***REMOVED***temp_raw***REMOVED***,
+            converter_type: ***REMOVED***split***REMOVED***,
+            column_names: [***REMOVED***unused***REMOVED***],
+            output_variables: [
+              { index: 0, output_variable: ***REMOVED***u***REMOVED*** },
+              { index: 1, output_variable: ***REMOVED***v***REMOVED*** },
+            ],
+          },
+          {
+            converter_type: ***REMOVED***drop***REMOVED***,
+            column_names: [***REMOVED***a***REMOVED***, ***REMOVED***b***REMOVED***],
+            output_variables: [
+              { index: 0, output_variable: ***REMOVED***depth***REMOVED*** },
+            ],
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        variable_converter: [
+          {
+            source_variable: ***REMOVED***temp_raw***REMOVED***,
+            converter_type: ***REMOVED***split***REMOVED***,
+            column_names: [***REMOVED***unused***REMOVED***],
+            output_variables: [
+              { index: 0, output_variable: ***REMOVED***u***REMOVED*** },
+              { index: 1, output_variable: ***REMOVED***v***REMOVED*** },
+            ],
+          },
+          {
+            converter_type: ***REMOVED***drop***REMOVED***,
+            column_names: [***REMOVED***a***REMOVED***, ***REMOVED***b***REMOVED***],
+            output_variables: [
+              { index: 0, output_variable: ***REMOVED***depth***REMOVED*** },
+            ],
+          },
+        ],
+      })
+    })
+
+    it(***REMOVED***should support n-level nested payload extraction with skip_path at arbitrary non-multiple levels***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***deep-form***REMOVED***,
+        label: ***REMOVED***Deep Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***variable_converter***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            multiple: true,
+            fields: [
+              {
+                id: ***REMOVED***split_operator***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                skip_path: true,
+                fields: [
+                  { id: ***REMOVED***source_variable***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                  {
+                    id: ***REMOVED***details***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    fields: [
+                      {
+                        id: ***REMOVED***meta***REMOVED***,
+                        type: ***REMOVED***object***REMOVED***,
+                        skip_path: true,
+                        fields: [
+                          { id: ***REMOVED***units***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: ***REMOVED***output_variables***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    multiple: true,
+                    fields: [
+                      { id: ***REMOVED***index***REMOVED***, type: ***REMOVED***number***REMOVED*** },
+                      {
+                        id: ***REMOVED***shape***REMOVED***,
+                        type: ***REMOVED***object***REMOVED***,
+                        skip_path: true,
+                        fields: [{ id: ***REMOVED***output_variable***REMOVED***, type: ***REMOVED***text***REMOVED*** }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        variable_converter: [
+          {
+            source_variable: ***REMOVED***temp_raw***REMOVED***,
+            details: {
+              units: ***REMOVED***degC***REMOVED***,
+            },
+            output_variables: [
+              { index: 0, output_variable: ***REMOVED***temp_surface***REMOVED*** },
+              { index: 1, output_variable: ***REMOVED***temp_bottom***REMOVED*** },
+            ],
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        variable_converter: [
+          {
+            source_variable: ***REMOVED***temp_raw***REMOVED***,
+            details: {
+              units: ***REMOVED***degC***REMOVED***,
+            },
+            output_variables: [
+              { index: 0, output_variable: ***REMOVED***temp_surface***REMOVED*** },
+              { index: 1, output_variable: ***REMOVED***temp_bottom***REMOVED*** },
+            ],
+          },
+        ],
+      })
+    })
   })
 })
