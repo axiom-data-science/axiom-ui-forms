@@ -60,7 +60,7 @@ const CSVUploadForSampleFile = ({ field, value }: IFieldInputProps): ReactElemen
         }
       }}
       acceptFileTypes={['csv', 'text/csv']}
-      onFileUploaded={(_fileData, fileCSVData) => {
+      onFileUpload={(_fileName, _fileData, fileCSVData) => {
         setCsvData(fileCSVData)
       }}
     />
