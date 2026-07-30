@@ -105,7 +105,7 @@ const [showDebug, setShowDebug] = useState(false)
     { (missingInCombined.length > 0 || addedInCombined.length > 0) &&
     <div className={`fixed bottom-0 left-0 ${showDebug ? ***REMOVED***w-90***REMOVED*** : ***REMOVED***w-40***REMOVED***} bg-white/90 z-80 shadow-md border-2 border-slate-200`}>
       <h4 className=***REMOVED***p-2 bg-slate-600 text-xs text-white cursor-pointer flex flex-row gap-2 items-center***REMOVED*** onClick={() => setShowDebug(!showDebug)}>
-        {showDebug ? <CaretDownIcon />: <CaretUpIcon />} Debug info <span className=***REMOVED***text-[10px] py-1 px-2 bg-slate-600 text-white rounded-lg***REMOVED***>{missingInCombined.length + addedInCombined.length}</span>
+        {showDebug ? <CaretDownIcon />: <CaretUpIcon />} Debug info <span className=***REMOVED***text-[10px] py-1 px-2 bg-white text-red-600 font-bold rounded-lg***REMOVED***>{missingInCombined.length + addedInCombined.length}</span>
       </h4>
       {
         showDebug &&
