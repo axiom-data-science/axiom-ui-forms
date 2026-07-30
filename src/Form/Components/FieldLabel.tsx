@@ -134,7 +134,7 @@ export const FieldDescriptionTooltip = ({
                 )}
               </span>
             }
-            contentClassName="max-w-[400px]"
+            contentClassName="max-w-100"
           >
             <InfoCircledIcon
               className={`${hasLongDescription ? ***REMOVED***-my-1 p-1 rounded-2xl shadow-md w-6 h-6 text-blue-600***REMOVED*** : ***REMOVED***w-4 h-4***REMOVED***}`}

@@ -113,7 +113,7 @@ const SchemaToFormPTT = (): ReactElement => {
                                       : <p>Loading...</p>
                                 }
                                 </div>
-                            <div className=***REMOVED***flex-grow h-full***REMOVED***>
+                            <div className=***REMOVED***grow h-full***REMOVED***>
                             <JSONInputLoader
                                 field={{
                                   id: ***REMOVED***formFieldOverrides***REMOVED***,

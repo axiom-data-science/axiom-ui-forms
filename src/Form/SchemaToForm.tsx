@@ -59,7 +59,7 @@ const SchemaToForm = (): ReactElement => {
         <p>
             This page will allow you to convert a JSON schema to a form UI schema
         </p>
-       <div className=***REMOVED***grid grid-cols-2 gap-8 flex-grow***REMOVED***>
+       <div className=***REMOVED***grid grid-cols-2 gap-8 grow***REMOVED***>
             <div className=***REMOVED***h-full bg-slate-100 p-8***REMOVED***>
                 {
                   form === undefined
@@ -135,7 +135,7 @@ const SchemaToForm = (): ReactElement => {
                                       <CopyButton string={JSON.stringify(form ?? ***REMOVED******REMOVED***, null, 2)}
                                         wrapperClassName=***REMOVED***absolute right-5 bottom-5 pointer-events-auto***REMOVED***
                                         />
-                                      <pre className=***REMOVED***p-5 text-blue-200 text-xs max-h-[400px] shadow-inner-x bg-blue-900 font-mono whitespace-pre-wrap overflow-auto***REMOVED***>
+                                      <pre className=***REMOVED***p-5 text-blue-200 text-xs max-h-100 shadow-inner-x bg-blue-900 font-mono whitespace-pre-wrap overflow-auto***REMOVED***>
                                         {JSON.stringify(form, null, 2)}
                                       </pre>
                                       </div>
@@ -155,7 +155,7 @@ const SchemaToForm = (): ReactElement => {
                             label: ***REMOVED***Paste JSON to convert to schema***REMOVED***,
                             type: ***REMOVED***json***REMOVED***
                           }}
-                          className=***REMOVED***h-full mt-0 w-full flex-grow max-h-[400px] shadow-inner-x bg-blue-900 text-white***REMOVED***
+                          className=***REMOVED***h-full mt-0 w-full grow max-h-100 shadow-inner-x bg-blue-900 text-white***REMOVED***
                           />
 
                           {
@@ -172,7 +172,7 @@ const SchemaToForm = (): ReactElement => {
                                         id=***REMOVED***convertedObject***REMOVED***
                                         testId=***REMOVED***convertedObject***REMOVED***
                                         value={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ***REMOVED******REMOVED***}
-                                        className=***REMOVED***h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-green-900 text-white***REMOVED***
+                                        className=***REMOVED***h-full mt-0 w-full grow min-h-150 shadow-inner-x bg-green-900 text-white***REMOVED***
                                         />
 
                                       </>

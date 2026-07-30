@@ -29,7 +29,7 @@ const Debug = (): ReactElement => {
                   content: <div className=***REMOVED***flex flex-row gap-4 flex-justify-center***REMOVED***>
                     {
                     allFieldOverrides.map(o => {
-                      return <pre key={JSON.stringify(o)} className=***REMOVED***p-5 bg-slate-200 text-xs flex-grow flex-1***REMOVED***>{JSON.stringify(o, null, 2)}</pre>
+                      return <pre key={JSON.stringify(o)} className=***REMOVED***p-5 bg-slate-200 text-xs grow flex-1***REMOVED***>{JSON.stringify(o, null, 2)}</pre>
                     })
                     }
                     </div>
@@ -40,7 +40,7 @@ const Debug = (): ReactElement => {
                   content: <div className=***REMOVED***flex flex-row gap-4***REMOVED***>
                     {
                       allFormOverrides.map(o => {
-                        return <pre key={JSON.stringify(o)} className=***REMOVED***p-5 bg-slate-200 text-xs flex-grow***REMOVED***>{JSON.stringify(o, null, 2)}</pre>
+                        return <pre key={JSON.stringify(o)} className=***REMOVED***p-5 bg-slate-200 text-xs grow***REMOVED***>{JSON.stringify(o, null, 2)}</pre>
                       })
                     }
                     </div>
@@ -66,7 +66,7 @@ const SchemaWithOverridesTest = (): ReactElement => {
             formOverrides={allFormOverrides}
             formFieldOverrides={allFieldOverrides}
             formValueState={[formValues, setFormValues]}
-            className=***REMOVED***m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white***REMOVED***
+            className=***REMOVED***m-5 p-5 max-h-125 border-2 border-dashed border-slate-400 overflow-y-scroll bg-white***REMOVED***
             />
 
            <Debug />

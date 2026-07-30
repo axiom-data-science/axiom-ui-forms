@@ -84,7 +84,7 @@ const inputOverrides = {
         {formValues.schema_input !== undefined ? (
           <div className="p-5 bg-slate-200">
             <SchemaFormCreator
-              className="m-5 p-5 max-h-[500px] border-2 border-dashed border-slate-400 overflow-y-scroll bg-white"
+              className="m-5 p-5 max-h-125 border-2 border-dashed border-slate-400 overflow-y-scroll bg-white"
               schema={formValues.schema_input as JSONSchema6}
               formValueState={formValueState}
               formFieldOverrides={
@@ -109,14 +109,14 @@ const inputOverrides = {
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
 
     return (
-      <div className="flex flex-col flex-grow h-full">
+      <div className="flex flex-col grow h-full">
         <FieldLabel field={field} />
-        <div className="flex flex-row gap-10 flex-grow h-full">
-          <div className="w-[350px] overflow-y-auto flex-none h-full bg-slate-200 text-xs">
+        <div className="flex flex-row gap-10 grow h-full">
+          <div className="w-87.5 overflow-y-auto flex-none h-full bg-slate-200 text-xs">
             <SchemaPathList schema={schemaInput} />
           </div>
 
-          <div className="flex-grow">
+          <div className="grow">
             <JSONInputLoader
               field={{ ...field, label: null, description: null }}
               onChange={(e) => {
@@ -134,13 +134,13 @@ const inputOverrides = {
     const [formValues] = useAtom(formValuesAtom)
     const schemaInput = (formValues.schema_input ?? {}) as JSONSchema6
     return (
-      <div className="flex flex-col flex-grow h-full">
+      <div className="flex flex-col grow h-full">
         <FieldLabel field={field} />
-        <div className="flex flex-row gap-10 flex-grow h-full">
-          <div className="w-[350px] flex-none overflow-y-auto bg-slate-200 text-xs">
+        <div className="flex flex-row gap-10 grow h-full">
+          <div className="w-87.5 flex-none overflow-y-auto bg-slate-200 text-xs">
             <SchemaPathList schema={schemaInput} />
           </div>
-          <div className="flex-grow">
+          <div className="grow">
             <JSONInputLoader
               field={{ ...field, label: null, description: null }}
               onChange={(e) => {

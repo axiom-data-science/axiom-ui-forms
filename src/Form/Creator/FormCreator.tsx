@@ -116,7 +116,7 @@ const FormCreator = ({
   error,
   onChange,
   className,
-  defaultClassName = ***REMOVED***flex flex-col gap-8 flex-grow***REMOVED***,
+  defaultClassName = ***REMOVED***flex flex-col gap-8 grow***REMOVED***,
   urlNavigable = true,
   inputOverrides,
   schema,

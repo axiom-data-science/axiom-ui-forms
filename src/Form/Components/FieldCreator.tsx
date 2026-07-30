@@ -837,7 +837,7 @@ const FieldCreator = ({
   onChange,
   className = field.type === ***REMOVED***constant***REMOVED*** ? ***REMOVED***hidden***REMOVED*** : undefined,
   disabled,
-  defaultClassName = ***REMOVED***flex flex-col gap-8 flex-grow h-full***REMOVED***,
+  defaultClassName = ***REMOVED***flex flex-col gap-8 grow h-full***REMOVED***,
   conditionResult,
 }: IFieldCreator): ReactElement | null => {
   const { form, inputOverrides, setFormValues, onChange: contextOnChange } = useFormContext()

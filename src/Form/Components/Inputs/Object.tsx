@@ -92,6 +92,7 @@ ObjectFieldItem.displayName = ***REMOVED***ObjectFieldItem***REMOVED***
 
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const formValues = useFormValues()
+  const settingsClassName = field?.settings?.className
 
   const objectField =
     field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED*** ? (field as any) : undefined

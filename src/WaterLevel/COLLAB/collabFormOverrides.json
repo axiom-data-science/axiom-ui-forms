@@ -359,7 +359,10 @@
         {
           "prop": "sensors",
           "type": "object",
-          "multiple": true,
+          "multiple": true,   
+          "settings": {
+            "className":"bg-red-100"
+          },
           "tabs": [
             {
               "id": "overview",

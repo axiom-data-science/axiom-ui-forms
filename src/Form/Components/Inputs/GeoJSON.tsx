@@ -513,7 +513,7 @@ export const GeoJSONInput = ({ field, onChange, value, disabled }: IFieldInputPr
         <TextArea
           disabled={disabled}
           error={error}
-          className=***REMOVED***min-h-[100px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
+          className=***REMOVED***min-h-25 bg-slate-50 rounded-lg shadow-inner***REMOVED***
           id={`${field.id}-coordinates`}
           testId={`${field.id}-coordinates`}
           value={coordinates}
@@ -523,7 +523,7 @@ export const GeoJSONInput = ({ field, onChange, value, disabled }: IFieldInputPr
       </div>
       {showGeoJSONInput && <TextArea
         error={error}
-        className=***REMOVED***min-h-[500px] bg-slate-50 rounded-lg shadow-inner***REMOVED***
+        className=***REMOVED***min-h-125 bg-slate-50 rounded-lg shadow-inner***REMOVED***
         id={field.id}
         testId={field.id}
         label={<FieldLabel field={field} disabled={disabled} />}
