@@ -45,6 +45,7 @@ export type IFormField =
   | IGeometryField
   | IFormFieldSection
   | ICustomField
+  | IFileUploadInput
 
 export type IFormFieldType =
   | 'text'
@@ -62,6 +63,11 @@ export type IFormFieldType =
   | 'objectWrapper'
   | 'objectList'
   | 'oneOf'
+  | 'fileUpload'
+  | 'file_upload'
+  | 'stateSelector'
+  | 'state_selector'
+  | 'selectOrText'
   | 'geojson'
   | 'geometry'
   | `custom:${string}`
@@ -108,6 +114,8 @@ type IFieldConstraints = Record<string, unknown>
 interface IFormFieldSettingsBase {
   [key: string]: unknown
   descriptionPresentation?: 'inline' | 'tooltip'
+  boldLabel?: boolean
+  boldDescription?: boolean
 }
 
 interface IFormFieldRoot {
@@ -145,6 +153,8 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
     invertForDisplay?: boolean
+    smallLabel?: boolean
+    className?: string
   }
 }
 
@@ -175,7 +185,8 @@ export interface IJSONField extends IFormFieldRoot {
 interface ISelectOption {
   label: string
   value: string | number
-  [key: string]: string | number | boolean | Record<string, unknown>
+  description?: string
+  [key: string]: string | number | boolean | Record<string, unknown> | undefined
 }
 
 interface ISelectableInput extends IFormFieldRoot {
@@ -191,6 +202,12 @@ interface ISelectableInput extends IFormFieldRoot {
   }
 }
 
+interface IFileUploadInput extends IFormFieldRoot {
+  type: 'fileUpload' | 'file_upload'
+  settings?: IFormFieldSettingsBase & {
+    acceptedFileTypes?: string[] | string
+  }
+}
 interface ICustomField extends IFormFieldRoot, ISelectableInput {
   type: `custom:${string}`
 }
@@ -202,7 +219,10 @@ interface IMultiSelectableInput extends ISelectableInput {
 }
 
 export interface ISelectField extends ISingleSelectableInput {
-  type: 'select' | 'stateSelector'
+  type: 'select' | 'stateSelector' | 'selectOrText'
+  settings?: IFormFieldSettingsBase & {
+    showDescriptionForSelected?: boolean
+  }
 }
 
 export interface IRadioField extends ISingleSelectableInput {
@@ -247,10 +267,12 @@ interface IDateTimeField extends IFormFieldRoot {
   type: 'datetime'
   constraints?: IDateTimeConstraints
 }
+
+export type IFormFieldLayout = 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 interface IContainerField extends IFormFieldRoot {
   skip_path?: boolean
   fields: IFormField[]
-  layout?: 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
+  layout?: IFormFieldLayout
   multiple?: boolean
 }
 
@@ -271,8 +293,15 @@ export interface IObjectField extends Omit<IValidContainerField, 'fields'> {
 
 export interface IObjectListField extends Omit<IValidContainerField, 'fields'> {
   type: 'objectList'
+  tabs?: IFormLayoutTab[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
   settings: {
     keyField: string
+    valueField?: string
+    onlyShowKeyUntilUniqueEntered?: boolean
+    showInitialObject?: boolean
+    excludeKeyFieldFromValue?: boolean
   }
   fields: IFormField[]
 }
@@ -367,6 +396,10 @@ export interface IFormSection {
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
   tabs?: IFormLayoutTab[]
+  settings?: {
+    boldDescription?: boolean
+    className?: string
+  }
 }
 
 export interface IPage extends Omit<IFormSection, 'pages'> {}
@@ -393,9 +426,11 @@ export interface IForm {
   settings?: IFormSettings
 }
 
+type IContainerFieldOverrideBase = Partial<IObjectField | IObjectWrapperField | IObjectListField>
+
 export type IFormFieldOverride = (Partial<IFormField> & { prop: string }) | IObjectFormFieldOverride
 export type IObjectFormFieldOverride = Omit<
-  Partial<IObjectField>,
+  IContainerFieldOverrideBase,
   'fields' | 'tabs' | 'pages' | 'wizard_steps'
 > & {
   fields?: IFormFieldOverride[]

@@ -1,20 +1,17 @@
 import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
-import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues, type ICompositeValueType } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormSection, type IFieldInputProps, IFormValues, type ICompositeValueType } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/utils/validators'
-import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from '@radix-ui/react-icons'
+import { Cross2Icon, DropdownMenuIcon } from '@radix-ui/react-icons'
 import React, { memo, ReactNode, useEffect, useState, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
-import FieldCreator from '@/Form/Components/FieldCreator'
-import { cloneObject } from '@/utils/manipulators'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
-import InlineMarkdown from '@/Form/Components/InlineMarkdown'
 import { useAtom } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 import { Button } from '@axdspub/axiom-ui-utilities'
-import FieldLabel, { FieldLabelText } from '@/Form/Components/FieldLabel'
+import FieldLabel from '@/Form/Components/FieldLabel'
 import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
 import { WizardNavSmall } from '@/Form/Creator/Wizard'
 
@@ -176,10 +173,11 @@ export const ActivePage = ({
               label: formSection.description,
               type: 'text',
               settings: {
-                descriptionPresentation: 'tooltip'
+                descriptionPresentation: 'tooltip',
+                ...formSection.settings
               }
             }}
-              textClassName='font-normal'
+              textClassName={`${formSection?.settings?.boldDescription ? 'font-bold' : 'font-normal'}`}
 
             />
 
@@ -262,12 +260,16 @@ const PageLayoutContent = ({
         />
       )}
     </div>
+    {
+      level === 0 &&
+    
       <SmallNavComponent
         sections={sections}
         sectionStatus={sectionStatus}
         level={level}
         SubmitButton={SubmitButton}
       />
+    }
     </div>
   )
 }

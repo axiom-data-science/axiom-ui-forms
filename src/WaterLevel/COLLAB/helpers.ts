@@ -1,9 +1,10 @@
 import {
   type IObjectFormFieldOverride,
   type IFormSectionOverride,
+  type IFormFieldOverride,
 } from '@/Form/Creator/FormCreatorTypes'
 import { type IMetadataFormSection, type IMetadataField } from '@/WaterLevel/COLLAB/types'
-import { type JSONSchema6 } from 'json-schema'
+import { type JSONSchema6, type JSONSchema6Definition } from 'json-schema'
 
 const COLLAB_ROOT =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRcD83QFtU6UeW5KwMt0qDYWtLoDWzRbw1dKZI5ntOhevndBL1CyxtSvBXgg7vREdmVCvDgnw4fbSrq/pub?output=tsv'
@@ -64,7 +65,7 @@ export interface IFormGrouping {
 
 export const getFormGroupings = async (): Promise<IFormGrouping[]> => {
   const groupings = await loadSheet<IMetadataFormSection>(FORM_GROUPINGS_SHEET)
-  return groupings.filter(g=>g.id && g.id.trim() !== '') as IFormGrouping[]
+  return groupings.filter((g) => g.id && g.id.trim() !== '') as IFormGrouping[]
 }
 
 const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 => {
@@ -77,9 +78,10 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
     f.option6,
     f.option7,
     f.option8,
-  ].filter((o) => o !== null && o !== '')
-  .map((o) => o?.split('; '))
-  .flat(Infinity) as string[]
+  ]
+    .filter((o) => o !== null && o !== '')
+    .map((o) => o?.split('; '))
+    .flat(Infinity) as string[]
   // const optionsToUse = options.length > 0 ? options.filter(o => o !== 'Other') : []
   // const optionsIncludesOther = options.some(o => o && o.toLowerCase() === 'other') || (f.response_type === "Multichoice with 'other' option" && optionsToUse.length > 0)
   // const useAnyOf = optionsIncludesOther && options.length > 0
@@ -134,12 +136,215 @@ const fieldToSchemaProperty = (f: IMetadataField, path?: string): JSONSchema6 =>
   return prop
 }
 
+const setSchemaPropertyByIdPath = (
+  properties: Record<string, JSONSchema6Definition>,
+  idPath: string,
+  prop: JSONSchema6
+): void => {
+  const pathParts = idPath
+    .split('.')
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
+
+  if (pathParts.length === 0) {
+    return
+  }
+
+  let currentProps = properties
+  for (let i = 0; i < pathParts.length - 1; i += 1) {
+    const part = pathParts[i]
+    const existing = currentProps[part]
+
+    if (existing === undefined || typeof existing === 'boolean') {
+      currentProps[part] = {
+        type: 'object',
+        properties: {},
+      }
+    } else if (existing.type !== 'object' || existing.properties === undefined) {
+      currentProps[part] = {
+        ...existing,
+        type: 'object',
+        properties: existing.properties ?? {},
+      }
+    }
+
+    currentProps = (currentProps[part] as JSONSchema6).properties as Record<
+      string,
+      JSONSchema6Definition
+    >
+  }
+
+  const leaf = pathParts[pathParts.length - 1]
+  currentProps[leaf] = prop
+}
+
+const contributorsSpecialCase = (): JSONSchema6 => {
+  return {
+    "type": "object",
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "title": "Contributor role",
+          "enum": [
+            {
+              "const": "custodian",
+              "title": "Custodian"
+            },
+            {
+              "const": "community_poc",
+              "title": "Community Point of Contact"
+            },
+            {
+              "const": "owner",
+              "title": "Owner"
+            },
+            {
+              "const": "publisher",
+              "title": "Data Publisher"
+            },
+            {
+              "const": "distributor",
+              "title": "Distributor"
+            },
+            {
+              "const": "funder",
+              "title": "Funder"
+            },
+            {
+              "const": "funder2",
+              "title": "Funder 2"
+            },
+            {
+              "const": "funder3",
+              "title": "Funder 3"
+            }
+          ],
+        },
+         "name": {
+            "type": "string",
+            "title": "Name",
+          },
+          "phone": {
+            "type": "string",
+            "format": "phone",
+            "title": "Telephone (primary)",
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+          },
+          "url": {
+            "type": "string",
+            "title": "URL",
+          },
+          "affiliation": {
+            "type": "string",
+            "title": "Organization"
+          }
+      }
+    }
+  }
+}
+
+const getContributorRootId = (id: string): 'contributor' | 'contributors' | undefined => {
+  const rootId = id.trim().split('.')[0]
+  if (rootId === 'contributor' || rootId === 'contributors') {
+    return rootId
+  }
+  return undefined
+}
+
+const isContributorFieldId = (id: string): boolean => getContributorRootId(id) !== undefined
+
+const setContributorsSpecialCase = (
+  properties: Record<string, JSONSchema6Definition>,
+  rootKey: 'contributor' | 'contributors'
+): void => {
+  if (properties[rootKey] === undefined) {
+    properties[rootKey] = contributorsSpecialCase()
+  }
+}
+
+const isRequiredMetadataField = (field: IMetadataField): boolean => {
+  const requirementStatus =
+    typeof field.requirement_status === 'string' ? field.requirement_status.trim().toLowerCase() : ''
+  return requirementStatus === 'required'
+}
+
+const markSchemaFieldRequired = (schema: JSONSchema6, field: IMetadataField): void => {
+  const idPathParts = field.id
+    .split('.')
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
+
+  if (idPathParts.length === 0) {
+    return
+  }
+
+  let currentSchema: JSONSchema6 = schema
+  const metadataPath = (field.path ?? '').trim()
+
+  if (metadataPath !== '') {
+    const pathParts = metadataPath.split('/').filter((part) => part.trim() !== '')
+
+    for (const rawPart of pathParts) {
+      const isArrayPart = rawPart.endsWith('[]')
+      const cleanPart = isArrayPart ? rawPart.slice(0, -2).trim() : rawPart.trim()
+      const nextDefinition = currentSchema.properties?.[cleanPart]
+
+      if (nextDefinition === undefined || typeof nextDefinition === 'boolean') {
+        return
+      }
+
+      const nextSchema = nextDefinition
+      if (isArrayPart) {
+        const arrayItems = nextSchema.items
+        if (arrayItems === undefined || Array.isArray(arrayItems) || typeof arrayItems === 'boolean') {
+          return
+        }
+        currentSchema = arrayItems
+      } else {
+        currentSchema = nextSchema
+      }
+    }
+  }
+
+  for (let i = 0; i < idPathParts.length - 1; i += 1) {
+    const part = idPathParts[i]
+    const nextDefinition =
+      currentSchema.properties?.[part] ?? (currentSchema as unknown as Record<string, JSONSchema6Definition>)[part]
+
+    if (nextDefinition === undefined || typeof nextDefinition === 'boolean') {
+      return
+    }
+
+    currentSchema = nextDefinition
+  }
+
+  const leafKey = idPathParts[idPathParts.length - 1]
+  const hasLeaf =
+    currentSchema.properties?.[leafKey] !== undefined ||
+    (currentSchema as unknown as Record<string, JSONSchema6Definition>)[leafKey] !== undefined
+
+  if (!hasLeaf) {
+    return
+  }
+
+  const requiredSet = new Set(currentSchema.required ?? [])
+  requiredSet.add(leafKey)
+  currentSchema.required = Array.from(requiredSet)
+}
+
 export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSchema6 => {
   const schema: JSONSchema6 = {
     type: 'object',
     $schema: 'http://json-schema.org/draft-06/schema#',
     title: 'COLLAB Water Level Metadata',
   }
+  schema.properties = schema.properties ?? {}
 
   const byPath: Record<string, IMetadataField[]> = {}
   fields.forEach((f) => {
@@ -153,9 +358,17 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
   Object.entries(byPath).forEach(([path, fields]) => {
     if (path === '') {
       fields.forEach((f) => {
+        const contributorRoot = getContributorRootId(f.id)
+        if (contributorRoot !== undefined) {
+          setContributorsSpecialCase(
+            schema.properties as Record<string, JSONSchema6Definition>,
+            contributorRoot
+          )
+          return
+        }
         const prop = fieldToSchemaProperty(f)
         schema.properties = schema.properties ?? {}
-        schema.properties[f.id] = prop
+        setSchemaPropertyByIdPath(schema.properties, f.id, prop)
       })
     } else {
       const pathParts = path.split('/').filter((p) => p)
@@ -163,7 +376,6 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
       pathParts.forEach((part, index) => {
         const isMultiple = part.match(/\[\]$/)
         const lastIndex = index >= pathParts.length - 1
-        const isObject = fields.length > 1
         const cleanPart = (isMultiple ? part.slice(0, -2) : part).trim()
 
         if (isMultiple && p[cleanPart] === undefined) {
@@ -187,15 +399,35 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
             p[cleanPart].type === 'array'
               ? (p[cleanPart].items as Record<string, JSONSchema6>)
               : (p[cleanPart].properties as Record<string, JSONSchema6>)
-          if (!isObject && isMultiple) {
-            propsOb[fields[0].id] = fieldToSchemaProperty(fields[0])
+
+          const propsObRecord = propsOb as Record<string, JSONSchema6Definition>
+          const contributorFields = fields.filter((f) => isContributorFieldId(f.id))
+          if (contributorFields.length > 0) {
+            const contributorRoot = getContributorRootId(contributorFields[0].id) ?? 'contributor'
+            setContributorsSpecialCase(propsObRecord, contributorRoot)
+          }
+
+          const nonContributorFields = fields.filter((f) => !isContributorFieldId(f.id))
+          if (nonContributorFields.length === 0) {
+            return
+          }
+
+          const shouldBeSingleProperty = nonContributorFields.length === 1
+          if (shouldBeSingleProperty) {
+            const onlyField = nonContributorFields[0]
+            const propsObRecord = propsOb as Record<string, JSONSchema6Definition>
+            setSchemaPropertyByIdPath(propsObRecord, onlyField.id, fieldToSchemaProperty(onlyField))
           } else {
-            fields.forEach((f) => {
+            nonContributorFields.forEach((f) => {
               const prop = fieldToSchemaProperty(f, path)
               const propsObRecord = propsOb as Record<string, any>
               propsObRecord.properties = propsObRecord.properties ?? {}
               propsObRecord.type = 'object'
-              propsObRecord.properties[f.id] = prop
+              setSchemaPropertyByIdPath(
+                propsObRecord.properties as Record<string, JSONSchema6Definition>,
+                f.id,
+                prop
+              )
             })
           }
         } else {
@@ -203,6 +435,11 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
         }
       })
     }
+  })
+
+  // Apply required flags after schema structure is fully built.
+  fields.filter((field) => isRequiredMetadataField(field)).forEach((field) => {
+    markSchemaFieldRequired(schema, field)
   })
 
   /* fields.forEach(f => {
@@ -233,6 +470,30 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
   }) */
   console.log('SCHEMA', schema)
   return schema
+}
+
+const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormFieldOverride => {
+  const fO: IFormFieldOverride = {
+    prop: field.id,
+  }
+  if (field.response_type && field.response_type.toLowerCase().includes('upload')) {
+    fO.type = 'file_upload'
+  }
+  const options = [
+    field.option1,
+    field.option2,
+    field.option3,
+    field.option4,
+    field.option5,
+    field.option6,
+    field.option7,
+    field.option8
+  ].filter(o => o !== null && o !== '' && o !== undefined) as string[]
+  if(options.length && options.find(o => o.toLowerCase() === 'other')) {
+    console.log('setting selectorOrText for', field.id, 'options', options)
+    fO.type = 'selectOrText'
+  }
+  return fO
 }
 
 export const parseFormSections = (
@@ -279,7 +540,7 @@ export const parseFormSections = (
             fieldsByPath[f.path ?? ''] = []
           }
           fieldsByPath[f.path ?? ''].push(f)
-          if(f.field_grouping && groupingsById[f.field_grouping]) {
+          if (f.field_grouping && groupingsById[f.field_grouping]) {
             fieldsByGrouping[f.field_grouping] = fieldsByGrouping[f.field_grouping] ?? []
             fieldsByGrouping[f.field_grouping].push(f)
           }
@@ -298,9 +559,7 @@ export const parseFormSections = (
             return {
               id: secondarySectionId,
               label: secondarySectionLabel,
-              fields: secondarySectionFields.map((f) => ({
-                prop: f.id,
-              })),
+              fields: secondarySectionFields.map(createFieldOverrideFromMetadataField),
             } satisfies IFormSectionOverride
           })
 
@@ -312,7 +571,7 @@ export const parseFormSections = (
           const objectFieldWithTabs: IObjectFormFieldOverride = {
             prop: path,
             type: 'object',
-            multiple: true,
+            // multiple: true,
             tabs,
           }
           section.fields = [objectFieldWithTabs]
@@ -320,9 +579,7 @@ export const parseFormSections = (
           section.tabs = tabs
         }
       } else {
-        section.fields = fields.map((f) => ({
-          prop: f.id,
-        }))
+        section.fields = fields.map(createFieldOverrideFromMetadataField)
       }
       return section
     })

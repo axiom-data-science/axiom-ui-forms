@@ -10,6 +10,8 @@ import {
   getFormPayload
 } from './getters'
 import { type IFormSection, type IFormField } from '@/Form/Creator/FormCreatorTypes'
+import { overridesAndSchemaToFormObject, schemaToFormObject } from './schemaToFormHelpers'
+import type { JSONSchema6 } from 'json-schema'
 
 describe('getters.ts', () => {
   describe('makeJsonPath', () => {
@@ -264,6 +266,428 @@ describe('getters.ts', () => {
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ field1: 'value1' })
       expect(result).not.toHaveProperty('field2')
+    })
+
+    it('should emit simple key/value payload for objectList when settings.valueField is set', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'servers',
+            type: 'objectList',
+            settings: {
+              keyField: 'hostname',
+              valueField: 'ip',
+            },
+            fields: [
+              { id: 'hostname', type: 'text' },
+              { id: 'ip', type: 'text' },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        servers: {
+          alpha: '10.0.0.1',
+          beta: {
+            hostname: 'beta',
+            ip: '10.0.0.2',
+            environment: 'prod',
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        servers: {
+          alpha: '10.0.0.1',
+          beta: '10.0.0.2',
+        },
+      })
+    })
+
+    it('should preserve nested object values in objectList valueField mode', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'nestedList',
+            type: 'objectList',
+            settings: {
+              keyField: 'name',
+              valueField: 'value',
+            },
+            fields: [
+              { id: 'name', type: 'text' },
+              {
+                id: 'value',
+                type: 'objectList',
+                settings: {
+                  keyField: 'subName',
+                  excludeKeyFieldFromValue: true,
+                },
+                fields: [
+                  { id: 'subName', type: 'text' },
+                  { id: 'subValue', type: 'text' },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        nestedList: {
+          outerA: {
+            innerA: {
+              subValue: 'x',
+            },
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        nestedList: {
+          outerA: {
+            innerA: {
+              subValue: 'x',
+            },
+          },
+        },
+      })
+    })
+
+    it('should emit objectList payload from wrapper layout without keyField when excludeKeyFieldFromValue is true', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: {
+                  keyField: 'name',
+                  excludeKeyFieldFromValue: true,
+                },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    layout: 'grid2',
+                    fields: [{ prop: 'name' }, { prop: 'value' }],
+                  },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const formValues = {
+        list: {
+          alpha: {
+            name: 'alpha',
+            value: 42,
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        list: {
+          alpha: {
+            value: 42,
+          },
+        },
+      })
+    })
+
+    it('should include flattened skip_path child values for multiple object items', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'variable_converter',
+            type: 'object',
+            multiple: true,
+            fields: [
+              {
+                id: 'split_operator',
+                type: 'object',
+                skip_path: true,
+                fields: [
+                  { id: 'source_variable', type: 'text' },
+                  { id: 'converter_type', type: 'text' },
+                ],
+              },
+              {
+                id: 'drop_columns',
+                type: 'object',
+                skip_path: true,
+                fields: [
+                  { id: 'column_names', type: 'text', multiple: true },
+                  { id: 'converter_type', type: 'text' },
+                ],
+              },
+              {
+                id: 'output_variables',
+                type: 'object',
+                multiple: true,
+                fields: [
+                  { id: 'index', type: 'number' },
+                  { id: 'output_variable', type: 'text' },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            converter_type: 'split',
+            column_names: ['unused'],
+            output_variables: [
+              { index: 0, output_variable: 'u' },
+              { index: 1, output_variable: 'v' },
+            ],
+          },
+          {
+            converter_type: 'drop',
+            column_names: ['a', 'b'],
+            output_variables: [
+              { index: 0, output_variable: 'depth' },
+            ],
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            converter_type: 'split',
+            column_names: ['unused'],
+            output_variables: [
+              { index: 0, output_variable: 'u' },
+              { index: 1, output_variable: 'v' },
+            ],
+          },
+          {
+            converter_type: 'drop',
+            column_names: ['a', 'b'],
+            output_variables: [
+              { index: 0, output_variable: 'depth' },
+            ],
+          },
+        ],
+      })
+    })
+
+    it('should support n-level nested payload extraction with skip_path at arbitrary non-multiple levels', () => {
+      const form = {
+        id: 'deep-form',
+        label: 'Deep Form',
+        fields: [
+          {
+            id: 'variable_converter',
+            type: 'object',
+            multiple: true,
+            fields: [
+              {
+                id: 'split_operator',
+                type: 'object',
+                skip_path: true,
+                fields: [
+                  { id: 'source_variable', type: 'text' },
+                  {
+                    id: 'details',
+                    type: 'object',
+                    fields: [
+                      {
+                        id: 'meta',
+                        type: 'object',
+                        skip_path: true,
+                        fields: [
+                          { id: 'units', type: 'text' },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'output_variables',
+                    type: 'object',
+                    multiple: true,
+                    fields: [
+                      { id: 'index', type: 'number' },
+                      {
+                        id: 'shape',
+                        type: 'object',
+                        skip_path: true,
+                        fields: [{ id: 'output_variable', type: 'text' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            details: {
+              units: 'degC',
+            },
+            output_variables: [
+              { index: 0, output_variable: 'temp_surface' },
+              { index: 1, output_variable: 'temp_bottom' },
+            ],
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        variable_converter: [
+          {
+            source_variable: 'temp_raw',
+            details: {
+              units: 'degC',
+            },
+            output_variables: [
+              { index: 0, output_variable: 'temp_surface' },
+              { index: 1, output_variable: 'temp_bottom' },
+            ],
+          },
+        ],
+      })
+    })
+
+    it('should include active oneOf object branch values in payload', () => {
+      const schema: JSONSchema6 = {
+        title: 'OneOf Object Payload Test',
+        type: 'object',
+        properties: {
+          transport: {
+            type: 'object',
+            title: 'Transport',
+            oneOf: [
+              {
+                title: 'S3',
+                type: 'object',
+                properties: {
+                  bucket: { type: 'string' },
+                  prefix: { type: 'string' },
+                },
+              },
+              {
+                title: 'HTTP',
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  method: { type: 'string', enum: ['GET', 'POST'] },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const formValues = {
+        transport: {
+          select_transport: 'S3',
+          bucket: 'example-bucket',
+          prefix: 'incoming/',
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        transport: {
+          bucket: 'example-bucket',
+          prefix: 'incoming/',
+        },
+      })
+    })
+
+    it('should exclude inactive oneOf branch values from payload', () => {
+      const schema: JSONSchema6 = {
+        title: 'OneOf Object Payload Exclusion Test',
+        type: 'object',
+        properties: {
+          transport: {
+            type: 'object',
+            title: 'Transport',
+            oneOf: [
+              {
+                title: 'S3',
+                type: 'object',
+                properties: {
+                  bucket: { type: 'string' },
+                  prefix: { type: 'string' },
+                },
+              },
+              {
+                title: 'HTTP',
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  method: { type: 'string', enum: ['GET', 'POST'] },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const formValues = {
+        transport: {
+          select_transport: 'HTTP',
+          bucket: 'old-bucket',
+          prefix: 'old-prefix/',
+          url: 'https://example.com/data',
+          method: 'GET',
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        transport: {
+          url: 'https://example.com/data',
+          method: 'GET',
+        },
+      })
     })
   })
 })

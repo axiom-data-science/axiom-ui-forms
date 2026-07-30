@@ -870,5 +870,33 @@ describe('formEngine - Field Logic Evaluation', () => {
       expect(formValues.shape_type).toBe('point')
       expect(formValues.geojson).toBe(null)
     })
+
+    it('applies defaults to nested object fields defined inside tabs', () => {
+      const fields: IFormField[] = [
+        {
+          id: 'processor',
+          type: 'object',
+          label: 'Processor',
+          tabs: [
+            {
+              id: 'split-tab',
+              label: 'Split',
+              fields: [
+                { id: 'source_variable', type: 'text', label: 'Source' },
+                { id: 'separator', type: 'text', label: 'Separator', defaultValue: ',' },
+              ],
+            },
+          ],
+        } as unknown as IFormField,
+      ]
+
+      const formValues: any = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      expect(formValues.processor).toBeDefined()
+      expect(formValues.processor.separator).toBe(',')
+    })
   })
 })

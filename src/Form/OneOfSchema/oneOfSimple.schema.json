@@ -1,0 +1,15 @@
+{
+  "title": "OneOf Simple Schema Demo",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "title": "Mode",
+      "type": "string",
+      "oneOf": [
+        { "const": "fast", "title": "Fast" },
+        { "const": "safe", "title": "Safe" },
+        { "const": "balanced", "title": "Balanced" }
+      ]
+    }
+  }
+}

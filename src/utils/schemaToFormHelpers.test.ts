@@ -138,6 +138,174 @@ describe('schemaToFormHelpers', () => {
       expect(form?.fields?.length).toBe(2)
       expect(form?.fields?.[0].label).toBe('First Name')
     })
+
+    it('renders oneOf object branches as a selector with conditional branch wrappers', () => {
+      const schema: JSONSchema6 = {
+        title: 'Config Form',
+        type: 'object',
+        properties: {
+          mode_config: {
+            type: 'object',
+            title: 'Mode Config',
+            oneOf: [
+              {
+                title: 'Split',
+                type: 'object',
+                properties: {
+                  source_variable: { type: 'string' },
+                },
+              },
+              {
+                title: 'Profile',
+                type: 'object',
+                properties: {
+                  depth: { type: 'number' },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const modeField = form.fields?.find((f) => f.id === 'mode_config') as any
+      expect(modeField).toBeDefined()
+      expect(modeField.type).toBe('object')
+
+      const selector = modeField.fields?.find((f: any) => f.id === 'select_mode_config')
+      expect(selector).toBeDefined()
+      expect(selector.type).toBe('select')
+      expect(selector.options?.map((o: any) => o.label)).toEqual(['Split', 'Profile'])
+      expect(selector.defaultValue).toBe('Split')
+      expect(selector.excludeFromPayload).toBe(true)
+      expect(selector.settings?.allowNull).toBe(false)
+
+      const splitBranch = modeField.fields?.find((f: any) => f.id === 'Split')
+      const profileBranch = modeField.fields?.find((f: any) => f.id === 'Profile')
+      expect(splitBranch?.type).toBe('objectWrapper')
+      expect(profileBranch?.type).toBe('objectWrapper')
+      expect(splitBranch?.skip_path).toBe(true)
+      expect(profileBranch?.skip_path).toBe(true)
+      expect(splitBranch?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Split',
+      })
+      expect(profileBranch?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Profile',
+      })
+
+      const splitSourceField = splitBranch?.fields?.find((f: any) => f.id === 'source_variable')
+      const profileDepthField = profileBranch?.fields?.find((f: any) => f.id === 'depth')
+      expect(splitSourceField?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Split',
+      })
+      expect(profileDepthField?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Profile',
+      })
+    })
+
+    it('preserves all oneOf branch wrappers when parent field is included via single prop override', () => {
+      const schema: JSONSchema6 = {
+        title: 'OneOf Override Branch Preservation',
+        type: 'object',
+        properties: {
+          transport: {
+            type: 'object',
+            title: 'Transport',
+            oneOf: [
+              {
+                title: 'S3',
+                type: 'object',
+                properties: {
+                  bucket: { type: 'string' },
+                },
+              },
+              {
+                title: 'HTTP',
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [{ prop: 'transport' }],
+          },
+        ],
+      })
+
+      const transport = form.fields?.find((f) => f.id === 'transport') as any
+      const selector = transport?.fields?.find((f: any) => f.id === 'select_transport')
+      const s3 = transport?.fields?.find((f: any) => f.id === 'S3')
+      const http = transport?.fields?.find((f: any) => f.id === 'HTTP')
+
+      expect(selector).toBeDefined()
+      expect(s3).toBeDefined()
+      expect(http).toBeDefined()
+      expect(s3?.type).toBe('objectWrapper')
+      expect(http?.type).toBe('objectWrapper')
+    })
+
+    it('renders anyOf object branches as tabs', () => {
+      const schema: JSONSchema6 = {
+        title: 'AnyOf Tabs Demo',
+        type: 'object',
+        properties: {
+          processor: {
+            title: 'Processor',
+            type: 'object',
+            anyOf: [
+              {
+                title: 'Split Processor',
+                type: 'object',
+                properties: {
+                  source_variable: { type: 'string', title: 'Source Variable' },
+                  separator: { type: 'string', title: 'Separator' },
+                },
+              },
+              {
+                title: 'Drop Processor',
+                type: 'object',
+                properties: {
+                  column_names: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    title: 'Column Names',
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const processorField = form.fields?.find((f) => f.id === 'processor') as any
+      expect(processorField).toBeDefined()
+      expect(processorField.type).toBe('object')
+      expect(processorField.tabs).toBeDefined()
+      expect(processorField.tabs).toHaveLength(2)
+      expect(processorField.tabs?.map((t: any) => t.label)).toEqual([
+        'Split Processor',
+        'Drop Processor',
+      ])
+
+      const splitTabFields = processorField.tabs?.[0]?.fields ?? []
+      const dropTabFields = processorField.tabs?.[1]?.fields ?? []
+      expect(splitTabFields.some((f: any) => f.id === 'source_variable')).toBe(true)
+      expect(splitTabFields.some((f: any) => f.id === 'separator')).toBe(true)
+      expect(dropTabFields.some((f: any) => f.id === 'column_names')).toBe(true)
+    })
   })
 
   describe('overridesAndSchemaToFormObject', () => {
@@ -156,6 +324,57 @@ describe('schemaToFormHelpers', () => {
       })
       expect(form.label).toBe('Overridden')
       expect(form?.fields?.[0]?.label).toBe('Bar')
+    })
+
+    it('preserves schema-generated tabs for anyOf object when override only references the parent prop', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          processor: {
+            type: 'object',
+            title: 'Processor',
+            anyOf: [
+              {
+                title: 'Split Processor',
+                type: 'object',
+                properties: {
+                  source_variable: { type: 'string' },
+                  separator: { type: 'string' },
+                },
+              },
+              {
+                title: 'Drop Processor',
+                type: 'object',
+                properties: {
+                  column_names: {
+                    type: 'array',
+                    items: { type: 'string' },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [{ prop: 'processor' }],
+          },
+        ],
+      })
+
+      const processorField = form.fields?.find((f) => f.id === 'processor') as any
+      expect(processorField).toBeDefined()
+      expect(processorField.type).toBe('object')
+      expect(processorField.tabs).toBeDefined()
+      expect(processorField.tabs).toHaveLength(2)
+      expect(processorField.tabs?.map((t: any) => t.label)).toEqual([
+        'Split Processor',
+        'Drop Processor',
+      ])
     })
 
     it('preserves defaultValue for override-only fields', () => {
@@ -225,6 +444,194 @@ describe('schemaToFormHelpers', () => {
       expect(nameField?.excludeFromPayload).not.toBe(true)
       expect(ageField?.excludeFromPayload).not.toBe(true)
     })
+
+    it('inherits title and description for objectList children from additionalProperties schema', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  title: 'Name',
+                  description: 'Name of the item',
+                },
+                value: {
+                  type: 'number',
+                  title: 'Value',
+                  description: 'Value of the item',
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: { keyField: 'name' },
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+      expect(listField.fields?.find((f: any) => f.id === 'name')?.label).toBe('Name')
+      expect(listField.fields?.find((f: any) => f.id === 'name')?.description).toBe(
+        'Name of the item'
+      )
+      expect(listField.fields?.find((f: any) => f.id === 'value')?.label).toBe('Value')
+      expect(listField.fields?.find((f: any) => f.id === 'value')?.description).toBe(
+        'Value of the item'
+      )
+    })
+
+    it('supports nested objectList display overrides with prop-based children', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  title: 'Name',
+                },
+                value: {
+                  type: 'number',
+                  title: 'Value',
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: {
+                  keyField: 'name',
+                },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    layout: 'grid2',
+                    fields: [
+                      { prop: 'name', label: 'Display Name' },
+                      { prop: 'value', label: 'Display Value' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+
+      const wrapper = listField.fields?.find((f: any) => f.id === 'wrapper')
+      expect(wrapper).toBeDefined()
+      expect(wrapper.type).toBe('objectWrapper')
+
+      const nestedName = wrapper.fields?.find((f: any) => f.id === 'name')
+      const nestedValue = wrapper.fields?.find((f: any) => f.id === 'value')
+      expect(nestedName?.label).toBe('Display Name')
+      expect(nestedValue?.label).toBe('Display Value')
+    })
+
+    it('does not duplicate objectList schema children when using id-only wrapper layout', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  title: 'Name',
+                  description: 'Name of the item',
+                },
+                value: {
+                  type: 'number',
+                  title: 'Value',
+                  description: 'Value of the item',
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: { keyField: 'name' },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    layout: 'grid2',
+                    fields: [{ prop: 'name' }, { prop: 'value' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+
+      const childIds = (listField.fields ?? []).map((f: any) => f.id)
+      expect(childIds).toEqual(['wrapper'])
+
+      const wrapper = listField.fields?.[0]
+      expect(wrapper?.type).toBe('objectWrapper')
+      expect(wrapper?.fields?.map((f: any) => f.id)).toEqual(['name', 'value'])
+      const nestedName = wrapper?.fields?.find((f: any) => f.id === 'name')
+      const nestedValue = wrapper?.fields?.find((f: any) => f.id === 'value')
+      expect(nestedName).toBeDefined()
+      expect(nestedValue).toBeDefined()
+      expect(nestedName?.label).toBe('Name')
+      expect(nestedName?.description).toBe('Name of the item')
+      expect(nestedValue?.label).toBe('Value')
+      expect(nestedValue?.description).toBe('Value of the item')
+      expect(nestedName?.excludeFromPayload === true).toBe(false)
+      expect(nestedValue?.excludeFromPayload === true).toBe(false)
+    })
   })
 
   describe('getSchemaPaths', () => {
@@ -254,6 +661,29 @@ describe('schemaToFormHelpers', () => {
       }
       const paths = getSchemaPaths(schema)
       expect(paths).toContain('[]')
+    })
+
+    it('includes additionalProperties object child paths', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
+      }
+
+      const paths = getSchemaPaths(schema)
+      expect(paths).toContain('list')
+      expect(paths).toContain('list.name')
+      expect(paths).toContain('list.value')
     })
   })
 
@@ -368,6 +798,148 @@ describe('schemaToFormHelpers', () => {
       expect(testObjectField.fields?.find((f: any) => f.id === 'field1')?.label).toBe(
         'Custom Field 1 Label'
       )
+    })
+
+    it('applies bracket-notation child labels defined directly in form override fields', () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'testObject',
+                fields: [
+                  { prop: 'testObject[].field1' },
+                  { prop: 'testObject[].field2', label: 'Custom Field 2 Label (from form override)' },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const testObjectField = form.fields?.find((f) => f.id === 'testObject') as any
+      expect(testObjectField).toBeDefined()
+      expect(testObjectField.fields?.find((f: any) => f.id === 'field2')?.label).toBe(
+        'Custom Field 2 Label (from form override)'
+      )
+    })
+
+    it('does not duplicate child fields when bracket and normalized keys both exist', () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'testObject',
+                fields: [
+                  { prop: 'testObject[].field1' },
+                  { prop: 'testObject.field1', label: 'Field 1 normalized override' },
+                  { prop: 'testObject[].field2' },
+                ],
+              } as any,
+            ],
+          },
+        ],
+        formFieldOverrides: [[{ prop: 'testObject[].field1', label: 'Field 1 bracket override' }]],
+      })
+
+      const testObjectField = form.fields?.find((f) => f.id === 'testObject') as any
+      expect(testObjectField).toBeDefined()
+
+      const field1Entries = (testObjectField.fields ?? []).filter((f: any) => f.id === 'field1')
+      const field2Entries = (testObjectField.fields ?? []).filter((f: any) => f.id === 'field2')
+
+      expect(field1Entries).toHaveLength(1)
+      expect(field2Entries).toHaveLength(1)
+      expect(testObjectField.fields).toHaveLength(2)
+      expect(field1Entries[0]?.label).toBeDefined()
+    })
+
+    it('keeps nested id-only objectWrapper children and renders inner override fields', () => {
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              { prop: 'testObject' },
+              {
+                id: 'wrapper1',
+                type: 'objectWrapper',
+                fields: [
+                  {
+                    id: 'wrapper2',
+                    type: 'objectWrapper',
+                    fields: [
+                      {
+                        prop: 'testEnum',
+                        label: 'Custom Label for Enum',
+                      },
+                    ],
+                  },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+
+      const wrapper1 = form.fields?.find((f) => f.id === 'wrapper1') as any
+      expect(wrapper1).toBeDefined()
+      expect(wrapper1.type).toBe('objectWrapper')
+      expect(wrapper1.skip_path).toBe(true)
+
+      const wrapper2 = wrapper1.fields?.find((f: any) => f.id === 'wrapper2')
+      expect(wrapper2).toBeDefined()
+      expect(wrapper2.type).toBe('objectWrapper')
+      expect(wrapper2.skip_path).toBe(true)
+
+      const nestedField = wrapper2.fields?.find((f: any) => f.id === 'testEnum')
+      expect(nestedField).toBeDefined()
+      expect(nestedField.label).toBe('Custom Label for Enum')
+    })
+
+    it('supports arbitrary-depth id-only objectWrapper nesting', () => {
+      const depth = 5
+      const leafField = {
+        prop: 'testEnum',
+        label: 'Deep Enum Label',
+      }
+
+      const nestedWrapper = Array.from({ length: depth }).reduceRight<any>((child, _, index) => {
+        return {
+          id: `wrapper${index + 1}`,
+          type: 'objectWrapper',
+          fields: [child],
+        }
+      }, leafField)
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [nestedWrapper],
+          },
+        ],
+      })
+
+      let current: any = form.fields?.find((f) => f.id === 'wrapper1')
+      expect(current).toBeDefined()
+
+      for (let level = 1; level <= depth; level++) {
+        expect(current).toBeDefined()
+        expect(current.type).toBe('objectWrapper')
+        expect(current.skip_path).toBe(true)
+
+        if (level < depth) {
+          current = current.fields?.find((f: any) => f.id === `wrapper${level + 1}`)
+        }
+      }
+
+      const deepField = current?.fields?.find((f: any) => f.id === 'testEnum')
+      expect(deepField).toBeDefined()
+      expect(deepField.label).toBe('Deep Enum Label')
     })
 
     it('remaps top-level tabs shorthand to the matching multiple array object field', () => {
@@ -584,6 +1156,65 @@ describe('schemaToFormHelpers', () => {
       expect(itemField.tabs?.length).toBe(2)
       expect(itemField.tabs?.[0]?.layout).toBe('grid2')
       expect(itemField.tabs?.[1]?.layout).toBeUndefined()
+    })
+
+    it('supports pages and wizard_steps on objectList containers with prop-based child fields', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          list: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                value: { type: 'number' },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'list',
+                type: 'objectList',
+                settings: { keyField: 'name' },
+                pages: [
+                  {
+                    id: 'details',
+                    label: 'Details',
+                    fields: [{ prop: 'list.name', label: 'Name Label' }],
+                  },
+                ],
+                wizard_steps: [
+                  {
+                    id: 'measure',
+                    label: 'Measure',
+                    fields: [{ prop: 'list.value', label: 'Value Label' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const listField = form.fields?.find((f) => f.id === 'list') as any
+      expect(listField).toBeDefined()
+      expect(listField.type).toBe('objectList')
+
+      expect(listField.pages?.length).toBe(1)
+      expect(listField.pages?.[0]?.fields?.[0]?.id).toBe('name')
+      expect(listField.pages?.[0]?.fields?.[0]?.label).toBe('Name Label')
+
+      expect(listField.wizard_steps?.length).toBe(1)
+      expect(listField.wizard_steps?.[0]?.fields?.[0]?.id).toBe('value')
+      expect(listField.wizard_steps?.[0]?.fields?.[0]?.label).toBe('Value Label')
     })
   })
 })

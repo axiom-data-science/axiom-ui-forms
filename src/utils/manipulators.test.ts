@@ -7,7 +7,10 @@ import {
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   createOneOfMultipleField,
+  copyAndAddPathToFields,
 } from '@/utils/manipulators'
+import { getPathFromField } from '@/utils/getters'
+import { schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { describe, it, expect } from 'vitest'
 
 describe('manipulators.ts', () => {
@@ -52,6 +55,45 @@ describe('manipulators.ts', () => {
       const secondField = createOneOfMultipleField(fieldWithPath, 1) as IObjectField
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
+    })
+
+    it('adds parent array path to fields nested in tabs', () => {
+      const form: IForm = {
+        id: 'testForm',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'testObject',
+            type: 'object',
+            multiple: true,
+            tabs: [
+              {
+                id: 'tab1',
+                label: 'Tab 1',
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    skip_path: true,
+                    fields: [
+                      { id: 'field1', type: 'text' },
+                      { id: 'field2', type: 'number' },
+                    ],
+                  } as any,
+                ],
+              },
+            ],
+          } as any,
+        ],
+      }
+
+      const formWithPaths = copyAndAddPathToFields(form)
+      const testObject = formWithPaths.fields?.[0] as any
+      const wrapper = testObject.tabs?.[0]?.fields?.[0] as IObjectField
+      const field2 = wrapper?.fields?.[1] as IFormField
+
+      expect(getPathFromField(wrapper)).toBeUndefined()
+      expect(getPathFromField(field2)).toBe('testObject.field2')
     })
   })
 
@@ -210,6 +252,121 @@ describe('manipulators.ts', () => {
   })
 
   describe('cleanAndUpdateFormValuesWithFieldValue - edge cases', () => {
+    it('clears stale oneOf branch values when selector changes', () => {
+      const formWithPaths = copyAndAddPathToFields(
+        schemaToFormObject({
+          title: 'OneOf Clear Test',
+          type: 'object',
+          properties: {
+            transport: {
+              type: 'object',
+              title: 'Transport',
+              oneOf: [
+                {
+                  title: 'S3',
+                  type: 'object',
+                  properties: {
+                    bucket: { type: 'string' },
+                    prefix: { type: 'string' },
+                  },
+                },
+                {
+                  title: 'HTTP',
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    method: { type: 'string', enum: ['GET', 'POST'] },
+                  },
+                },
+              ],
+            },
+          },
+        } as any)
+      )
+
+      const transportField = formWithPaths.fields?.find((f) => f.id === 'transport') as IFormField
+      const selectorField = (transportField as any).fields?.find(
+        (f: IFormField) => f.id === 'select_transport'
+      ) as IFormField
+
+      const formValues: IFormValues = {
+        transport: {
+          select_transport: 'S3',
+          bucket: 'example-bucket',
+          prefix: 'incoming/',
+        },
+      }
+
+      const updated = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: selectorField,
+        value: 'HTTP',
+        formValues,
+      })
+
+      const transport = updated.transport as IFormValues
+      expect(transport.select_transport).toBe('HTTP')
+      expect(transport.bucket).toBeUndefined()
+      expect(transport.prefix).toBeUndefined()
+    })
+
+    it('does not clear active oneOf values when unrelated root field changes', () => {
+      const formWithPaths = copyAndAddPathToFields(
+        schemaToFormObject({
+          title: 'OneOf Preserve Test',
+          type: 'object',
+          properties: {
+            field1: { type: 'string' },
+            transport: {
+              type: 'object',
+              title: 'Transport',
+              oneOf: [
+                {
+                  title: 'S3',
+                  type: 'object',
+                  properties: {
+                    bucket: { type: 'string' },
+                    prefix: { type: 'string' },
+                  },
+                },
+                {
+                  title: 'HTTP',
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    method: { type: 'string', enum: ['GET', 'POST'] },
+                  },
+                },
+              ],
+            },
+          },
+        } as any)
+      )
+
+      const field1 = formWithPaths.fields?.find((f) => f.id === 'field1') as IFormField
+      const formValues: IFormValues = {
+        field1: 'before',
+        transport: {
+          select_transport: 'S3',
+          bucket: 'my-bucket',
+          prefix: 'incoming/',
+        },
+      }
+
+      const updated = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: field1,
+        value: 'after',
+        formValues,
+      })
+
+      const transport = updated.transport as IFormValues
+      expect(updated.field1).toBe('after')
+      expect(transport.select_transport).toBe('S3')
+      expect(transport.bucket).toBe('my-bucket')
+      expect(transport.prefix).toBe('incoming/')
+    })
+
     it('preserves simple field update', () => {
       const form: IForm = {
         id: 'testForm',

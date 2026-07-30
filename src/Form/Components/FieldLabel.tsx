@@ -165,6 +165,8 @@ export const FieldLabelText = ({
   if (field.label === undefined || field.label === null || field.label === '') {
     return <></>
   }
+  const boldLabel = (field.settings as {boldLabel?: boolean} | undefined)?.boldLabel ?? false
+  const smallLabel = (field.settings as {smallLabel?: boolean} | undefined)?.smallLabel ?? false
   return (
     <span
       className={utils.makeClassName({
@@ -176,6 +178,8 @@ export const FieldLabelText = ({
             ? 'font-normal'
             : undefined,
           field.level !== undefined && field.level > 1 ? 'text-sm' : undefined,
+          boldLabel ? 'font-bold' : undefined,
+          smallLabel ? 'text-xs' : undefined,
         ],
       })}
     >
@@ -203,6 +207,7 @@ export const FieldDescriptionText = ({
   disabled?: boolean
 }): ReactElement => {
   const [showModal, setShowModal] = useState(false)
+  const isBold = (field.settings as {boldDescription?: boolean} | undefined)?.boldDescription ?? false
   const hasLongDescription =
     field.long_description !== undefined &&
     field.long_description !== null &&
@@ -224,10 +229,10 @@ export const FieldDescriptionText = ({
   return (
     <>
       {(hasDescription || hasLongDescription) && (
-        <p className="text-xs pb-2">
+        <div className={`text-xs pb-2 ${isBold ? 'font-bold' : ''}`}>
           <InlineMarkdown>{field.description}</InlineMarkdown>
           {longDescriptionButton}
-        </p>
+        </div>
       )}
       {showModal && <LongDescriptionModal field={field} setShowModal={setShowModal} />}
     </>
@@ -253,7 +258,7 @@ export const FieldLabel = ({
   return (
     <>
       {field.label !== undefined && field.label !== null && (
-        <p className="pb-2">
+        <div className="pb-2">
           <FieldLabelText
             field={field}
             disabled={disabled}
@@ -269,7 +274,7 @@ export const FieldLabel = ({
           ) : (
             <></>
           )}
-        </p>
+        </div>
       )}
       {descriptionPresentation === 'inline' ||
       descriptionPresentation === 'default' ? (

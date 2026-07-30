@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from 'react'
-import FileUpload from './FileUpload'
-import type { ParsedCSV } from './csvParser'
+import FileUpload from '@/Form/Components/Inputs/FileUpload/FileUpload'
+import type { ParsedCSV } from '@/Form/Components/Inputs/FileUpload/csvParser'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import { IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
 
@@ -60,7 +60,7 @@ const CSVUploadForSampleFile = ({ field, value }: IFieldInputProps): ReactElemen
         }
       }}
       acceptFileTypes={['csv', 'text/csv']}
-      onFileUploaded={(_fileData, fileCSVData) => {
+      onFileUpload={(_fileName, _fileData, fileCSVData) => {
         setCsvData(fileCSVData)
       }}
     />
