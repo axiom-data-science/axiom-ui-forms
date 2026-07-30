@@ -360,9 +360,6 @@
           "prop": "sensors",
           "type": "object",
           "multiple": true,   
-          "settings": {
-            "className":"bg-red-100"
-          },
           "tabs": [
             {
               "id": "overview",
@@ -372,35 +369,41 @@
                   "id": "time-coverage-wrapper",
                   "label": "Time coverage",
                   "type": "objectWrapper",
+                  "settings": {
+                    "boldLabel": true
+                  },
                   "fields": [
                     {
                       "prop": "sensors[].is-real-time",
                       "type": "boolean"
-                    }
-                  ]
-                },
-                {
-                  "id": "start-end-wrapper",
-                  "label": "",
-                  "type": "objectWrapper",
-                  "layout": "grid2",
-                  "fields": [
-                    {
-                      "prop": "sensors[].time_coverage_start",
-                      "type": "date",
-                      "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
                     },
                     {
-                      "prop": "sensors[].time_coverage_end",
-                      "description": "Only if not real-time. If real-time, leave blank.",
-                      "type": "date",
+                      "id": "start-end-wrapper",
+                      "label": "",
+                      "type": "objectWrapper",
+                      "layout": "grid2",
                       "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
+                        "className": "bg-slate-100 p-0"
+                      },
+                      "fields": [
+                        {
+                          "prop": "sensors[].time_coverage_start",
+                          "type": "date",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensors[].time_coverage_end",
+                          "description": "Only if not real-time. If real-time, leave blank.",
+                          "type": "date",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        }
+                      ]
                     }
                   ]
                 },
@@ -409,6 +412,9 @@
                   "label": "Sampling",
                   "type": "objectWrapper",
                   "layout": "grid2",
+                  "settings": {
+                    "boldLabel": true
+                  },
                   "fields": [
                     {
                       "prop": "sensors[].sample-interval-min",
@@ -429,14 +435,26 @@
                   ]
                 },
                 {
-                  "prop": "sensors[].mounting-structure",
-                  "type": "selectOrText"
-                },
-                {
-                  "prop": "sensors[].geophysical_variable:accuracy"
-                },
-                {
-                  "prop": "sensors[].is-station-surveyed"
+                  "id": "sensor-other-wrapper",
+                  "label": "Other details",
+                  "settings": {
+                    "boldLabel": true
+                  },
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "sensors[].mounting-structure",
+                      "type": "selectOrText"
+                    },
+                    {
+                      "prop": "sensors[].geophysical_variable:accuracy"
+                    },
+                    {
+                      "prop": "sensors[].is-station-surveyed"
+                    }
+
+                  ]
                 }
               ]
             },
@@ -449,6 +467,9 @@
                   "label": "Instrument",
                   "type": "objectWrapper",
                   "layout": "grid2",
+                  "settings": {
+                    "boldLabel": true
+                  },
                   "fields": [
                     {
                       "prop": "sensors[].instrument",
@@ -465,25 +486,32 @@
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
                       }
+                    },
+                    {
+                      "prop": "sensors[].instrument_variable:make_model",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].sensor-serial-number",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
                     }
                   ]
-                },
-                {
-                  "prop": "sensors[].instrument_variable:make_model",
-                  "type": "selectOrText",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "sensors[].sensor-serial-number"
                 },
                 {
                   "id": "prior-wrapper",
                   "type": "objectWrapper",
                   "label": "Prior CO-OPS installation",
                   "layout": "grid2",
+                  "settings": {
+                    "boldLabel": true
+                  },
                   "fields": [
                     {
                       "prop": "sensors[].prior-wmo-id",
@@ -509,6 +537,9 @@
                   "label": "Modem",
                   "type": "objectWrapper",
                   "layout": "grid2",
+                  "settings": {
+                    "boldLabel": true
+                  },
                   "fields": [
                     {
                       "prop": "sensors[].modem-communication-manufacturer-model",
