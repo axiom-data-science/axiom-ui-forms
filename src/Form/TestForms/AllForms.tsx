@@ -13,7 +13,7 @@ import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustom
 import MultiTabs from ***REMOVED***@/Form/TestForms/MultiTabs/MultiTabs***REMOVED***
 import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
-import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
+import ObjectListExample, { NestedObjectListExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
 import ObjectListKeyValueExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample***REMOVED***
 import ObjectListWithSchemaExample, { ObjectListKeyValueWithSchemaExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample***REMOVED***
@@ -83,6 +83,11 @@ const forms = [
     label: ***REMOVED***Object list with key/value and schema***REMOVED***,
     path: ***REMOVED***object-list-with-key-value-and-schema***REMOVED***,
     view: ObjectListKeyValueWithSchemaExample,
+  },
+  {
+    label: ***REMOVED***Nested object list***REMOVED***,
+    path: ***REMOVED***nested-object-list***REMOVED***,
+    view: NestedObjectListExample,
   },
   {
     label: ***REMOVED***Object wrapper***REMOVED***,
