@@ -397,4 +397,90 @@ describe(***REMOVED***FieldCreator objectList valueField mode***REMOVED***, () =
       },
     })
   })
+
+  it(***REMOVED***accepts valueField that points to a nested wrapper child field***REMOVED***, () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***nestedList***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***Nested List***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***name***REMOVED***,
+        valueField: ***REMOVED***value***REMOVED***,
+      },
+      fields: [
+        {
+          id: ***REMOVED***wrapper***REMOVED***,
+          type: ***REMOVED***objectWrapper***REMOVED***,
+          fields: [
+            { id: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED*** },
+            { id: ***REMOVED***value***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Value***REMOVED*** },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      nestedList: {},
+    }
+
+    render(<FieldCreator field={objectListField} />)
+
+    expect(
+      screen.queryByText(/does not point at a valid field/i)
+    ).toBeNull()
+  })
+
+  it(***REMOVED***rehydrates object valueField entries into nested objectList child state***REMOVED***, () => {
+    const objectListField: IFormField = {
+      id: ***REMOVED***nestedList***REMOVED***,
+      type: ***REMOVED***objectList***REMOVED***,
+      label: ***REMOVED***Nested List***REMOVED***,
+      settings: {
+        keyField: ***REMOVED***name***REMOVED***,
+        valueField: ***REMOVED***value***REMOVED***,
+      },
+      fields: [
+        { id: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Name***REMOVED*** },
+        {
+          id: ***REMOVED***value***REMOVED***,
+          type: ***REMOVED***objectList***REMOVED***,
+          label: ***REMOVED***Nested Value***REMOVED***,
+          settings: {
+            keyField: ***REMOVED***subName***REMOVED***,
+            excludeKeyFieldFromValue: true,
+          },
+          fields: [
+            { id: ***REMOVED***subName***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Sub Name***REMOVED*** },
+            { id: ***REMOVED***subValue***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Sub Value***REMOVED*** },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: ***REMOVED***test-form***REMOVED***,
+      label: ***REMOVED***Test Form***REMOVED***,
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      nestedList: {
+        outerA: {
+          innerA: {
+            subValue: ***REMOVED***x***REMOVED***,
+          },
+        },
+      },
+    }
+
+    render(<FieldCreator field={objectListField} />)
+
+    const subNameInput = screen.getByTestId(***REMOVED***mock-input-subName***REMOVED***) as HTMLInputElement
+    expect(subNameInput.value).toBe(***REMOVED***innerA***REMOVED***)
+  })
+
 })

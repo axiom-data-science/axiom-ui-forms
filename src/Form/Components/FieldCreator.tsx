@@ -17,7 +17,7 @@ import {
 import { seedNestedDefaults } from ***REMOVED***@/utils/formEngine***REMOVED***
 import { evaluateConditionStateUpdate } from ***REMOVED***@/utils/formEngine/conditionLogic***REMOVED***
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
-import { getFieldValue, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
+import { getFieldValue, getFields, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   cloneObject,
@@ -34,6 +34,7 @@ import {
   TrashIcon,
 } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { error } from ***REMOVED***ajv/dist/vocabularies/applicator/dependencies***REMOVED***
+import { get as lodashGet, set as lodashSet } from ***REMOVED***lodash-es***REMOVED***
 import React, { useCallback, useEffect, useRef, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 
@@ -329,7 +330,7 @@ export const ObjectListCreator = ({
 
   if (
     valueField !== undefined &&
-    !objListField.fields?.some((f: IFormField) => f.id === valueField)
+    !getFields(objListField.fields).some((f: IFormField) => f.id === valueField)
   ) {
     return (
       <div className="p-4 bg-slate-100">
@@ -352,6 +353,13 @@ export const ObjectListCreator = ({
   }
 
   const defaultOnChange = useCallback((updatedObj: ICompositeValueType): void => {
+    // When nested/scoped onChange is provided, let parent scope own the update.
+    // Writing globally here can reset nested objectList pending rows.
+    if (typeof onChange === ***REMOVED***function***REMOVED***) {
+      onChange(updatedObj)
+      return
+    }
+
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
       form,
       field,
@@ -359,9 +367,9 @@ export const ObjectListCreator = ({
       formValues: formValuesRef.current,
     })
     setFormValues(formValuesCopyClean)
-    const notifyFn = onChange ?? contextOnChange
-    if (typeof notifyFn === ***REMOVED***function***REMOVED***) {
-      notifyFn(updatedObj)
+
+    if (typeof contextOnChange === ***REMOVED***function***REMOVED***) {
+      contextOnChange(updatedObj)
     }
   }, [form, field, setFormValues, onChange, contextOnChange])
 
@@ -378,8 +386,9 @@ export const ObjectListCreator = ({
         delete storedItem[keyField]
         return storedItem
       }
-      if (itemData[valueField] !== undefined) {
-        return itemData[valueField]
+      const mappedValue = lodashGet(itemData, valueField)
+      if (mappedValue !== undefined) {
+        return mappedValue as IValueType | IValueType[]
       }
       // Preserve existing key/value entries when value field is missing from edited object.
       return objValue[keyValue]
@@ -389,6 +398,14 @@ export const ObjectListCreator = ({
 
   const toRenderableItemValue = useCallback(
     (currentKey: string, item: IValueType | IValueType[] | undefined): ICompositeValueType => {
+      if (valueField !== undefined) {
+        const renderable = {
+          [keyField]: currentKey,
+        } as ICompositeValueType
+        lodashSet(renderable, valueField, item)
+        return renderable
+      }
+
       if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
         const objectItem = cloneObject(item) as ICompositeValueType
         if (objectItem[keyField] === undefined) {
@@ -396,12 +413,7 @@ export const ObjectListCreator = ({
         }
         return objectItem
       }
-      if (valueField !== undefined) {
-        return {
-          [keyField]: currentKey,
-          [valueField]: item,
-        } as ICompositeValueType
-      }
+
       return {
         [keyField]: currentKey,
       } as ICompositeValueType

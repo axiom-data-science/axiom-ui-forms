@@ -308,6 +308,59 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       })
     })
 
+    it(***REMOVED***should preserve nested object values in objectList valueField mode***REMOVED***, () => {
+      const form = {
+        id: ***REMOVED***test-form***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***nestedList***REMOVED***,
+            type: ***REMOVED***objectList***REMOVED***,
+            settings: {
+              keyField: ***REMOVED***name***REMOVED***,
+              valueField: ***REMOVED***value***REMOVED***,
+            },
+            fields: [
+              { id: ***REMOVED***name***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+              {
+                id: ***REMOVED***value***REMOVED***,
+                type: ***REMOVED***objectList***REMOVED***,
+                settings: {
+                  keyField: ***REMOVED***subName***REMOVED***,
+                  excludeKeyFieldFromValue: true,
+                },
+                fields: [
+                  { id: ***REMOVED***subName***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                  { id: ***REMOVED***subValue***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        nestedList: {
+          outerA: {
+            innerA: {
+              subValue: ***REMOVED***x***REMOVED***,
+            },
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        nestedList: {
+          outerA: {
+            innerA: {
+              subValue: ***REMOVED***x***REMOVED***,
+            },
+          },
+        },
+      })
+    })
+
     it(***REMOVED***should emit objectList payload from wrapper layout without keyField when excludeKeyFieldFromValue is true***REMOVED***, () => {
       const schema: JSONSchema6 = {
         type: ***REMOVED***object***REMOVED***,

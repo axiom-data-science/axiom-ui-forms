@@ -551,6 +551,9 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
             const mappedValue = (item as IFormValues)[valueField]
             if (mappedValue !== undefined) {
               objectListPayload[key] = mappedValue
+            } else {
+              // In nested objectList valueField mode, stored value may already be the mapped object.
+              objectListPayload[key] = item as IFormValues
             }
           } else if (item !== undefined) {
             objectListPayload[key] = item as IValueType
