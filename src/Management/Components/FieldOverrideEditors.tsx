@@ -89,8 +89,11 @@ const createTypeSpecificSettingsTemplate = (
         allowEmpty: true,
       }
     case 'select':
+    case 'stateSelector':
+    case 'selectOrText':
       return {
         allowNull: true,
+        showDescriptionForSelected: false,
       }
     case 'radio':
       return {
@@ -108,6 +111,11 @@ const createTypeSpecificSettingsTemplate = (
     case 'objectList':
       return {
         keyField: 'id',
+      }
+    case 'file_upload':
+    case 'fileUpload':
+      return {
+        acceptedFileTypes: ['.csv'],
       }
     default:
       return {}
@@ -768,17 +776,31 @@ const FieldOverrideEditors = ({
           </div>
         ) : null}
 
-        {effectiveType === 'select' ? (
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={typeSpecificSettings.allowNull !== false}
-              onChange={(event) => {
-                setTypeSpecific('allowNull', event.target.checked, true)
-              }}
-            />
-            Allow null selection
-          </label>
+        {effectiveType === 'select' ||
+        effectiveType === 'stateSelector' ||
+        effectiveType === 'selectOrText' ? (
+          <div className="grid grid-cols-1 gap-2 text-sm">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={typeSpecificSettings.allowNull !== false}
+                onChange={(event) => {
+                  setTypeSpecific('allowNull', event.target.checked, true)
+                }}
+              />
+              Allow null selection
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={typeSpecificSettings.showDescriptionForSelected === true}
+                onChange={(event) => {
+                  setTypeSpecific('showDescriptionForSelected', event.target.checked, true)
+                }}
+              />
+              Show selected option description
+            </label>
+          </div>
         ) : null}
 
         {effectiveType === 'radio' ? (
@@ -917,12 +939,47 @@ const FieldOverrideEditors = ({
           </label>
         ) : null}
 
+        {effectiveType === 'file_upload' || effectiveType === 'fileUpload' ? (
+          <label className="flex flex-col gap-1 text-sm">
+            Accepted file types
+            <input
+              className="border rounded px-2 py-1"
+              placeholder=".csv, .xlsx, image/*"
+              value={
+                Array.isArray(typeSpecificSettings.acceptedFileTypes)
+                  ? typeSpecificSettings.acceptedFileTypes.join(', ')
+                  : typeof typeSpecificSettings.acceptedFileTypes === 'string'
+                    ? typeSpecificSettings.acceptedFileTypes
+                    : ''
+              }
+              onChange={(event) => {
+                const raw = event.target.value.trim()
+                if (raw === '') {
+                  setTypeSpecific('acceptedFileTypes', undefined)
+                  return
+                }
+
+                const values = raw
+                  .split(',')
+                  .map((candidate) => candidate.trim())
+                  .filter((candidate) => candidate.length > 0)
+
+                setTypeSpecific('acceptedFileTypes', values.length <= 1 ? values[0] : values)
+              }}
+            />
+          </label>
+        ) : null}
+
         {effectiveType !== 'number' &&
         effectiveType !== 'json' &&
         effectiveType !== 'select' &&
+        effectiveType !== 'stateSelector' &&
+        effectiveType !== 'selectOrText' &&
         effectiveType !== 'radio' &&
         effectiveType !== 'geometry' &&
-        effectiveType !== 'objectList' ? (
+        effectiveType !== 'objectList' &&
+        effectiveType !== 'file_upload' &&
+        effectiveType !== 'fileUpload' ? (
           <p className="text-xs text-slate-500">
             No dedicated type-specific settings for this field type yet.
           </p>

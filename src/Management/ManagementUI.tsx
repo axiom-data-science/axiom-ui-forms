@@ -95,12 +95,20 @@ const fieldTypeOptions: IFormField['type'][] = [
   'long_text',
   'number',
   'boolean',
+  'checkbox',
   'select',
+  'stateSelector',
+  'selectOrText',
   'radio',
   'date',
   'time',
   'datetime',
+  'file_upload',
   'json',
+  'geojson',
+  'geometry',
+  'objectList',
+  'oneOf',
   'object',
   'objectWrapper',
 ]
@@ -260,6 +268,12 @@ const readRecord = (value: unknown): Record<string, unknown> | undefined => {
 
 const generateShortGuid = (): string => {
   return Math.random().toString(36).substring(2, 6).toUpperCase()
+}
+
+const normalizeFieldType = (value: string | undefined): IFormField['type'] | undefined => {
+  if (value === undefined) return undefined
+  if (value === 'fileUpload') return 'file_upload'
+  return value as IFormField['type']
 }
 
 const GENERAL_FIELD_SETTING_KEYS = new Set([
@@ -942,7 +956,7 @@ const createModelFromOverrides = (
     const existing = fields.find((field) => field.prop === prop && prop !== '')
 
     const baseField = byProp.get(prop)
-    const fallbackType = readString(overrideLike?.type) as IFormField['type'] | undefined
+    const fallbackType = normalizeFieldType(readString(overrideLike?.type))
 
     if (existing !== undefined) {
       existing.parentRef = parentRef
@@ -1074,9 +1088,9 @@ const createModelFromOverrides = (
         fields.push(field)
       }
 
-      const overrideType = readString(overrideLike.type)
+      const overrideType = normalizeFieldType(readString(overrideLike.type))
       if (overrideType !== undefined) {
-        field.overrideType = overrideType as IFormField['type']
+        field.overrideType = overrideType
       }
 
       const overrideLabel = readString(overrideLike.label)
