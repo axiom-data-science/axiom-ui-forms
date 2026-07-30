@@ -13,7 +13,7 @@ import FormWithCustomGeom from '@/Form/TestForms/Geom/FormWithCustomGeom'
 import MultiTabs from '@/Form/TestForms/MultiTabs/MultiTabs'
 import NestedDependents from '@/Form/TestForms/NestedDependents/NestedDependents'
 import NestedLayoutInMultiTab from '@/Form/TestForms/NestedLayoutInMultiTab'
-import ObjectListExample from '@/Form/TestForms/ObjectListExample/ObjectListExample'
+import ObjectListExample, { NestedObjectListExample } from '@/Form/TestForms/ObjectListExample/ObjectListExample'
 import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField'
 import ObjectListKeyValueExample from '@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample'
 import ObjectListWithSchemaExample, { ObjectListKeyValueWithSchemaExample } from '@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample'
@@ -83,6 +83,11 @@ const forms = [
     label: 'Object list with key/value and schema',
     path: 'object-list-with-key-value-and-schema',
     view: ObjectListKeyValueWithSchemaExample,
+  },
+  {
+    label: 'Nested object list',
+    path: 'nested-object-list',
+    view: NestedObjectListExample,
   },
   {
     label: 'Object wrapper',
