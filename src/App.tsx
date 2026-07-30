@@ -66,6 +66,7 @@ import MultiTabs from '@/Form/TestForms/MultiTabs/MultiTabs'
 import NestedLayoutInMultiTab from '@/Form/TestForms/NestedLayoutInMultiTab'
 import AllForms from '@/Form/TestForms/AllForms'
 import NestedDependents from '@/Form/TestForms/NestedDependents/NestedDependents'
+import { DragDropSandbox, ManagementUI } from '@/Management'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -323,6 +324,10 @@ const App = (): ReactElement => {
             <Route path="all-forms" element={<AllForms />}>
               <Route path="*" element={<AllForms />} />
             </Route>
+            <Route path="management" element={<ManagementUI />}>
+              <Route path="*" element={<ManagementUI />} />
+            </Route>
+            <Route path="management-dd" element={<DragDropSandbox />} />
           </Routes>
         </BrowserRouter>
       </div>
