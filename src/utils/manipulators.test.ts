@@ -10,6 +10,7 @@ import {
   copyAndAddPathToFields,
 } from '@/utils/manipulators'
 import { getPathFromField } from '@/utils/getters'
+import { schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { describe, it, expect } from 'vitest'
 
 describe('manipulators.ts', () => {
@@ -251,6 +252,121 @@ describe('manipulators.ts', () => {
   })
 
   describe('cleanAndUpdateFormValuesWithFieldValue - edge cases', () => {
+    it('clears stale oneOf branch values when selector changes', () => {
+      const formWithPaths = copyAndAddPathToFields(
+        schemaToFormObject({
+          title: 'OneOf Clear Test',
+          type: 'object',
+          properties: {
+            transport: {
+              type: 'object',
+              title: 'Transport',
+              oneOf: [
+                {
+                  title: 'S3',
+                  type: 'object',
+                  properties: {
+                    bucket: { type: 'string' },
+                    prefix: { type: 'string' },
+                  },
+                },
+                {
+                  title: 'HTTP',
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    method: { type: 'string', enum: ['GET', 'POST'] },
+                  },
+                },
+              ],
+            },
+          },
+        } as any)
+      )
+
+      const transportField = formWithPaths.fields?.find((f) => f.id === 'transport') as IFormField
+      const selectorField = (transportField as any).fields?.find(
+        (f: IFormField) => f.id === 'select_transport'
+      ) as IFormField
+
+      const formValues: IFormValues = {
+        transport: {
+          select_transport: 'S3',
+          bucket: 'example-bucket',
+          prefix: 'incoming/',
+        },
+      }
+
+      const updated = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: selectorField,
+        value: 'HTTP',
+        formValues,
+      })
+
+      const transport = updated.transport as IFormValues
+      expect(transport.select_transport).toBe('HTTP')
+      expect(transport.bucket).toBeUndefined()
+      expect(transport.prefix).toBeUndefined()
+    })
+
+    it('does not clear active oneOf values when unrelated root field changes', () => {
+      const formWithPaths = copyAndAddPathToFields(
+        schemaToFormObject({
+          title: 'OneOf Preserve Test',
+          type: 'object',
+          properties: {
+            field1: { type: 'string' },
+            transport: {
+              type: 'object',
+              title: 'Transport',
+              oneOf: [
+                {
+                  title: 'S3',
+                  type: 'object',
+                  properties: {
+                    bucket: { type: 'string' },
+                    prefix: { type: 'string' },
+                  },
+                },
+                {
+                  title: 'HTTP',
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string' },
+                    method: { type: 'string', enum: ['GET', 'POST'] },
+                  },
+                },
+              ],
+            },
+          },
+        } as any)
+      )
+
+      const field1 = formWithPaths.fields?.find((f) => f.id === 'field1') as IFormField
+      const formValues: IFormValues = {
+        field1: 'before',
+        transport: {
+          select_transport: 'S3',
+          bucket: 'my-bucket',
+          prefix: 'incoming/',
+        },
+      }
+
+      const updated = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: field1,
+        value: 'after',
+        formValues,
+      })
+
+      const transport = updated.transport as IFormValues
+      expect(updated.field1).toBe('after')
+      expect(transport.select_transport).toBe('S3')
+      expect(transport.bucket).toBe('my-bucket')
+      expect(transport.prefix).toBe('incoming/')
+    })
+
     it('preserves simple field update', () => {
       const form: IForm = {
         id: 'testForm',

@@ -138,6 +138,174 @@ describe('schemaToFormHelpers', () => {
       expect(form?.fields?.length).toBe(2)
       expect(form?.fields?.[0].label).toBe('First Name')
     })
+
+    it('renders oneOf object branches as a selector with conditional branch wrappers', () => {
+      const schema: JSONSchema6 = {
+        title: 'Config Form',
+        type: 'object',
+        properties: {
+          mode_config: {
+            type: 'object',
+            title: 'Mode Config',
+            oneOf: [
+              {
+                title: 'Split',
+                type: 'object',
+                properties: {
+                  source_variable: { type: 'string' },
+                },
+              },
+              {
+                title: 'Profile',
+                type: 'object',
+                properties: {
+                  depth: { type: 'number' },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const modeField = form.fields?.find((f) => f.id === 'mode_config') as any
+      expect(modeField).toBeDefined()
+      expect(modeField.type).toBe('object')
+
+      const selector = modeField.fields?.find((f: any) => f.id === 'select_mode_config')
+      expect(selector).toBeDefined()
+      expect(selector.type).toBe('select')
+      expect(selector.options?.map((o: any) => o.label)).toEqual(['Split', 'Profile'])
+      expect(selector.defaultValue).toBe('Split')
+      expect(selector.excludeFromPayload).toBe(true)
+      expect(selector.settings?.allowNull).toBe(false)
+
+      const splitBranch = modeField.fields?.find((f: any) => f.id === 'Split')
+      const profileBranch = modeField.fields?.find((f: any) => f.id === 'Profile')
+      expect(splitBranch?.type).toBe('objectWrapper')
+      expect(profileBranch?.type).toBe('objectWrapper')
+      expect(splitBranch?.skip_path).toBe(true)
+      expect(profileBranch?.skip_path).toBe(true)
+      expect(splitBranch?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Split',
+      })
+      expect(profileBranch?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Profile',
+      })
+
+      const splitSourceField = splitBranch?.fields?.find((f: any) => f.id === 'source_variable')
+      const profileDepthField = profileBranch?.fields?.find((f: any) => f.id === 'depth')
+      expect(splitSourceField?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Split',
+      })
+      expect(profileDepthField?.conditions).toEqual({
+        dependsOn: 'mode_config.select_mode_config',
+        value: 'Profile',
+      })
+    })
+
+    it('preserves all oneOf branch wrappers when parent field is included via single prop override', () => {
+      const schema: JSONSchema6 = {
+        title: 'OneOf Override Branch Preservation',
+        type: 'object',
+        properties: {
+          transport: {
+            type: 'object',
+            title: 'Transport',
+            oneOf: [
+              {
+                title: 'S3',
+                type: 'object',
+                properties: {
+                  bucket: { type: 'string' },
+                },
+              },
+              {
+                title: 'HTTP',
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [{ prop: 'transport' }],
+          },
+        ],
+      })
+
+      const transport = form.fields?.find((f) => f.id === 'transport') as any
+      const selector = transport?.fields?.find((f: any) => f.id === 'select_transport')
+      const s3 = transport?.fields?.find((f: any) => f.id === 'S3')
+      const http = transport?.fields?.find((f: any) => f.id === 'HTTP')
+
+      expect(selector).toBeDefined()
+      expect(s3).toBeDefined()
+      expect(http).toBeDefined()
+      expect(s3?.type).toBe('objectWrapper')
+      expect(http?.type).toBe('objectWrapper')
+    })
+
+    it('renders anyOf object branches as tabs', () => {
+      const schema: JSONSchema6 = {
+        title: 'AnyOf Tabs Demo',
+        type: 'object',
+        properties: {
+          processor: {
+            title: 'Processor',
+            type: 'object',
+            anyOf: [
+              {
+                title: 'Split Processor',
+                type: 'object',
+                properties: {
+                  source_variable: { type: 'string', title: 'Source Variable' },
+                  separator: { type: 'string', title: 'Separator' },
+                },
+              },
+              {
+                title: 'Drop Processor',
+                type: 'object',
+                properties: {
+                  column_names: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    title: 'Column Names',
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const processorField = form.fields?.find((f) => f.id === 'processor') as any
+      expect(processorField).toBeDefined()
+      expect(processorField.type).toBe('object')
+      expect(processorField.tabs).toBeDefined()
+      expect(processorField.tabs).toHaveLength(2)
+      expect(processorField.tabs?.map((t: any) => t.label)).toEqual([
+        'Split Processor',
+        'Drop Processor',
+      ])
+
+      const splitTabFields = processorField.tabs?.[0]?.fields ?? []
+      const dropTabFields = processorField.tabs?.[1]?.fields ?? []
+      expect(splitTabFields.some((f: any) => f.id === 'source_variable')).toBe(true)
+      expect(splitTabFields.some((f: any) => f.id === 'separator')).toBe(true)
+      expect(dropTabFields.some((f: any) => f.id === 'column_names')).toBe(true)
+    })
   })
 
   describe('overridesAndSchemaToFormObject', () => {
@@ -156,6 +324,57 @@ describe('schemaToFormHelpers', () => {
       })
       expect(form.label).toBe('Overridden')
       expect(form?.fields?.[0]?.label).toBe('Bar')
+    })
+
+    it('preserves schema-generated tabs for anyOf object when override only references the parent prop', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          processor: {
+            type: 'object',
+            title: 'Processor',
+            anyOf: [
+              {
+                title: 'Split Processor',
+                type: 'object',
+                properties: {
+                  source_variable: { type: 'string' },
+                  separator: { type: 'string' },
+                },
+              },
+              {
+                title: 'Drop Processor',
+                type: 'object',
+                properties: {
+                  column_names: {
+                    type: 'array',
+                    items: { type: 'string' },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [{ prop: 'processor' }],
+          },
+        ],
+      })
+
+      const processorField = form.fields?.find((f) => f.id === 'processor') as any
+      expect(processorField).toBeDefined()
+      expect(processorField.type).toBe('object')
+      expect(processorField.tabs).toBeDefined()
+      expect(processorField.tabs).toHaveLength(2)
+      expect(processorField.tabs?.map((t: any) => t.label)).toEqual([
+        'Split Processor',
+        'Drop Processor',
+      ])
     })
 
     it('preserves defaultValue for override-only fields', () => {

@@ -264,6 +264,80 @@ interface ISchemaToFormFieldProps {
   path?: string[]
 }
 
+const applyConditionToDescendants = (
+  field: IFormField,
+  condition: { dependsOn: string; value: string }
+): IFormField => {
+  const applyToField = (current: IFormField): IFormField => {
+    const next = { ...current }
+
+    if (next.conditionsSet !== undefined) {
+      next.conditionsSet = {
+        ...next.conditionsSet,
+        logic: 'and',
+        conditions: [...next.conditionsSet.conditions, condition],
+      }
+    } else if (next.conditions !== undefined) {
+      next.conditionsSet = {
+        logic: 'and',
+        conditions: [next.conditions, condition],
+      }
+      next.conditions = undefined
+    } else {
+      next.conditions = condition
+    }
+
+    if ((next as any).fields !== undefined && Array.isArray((next as any).fields)) {
+      ;(next as any).fields = (next as any).fields.map((child: IFormField) => applyToField(child))
+    }
+    if ((next as any).tabs !== undefined && Array.isArray((next as any).tabs)) {
+      ;(next as any).tabs = (next as any).tabs.map((tab: any) => ({
+        ...tab,
+        fields: tab.fields?.map((child: IFormField) => applyToField(child)),
+      }))
+    }
+    if ((next as any).pages !== undefined && Array.isArray((next as any).pages)) {
+      ;(next as any).pages = (next as any).pages.map((page: any) => ({
+        ...page,
+        fields: page.fields?.map((child: IFormField) => applyToField(child)),
+      }))
+    }
+    if ((next as any).wizard_steps !== undefined && Array.isArray((next as any).wizard_steps)) {
+      ;(next as any).wizard_steps = (next as any).wizard_steps.map((step: any) => ({
+        ...step,
+        fields: step.fields?.map((child: IFormField) => applyToField(child)),
+      }))
+    }
+
+    return next
+  }
+
+  const nextField = { ...field }
+  if ((nextField as any).fields !== undefined && Array.isArray((nextField as any).fields)) {
+    ;(nextField as any).fields = (nextField as any).fields.map((child: IFormField) => applyToField(child))
+  }
+  if ((nextField as any).tabs !== undefined && Array.isArray((nextField as any).tabs)) {
+    ;(nextField as any).tabs = (nextField as any).tabs.map((tab: any) => ({
+      ...tab,
+      fields: tab.fields?.map((child: IFormField) => applyToField(child)),
+    }))
+  }
+  if ((nextField as any).pages !== undefined && Array.isArray((nextField as any).pages)) {
+    ;(nextField as any).pages = (nextField as any).pages.map((page: any) => ({
+      ...page,
+      fields: page.fields?.map((child: IFormField) => applyToField(child)),
+    }))
+  }
+  if ((nextField as any).wizard_steps !== undefined && Array.isArray((nextField as any).wizard_steps)) {
+    ;(nextField as any).wizard_steps = (nextField as any).wizard_steps.map((step: any) => ({
+      ...step,
+      fields: step.fields?.map((child: IFormField) => applyToField(child)),
+    }))
+  }
+
+  return nextField
+}
+
 const schemaToFormField = ({
   schema,
   property,
@@ -441,11 +515,20 @@ const schemaToFormField = ({
             schemaField: f,
             path: path.slice(),
           })
-          oneOfield.conditions = {
+          if (oneOfield.type === 'object') {
+            // oneOf object variants should act as conditional branch groups, not nested payload objects.
+            // objectWrapper + skip_path keeps branch fields in the parent scope.
+            Object.assign(oneOfield as unknown as Record<string, unknown>, {
+              type: 'objectWrapper',
+              skip_path: true,
+            })
+          }
+          const branchCondition = {
             dependsOn: `${path.join('.')}.${selectorField}`,
             value,
           }
-          oneOfFields.push(oneOfield)
+          oneOfield.conditions = branchCondition
+          oneOfFields.push(applyConditionToDescendants(oneOfield, branchCondition))
         }
       })
       fields.push({
@@ -453,29 +536,63 @@ const schemaToFormField = ({
         type: 'select',
         label: schemaField.title,
         options,
+        defaultValue: options.length > 0 ? (options[0].value as IValueType) : undefined,
+        excludeFromPayload: true,
+        settings: {
+          allowNull: false,
+        },
       })
       oneOfFields.forEach((f) => {
         fields.push(f)
       })
     }
 
-    const ofArr = (schemaField.anyOf ?? []).concat(schemaField.allOf ?? [])
-    ofArr.forEach((anyOf) => {
+    const anyOfTabs: IFormLayoutTab[] = []
+    ;(schemaField.anyOf ?? []).forEach((anyOf, index) => {
       const anyOfId = schemaField.$id
       if (typeof anyOf !== 'boolean' && anyOf.type !== 'null') {
         const field = schemaToFormField({
           schema: schemaField,
           property: anyOfId ?? makeRandom(),
-          schemaField:
-            typeof anyOf === 'boolean'
-              ? anyOf
-              : {
-                  title: anyOf.title ?? '',
-                  ...anyOf,
-                },
+          schemaField: {
+            title: anyOf.title ?? '',
+            ...anyOf,
+          },
           path: path.slice(),
         })
+
+        // Default anyOf object behavior: one tab per branch.
+        if (field.type === 'object' && field.fields !== undefined) {
+          anyOfTabs.push({
+            id: makeFormFieldId([anyOf.$id, anyOf.title, `${property}_anyof_${index + 1}`]),
+            label:
+              makeLabel([anyOf.title, anyOf.$id, `${property} option ${String(index + 1)}`]) ??
+              `Option ${String(index + 1)}`,
+            fields: field.fields,
+          })
+          return
+        }
+
         if (anyOfId === undefined && field.type === 'object') {
+          field.skip_path = true
+        }
+        fields.push(field)
+      }
+    })
+
+    ;(schemaField.allOf ?? []).forEach((allOf) => {
+      const allOfId = schemaField.$id
+      if (typeof allOf !== 'boolean' && allOf.type !== 'null') {
+        const field = schemaToFormField({
+          schema: schemaField,
+          property: allOfId ?? makeRandom(),
+          schemaField: {
+            title: allOf.title ?? '',
+            ...allOf,
+          },
+          path: path.slice(),
+        })
+        if (allOfId === undefined && field.type === 'object') {
           field.skip_path = true
         }
         fields.push(field)
@@ -486,6 +603,7 @@ const schemaToFormField = ({
       ...baseFieldProps,
       type,
       fields,
+      tabs: anyOfTabs.length > 0 ? anyOfTabs : undefined,
       multiple,
     }
   }
@@ -585,7 +703,14 @@ const mergeFormField = ({
       field?.type === 'object' || field?.type === 'objectWrapper' || field?.type === 'objectList'
         ? (field.fields ?? [])
         : []
-    const fieldFieldsMap = Object.fromEntries(fieldFields.map((f) => [getPathFromField(f), f]))
+    const fieldFieldsMap = Object.fromEntries(
+      fieldFields
+        .map((f) => {
+          const key = normalizePath(getPathFromField(f)) ?? f.id
+          return key !== undefined ? ([key, f] as [string, IFormField]) : undefined
+        })
+        .filter((entry): entry is [string, IFormField] => entry !== undefined)
+    )
     /* if (fieldPages !== undefined) {
       mergedField.pages = fieldPages
     }
@@ -761,6 +886,18 @@ const mergeFormField = ({
     const mergedTabs = formOverrideFieldTabs ?? overrideFieldTabs
     const mergedPages = formOverrideFieldPages ?? overrideFieldPages
     const mergedWizardSteps = formOverrideFieldWizardSteps ?? overrideFieldWizardSteps
+    const schemaFieldTabs =
+      field?.type === 'object' || field?.type === 'objectWrapper' || field?.type === 'objectList'
+        ? (field as any).tabs
+        : undefined
+    const schemaFieldPages =
+      field?.type === 'object' || field?.type === 'objectWrapper' || field?.type === 'objectList'
+        ? (field as any).pages
+        : undefined
+    const schemaFieldWizardSteps =
+      field?.type === 'object' || field?.type === 'objectWrapper' || field?.type === 'objectList'
+        ? (field as any).wizard_steps
+        : undefined
 
     mergedField.tabs =
       mergedTabs !== undefined
@@ -769,7 +906,7 @@ const mergeFormField = ({
             schemaForm,
             formFieldsOverrideMap,
           }) as IFormLayoutTab[])
-        : undefined
+        : schemaFieldTabs
     mergedField.pages =
       mergedPages !== undefined
         ? (mergeFormSections({
@@ -777,7 +914,7 @@ const mergeFormField = ({
             schemaForm,
             formFieldsOverrideMap,
           }) as IPage[])
-        : undefined
+        : schemaFieldPages
     mergedField.wizard_steps =
       mergedWizardSteps !== undefined
         ? (mergeFormSections({
@@ -785,7 +922,7 @@ const mergeFormField = ({
             schemaForm,
             formFieldsOverrideMap,
           }) as IWizardStep[])
-        : undefined
+        : schemaFieldWizardSteps
   }
 
   // Enforce skip_path: true for objectWrapper fields

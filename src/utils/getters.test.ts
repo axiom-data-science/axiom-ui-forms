@@ -10,7 +10,7 @@ import {
   getFormPayload
 } from './getters'
 import { type IFormSection, type IFormField } from '@/Form/Creator/FormCreatorTypes'
-import { overridesAndSchemaToFormObject } from './schemaToFormHelpers'
+import { overridesAndSchemaToFormObject, schemaToFormObject } from './schemaToFormHelpers'
 import type { JSONSchema6 } from 'json-schema'
 
 describe('getters.ts', () => {
@@ -536,6 +536,104 @@ describe('getters.ts', () => {
             ],
           },
         ],
+      })
+    })
+
+    it('should include active oneOf object branch values in payload', () => {
+      const schema: JSONSchema6 = {
+        title: 'OneOf Object Payload Test',
+        type: 'object',
+        properties: {
+          transport: {
+            type: 'object',
+            title: 'Transport',
+            oneOf: [
+              {
+                title: 'S3',
+                type: 'object',
+                properties: {
+                  bucket: { type: 'string' },
+                  prefix: { type: 'string' },
+                },
+              },
+              {
+                title: 'HTTP',
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  method: { type: 'string', enum: ['GET', 'POST'] },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const formValues = {
+        transport: {
+          select_transport: 'S3',
+          bucket: 'example-bucket',
+          prefix: 'incoming/',
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        transport: {
+          bucket: 'example-bucket',
+          prefix: 'incoming/',
+        },
+      })
+    })
+
+    it('should exclude inactive oneOf branch values from payload', () => {
+      const schema: JSONSchema6 = {
+        title: 'OneOf Object Payload Exclusion Test',
+        type: 'object',
+        properties: {
+          transport: {
+            type: 'object',
+            title: 'Transport',
+            oneOf: [
+              {
+                title: 'S3',
+                type: 'object',
+                properties: {
+                  bucket: { type: 'string' },
+                  prefix: { type: 'string' },
+                },
+              },
+              {
+                title: 'HTTP',
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  method: { type: 'string', enum: ['GET', 'POST'] },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const formValues = {
+        transport: {
+          select_transport: 'HTTP',
+          bucket: 'old-bucket',
+          prefix: 'old-prefix/',
+          url: 'https://example.com/data',
+          method: 'GET',
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        transport: {
+          url: 'https://example.com/data',
+          method: 'GET',
+        },
       })
     })
   })
