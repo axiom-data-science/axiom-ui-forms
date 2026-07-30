@@ -1,0 +1,36 @@
+{
+  "title": "OneOf Object Schema Demo",
+  "type": "object",
+  "properties": {
+    "field1": {
+      "title": "Field 1",
+      "type": "string"
+    },
+    "transport": {
+      "title": "Transport",
+      "type": "object",
+      "oneOf": [
+        {
+          "title": "S3",
+          "type": "object",
+          "properties": {
+            "bucket": { "type": "string", "title": "Bucket" },
+            "prefix": { "type": "string", "title": "Prefix" }
+          }
+        },
+        {
+          "title": "HTTP",
+          "type": "object",
+          "properties": {
+            "url": { "type": "string", "title": "URL" },
+            "method": {
+              "type": "string",
+              "title": "Method",
+              "enum": ["GET", "POST"]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

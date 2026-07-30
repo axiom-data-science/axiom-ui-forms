@@ -1,0 +1,15 @@
+{
+  "title": "AnyOf Simple Schema Demo",
+  "type": "object",
+  "properties": {
+    "channels": {
+      "title": "Channels",
+      "type": "string",
+      "anyOf": [
+        { "const": "email", "title": "Email" },
+        { "const": "sms", "title": "SMS" },
+        { "const": "webhook", "title": "Webhook" }
+      ]
+    }
+  }
+}
