@@ -13,7 +13,6 @@ import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/sche
 import { getFieldsFromFormSection } from '@/utils/getters'
 import { cloneObject } from '@/utils/manipulators'
 import { pick } from 'lodash-es'
-import { useSearchParams } from 'react-router-dom'
 import { CaretDownIcon, CaretUpIcon } from '@radix-ui/react-icons'
 
 const inputOverrides = {
@@ -58,7 +57,6 @@ const CollabedWatterLevelFormSheetSchemaOnly = (
     formSectionOverrides: IFormSectionOverride[]
   }
 ): ReactElement => {
-  const [searchParams] = useSearchParams()
   const schemaState = useState<JSONSchema6 | undefined>(schema)
   const fieldOverridesFromSections = formSectionOverrides.map(s => getFieldsFromFormSection(s as IFormSection)).flat()
     .map(f => {
