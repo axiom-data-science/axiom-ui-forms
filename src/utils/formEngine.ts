@@ -226,10 +226,11 @@ export function seedNestedDefaults(
       }
       // Skip processing nested fields - they will get defaults when added via getNewDefaultElement
       continue
-    } else if (field.type === ***REMOVED***object***REMOVED*** && field.fields) {
+    } else if (field.type === ***REMOVED***object***REMOVED*** && ((field.fields ?? (field as any).tabs) || (field as any).pages || (field as any).wizard_steps)) {
+      const childFields = getChildFields(field)
+
       // skip_path objects are UI-only containers (like objectWrapper) — don***REMOVED***t nest under field.id
       if ((field as any).skip_path === true) {
-        const childFields = getChildFields(field)
         seedNestedDefaults(childFields, formValues, context, ***REMOVED******REMOVED***)
         continue
       }
@@ -248,7 +249,7 @@ export function seedNestedDefaults(
               arrayValue[i] = {}
             }
             // Recursively seed defaults for each array element
-            seedNestedDefaults(field.fields, arrayValue[i] as IFormValues, context, ***REMOVED******REMOVED***)
+            seedNestedDefaults(childFields, arrayValue[i] as IFormValues, context, ***REMOVED******REMOVED***)
           }
         }
       } else {
@@ -260,7 +261,7 @@ export function seedNestedDefaults(
           !Array.isArray(objectValue)
         ) {
           // Recursively seed defaults for nested fields
-          seedNestedDefaults(field.fields, objectValue as IFormValues, context, ***REMOVED******REMOVED***)
+          seedNestedDefaults(childFields, objectValue as IFormValues, context, ***REMOVED******REMOVED***)
         }
       }
     } else {
