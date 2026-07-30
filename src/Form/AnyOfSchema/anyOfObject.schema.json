@@ -1,0 +1,31 @@
+{
+  "title": "AnyOf Object Schema Demo",
+  "type": "object",
+  "properties": {
+    "processor": {
+      "title": "Processor",
+      "type": "object",
+      "anyOf": [
+        {
+          "title": "Split Processor (schema title)",
+          "type": "object",
+          "properties": {
+            "source_variable": { "type": "string", "title": "Source Variable (schema title)" },
+            "separator": { "type": "string", "title": "Separator (schema title)", "default": "," }
+          }
+        },
+        {
+          "title": "Drop Processor (schema title)",
+          "type": "object",
+          "properties": {
+            "column_names": {
+              "type": "array",
+              "title": "Column Names (schema title)",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
