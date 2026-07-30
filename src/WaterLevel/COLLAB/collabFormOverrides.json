@@ -354,7 +354,7 @@
     {
       "id": "sensor-information",
       "label": "Sensor Information",
-      "description": "Enter one or more sensors. Definitions:  - Platform is the type of asset, and this term is defined with options by ERDDAP. For WL, it is considered a ***REMOVED***station***REMOVED*** platform.   - Station is the physical location of a deployment. For example, West Dock Station.  - Instrument is the large physical instrument that may house individual or smaller components, aka sensors.   - Components are the individual sensors within an instrument. There may be multiple components within a single instrument.  Example two radar gauges within one instrument.  - Discriminant is the serial number of the individual component(s), if applicable, or the instrument itself.",
+      "description": "Enter one or more sensors.  \nDefinitions:\n\n- **Instrument** is the large physical instrument that may house individual or smaller components, aka sensors.\n - **Components** are the individual sensors within an instrument. There may be multiple components within a single instrument. Example two radar gauges within one instrument.",
       "fields": [
         {
           "prop": "sensors",
@@ -426,7 +426,8 @@
                   ]
                 },
                 {
-                  "prop": "sensors[].mounting-structure"
+                  "prop": "sensors[].mounting-structure",
+                  "type": "selectOrText"
                 },
                 {
                   "prop": "sensors[].geophysical_variable:accuracy"
@@ -448,7 +449,7 @@
                   "fields": [
                     {
                       "prop": "sensors[].instrument",
-                      "label": "Instrument",
+                      "type": "selectOrText",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
@@ -456,7 +457,7 @@
                     },
                     {
                       "prop": "sensors[].instrument_variable:component",
-                      "label": "Component",
+                      "type": "selectOrText",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
@@ -466,7 +467,7 @@
                 },
                 {
                   "prop": "sensors[].instrument_variable:make_model",
-                  "label": "Make/Model",
+                  "type": "selectOrText",
                   "settings": {
                     "descriptionPresentation": "tooltip",
                     "smallLabel": true
@@ -508,7 +509,6 @@
                   "fields": [
                     {
                       "prop": "sensors[].modem-communication-manufacturer-model",
-                      "label": "Manufacturer/Model",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
@@ -516,7 +516,6 @@
                     },
                     {
                       "prop": "sensors[].serial-number-for-modem",
-                      "label": "Serial Number",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true

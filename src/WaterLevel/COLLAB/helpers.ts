@@ -472,6 +472,30 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
   return schema
 }
 
+const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormFieldOverride => {
+  const fO: IFormFieldOverride = {
+    prop: field.id,
+  }
+  if (field.response_type && field.response_type.toLowerCase().includes(***REMOVED***upload***REMOVED***)) {
+    fO.type = ***REMOVED***file_upload***REMOVED***
+  }
+  const options = [
+    field.option1,
+    field.option2,
+    field.option3,
+    field.option4,
+    field.option5,
+    field.option6,
+    field.option7,
+    field.option8
+  ].filter(o => o !== null && o !== ***REMOVED******REMOVED*** && o !== undefined) as string[]
+  if(options.length && options.find(o => o.toLowerCase() === ***REMOVED***other***REMOVED***)) {
+    console.log(***REMOVED***setting selectorOrText for***REMOVED***, field.id, ***REMOVED***options***REMOVED***, options)
+    fO.type = ***REMOVED***selectOrText***REMOVED***
+  }
+  return fO
+}
+
 export const parseFormSections = (
   fields: IMetadataField[],
   sections: IMetadataFormSection[],
@@ -535,9 +559,7 @@ export const parseFormSections = (
             return {
               id: secondarySectionId,
               label: secondarySectionLabel,
-              fields: secondarySectionFields.map((f) => ({
-                prop: f.id,
-              })),
+              fields: secondarySectionFields.map(createFieldOverrideFromMetadataField),
             } satisfies IFormSectionOverride
           })
 
@@ -557,15 +579,7 @@ export const parseFormSections = (
           section.tabs = tabs
         }
       } else {
-        section.fields = fields.map((f) => {
-          const fO: IFormFieldOverride = {
-            prop: f.id,
-          }
-          if (f.response_type && f.response_type.toLowerCase().includes(***REMOVED***upload***REMOVED***)) {
-            fO.type = ***REMOVED***file_upload***REMOVED***
-          }
-          return fO
-        })
+        section.fields = fields.map(createFieldOverrideFromMetadataField)
       }
       return section
     })
