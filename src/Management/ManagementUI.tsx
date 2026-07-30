@@ -95,12 +95,20 @@ const fieldTypeOptions: IFormField[***REMOVED***type***REMOVED***][] = [
   ***REMOVED***long_text***REMOVED***,
   ***REMOVED***number***REMOVED***,
   ***REMOVED***boolean***REMOVED***,
+  ***REMOVED***checkbox***REMOVED***,
   ***REMOVED***select***REMOVED***,
+  ***REMOVED***stateSelector***REMOVED***,
+  ***REMOVED***selectOrText***REMOVED***,
   ***REMOVED***radio***REMOVED***,
   ***REMOVED***date***REMOVED***,
   ***REMOVED***time***REMOVED***,
   ***REMOVED***datetime***REMOVED***,
+  ***REMOVED***file_upload***REMOVED***,
   ***REMOVED***json***REMOVED***,
+  ***REMOVED***geojson***REMOVED***,
+  ***REMOVED***geometry***REMOVED***,
+  ***REMOVED***objectList***REMOVED***,
+  ***REMOVED***oneOf***REMOVED***,
   ***REMOVED***object***REMOVED***,
   ***REMOVED***objectWrapper***REMOVED***,
 ]
@@ -260,6 +268,12 @@ const readRecord = (value: unknown): Record<string, unknown> | undefined => {
 
 const generateShortGuid = (): string => {
   return Math.random().toString(36).substring(2, 6).toUpperCase()
+}
+
+const normalizeFieldType = (value: string | undefined): IFormField[***REMOVED***type***REMOVED***] | undefined => {
+  if (value === undefined) return undefined
+  if (value === ***REMOVED***fileUpload***REMOVED***) return ***REMOVED***file_upload***REMOVED***
+  return value as IFormField[***REMOVED***type***REMOVED***]
 }
 
 const GENERAL_FIELD_SETTING_KEYS = new Set([
@@ -942,7 +956,7 @@ const createModelFromOverrides = (
     const existing = fields.find((field) => field.prop === prop && prop !== ***REMOVED******REMOVED***)
 
     const baseField = byProp.get(prop)
-    const fallbackType = readString(overrideLike?.type) as IFormField[***REMOVED***type***REMOVED***] | undefined
+    const fallbackType = normalizeFieldType(readString(overrideLike?.type))
 
     if (existing !== undefined) {
       existing.parentRef = parentRef
@@ -1074,9 +1088,9 @@ const createModelFromOverrides = (
         fields.push(field)
       }
 
-      const overrideType = readString(overrideLike.type)
+      const overrideType = normalizeFieldType(readString(overrideLike.type))
       if (overrideType !== undefined) {
-        field.overrideType = overrideType as IFormField[***REMOVED***type***REMOVED***]
+        field.overrideType = overrideType
       }
 
       const overrideLabel = readString(overrideLike.label)

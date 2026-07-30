@@ -89,8 +89,11 @@ const createTypeSpecificSettingsTemplate = (
         allowEmpty: true,
       }
     case ***REMOVED***select***REMOVED***:
+    case ***REMOVED***stateSelector***REMOVED***:
+    case ***REMOVED***selectOrText***REMOVED***:
       return {
         allowNull: true,
+        showDescriptionForSelected: false,
       }
     case ***REMOVED***radio***REMOVED***:
       return {
@@ -108,6 +111,11 @@ const createTypeSpecificSettingsTemplate = (
     case ***REMOVED***objectList***REMOVED***:
       return {
         keyField: ***REMOVED***id***REMOVED***,
+      }
+    case ***REMOVED***file_upload***REMOVED***:
+    case ***REMOVED***fileUpload***REMOVED***:
+      return {
+        acceptedFileTypes: [***REMOVED***.csv***REMOVED***],
       }
     default:
       return {}
@@ -768,17 +776,31 @@ const FieldOverrideEditors = ({
           </div>
         ) : null}
 
-        {effectiveType === ***REMOVED***select***REMOVED*** ? (
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={typeSpecificSettings.allowNull !== false}
-              onChange={(event) => {
-                setTypeSpecific(***REMOVED***allowNull***REMOVED***, event.target.checked, true)
-              }}
-            />
-            Allow null selection
-          </label>
+        {effectiveType === ***REMOVED***select***REMOVED*** ||
+        effectiveType === ***REMOVED***stateSelector***REMOVED*** ||
+        effectiveType === ***REMOVED***selectOrText***REMOVED*** ? (
+          <div className="grid grid-cols-1 gap-2 text-sm">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={typeSpecificSettings.allowNull !== false}
+                onChange={(event) => {
+                  setTypeSpecific(***REMOVED***allowNull***REMOVED***, event.target.checked, true)
+                }}
+              />
+              Allow null selection
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={typeSpecificSettings.showDescriptionForSelected === true}
+                onChange={(event) => {
+                  setTypeSpecific(***REMOVED***showDescriptionForSelected***REMOVED***, event.target.checked, true)
+                }}
+              />
+              Show selected option description
+            </label>
+          </div>
         ) : null}
 
         {effectiveType === ***REMOVED***radio***REMOVED*** ? (
@@ -917,12 +939,47 @@ const FieldOverrideEditors = ({
           </label>
         ) : null}
 
+        {effectiveType === ***REMOVED***file_upload***REMOVED*** || effectiveType === ***REMOVED***fileUpload***REMOVED*** ? (
+          <label className="flex flex-col gap-1 text-sm">
+            Accepted file types
+            <input
+              className="border rounded px-2 py-1"
+              placeholder=".csv, .xlsx, image/*"
+              value={
+                Array.isArray(typeSpecificSettings.acceptedFileTypes)
+                  ? typeSpecificSettings.acceptedFileTypes.join(***REMOVED***, ***REMOVED***)
+                  : typeof typeSpecificSettings.acceptedFileTypes === ***REMOVED***string***REMOVED***
+                    ? typeSpecificSettings.acceptedFileTypes
+                    : ***REMOVED******REMOVED***
+              }
+              onChange={(event) => {
+                const raw = event.target.value.trim()
+                if (raw === ***REMOVED******REMOVED***) {
+                  setTypeSpecific(***REMOVED***acceptedFileTypes***REMOVED***, undefined)
+                  return
+                }
+
+                const values = raw
+                  .split(***REMOVED***,***REMOVED***)
+                  .map((candidate) => candidate.trim())
+                  .filter((candidate) => candidate.length > 0)
+
+                setTypeSpecific(***REMOVED***acceptedFileTypes***REMOVED***, values.length <= 1 ? values[0] : values)
+              }}
+            />
+          </label>
+        ) : null}
+
         {effectiveType !== ***REMOVED***number***REMOVED*** &&
         effectiveType !== ***REMOVED***json***REMOVED*** &&
         effectiveType !== ***REMOVED***select***REMOVED*** &&
+        effectiveType !== ***REMOVED***stateSelector***REMOVED*** &&
+        effectiveType !== ***REMOVED***selectOrText***REMOVED*** &&
         effectiveType !== ***REMOVED***radio***REMOVED*** &&
         effectiveType !== ***REMOVED***geometry***REMOVED*** &&
-        effectiveType !== ***REMOVED***objectList***REMOVED*** ? (
+        effectiveType !== ***REMOVED***objectList***REMOVED*** &&
+        effectiveType !== ***REMOVED***file_upload***REMOVED*** &&
+        effectiveType !== ***REMOVED***fileUpload***REMOVED*** ? (
           <p className="text-xs text-slate-500">
             No dedicated type-specific settings for this field type yet.
           </p>
