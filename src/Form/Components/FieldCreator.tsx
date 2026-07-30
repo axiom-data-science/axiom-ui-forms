@@ -17,7 +17,7 @@ import {
 import { seedNestedDefaults } from '@/utils/formEngine'
 import { evaluateConditionStateUpdate } from '@/utils/formEngine/conditionLogic'
 import errorRenderer from '@/utils/errorRenderer'
-import { getFieldValue, makeJsonPath } from '@/utils/getters'
+import { getFieldValue, getFields, makeJsonPath } from '@/utils/getters'
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   cloneObject,
@@ -34,6 +34,7 @@ import {
   TrashIcon,
 } from '@radix-ui/react-icons'
 import { error } from 'ajv/dist/vocabularies/applicator/dependencies'
+import { get as lodashGet, set as lodashSet } from 'lodash-es'
 import React, { useCallback, useEffect, useRef, useState, type ReactElement } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -329,7 +330,7 @@ export const ObjectListCreator = ({
 
   if (
     valueField !== undefined &&
-    !objListField.fields?.some((f: IFormField) => f.id === valueField)
+    !getFields(objListField.fields).some((f: IFormField) => f.id === valueField)
   ) {
     return (
       <div className="p-4 bg-slate-100">
@@ -352,6 +353,13 @@ export const ObjectListCreator = ({
   }
 
   const defaultOnChange = useCallback((updatedObj: ICompositeValueType): void => {
+    // When nested/scoped onChange is provided, let parent scope own the update.
+    // Writing globally here can reset nested objectList pending rows.
+    if (typeof onChange === 'function') {
+      onChange(updatedObj)
+      return
+    }
+
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
       form,
       field,
@@ -359,9 +367,9 @@ export const ObjectListCreator = ({
       formValues: formValuesRef.current,
     })
     setFormValues(formValuesCopyClean)
-    const notifyFn = onChange ?? contextOnChange
-    if (typeof notifyFn === 'function') {
-      notifyFn(updatedObj)
+
+    if (typeof contextOnChange === 'function') {
+      contextOnChange(updatedObj)
     }
   }, [form, field, setFormValues, onChange, contextOnChange])
 
@@ -378,8 +386,9 @@ export const ObjectListCreator = ({
         delete storedItem[keyField]
         return storedItem
       }
-      if (itemData[valueField] !== undefined) {
-        return itemData[valueField]
+      const mappedValue = lodashGet(itemData, valueField)
+      if (mappedValue !== undefined) {
+        return mappedValue as IValueType | IValueType[]
       }
       // Preserve existing key/value entries when value field is missing from edited object.
       return objValue[keyValue]
@@ -389,6 +398,14 @@ export const ObjectListCreator = ({
 
   const toRenderableItemValue = useCallback(
     (currentKey: string, item: IValueType | IValueType[] | undefined): ICompositeValueType => {
+      if (valueField !== undefined) {
+        const renderable = {
+          [keyField]: currentKey,
+        } as ICompositeValueType
+        lodashSet(renderable, valueField, item)
+        return renderable
+      }
+
       if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
         const objectItem = cloneObject(item) as ICompositeValueType
         if (objectItem[keyField] === undefined) {
@@ -396,12 +413,7 @@ export const ObjectListCreator = ({
         }
         return objectItem
       }
-      if (valueField !== undefined) {
-        return {
-          [keyField]: currentKey,
-          [valueField]: item,
-        } as ICompositeValueType
-      }
+
       return {
         [keyField]: currentKey,
       } as ICompositeValueType

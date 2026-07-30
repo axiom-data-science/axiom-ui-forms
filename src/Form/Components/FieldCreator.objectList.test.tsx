@@ -397,4 +397,90 @@ describe('FieldCreator objectList valueField mode', () => {
       },
     })
   })
+
+  it('accepts valueField that points to a nested wrapper child field', () => {
+    const objectListField: IFormField = {
+      id: 'nestedList',
+      type: 'objectList',
+      label: 'Nested List',
+      settings: {
+        keyField: 'name',
+        valueField: 'value',
+      },
+      fields: [
+        {
+          id: 'wrapper',
+          type: 'objectWrapper',
+          fields: [
+            { id: 'name', type: 'text', label: 'Name' },
+            { id: 'value', type: 'text', label: 'Value' },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      nestedList: {},
+    }
+
+    render(<FieldCreator field={objectListField} />)
+
+    expect(
+      screen.queryByText(/does not point at a valid field/i)
+    ).toBeNull()
+  })
+
+  it('rehydrates object valueField entries into nested objectList child state', () => {
+    const objectListField: IFormField = {
+      id: 'nestedList',
+      type: 'objectList',
+      label: 'Nested List',
+      settings: {
+        keyField: 'name',
+        valueField: 'value',
+      },
+      fields: [
+        { id: 'name', type: 'text', label: 'Name' },
+        {
+          id: 'value',
+          type: 'objectList',
+          label: 'Nested Value',
+          settings: {
+            keyField: 'subName',
+            excludeKeyFieldFromValue: true,
+          },
+          fields: [
+            { id: 'subName', type: 'text', label: 'Sub Name' },
+            { id: 'subValue', type: 'text', label: 'Sub Value' },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      nestedList: {
+        outerA: {
+          innerA: {
+            subValue: 'x',
+          },
+        },
+      },
+    }
+
+    render(<FieldCreator field={objectListField} />)
+
+    const subNameInput = screen.getByTestId('mock-input-subName') as HTMLInputElement
+    expect(subNameInput.value).toBe('innerA')
+  })
+
 })

@@ -308,6 +308,59 @@ describe('getters.ts', () => {
       })
     })
 
+    it('should preserve nested object values in objectList valueField mode', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'nestedList',
+            type: 'objectList',
+            settings: {
+              keyField: 'name',
+              valueField: 'value',
+            },
+            fields: [
+              { id: 'name', type: 'text' },
+              {
+                id: 'value',
+                type: 'objectList',
+                settings: {
+                  keyField: 'subName',
+                  excludeKeyFieldFromValue: true,
+                },
+                fields: [
+                  { id: 'subName', type: 'text' },
+                  { id: 'subValue', type: 'text' },
+                ],
+              },
+            ],
+          } as any,
+        ],
+      } as any
+
+      const formValues = {
+        nestedList: {
+          outerA: {
+            innerA: {
+              subValue: 'x',
+            },
+          },
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        nestedList: {
+          outerA: {
+            innerA: {
+              subValue: 'x',
+            },
+          },
+        },
+      })
+    })
+
     it('should emit objectList payload from wrapper layout without keyField when excludeKeyFieldFromValue is true', () => {
       const schema: JSONSchema6 = {
         type: 'object',
