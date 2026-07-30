@@ -1,5 +1,11 @@
 import MODLS3Form from ***REMOVED***@/Form/MODL/s3/MODLS3Form***REMOVED***
 import MODLS3SchemaForm from ***REMOVED***@/Form/MODL/s3/MODLS3SchemaForm***REMOVED***
+import AnyOfObjectSchema, { AnyOfObjectSchemaSingleProp } from ***REMOVED***@/Form/AnyOfSchema/AnyOfObjectSchema***REMOVED***
+import AnyOfSimpleSchema from ***REMOVED***@/Form/AnyOfSchema/AnyOfSimpleSchema***REMOVED***
+import AnyOfObjectSchemaWithOverrides from ***REMOVED***@/Form/AnyOfSchema/AnyOfObjectSchemaWithOverrides***REMOVED***
+import OneOfObjectSchema, { OneOfObjectSchemaSingleProp } from ***REMOVED***@/Form/OneOfSchema/OneOfObjectSchema***REMOVED***
+import OneOfSimpleSchema from ***REMOVED***@/Form/OneOfSchema/OneOfSimpleSchema***REMOVED***
+import OneOfObjectSchemaWithOverrides from ***REMOVED***@/Form/OneOfSchema/OneOfObjectSchemaWithOverrides***REMOVED***
 import ArrayWithTabs from ***REMOVED***@/Form/TestForms/ArrayWithTabs/ArrayWithTabs***REMOVED***
 import DefaultValueThatIsDependent from ***REMOVED***@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent***REMOVED***
 import ERDDAPForm from ***REMOVED***@/Form/TestForms/ERDDAP/ERDDAPForm***REMOVED***
@@ -7,24 +13,24 @@ import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustom
 import MultiTabs from ***REMOVED***@/Form/TestForms/MultiTabs/MultiTabs***REMOVED***
 import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
-import ObjectListExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
+import ObjectListExample, { NestedObjectListExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
+import ObjectListKeyValueExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample***REMOVED***
+import ObjectListWithSchemaExample, { ObjectListKeyValueWithSchemaExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample***REMOVED***
 import ObjectWrapper from ***REMOVED***@/Form/TestForms/ObjectWrapper/ObjectWrapper***REMOVED***
 import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
-import OverrideOfSchemaArray from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
+import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
 import PopulateHeadersFromUpload, {
   PrePopulatedPopulateHeadersFromUpload,
 } from ***REMOVED***@/Form/TestForms/PopulateHeadersFromUpload.tsx/PopulateHeadersFromUpload***REMOVED***
 import TabsInPagesWithWrapper from ***REMOVED***@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper***REMOVED***
 import { Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import {
-  ArrowLeftIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  Cross1Icon,
   ListBulletIcon,
 } from ***REMOVED***@radix-ui/react-icons***REMOVED***
-import { ReactElement, useState } from ***REMOVED***react***REMOVED***
+import { ReactElement, useEffect, useRef, useState } from ***REMOVED***react***REMOVED***
 import { Link, useLocation } from ***REMOVED***react-router-dom***REMOVED***
 
 const forms = [
@@ -59,9 +65,29 @@ const forms = [
     view: ObjectListExample,
   },
   {
+    label: ***REMOVED***Object list (key-value)***REMOVED***,
+    path: ***REMOVED***object-list-key-value***REMOVED***,
+    view: ObjectListKeyValueExample,
+  },
+  {
     label: ***REMOVED***Object list with select***REMOVED***,
     path: ***REMOVED***object-list-with-select***REMOVED***,
     view: ObjectListExampleWithSelectAsKeyField,
+  },
+  {
+    label: ***REMOVED***Object list with schema***REMOVED***,
+    path: ***REMOVED***object-list-with-schema***REMOVED***,
+    view: ObjectListWithSchemaExample,
+  },
+  {
+    label: ***REMOVED***Object list with key/value and schema***REMOVED***,
+    path: ***REMOVED***object-list-with-key-value-and-schema***REMOVED***,
+    view: ObjectListKeyValueWithSchemaExample,
+  },
+  {
+    label: ***REMOVED***Nested object list***REMOVED***,
+    path: ***REMOVED***nested-object-list***REMOVED***,
+    view: NestedObjectListExample,
   },
   {
     label: ***REMOVED***Object wrapper***REMOVED***,
@@ -77,6 +103,11 @@ const forms = [
     label: ***REMOVED***Override of schema array***REMOVED***,
     path: ***REMOVED***override-of-schema-array***REMOVED***,
     view: OverrideOfSchemaArray,
+  },
+  {
+    label: ***REMOVED***Override of schema array with embedded tabs***REMOVED***,
+    path: ***REMOVED***override-of-schema-array-with-embedded-tabs***REMOVED***,
+    view: OverrideOfSchemaArrayWithTabs,
   },
   {
     label: ***REMOVED***Tabs in page with wrapper***REMOVED***,
@@ -103,7 +134,47 @@ const forms = [
     path: ***REMOVED***modl-s3-schema-form***REMOVED***,
     view: MODLS3SchemaForm,
   },
-    {
+  {
+    label: ***REMOVED***AnyOf schema (object)***REMOVED***,
+    path: ***REMOVED***anyof-schema-object***REMOVED***,
+    view: AnyOfObjectSchema,
+  },
+  {
+    label: ***REMOVED***AnyOf schema (single prop override)***REMOVED***,
+    path: ***REMOVED***anyof-schema-object-single-prop***REMOVED***,
+    view: AnyOfObjectSchemaSingleProp,
+  },
+  {
+    label: ***REMOVED***AnyOf schema (object, overrides)***REMOVED***,
+    path: ***REMOVED***anyof-schema-object-overrides***REMOVED***,
+    view: AnyOfObjectSchemaWithOverrides,
+  },
+  {
+    label: ***REMOVED***AnyOf schema (simple)***REMOVED***,
+    path: ***REMOVED***anyof-schema-simple***REMOVED***,
+    view: AnyOfSimpleSchema,
+  },
+  {
+    label: ***REMOVED***OneOf schema (object)***REMOVED***,
+    path: ***REMOVED***oneof-schema-object***REMOVED***,
+    view: OneOfObjectSchema,
+  },
+  {
+    label: ***REMOVED***OneOf schema (single prop override)***REMOVED***,
+    path: ***REMOVED***oneof-schema-single-prop-override***REMOVED***,
+    view: OneOfObjectSchemaSingleProp,
+  },
+  {
+    label: ***REMOVED***OneOf schema (object, overrides)***REMOVED***,
+    path: ***REMOVED***oneof-schema-object-overrides***REMOVED***,
+    view: OneOfObjectSchemaWithOverrides,
+  },
+  {
+    label: ***REMOVED***OneOf schema (simple)***REMOVED***,
+    path: ***REMOVED***oneof-schema-simple***REMOVED***,
+    view: OneOfSimpleSchema,
+  },
+  {
     label: ***REMOVED***MODL S3***REMOVED***,
     path: ***REMOVED***modl-s3-form***REMOVED***,
     view: MODLS3Form,
@@ -125,6 +196,19 @@ const AllForms = (): ReactElement => {
   const nav = useLocation()
   const selectedFormKey = nav.pathname.split(***REMOVED***/***REMOVED***)[2] ?? null
   const View = forms.find((f) => f.path === selectedFormKey)?.view ?? null
+  const navItemRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
+
+  useEffect(() => {
+    if (!showNav || selectedFormKey === null) {
+      return
+    }
+
+    const selectedLink = navItemRefs.current[selectedFormKey]
+    if (selectedLink !== undefined && selectedLink !== null) {
+      selectedLink.scrollIntoView({ block: ***REMOVED***center***REMOVED*** })
+    }
+  }, [selectedFormKey, showNav])
+
   return (
     <div className={`h-full flex flex-row gap-4${showNav ? ***REMOVED******REMOVED*** : ***REMOVED*** pl-20***REMOVED***}`}>
       {showNav ? (
@@ -140,6 +224,9 @@ const AllForms = (): ReactElement => {
             {forms.map((form) => (
               <Link
                 key={form.path}
+                ref={(element) => {
+                  navItemRefs.current[form.path] = element
+                }}
                 to={`/all-forms/${form.path}`}
                 className={`block rounded  p-4 px-6 ${selectedFormKey === form.path ? ***REMOVED***bg-slate-200 font-semibold***REMOVED*** : ***REMOVED***hover:bg-slate-100***REMOVED***}`}
               >

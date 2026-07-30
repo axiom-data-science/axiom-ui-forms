@@ -45,6 +45,7 @@ export type IFormField =
   | IGeometryField
   | IFormFieldSection
   | ICustomField
+  | IFileUploadInput
 
 export type IFormFieldType =
   | ***REMOVED***text***REMOVED***
@@ -62,6 +63,11 @@ export type IFormFieldType =
   | ***REMOVED***objectWrapper***REMOVED***
   | ***REMOVED***objectList***REMOVED***
   | ***REMOVED***oneOf***REMOVED***
+  | ***REMOVED***fileUpload***REMOVED***
+  | ***REMOVED***file_upload***REMOVED***
+  | ***REMOVED***stateSelector***REMOVED***
+  | ***REMOVED***state_selector***REMOVED***
+  | ***REMOVED***selectOrText***REMOVED***
   | ***REMOVED***geojson***REMOVED***
   | ***REMOVED***geometry***REMOVED***
   | `custom:${string}`
@@ -108,6 +114,8 @@ type IFieldConstraints = Record<string, unknown>
 interface IFormFieldSettingsBase {
   [key: string]: unknown
   descriptionPresentation?: ***REMOVED***inline***REMOVED*** | ***REMOVED***tooltip***REMOVED***
+  boldLabel?: boolean
+  boldDescription?: boolean
 }
 
 interface IFormFieldRoot {
@@ -145,6 +153,8 @@ interface INumberValueInput extends IFormFieldRoot {
     canBeNull?: boolean
     nonNullDefaultValue?: number
     invertForDisplay?: boolean
+    smallLabel?: boolean
+    className?: string
   }
 }
 
@@ -175,7 +185,8 @@ export interface IJSONField extends IFormFieldRoot {
 interface ISelectOption {
   label: string
   value: string | number
-  [key: string]: string | number | boolean | Record<string, unknown>
+  description?: string
+  [key: string]: string | number | boolean | Record<string, unknown> | undefined
 }
 
 interface ISelectableInput extends IFormFieldRoot {
@@ -191,6 +202,12 @@ interface ISelectableInput extends IFormFieldRoot {
   }
 }
 
+interface IFileUploadInput extends IFormFieldRoot {
+  type: ***REMOVED***fileUpload***REMOVED*** | ***REMOVED***file_upload***REMOVED***
+  settings?: IFormFieldSettingsBase & {
+    acceptedFileTypes?: string[] | string
+  }
+}
 interface ICustomField extends IFormFieldRoot, ISelectableInput {
   type: `custom:${string}`
 }
@@ -202,7 +219,10 @@ interface IMultiSelectableInput extends ISelectableInput {
 }
 
 export interface ISelectField extends ISingleSelectableInput {
-  type: ***REMOVED***select***REMOVED*** | ***REMOVED***stateSelector***REMOVED***
+  type: ***REMOVED***select***REMOVED*** | ***REMOVED***stateSelector***REMOVED*** | ***REMOVED***selectOrText***REMOVED***
+  settings?: IFormFieldSettingsBase & {
+    showDescriptionForSelected?: boolean
+  }
 }
 
 export interface IRadioField extends ISingleSelectableInput {
@@ -247,10 +267,12 @@ interface IDateTimeField extends IFormFieldRoot {
   type: ***REMOVED***datetime***REMOVED***
   constraints?: IDateTimeConstraints
 }
+
+export type IFormFieldLayout = ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
 interface IContainerField extends IFormFieldRoot {
   skip_path?: boolean
   fields: IFormField[]
-  layout?: ***REMOVED***horizontal***REMOVED*** | ***REMOVED***vertical***REMOVED*** | ***REMOVED***grid2***REMOVED*** | ***REMOVED***grid3***REMOVED*** | ***REMOVED***grid4***REMOVED***
+  layout?: IFormFieldLayout
   multiple?: boolean
 }
 
@@ -271,8 +293,15 @@ export interface IObjectField extends Omit<IValidContainerField, ***REMOVED***fi
 
 export interface IObjectListField extends Omit<IValidContainerField, ***REMOVED***fields***REMOVED***> {
   type: ***REMOVED***objectList***REMOVED***
+  tabs?: IFormLayoutTab[]
+  pages?: IPage[]
+  wizard_steps?: IWizardStep[]
   settings: {
     keyField: string
+    valueField?: string
+    onlyShowKeyUntilUniqueEntered?: boolean
+    showInitialObject?: boolean
+    excludeKeyFieldFromValue?: boolean
   }
   fields: IFormField[]
 }
@@ -367,6 +396,10 @@ export interface IFormSection {
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
   tabs?: IFormLayoutTab[]
+  settings?: {
+    boldDescription?: boolean
+    className?: string
+  }
 }
 
 export interface IPage extends Omit<IFormSection, ***REMOVED***pages***REMOVED***> {}
@@ -393,9 +426,11 @@ export interface IForm {
   settings?: IFormSettings
 }
 
+type IContainerFieldOverrideBase = Partial<IObjectField | IObjectWrapperField | IObjectListField>
+
 export type IFormFieldOverride = (Partial<IFormField> & { prop: string }) | IObjectFormFieldOverride
 export type IObjectFormFieldOverride = Omit<
-  Partial<IObjectField>,
+  IContainerFieldOverrideBase,
   ***REMOVED***fields***REMOVED*** | ***REMOVED***tabs***REMOVED*** | ***REMOVED***pages***REMOVED*** | ***REMOVED***wizard_steps***REMOVED***
 > & {
   fields?: IFormFieldOverride[]

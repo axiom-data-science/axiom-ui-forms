@@ -1,0 +1,32 @@
+{
+  "fields": [
+    { "prop": "test" }, 
+    {
+      "prop": "testObject",
+      "layout": "grid2",
+      "tabs": [
+        {
+          "id": "tab1",
+          "label": "Tab 1",
+          "fields": [
+            {
+              "id": "wrapper",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "fields": [
+                {
+                  "prop": "testObject[].field1"
+                },
+                {
+                  "prop": "testObject[].field2",
+                  "label": "Custom Field 2 Label (from array override)"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+      
+    }
+  ]
+}

@@ -1,20 +1,17 @@
 import { FormSectionContextProvider, useFormSectionContext } from ***REMOVED***@/Form/Creator/FormSectionContextProvider***REMOVED***
 import { type IFormSectionStatus } from ***REMOVED***@/Form/Creator/FormCreator***REMOVED***
-import { type IFormSection, type IValueChangeFn, type IFieldInputProps, IFormValues, type ICompositeValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { type IFormSection, type IFieldInputProps, IFormValues, type ICompositeValueType } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FormSection from ***REMOVED***@/Form/Creator/FormSection***REMOVED***
 import NavElement from ***REMOVED***@/Form/Creator/NavElement***REMOVED***
 import { calculateSectionStatus } from ***REMOVED***@/utils/validators***REMOVED***
-import { Cross2Icon, DropdownMenuIcon, InfoCircledIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { Cross2Icon, DropdownMenuIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import React, { memo, ReactNode, useEffect, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { useParams } from ***REMOVED***react-router-dom***REMOVED***
-import FieldCreator from ***REMOVED***@/Form/Components/FieldCreator***REMOVED***
-import { cloneObject } from ***REMOVED***@/utils/manipulators***REMOVED***
 import { useFormContext, useFormValues } from ***REMOVED***@/Form/Creator/FormContextProvider***REMOVED***
-import InlineMarkdown from ***REMOVED***@/Form/Components/InlineMarkdown***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import layoutAtom from ***REMOVED***@/utils/responsive/layoutState***REMOVED***
 import { Button } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import FieldLabel, { FieldLabelText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
+import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { ScopedActiveSection } from ***REMOVED***@/Form/Creator/TabLayout***REMOVED***
 import { WizardNavSmall } from ***REMOVED***@/Form/Creator/Wizard***REMOVED***
 
@@ -176,10 +173,11 @@ export const ActivePage = ({
               label: formSection.description,
               type: ***REMOVED***text***REMOVED***,
               settings: {
-                descriptionPresentation: ***REMOVED***tooltip***REMOVED***
+                descriptionPresentation: ***REMOVED***tooltip***REMOVED***,
+                ...formSection.settings
               }
             }}
-              textClassName=***REMOVED***font-normal***REMOVED***
+              textClassName={`${formSection?.settings?.boldDescription ? ***REMOVED***font-bold***REMOVED*** : ***REMOVED***font-normal***REMOVED***}`}
 
             />
 
@@ -262,12 +260,16 @@ const PageLayoutContent = ({
         />
       )}
     </div>
+    {
+      level === 0 &&
+    
       <SmallNavComponent
         sections={sections}
         sectionStatus={sectionStatus}
         level={level}
         SubmitButton={SubmitButton}
       />
+    }
     </div>
   )
 }

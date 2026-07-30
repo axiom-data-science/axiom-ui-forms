@@ -20,6 +20,7 @@ export interface IMetadataField {
     | ***REMOVED***Email***REMOVED***
     | ***REMOVED***Phone number***REMOVED***
     | ***REMOVED***Boolean***REMOVED***
+    | ***REMOVED***Attachment/upload***REMOVED***
     | null
     | string
   filter_control: ***REMOVED***Y***REMOVED*** | ***REMOVED***N***REMOVED*** | ***REMOVED***Update***REMOVED*** | string | null

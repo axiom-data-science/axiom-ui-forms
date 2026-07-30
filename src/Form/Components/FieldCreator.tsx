@@ -17,7 +17,7 @@ import {
 import { seedNestedDefaults } from ***REMOVED***@/utils/formEngine***REMOVED***
 import { evaluateConditionStateUpdate } from ***REMOVED***@/utils/formEngine/conditionLogic***REMOVED***
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
-import { getFieldValue, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
+import { getFieldValue, getFields, makeJsonPath } from ***REMOVED***@/utils/getters***REMOVED***
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   cloneObject,
@@ -34,6 +34,7 @@ import {
   TrashIcon,
 } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { error } from ***REMOVED***ajv/dist/vocabularies/applicator/dependencies***REMOVED***
+import { get as lodashGet, set as lodashSet } from ***REMOVED***lodash-es***REMOVED***
 import React, { useCallback, useEffect, useRef, useState, type ReactElement } from ***REMOVED***react***REMOVED***
 import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 
@@ -307,6 +308,13 @@ export const ObjectListCreator = ({
 
   const objListField = field as any // IObjectListField
   const keyField = objListField.settings?.keyField
+  const valueField = objListField.settings?.valueField as string | undefined
+  const onlyShowKeyUntilUniqueEntered =
+    objListField.settings?.onlyShowKeyUntilUniqueEntered === true
+  const showInitialObject = objListField.settings?.showInitialObject === true
+  const excludeKeyFieldFromValue =
+    objListField.settings?.excludeKeyFieldFromValue === true
+  const didInitializeInitialObject = useRef(false)
 
   if (!keyField) {
     return (
@@ -315,6 +323,22 @@ export const ObjectListCreator = ({
         <p className="text-rose-700">
           <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error: objectList field{***REMOVED*** ***REMOVED***}
           <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> requires settings.keyField
+        </p>
+      </div>
+    )
+  }
+
+  if (
+    valueField !== undefined &&
+    !getFields(objListField.fields).some((f: IFormField) => f.id === valueField)
+  ) {
+    return (
+      <div className="p-4 bg-slate-100">
+        <FieldLabel field={field} disabled={disabled} />
+        <p className="text-rose-700">
+          <ExclamationTriangleIcon className="inline w-4 h-4 mr-2" /> Error: objectList field{***REMOVED*** ***REMOVED***}
+          <span className="font-sans p-2 text-xs bg-slate-200">{field.id}</span> has settings.valueField
+          that does not point at a valid field
         </p>
       </div>
     )
@@ -329,6 +353,13 @@ export const ObjectListCreator = ({
   }
 
   const defaultOnChange = useCallback((updatedObj: ICompositeValueType): void => {
+    // When nested/scoped onChange is provided, let parent scope own the update.
+    // Writing globally here can reset nested objectList pending rows.
+    if (typeof onChange === ***REMOVED***function***REMOVED***) {
+      onChange(updatedObj)
+      return
+    }
+
     const formValuesCopyClean = cleanAndUpdateFormValuesWithFieldValue({
       form,
       field,
@@ -336,13 +367,59 @@ export const ObjectListCreator = ({
       formValues: formValuesRef.current,
     })
     setFormValues(formValuesCopyClean)
-    const notifyFn = onChange ?? contextOnChange
-    if (typeof notifyFn === ***REMOVED***function***REMOVED***) {
-      notifyFn(updatedObj)
+
+    if (typeof contextOnChange === ***REMOVED***function***REMOVED***) {
+      contextOnChange(updatedObj)
     }
   }, [form, field, setFormValues, onChange, contextOnChange])
 
   const objValue = (typeof value === ***REMOVED***object***REMOVED*** && value !== null && !Array.isArray(value)) ? value as ICompositeValueType : {}
+
+  const toStoredItemValue = useCallback(
+    (keyValue: string, itemData: ICompositeValueType): IValueType | IValueType[] | undefined => {
+      if (valueField === undefined) {
+        const storedItem = cloneObject(itemData)
+        delete (storedItem as any)._id
+        if (!excludeKeyFieldFromValue) {
+          return storedItem
+        }
+        delete storedItem[keyField]
+        return storedItem
+      }
+      const mappedValue = lodashGet(itemData, valueField)
+      if (mappedValue !== undefined) {
+        return mappedValue as IValueType | IValueType[]
+      }
+      // Preserve existing key/value entries when value field is missing from edited object.
+      return objValue[keyValue]
+    },
+    [excludeKeyFieldFromValue, keyField, objValue, valueField]
+  )
+
+  const toRenderableItemValue = useCallback(
+    (currentKey: string, item: IValueType | IValueType[] | undefined): ICompositeValueType => {
+      if (valueField !== undefined) {
+        const renderable = {
+          [keyField]: currentKey,
+        } as ICompositeValueType
+        lodashSet(renderable, valueField, item)
+        return renderable
+      }
+
+      if (typeof item === ***REMOVED***object***REMOVED*** && item !== null && !Array.isArray(item)) {
+        const objectItem = cloneObject(item) as ICompositeValueType
+        if (objectItem[keyField] === undefined) {
+          objectItem[keyField] = currentKey
+        }
+        return objectItem
+      }
+
+      return {
+        [keyField]: currentKey,
+      } as ICompositeValueType
+    },
+    [keyField, valueField]
+  )
 
   // Returns true if keyValue is already used by a committed item (excluding excludeCommittedKey)
   // or by another pending item (excluding excludeTempKey).
@@ -425,16 +502,75 @@ export const ObjectListCreator = ({
       return next
     })
     const newObjValue = cloneObject(objValue)
-    newObjValue[keyValue] = itemData
+    newObjValue[keyValue] = toStoredItemValue(keyValue, itemData)
     defaultOnChange(newObjValue)
     setPendingItems(prev => prev.filter(p => p.tempKey !== tempKey))
   }
 
   // Combine committed (formValues) and pending (local) items for rendering
   const allItems: Array<{ currentKey: string; itemValue: ICompositeValueType; isPending: boolean }> = [
-    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: v as ICompositeValueType, isPending: false })),
+    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: toRenderableItemValue(k, v), isPending: false })),
     ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true })),
   ]
+
+  const createPendingItem = (itemOverride?: ICompositeValueType): {
+    tempKey: string
+    data: ICompositeValueType
+  } => {
+    const tempKey = String(new Date().getTime())
+    const newItem =
+      itemOverride !== undefined
+        ? cloneObject(itemOverride)
+        : ((getNewDefaultElement() ?? {}) as ICompositeValueType)
+    ;(newItem as any)._id = tempKey
+    return { tempKey, data: newItem }
+  }
+
+  useEffect(() => {
+    if (didInitializeInitialObject.current || !showInitialObject) {
+      return
+    }
+
+    const hasCommittedItems = Object.keys(objValue).length > 0
+    const hasPendingItems = pendingItems.length > 0
+    if (hasCommittedItems || hasPendingItems) {
+      didInitializeInitialObject.current = true
+      return
+    }
+
+    const firstPending = createPendingItem()
+    setPendingItems([firstPending])
+    didInitializeInitialObject.current = true
+  }, [objValue, pendingItems, showInitialObject])
+
+  const shouldShowOnlyKeyField = ({
+    currentKey,
+    itemValue,
+    isPending,
+  }: {
+    currentKey: string
+    itemValue: ICompositeValueType
+    isPending: boolean
+  }): boolean => {
+    if (!onlyShowKeyUntilUniqueEntered) {
+      return false
+    }
+
+    const keyValue = String(itemValue[keyField] ?? ***REMOVED******REMOVED***)
+    if (keyValue === ***REMOVED******REMOVED***) {
+      return true
+    }
+
+    if (!isPending && keyValue === currentKey) {
+      return false
+    }
+
+    const hasDuplicate = isPending
+      ? isKeyDuplicate(keyValue, { excludeTempKey: currentKey })
+      : isKeyDuplicate(keyValue, { excludeCommittedKey: currentKey })
+
+    return hasDuplicate
+  }
 
   const InputComponent = {
     ...inputMap,
@@ -449,6 +585,14 @@ export const ObjectListCreator = ({
           // Use _id for stable React key if it exists, otherwise fallback to currentKey
           const itemId = (itemValue as any)?._id || currentKey
           const itemError = itemErrors[currentKey]
+          const showOnlyKeyField = shouldShowOnlyKeyField({
+            currentKey,
+            itemValue,
+            isPending,
+          })
+          const fieldsToRender = showOnlyKeyField
+            ? objListField.fields?.filter((childField: IFormField) => childField.id === keyField)
+            : objListField.fields
           
           return (
             <div key={itemId} className={`flex flex-col gap-2 py-2 ${getFieldWrapperClass(field)}`}>
@@ -458,7 +602,7 @@ export const ObjectListCreator = ({
               </p>
             )}
             <div className="flex flex-col gap-4">
-              {objListField.fields?.map((childField: IFormField) => {
+              {fieldsToRender?.map((childField: IFormField) => {
                 const key = `${field.id}-${itemId}-${childField.id}`
                 
                 // For skip_path fields (objectWrapper or object with skip_path=true),
@@ -519,7 +663,7 @@ export const ObjectListCreator = ({
                           }))
                           // Update data under the existing key without renaming
                           const newObjValue = cloneObject(objValue)
-                          newObjValue[currentKey] = newItemValue
+                          newObjValue[currentKey] = toStoredItemValue(currentKey, newItemValue)
                           defaultOnChange(newObjValue)
                           return
                         }
@@ -530,7 +674,7 @@ export const ObjectListCreator = ({
                         })
                         const newObjValue = cloneObject(objValue)
                         delete newObjValue[currentKey]
-                        newObjValue[newKeyValue] = newItemValue
+                        newObjValue[newKeyValue] = toStoredItemValue(newKeyValue, newItemValue)
                         defaultOnChange(newObjValue)
                         return
                       }
@@ -546,7 +690,7 @@ export const ObjectListCreator = ({
 
                       // Otherwise just update the value
                       const newObjValue = cloneObject(objValue)
-                      newObjValue[currentKey] = newItemValue
+                      newObjValue[currentKey] = toStoredItemValue(currentKey, newItemValue)
                       defaultOnChange(newObjValue)
                     }}
                   />
@@ -582,7 +726,7 @@ export const ObjectListCreator = ({
                                 [currentKey]: `"${newKeyValue}" is already in use. Each ${keyField} must be unique.`
                               }))
                               const newObjValue = cloneObject(objValue)
-                              newObjValue[currentKey] = newValue
+                              newObjValue[currentKey] = toStoredItemValue(currentKey, newValue)
                               defaultOnChange(newObjValue)
                               return
                             }
@@ -593,7 +737,7 @@ export const ObjectListCreator = ({
                             })
                             const newObjValue = cloneObject(objValue)
                             delete newObjValue[currentKey]
-                            newObjValue[newKeyValue] = newValue
+                            newObjValue[newKeyValue] = toStoredItemValue(newKeyValue, newValue)
                             defaultOnChange(newObjValue)
                             return
                           }
@@ -609,7 +753,7 @@ export const ObjectListCreator = ({
                           
                           // Otherwise just update the value
                           const newObjValue = cloneObject(objValue)
-                          newObjValue[currentKey] = newValue
+                          newObjValue[currentKey] = toStoredItemValue(currentKey, newValue)
                           defaultOnChange(newObjValue)
                         }
                       }}
@@ -628,10 +772,8 @@ export const ObjectListCreator = ({
                   size="xs"
                   className={toolButtonClass}
                   onClick={() => {
-                    const tempKey = String(new Date().getTime())
-                    const newItem = getNewDefaultElement() ?? {}
-                    ;(newItem as any)._id = tempKey
-                    setPendingItems(prev => [...prev, { tempKey, data: newItem as ICompositeValueType }])
+                    const pendingItem = createPendingItem()
+                    setPendingItems(prev => [...prev, pendingItem])
                   }}
                 >
                   Add <PlusIcon className="inline ml-2" />
@@ -640,12 +782,11 @@ export const ObjectListCreator = ({
                   size="xs"
                   className={toolButtonClass}
                   onClick={() => {
-                    const tempKey = String(new Date().getTime())
                     const newItem = cloneObject(itemValue) as ICompositeValueType
-                    ;(newItem as any)._id = tempKey
                     // Clear keyField so the duplicate starts without a key (pending state)
                     delete newItem[keyField]
-                    setPendingItems(prev => [...prev, { tempKey, data: newItem }])
+                    const pendingItem = createPendingItem(newItem)
+                    setPendingItems(prev => [...prev, pendingItem])
                   }}
                 >
                   Duplicate <CopyIcon className="inline ml-2" />
@@ -678,10 +819,8 @@ export const ObjectListCreator = ({
         <Button
           size="sm"
           onClick={() => {
-            const tempKey = String(new Date().getTime())
-            const newItem = getNewDefaultElement() ?? {}
-            ;(newItem as any)._id = tempKey
-            setPendingItems([{ tempKey, data: newItem as ICompositeValueType }])
+            const pendingItem = createPendingItem()
+            setPendingItems([pendingItem])
           }}
           className="mt-4"
         >

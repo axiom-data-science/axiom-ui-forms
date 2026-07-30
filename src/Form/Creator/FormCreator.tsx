@@ -15,6 +15,7 @@ import { ErrorBoundary } from ***REMOVED***react-error-boundary***REMOVED***
 import { useAtom } from ***REMOVED***jotai***REMOVED***
 import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 import debounce from ***REMOVED***lodash-es/debounce***REMOVED***
+import isEqual from ***REMOVED***lodash-es/isEqual***REMOVED***
 import React, { type ReactNode, useContext, type ReactElement, useState, useEffect, useMemo, useCallback } from ***REMOVED***react***REMOVED***
 import errorRenderer from ***REMOVED***@/utils/errorRenderer***REMOVED***
 
@@ -95,7 +96,7 @@ export const SchemaFormCreator = ({
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
 
-  const gatherSectionFields = (section: IFormSection): IFormField[] => {
+  const gatherSectionFields = (section: IFormSection | IForm): IFormField[] => {
     const direct = section.fields ?? []
     const fromPages = (section.pages ?? []).flatMap(p => gatherSectionFields(p))
     const fromWizard = (section.wizard_steps ?? []).flatMap(ws => gatherSectionFields(ws))
@@ -137,6 +138,17 @@ const FormCreator = ({
     ...seedFormValuesWithDefaults(activeForm),
     ...initialFormValues
   }))
+
+  useEffect(() => {
+    const valuesWithDefaults = {
+      ...seedFormValuesWithDefaults(activeForm),
+      ...formValues,
+    }
+
+    if (!isEqual(valuesWithDefaults, formValues)) {
+      setFormValues(valuesWithDefaults)
+    }
+  }, [activeForm, formValues, setFormValues])
 
   const [layout, setLayout] = useAtom(layoutAtom)
   const updateLayoutValue = useCallback((): void => {

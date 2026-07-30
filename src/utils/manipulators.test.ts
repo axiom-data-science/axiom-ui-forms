@@ -7,7 +7,10 @@ import {
 import {
   cleanAndUpdateFormValuesWithFieldValue,
   createOneOfMultipleField,
+  copyAndAddPathToFields,
 } from ***REMOVED***@/utils/manipulators***REMOVED***
+import { getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
+import { schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 
 describe(***REMOVED***manipulators.ts***REMOVED***, () => {
@@ -52,6 +55,45 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
       const secondField = createOneOfMultipleField(fieldWithPath, 1) as IObjectField
       expect(secondField.path?.[0].index).toBe(1)
       expect(secondField?.index).toBe(1)
+    })
+
+    it(***REMOVED***adds parent array path to fields nested in tabs***REMOVED***, () => {
+      const form: IForm = {
+        id: ***REMOVED***testForm***REMOVED***,
+        label: ***REMOVED***Test Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***testObject***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            multiple: true,
+            tabs: [
+              {
+                id: ***REMOVED***tab1***REMOVED***,
+                label: ***REMOVED***Tab 1***REMOVED***,
+                fields: [
+                  {
+                    id: ***REMOVED***wrapper***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    skip_path: true,
+                    fields: [
+                      { id: ***REMOVED***field1***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+                      { id: ***REMOVED***field2***REMOVED***, type: ***REMOVED***number***REMOVED*** },
+                    ],
+                  } as any,
+                ],
+              },
+            ],
+          } as any,
+        ],
+      }
+
+      const formWithPaths = copyAndAddPathToFields(form)
+      const testObject = formWithPaths.fields?.[0] as any
+      const wrapper = testObject.tabs?.[0]?.fields?.[0] as IObjectField
+      const field2 = wrapper?.fields?.[1] as IFormField
+
+      expect(getPathFromField(wrapper)).toBeUndefined()
+      expect(getPathFromField(field2)).toBe(***REMOVED***testObject.field2***REMOVED***)
     })
   })
 
@@ -210,6 +252,121 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
   })
 
   describe(***REMOVED***cleanAndUpdateFormValuesWithFieldValue - edge cases***REMOVED***, () => {
+    it(***REMOVED***clears stale oneOf branch values when selector changes***REMOVED***, () => {
+      const formWithPaths = copyAndAddPathToFields(
+        schemaToFormObject({
+          title: ***REMOVED***OneOf Clear Test***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          properties: {
+            transport: {
+              type: ***REMOVED***object***REMOVED***,
+              title: ***REMOVED***Transport***REMOVED***,
+              oneOf: [
+                {
+                  title: ***REMOVED***S3***REMOVED***,
+                  type: ***REMOVED***object***REMOVED***,
+                  properties: {
+                    bucket: { type: ***REMOVED***string***REMOVED*** },
+                    prefix: { type: ***REMOVED***string***REMOVED*** },
+                  },
+                },
+                {
+                  title: ***REMOVED***HTTP***REMOVED***,
+                  type: ***REMOVED***object***REMOVED***,
+                  properties: {
+                    url: { type: ***REMOVED***string***REMOVED*** },
+                    method: { type: ***REMOVED***string***REMOVED***, enum: [***REMOVED***GET***REMOVED***, ***REMOVED***POST***REMOVED***] },
+                  },
+                },
+              ],
+            },
+          },
+        } as any)
+      )
+
+      const transportField = formWithPaths.fields?.find((f) => f.id === ***REMOVED***transport***REMOVED***) as IFormField
+      const selectorField = (transportField as any).fields?.find(
+        (f: IFormField) => f.id === ***REMOVED***select_transport***REMOVED***
+      ) as IFormField
+
+      const formValues: IFormValues = {
+        transport: {
+          select_transport: ***REMOVED***S3***REMOVED***,
+          bucket: ***REMOVED***example-bucket***REMOVED***,
+          prefix: ***REMOVED***incoming/***REMOVED***,
+        },
+      }
+
+      const updated = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: selectorField,
+        value: ***REMOVED***HTTP***REMOVED***,
+        formValues,
+      })
+
+      const transport = updated.transport as IFormValues
+      expect(transport.select_transport).toBe(***REMOVED***HTTP***REMOVED***)
+      expect(transport.bucket).toBeUndefined()
+      expect(transport.prefix).toBeUndefined()
+    })
+
+    it(***REMOVED***does not clear active oneOf values when unrelated root field changes***REMOVED***, () => {
+      const formWithPaths = copyAndAddPathToFields(
+        schemaToFormObject({
+          title: ***REMOVED***OneOf Preserve Test***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          properties: {
+            field1: { type: ***REMOVED***string***REMOVED*** },
+            transport: {
+              type: ***REMOVED***object***REMOVED***,
+              title: ***REMOVED***Transport***REMOVED***,
+              oneOf: [
+                {
+                  title: ***REMOVED***S3***REMOVED***,
+                  type: ***REMOVED***object***REMOVED***,
+                  properties: {
+                    bucket: { type: ***REMOVED***string***REMOVED*** },
+                    prefix: { type: ***REMOVED***string***REMOVED*** },
+                  },
+                },
+                {
+                  title: ***REMOVED***HTTP***REMOVED***,
+                  type: ***REMOVED***object***REMOVED***,
+                  properties: {
+                    url: { type: ***REMOVED***string***REMOVED*** },
+                    method: { type: ***REMOVED***string***REMOVED***, enum: [***REMOVED***GET***REMOVED***, ***REMOVED***POST***REMOVED***] },
+                  },
+                },
+              ],
+            },
+          },
+        } as any)
+      )
+
+      const field1 = formWithPaths.fields?.find((f) => f.id === ***REMOVED***field1***REMOVED***) as IFormField
+      const formValues: IFormValues = {
+        field1: ***REMOVED***before***REMOVED***,
+        transport: {
+          select_transport: ***REMOVED***S3***REMOVED***,
+          bucket: ***REMOVED***my-bucket***REMOVED***,
+          prefix: ***REMOVED***incoming/***REMOVED***,
+        },
+      }
+
+      const updated = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: field1,
+        value: ***REMOVED***after***REMOVED***,
+        formValues,
+      })
+
+      const transport = updated.transport as IFormValues
+      expect(updated.field1).toBe(***REMOVED***after***REMOVED***)
+      expect(transport.select_transport).toBe(***REMOVED***S3***REMOVED***)
+      expect(transport.bucket).toBe(***REMOVED***my-bucket***REMOVED***)
+      expect(transport.prefix).toBe(***REMOVED***incoming/***REMOVED***)
+    })
+
     it(***REMOVED***preserves simple field update***REMOVED***, () => {
       const form: IForm = {
         id: ***REMOVED***testForm***REMOVED***,

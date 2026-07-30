@@ -870,5 +870,33 @@ describe(***REMOVED***formEngine - Field Logic Evaluation***REMOVED***, () => {
       expect(formValues.shape_type).toBe(***REMOVED***point***REMOVED***)
       expect(formValues.geojson).toBe(null)
     })
+
+    it(***REMOVED***applies defaults to nested object fields defined inside tabs***REMOVED***, () => {
+      const fields: IFormField[] = [
+        {
+          id: ***REMOVED***processor***REMOVED***,
+          type: ***REMOVED***object***REMOVED***,
+          label: ***REMOVED***Processor***REMOVED***,
+          tabs: [
+            {
+              id: ***REMOVED***split-tab***REMOVED***,
+              label: ***REMOVED***Split***REMOVED***,
+              fields: [
+                { id: ***REMOVED***source_variable***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Source***REMOVED*** },
+                { id: ***REMOVED***separator***REMOVED***, type: ***REMOVED***text***REMOVED***, label: ***REMOVED***Separator***REMOVED***, defaultValue: ***REMOVED***,***REMOVED*** },
+              ],
+            },
+          ],
+        } as unknown as IFormField,
+      ]
+
+      const formValues: any = {}
+      const context: FieldEvaluationContext = { rootFormValues: {} }
+
+      seedNestedDefaults(fields, formValues, context)
+
+      expect(formValues.processor).toBeDefined()
+      expect(formValues.processor.separator).toBe(***REMOVED***,***REMOVED***)
+    })
   })
 })

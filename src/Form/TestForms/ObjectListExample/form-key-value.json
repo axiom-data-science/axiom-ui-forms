@@ -1,0 +1,28 @@
+{
+  "id": "infrastructure_config",
+  "label": "Infrastructure Configuration",
+  "fields": [
+    {
+      "id": "simple-list",
+      "label": "Simple list",
+      "type": "objectList",
+      "settings": {
+        "keyField": "key",
+        "valueField": "value"
+      },
+      "fields": [
+        {
+          "id": "key",
+          "label": "Name",
+          "type": "text"
+        },
+        {
+          "id": "value",
+          "label": "Value",
+          "type": "text"
+        }
+      ]
+    }
+     
+  ]
+}

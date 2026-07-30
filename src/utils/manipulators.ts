@@ -26,9 +26,43 @@ export const addFieldPath = (field: IFormField, parentPath?: IFormField[]): IFor
     field.path = parentPath !== undefined ? parentPath.slice().concat(newSegment) : [newSegment]
     field.level = parentPath !== undefined ? parentPath.length + 1 : 1
   }
-  if ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.fields !== undefined) {
+  if (
+    (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) &&
+    field.fields !== undefined
+  ) {
     field.fields = field.fields.map((childField) => {
       return addFieldPath(childField, field.path?.slice())
+    })
+  }
+  const containerField = field as unknown as {
+    tabs?: IFormSection[]
+    pages?: IFormSection[]
+    wizard_steps?: IFormSection[]
+  }
+  if (containerField.tabs !== undefined) {
+    containerField.tabs = containerField.tabs.map((tab) => {
+      if (tab.fields !== undefined) {
+        tab.fields = tab.fields.map((childField) => addFieldPath(childField, field.path?.slice()))
+      }
+      return tab
+    })
+  }
+  if (containerField.pages !== undefined) {
+    containerField.pages = containerField.pages.map((page) => {
+      if (page.fields !== undefined) {
+        page.fields = page.fields.map((childField) => addFieldPath(childField, field.path?.slice()))
+      }
+      return addPathsToFormSections(page)
+    })
+  }
+  if (containerField.wizard_steps !== undefined) {
+    containerField.wizard_steps = containerField.wizard_steps.map((wizardStep) => {
+      if (wizardStep.fields !== undefined) {
+        wizardStep.fields = wizardStep.fields.map((childField) =>
+          addFieldPath(childField, field.path?.slice())
+        )
+      }
+      return addPathsToFormSections(wizardStep)
     })
   }
   // return field
@@ -63,9 +97,42 @@ export function copyAndAddPathToFields(formOrContainer: IFormSection | IForm): I
 function removeFieldPath(field: IFormField): IFormField {
   field.path = undefined
   field.level = undefined
-  if (field.type === ***REMOVED***object***REMOVED*** && field.fields !== undefined) {
+  if (
+    (field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***objectWrapper***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) &&
+    field.fields !== undefined
+  ) {
     field.fields = field.fields.map((childField) => {
       return removeFieldPath(childField)
+    })
+  }
+
+  const containerField = field as unknown as {
+    tabs?: IFormSection[]
+    pages?: IFormSection[]
+    wizard_steps?: IFormSection[]
+  }
+  if (containerField.tabs !== undefined) {
+    containerField.tabs = containerField.tabs.map((tab) => {
+      if (tab.fields !== undefined) {
+        tab.fields = tab.fields.map((childField) => removeFieldPath(childField))
+      }
+      return tab
+    })
+  }
+  if (containerField.pages !== undefined) {
+    containerField.pages = containerField.pages.map((page) => {
+      if (page.fields !== undefined) {
+        page.fields = page.fields.map((childField) => removeFieldPath(childField))
+      }
+      return removePathsFromFormSections(page)
+    })
+  }
+  if (containerField.wizard_steps !== undefined) {
+    containerField.wizard_steps = containerField.wizard_steps.map((wizardStep) => {
+      if (wizardStep.fields !== undefined) {
+        wizardStep.fields = wizardStep.fields.map((childField) => removeFieldPath(childField))
+      }
+      return removePathsFromFormSections(wizardStep)
     })
   }
 
@@ -99,14 +166,16 @@ export function copyAndRemovePathFromFields(formOrContainer: IFormSection | IFor
 export function cleanFormValuesLevel(
   formValues: IFormValues,
   fields: IFormField[],
-  formValuesPath: string = ***REMOVED******REMOVED***
+  formValuesPath: string = ***REMOVED******REMOVED***,
+  rootFormValues?: IFormValues
 ): IFormValues {
+  const evalFormValues = rootFormValues ?? formValues
   const formValuesCopy = cloneObject(formValues)
   Object.keys(formValues).forEach((key) => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
     const field = fields?.find((f) => {
       const ff = getPathFromField(f) === path
-      const cc = ff ? checkCondition(f, formValues).pass : false
+      const cc = ff ? checkCondition(f, evalFormValues).pass : false
       return ff && cc
     })
     if (
@@ -123,7 +192,9 @@ export function cleanFormValuesLevel(
       })
     }
     const checkedCondition: ICheckConditionResult =
-      field !== undefined ? checkCondition(field, formValues) : { pass: true, result: ***REMOVED***include***REMOVED*** }
+      field !== undefined
+        ? checkCondition(field, evalFormValues)
+        : { pass: true, result: ***REMOVED***include***REMOVED*** }
     if (
       field !== undefined &&
       ((!checkedCondition.pass && checkedCondition.result === ***REMOVED***include***REMOVED***) ||
@@ -140,7 +211,8 @@ export function cleanFormValuesLevel(
       formValuesCopy[key] = cleanFormValuesLevel(
         (formValuesCopy[key] ?? {}) as IFormValues,
         fields,
-        path
+        path,
+        evalFormValues
       )
       /* } else if (field !== undefined && checkedCondition.pass && checkedCondition.newDefaultValue !== undefined) {
         formValuesCopy[key] = checkedCondition.newDefaultValue */
@@ -157,8 +229,8 @@ export function cleanUnusedDependenciesFromFormValues(
   form: IForm,
   formValues: IFormValues
 ): IFormValues {
-  const fields = getFieldsFromFormSection(form)
-  const newFormValues = cleanFormValuesLevel(formValues, fields)
+  const fields = getFieldsFromFormSection(form as IFormSection)
+  const newFormValues = cleanFormValuesLevel(formValues, fields, ***REMOVED******REMOVED***, formValues)
   return newFormValues
 }
 
@@ -349,7 +421,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
       ;(out as any).tabs = (field as any).tabs.map((tab: any) => ({
         ...tab,
         fields: tab.fields
-          ? assignIndexToFields({ ...field, fields: tab.fields } as IObjectField, field, index)
+          ? assignIndexToFields({ ...field, fields: tab.fields } satisfies IObjectField, field, index)
           : undefined,
       }))
     }
@@ -357,7 +429,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
       ;(out as any).pages = (field as any).pages.map((page: any) => ({
         ...page,
         fields: page.fields
-          ? assignIndexToFields({ ...field, fields: page.fields } as IObjectField, field, index)
+          ? assignIndexToFields({ ...field, fields: page.fields } satisfies IObjectField, field, index)
           : undefined,
       }))
     }
@@ -365,7 +437,7 @@ export const createOneOfMultipleField = (field: IFormField, index: number): IFor
       ;(out as any).wizard_steps = (field as any).wizard_steps.map((step: any) => ({
         ...step,
         fields: step.fields
-          ? assignIndexToFields({ ...field, fields: step.fields } as IObjectField, field, index)
+          ? assignIndexToFields({ ...field, fields: step.fields } satisfies IObjectField, field, index)
           : undefined,
       }))
     }

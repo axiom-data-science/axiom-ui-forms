@@ -1,4 +1,5 @@
 import {
+  IForm,
   IFormValues,
   type IFieldInputProps,
   type IFormSection,
@@ -15,7 +16,7 @@ const FormSection = ({
   inputOverrides,
   SubmitButton,
 }: {
-  formSection?: IFormSection
+  formSection?: IFormSection | IForm
   level?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
