@@ -244,3 +244,12 @@ Below is a concise timeline of follow-up prompts used to iteratively shape the c
 57. Extended the structured General Settings editor with `boldLabel` (boolean), `smallLabel` (boolean), and `className` (string), and updated settings split logic so these keys persist as global settings rather than type-specific settings.
 58. Added nested container behavior for field nodes typed `object`/`objectWrapper`: fields and groups can now be dropped into these field nodes, nested children render under the field, cycle-safe drag/drop validation prevents self/descendant parenting, and container fields disable inline rename shortcuts so edits are performed via the explicit edit icon/modal.
 59. Corrected container nesting scope so drag/drop parenting into `object`/`objectWrapper` field nodes is restricted to **unmapped** field containers only (mapped schema fields no longer act as drop parents).
+60. Rebased this branch onto `main`; the rebase introduced additional field types and settings in the broader codebase that are not yet fully represented in the Management UI editors/import-export paths.
+
+## Rebase Note
+
+- Branch has been rebased on `main`.
+- `main` now includes new fields/settings that should be accounted for in Management UI:
+    - ensure field editor controls expose any newly supported settings/constraints.
+    - ensure adapters/model import-export preserve and round-trip those new properties.
+    - verify preview and generated override JSON remain aligned with latest `FormCreatorTypes` behavior.
