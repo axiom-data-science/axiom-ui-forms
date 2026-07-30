@@ -53,7 +53,7 @@
           "prop": "creator.name",
           "label": "Name"
         },
-                {
+        {
           "id": "creator2",
           "label": "",
           "type": "objectWrapper",
@@ -159,24 +159,35 @@
             "boldLabel": true
           },
           "fields": [
-            {"prop": "role", "type": "select"},
+            {
+              "prop": "role",
+              "type": "select"
+            },
             {
               "id": "contributor-fields",
               "label": "",
               "type": "objectWrapper",
               "layout": "grid3",
               "fields": [
-                {"prop": "name"},
-                {"prop": "phone"},
-                {"prop": "email"},
-                {"prop": "url"},
-                {"prop": "affiliation"}
+                {
+                  "prop": "name"
+                },
+                {
+                  "prop": "phone"
+                },
+                {
+                  "prop": "email"
+                },
+                {
+                  "prop": "url"
+                },
+                {
+                  "prop": "affiliation"
+                }
               ]
             }
-
           ]
         }
-
       ]
     },
     {
@@ -247,6 +258,7 @@
           "fields": [
             {
               "prop": "latitude",
+              "type": "number",
               "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
@@ -254,6 +266,7 @@
             },
             {
               "prop": "longitude",
+              "type": "number",
               "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
@@ -359,7 +372,8 @@
         {
           "prop": "sensors",
           "type": "object",
-          "multiple": true,   
+          "label": "",
+          "multiple": true,
           "tabs": [
             {
               "id": "overview",
@@ -449,11 +463,7 @@
                     },
                     {
                       "prop": "sensors[].geophysical_variable:accuracy"
-                    },
-                    {
-                      "prop": "sensors[].is-station-surveyed"
                     }
-
                   ]
                 }
               ]
@@ -497,6 +507,14 @@
                     },
                     {
                       "prop": "sensors[].sensor-serial-number",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].additional-sensor-information",
+                      "type": "long_text",
                       "settings": {
                         "descriptionPresentation": "tooltip",
                         "smallLabel": true
@@ -558,61 +576,183 @@
                   ]
                 }
               ]
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "survey-information",
+      "label": "Survey Information",
+      "fields": [
+        {
+          "prop": "surveys",
+          "label": "Marker information and stamping",
+          "multiple": true,
+          "fields": [
             {
-              "id": "marker-information-and-stamping",
-              "label": "Marker information and stamping",
+              "id": "survey-wrapper-1",
+              "label": "Overview",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "settings": {
+                "boldLabel": true
+              },
               "fields": [
                 {
-                  "prop": "sensors[].bench-mark-descriptions"
-                },
-                {
-                  "prop": "sensors[].marker-stamping"
-                },
-                {
-                  "prop": "sensors[].marker-ngs-pid"
-                },
-                {
-                  "prop": "sensors[].marker-co-ops-vm"
-                },
-                {
-                  "prop": "sensors[].marker-other-identifier"
-                },
-                {
-                  "prop": "sensors[].survey-method"
-                },
-                {
-                  "prop": "sensors[].date-of-most-recent-survey"
-                },
-                {
-                  "prop": "sensors[].measurement-by-at-most-recent-survey"
-                },
-                {
-                  "prop": "sensors[].additional-survey-information"
-                },
-                {
-                  "prop": "sensors[].gnss-rtk-unit"
-                },
-                {
-                  "prop": "sensors[].processing-software"
-                },
-                {
-                  "prop": "sensors[].movement-since-last-survey"
-                },
-                {
-                  "prop": "sensors[].difference-since-last-survey",
-                  "conditions": {
-                    "field": "sensors[].movement-since-last-survey",
-                    "value": "Yes"
+                  "prop": "surveys[].date-of-most-recent-survey",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
                   }
                 },
                 {
-                  "prop": "sensors[].difference-within-5-cm"
-                },
-                {
-                  "prop": "sensors[].additional-sensor-information"
+                  "prop": "surveys[].measurement-by-at-most-recent-survey",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
                 }
               ]
+            },
+            {
+              "id": "survey-wrapper-2",
+              "label": "Methods",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].survey-method",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].gnss-rtk-unit",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].processing-software",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "survey-wrapper-3",
+              "label": "Bench Mark Identification",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].marker-stamping",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].marker-other-identifier",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].marker-co-ops-vm",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].marker-ngs-pid",
+                  "type": "selectOrText",
+                  "options": [
+                    {
+                      "label": "Not available (enter VIM)",
+                      "value": "not_available"
+                    },
+                    {
+                      "label": "Other (enter PID)",
+                      "value": "other"
+                    }
+                  ],
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].bench-mark-descriptions",
+                  "type": "long_text"
+                }
+              ]
+            },
+            {
+              "id": "survey-wrapper-4",
+              "label": "Location",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].latitude",
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].longitude",
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].horizontal-datum",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].elevation",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].movement-since-last-survey",
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+            {
+              "prop": "surveys[].additional-survey-information",
+              "type": "long_text"
             }
           ]
         }
@@ -711,7 +851,6 @@
             }
           ]
         },
-
         {
           "prop": "nwlon-control-station"
         },
@@ -773,7 +912,14 @@
             },
             {
               "prop": "reference-datum",
-                "settings": {
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-survey-reference-point",
+              "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
               }
@@ -930,9 +1076,6 @@
       "id": "photos",
       "label": "Photos",
       "fields": [
-        {
-          "prop": "sensor-survey-reference-point"
-        },
         {
           "prop": "benchmarks-photo",
           "multiple": true
