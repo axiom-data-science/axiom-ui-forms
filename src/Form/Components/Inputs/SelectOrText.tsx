@@ -55,7 +55,8 @@ const SelectOrTextInput = ({
               field={{
                 ...field,
                 type: ***REMOVED***text***REMOVED***,
-                label: ***REMOVED******REMOVED***
+                label: ***REMOVED******REMOVED***,
+                description: ***REMOVED******REMOVED***
               }}
               onChange={onChange}
               value={initialValue}
