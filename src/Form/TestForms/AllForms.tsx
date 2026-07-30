@@ -1,5 +1,11 @@
 import MODLS3Form from '@/Form/MODL/s3/MODLS3Form'
 import MODLS3SchemaForm from '@/Form/MODL/s3/MODLS3SchemaForm'
+import AnyOfObjectSchema, { AnyOfObjectSchemaSingleProp } from '@/Form/AnyOfSchema/AnyOfObjectSchema'
+import AnyOfSimpleSchema from '@/Form/AnyOfSchema/AnyOfSimpleSchema'
+import AnyOfObjectSchemaWithOverrides from '@/Form/AnyOfSchema/AnyOfObjectSchemaWithOverrides'
+import OneOfObjectSchema, { OneOfObjectSchemaSingleProp } from '@/Form/OneOfSchema/OneOfObjectSchema'
+import OneOfSimpleSchema from '@/Form/OneOfSchema/OneOfSimpleSchema'
+import OneOfObjectSchemaWithOverrides from '@/Form/OneOfSchema/OneOfObjectSchemaWithOverrides'
 import ArrayWithTabs from '@/Form/TestForms/ArrayWithTabs/ArrayWithTabs'
 import DefaultValueThatIsDependent from '@/Form/TestForms/DefaultValue/DefaultValueThatIsDependent'
 import ERDDAPForm from '@/Form/TestForms/ERDDAP/ERDDAPForm'
@@ -20,13 +26,11 @@ import PopulateHeadersFromUpload, {
 import TabsInPagesWithWrapper from '@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper'
 import { Tooltip } from '@axdspub/axiom-ui-utilities'
 import {
-  ArrowLeftIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  Cross1Icon,
   ListBulletIcon,
 } from '@radix-ui/react-icons'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 const forms = [
@@ -60,7 +64,7 @@ const forms = [
     path: 'object-list',
     view: ObjectListExample,
   },
-    {
+  {
     label: 'Object list (key-value)',
     path: 'object-list-key-value',
     view: ObjectListKeyValueExample,
@@ -95,7 +99,7 @@ const forms = [
     path: 'override-of-schema-array',
     view: OverrideOfSchemaArray,
   },
-    {
+  {
     label: 'Override of schema array with embedded tabs',
     path: 'override-of-schema-array-with-embedded-tabs',
     view: OverrideOfSchemaArrayWithTabs,
@@ -125,7 +129,47 @@ const forms = [
     path: 'modl-s3-schema-form',
     view: MODLS3SchemaForm,
   },
-    {
+  {
+    label: 'AnyOf schema (object)',
+    path: 'anyof-schema-object',
+    view: AnyOfObjectSchema,
+  },
+  {
+    label: 'AnyOf schema (single prop override)',
+    path: 'anyof-schema-object-single-prop',
+    view: AnyOfObjectSchemaSingleProp,
+  },
+  {
+    label: 'AnyOf schema (object, overrides)',
+    path: 'anyof-schema-object-overrides',
+    view: AnyOfObjectSchemaWithOverrides,
+  },
+  {
+    label: 'AnyOf schema (simple)',
+    path: 'anyof-schema-simple',
+    view: AnyOfSimpleSchema,
+  },
+  {
+    label: 'OneOf schema (object)',
+    path: 'oneof-schema-object',
+    view: OneOfObjectSchema,
+  },
+  {
+    label: 'OneOf schema (single prop override)',
+    path: 'oneof-schema-single-prop-override',
+    view: OneOfObjectSchemaSingleProp,
+  },
+  {
+    label: 'OneOf schema (object, overrides)',
+    path: 'oneof-schema-object-overrides',
+    view: OneOfObjectSchemaWithOverrides,
+  },
+  {
+    label: 'OneOf schema (simple)',
+    path: 'oneof-schema-simple',
+    view: OneOfSimpleSchema,
+  },
+  {
     label: 'MODL S3',
     path: 'modl-s3-form',
     view: MODLS3Form,
@@ -147,6 +191,19 @@ const AllForms = (): ReactElement => {
   const nav = useLocation()
   const selectedFormKey = nav.pathname.split('/')[2] ?? null
   const View = forms.find((f) => f.path === selectedFormKey)?.view ?? null
+  const navItemRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
+
+  useEffect(() => {
+    if (!showNav || selectedFormKey === null) {
+      return
+    }
+
+    const selectedLink = navItemRefs.current[selectedFormKey]
+    if (selectedLink !== undefined && selectedLink !== null) {
+      selectedLink.scrollIntoView({ block: 'center' })
+    }
+  }, [selectedFormKey, showNav])
+
   return (
     <div className={`h-full flex flex-row gap-4${showNav ? '' : ' pl-20'}`}>
       {showNav ? (
@@ -162,6 +219,9 @@ const AllForms = (): ReactElement => {
             {forms.map((form) => (
               <Link
                 key={form.path}
+                ref={(element) => {
+                  navItemRefs.current[form.path] = element
+                }}
                 to={`/all-forms/${form.path}`}
                 className={`block rounded  p-4 px-6 ${selectedFormKey === form.path ? 'bg-slate-200 font-semibold' : 'hover:bg-slate-100'}`}
               >
