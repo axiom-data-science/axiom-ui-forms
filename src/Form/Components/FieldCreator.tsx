@@ -101,13 +101,20 @@ const getFieldWrapperClass = (field: IFormField): string => {
   const level = field.level ?? 0
   const type = field.type
   const multiple = field.type === 'object' ? (field.multiple ?? false) : false
+  
   if (((type === 'object' || type === 'objectWrapper') && level > 1) || multiple) {
     cl.push('p-4')
     if (level > 0) {
       cl.push(level % 2 ? 'bg-slate-200' : 'bg-slate-100')
     }
   }
-  return cl.join(' ')
+  const settingsClassName = field.settings?.className
+  return utils.makeClassName({
+    defaultClassName: cl.join(' '),
+    className: settingsClassName ? settingsClassName : undefined
+
+  })
+  //return cl.join(' ')
 }
 
 const OneOfMultiple = ({
