@@ -10,7 +10,7 @@ import {
   getFormPayload
 } from ***REMOVED***./getters***REMOVED***
 import { type IFormSection, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { overridesAndSchemaToFormObject } from ***REMOVED***./schemaToFormHelpers***REMOVED***
+import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***./schemaToFormHelpers***REMOVED***
 import type { JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 
 describe(***REMOVED***getters.ts***REMOVED***, () => {
@@ -536,6 +536,104 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
             ],
           },
         ],
+      })
+    })
+
+    it(***REMOVED***should include active oneOf object branch values in payload***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        title: ***REMOVED***OneOf Object Payload Test***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          transport: {
+            type: ***REMOVED***object***REMOVED***,
+            title: ***REMOVED***Transport***REMOVED***,
+            oneOf: [
+              {
+                title: ***REMOVED***S3***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  bucket: { type: ***REMOVED***string***REMOVED*** },
+                  prefix: { type: ***REMOVED***string***REMOVED*** },
+                },
+              },
+              {
+                title: ***REMOVED***HTTP***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  url: { type: ***REMOVED***string***REMOVED*** },
+                  method: { type: ***REMOVED***string***REMOVED***, enum: [***REMOVED***GET***REMOVED***, ***REMOVED***POST***REMOVED***] },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const formValues = {
+        transport: {
+          select_transport: ***REMOVED***S3***REMOVED***,
+          bucket: ***REMOVED***example-bucket***REMOVED***,
+          prefix: ***REMOVED***incoming/***REMOVED***,
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        transport: {
+          bucket: ***REMOVED***example-bucket***REMOVED***,
+          prefix: ***REMOVED***incoming/***REMOVED***,
+        },
+      })
+    })
+
+    it(***REMOVED***should exclude inactive oneOf branch values from payload***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        title: ***REMOVED***OneOf Object Payload Exclusion Test***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          transport: {
+            type: ***REMOVED***object***REMOVED***,
+            title: ***REMOVED***Transport***REMOVED***,
+            oneOf: [
+              {
+                title: ***REMOVED***S3***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  bucket: { type: ***REMOVED***string***REMOVED*** },
+                  prefix: { type: ***REMOVED***string***REMOVED*** },
+                },
+              },
+              {
+                title: ***REMOVED***HTTP***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  url: { type: ***REMOVED***string***REMOVED*** },
+                  method: { type: ***REMOVED***string***REMOVED***, enum: [***REMOVED***GET***REMOVED***, ***REMOVED***POST***REMOVED***] },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const formValues = {
+        transport: {
+          select_transport: ***REMOVED***HTTP***REMOVED***,
+          bucket: ***REMOVED***old-bucket***REMOVED***,
+          prefix: ***REMOVED***old-prefix/***REMOVED***,
+          url: ***REMOVED***https://example.com/data***REMOVED***,
+          method: ***REMOVED***GET***REMOVED***,
+        },
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        transport: {
+          url: ***REMOVED***https://example.com/data***REMOVED***,
+          method: ***REMOVED***GET***REMOVED***,
+        },
       })
     })
   })

@@ -138,6 +138,174 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(form?.fields?.length).toBe(2)
       expect(form?.fields?.[0].label).toBe(***REMOVED***First Name***REMOVED***)
     })
+
+    it(***REMOVED***renders oneOf object branches as a selector with conditional branch wrappers***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        title: ***REMOVED***Config Form***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          mode_config: {
+            type: ***REMOVED***object***REMOVED***,
+            title: ***REMOVED***Mode Config***REMOVED***,
+            oneOf: [
+              {
+                title: ***REMOVED***Split***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  source_variable: { type: ***REMOVED***string***REMOVED*** },
+                },
+              },
+              {
+                title: ***REMOVED***Profile***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  depth: { type: ***REMOVED***number***REMOVED*** },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const modeField = form.fields?.find((f) => f.id === ***REMOVED***mode_config***REMOVED***) as any
+      expect(modeField).toBeDefined()
+      expect(modeField.type).toBe(***REMOVED***object***REMOVED***)
+
+      const selector = modeField.fields?.find((f: any) => f.id === ***REMOVED***select_mode_config***REMOVED***)
+      expect(selector).toBeDefined()
+      expect(selector.type).toBe(***REMOVED***select***REMOVED***)
+      expect(selector.options?.map((o: any) => o.label)).toEqual([***REMOVED***Split***REMOVED***, ***REMOVED***Profile***REMOVED***])
+      expect(selector.defaultValue).toBe(***REMOVED***Split***REMOVED***)
+      expect(selector.excludeFromPayload).toBe(true)
+      expect(selector.settings?.allowNull).toBe(false)
+
+      const splitBranch = modeField.fields?.find((f: any) => f.id === ***REMOVED***Split***REMOVED***)
+      const profileBranch = modeField.fields?.find((f: any) => f.id === ***REMOVED***Profile***REMOVED***)
+      expect(splitBranch?.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+      expect(profileBranch?.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+      expect(splitBranch?.skip_path).toBe(true)
+      expect(profileBranch?.skip_path).toBe(true)
+      expect(splitBranch?.conditions).toEqual({
+        dependsOn: ***REMOVED***mode_config.select_mode_config***REMOVED***,
+        value: ***REMOVED***Split***REMOVED***,
+      })
+      expect(profileBranch?.conditions).toEqual({
+        dependsOn: ***REMOVED***mode_config.select_mode_config***REMOVED***,
+        value: ***REMOVED***Profile***REMOVED***,
+      })
+
+      const splitSourceField = splitBranch?.fields?.find((f: any) => f.id === ***REMOVED***source_variable***REMOVED***)
+      const profileDepthField = profileBranch?.fields?.find((f: any) => f.id === ***REMOVED***depth***REMOVED***)
+      expect(splitSourceField?.conditions).toEqual({
+        dependsOn: ***REMOVED***mode_config.select_mode_config***REMOVED***,
+        value: ***REMOVED***Split***REMOVED***,
+      })
+      expect(profileDepthField?.conditions).toEqual({
+        dependsOn: ***REMOVED***mode_config.select_mode_config***REMOVED***,
+        value: ***REMOVED***Profile***REMOVED***,
+      })
+    })
+
+    it(***REMOVED***preserves all oneOf branch wrappers when parent field is included via single prop override***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        title: ***REMOVED***OneOf Override Branch Preservation***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          transport: {
+            type: ***REMOVED***object***REMOVED***,
+            title: ***REMOVED***Transport***REMOVED***,
+            oneOf: [
+              {
+                title: ***REMOVED***S3***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  bucket: { type: ***REMOVED***string***REMOVED*** },
+                },
+              },
+              {
+                title: ***REMOVED***HTTP***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  url: { type: ***REMOVED***string***REMOVED*** },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [{ prop: ***REMOVED***transport***REMOVED*** }],
+          },
+        ],
+      })
+
+      const transport = form.fields?.find((f) => f.id === ***REMOVED***transport***REMOVED***) as any
+      const selector = transport?.fields?.find((f: any) => f.id === ***REMOVED***select_transport***REMOVED***)
+      const s3 = transport?.fields?.find((f: any) => f.id === ***REMOVED***S3***REMOVED***)
+      const http = transport?.fields?.find((f: any) => f.id === ***REMOVED***HTTP***REMOVED***)
+
+      expect(selector).toBeDefined()
+      expect(s3).toBeDefined()
+      expect(http).toBeDefined()
+      expect(s3?.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+      expect(http?.type).toBe(***REMOVED***objectWrapper***REMOVED***)
+    })
+
+    it(***REMOVED***renders anyOf object branches as tabs***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        title: ***REMOVED***AnyOf Tabs Demo***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          processor: {
+            title: ***REMOVED***Processor***REMOVED***,
+            type: ***REMOVED***object***REMOVED***,
+            anyOf: [
+              {
+                title: ***REMOVED***Split Processor***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  source_variable: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Source Variable***REMOVED*** },
+                  separator: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Separator***REMOVED*** },
+                },
+              },
+              {
+                title: ***REMOVED***Drop Processor***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  column_names: {
+                    type: ***REMOVED***array***REMOVED***,
+                    items: { type: ***REMOVED***string***REMOVED*** },
+                    title: ***REMOVED***Column Names***REMOVED***,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const processorField = form.fields?.find((f) => f.id === ***REMOVED***processor***REMOVED***) as any
+      expect(processorField).toBeDefined()
+      expect(processorField.type).toBe(***REMOVED***object***REMOVED***)
+      expect(processorField.tabs).toBeDefined()
+      expect(processorField.tabs).toHaveLength(2)
+      expect(processorField.tabs?.map((t: any) => t.label)).toEqual([
+        ***REMOVED***Split Processor***REMOVED***,
+        ***REMOVED***Drop Processor***REMOVED***,
+      ])
+
+      const splitTabFields = processorField.tabs?.[0]?.fields ?? []
+      const dropTabFields = processorField.tabs?.[1]?.fields ?? []
+      expect(splitTabFields.some((f: any) => f.id === ***REMOVED***source_variable***REMOVED***)).toBe(true)
+      expect(splitTabFields.some((f: any) => f.id === ***REMOVED***separator***REMOVED***)).toBe(true)
+      expect(dropTabFields.some((f: any) => f.id === ***REMOVED***column_names***REMOVED***)).toBe(true)
+    })
   })
 
   describe(***REMOVED***overridesAndSchemaToFormObject***REMOVED***, () => {
@@ -156,6 +324,57 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       })
       expect(form.label).toBe(***REMOVED***Overridden***REMOVED***)
       expect(form?.fields?.[0]?.label).toBe(***REMOVED***Bar***REMOVED***)
+    })
+
+    it(***REMOVED***preserves schema-generated tabs for anyOf object when override only references the parent prop***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          processor: {
+            type: ***REMOVED***object***REMOVED***,
+            title: ***REMOVED***Processor***REMOVED***,
+            anyOf: [
+              {
+                title: ***REMOVED***Split Processor***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  source_variable: { type: ***REMOVED***string***REMOVED*** },
+                  separator: { type: ***REMOVED***string***REMOVED*** },
+                },
+              },
+              {
+                title: ***REMOVED***Drop Processor***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                properties: {
+                  column_names: {
+                    type: ***REMOVED***array***REMOVED***,
+                    items: { type: ***REMOVED***string***REMOVED*** },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [{ prop: ***REMOVED***processor***REMOVED*** }],
+          },
+        ],
+      })
+
+      const processorField = form.fields?.find((f) => f.id === ***REMOVED***processor***REMOVED***) as any
+      expect(processorField).toBeDefined()
+      expect(processorField.type).toBe(***REMOVED***object***REMOVED***)
+      expect(processorField.tabs).toBeDefined()
+      expect(processorField.tabs).toHaveLength(2)
+      expect(processorField.tabs?.map((t: any) => t.label)).toEqual([
+        ***REMOVED***Split Processor***REMOVED***,
+        ***REMOVED***Drop Processor***REMOVED***,
+      ])
     })
 
     it(***REMOVED***preserves defaultValue for override-only fields***REMOVED***, () => {

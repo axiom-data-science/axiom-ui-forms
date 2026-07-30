@@ -231,6 +231,168 @@ export function getFieldsFromFormSection(formSection: IFormSection | IForm): IFo
   return fields
 }
 
+const addPathsToFieldForPayload = (field: IFormField, parentPath: IFormField[] = []): IFormField => {
+  const skipAsPathSegment = field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true
+  const nextPath = skipAsPathSegment ? parentPath.slice() : parentPath.slice().concat(field)
+
+  const nextField: IFormField = {
+    ...field,
+    path: nextPath,
+    level: nextPath.length,
+  }
+
+  if (
+    (nextField.type === ***REMOVED***object***REMOVED*** || nextField.type === ***REMOVED***objectWrapper***REMOVED*** || nextField.type === ***REMOVED***section***REMOVED***) &&
+    nextField.fields !== undefined
+  ) {
+    nextField.fields = nextField.fields.map((childField) =>
+      addPathsToFieldForPayload(childField, nextPath.slice())
+    )
+  }
+
+  const containerField = nextField as unknown as {
+    tabs?: IFormSection[]
+    pages?: IFormSection[]
+    wizard_steps?: IFormSection[]
+  }
+
+  if (containerField.tabs !== undefined) {
+    containerField.tabs = containerField.tabs.map((tab) =>
+      addPathsToSectionForPayload(tab, nextPath.slice())
+    )
+  }
+  if (containerField.pages !== undefined) {
+    containerField.pages = containerField.pages.map((page) =>
+      addPathsToSectionForPayload(page, nextPath.slice())
+    )
+  }
+  if (containerField.wizard_steps !== undefined) {
+    containerField.wizard_steps = containerField.wizard_steps.map((step) =>
+      addPathsToSectionForPayload(step, nextPath.slice())
+    )
+  }
+
+  return nextField
+}
+
+const addPathsToSectionForPayload = (
+  formSection: IFormSection,
+  parentPath: IFormField[] = []
+): IFormSection => {
+  const section = {
+    ...formSection,
+  }
+
+  if (section.fields !== undefined) {
+    section.fields = section.fields.map((field) => addPathsToFieldForPayload(field, parentPath.slice()))
+  }
+  if (section.pages !== undefined) {
+    section.pages = section.pages.map((page) =>
+      addPathsToSectionForPayload(page, parentPath.slice()) as any
+    )
+  }
+  if (section.wizard_steps !== undefined) {
+    section.wizard_steps = section.wizard_steps.map((wizardStep) =>
+      addPathsToSectionForPayload(wizardStep, parentPath.slice()) as any
+    )
+  }
+  if (section.tabs !== undefined) {
+    section.tabs = section.tabs.map((tab) =>
+      addPathsToSectionForPayload(tab, parentPath.slice()) as any
+    )
+  }
+
+  return section
+}
+
+const addPathsToFormForPayload = (form: IForm): IForm => {
+  return {
+    ...form,
+    fields: form.fields?.map((field) => addPathsToFieldForPayload(field, [])),
+    pages: form.pages?.map((page) => addPathsToSectionForPayload(page, [])),
+    wizard_steps: form.wizard_steps?.map((step) => addPathsToSectionForPayload(step, [])),
+    tabs: form.tabs?.map((tab) => addPathsToSectionForPayload(tab, [])),
+  }
+}
+
+const compareConditionValue = (
+  val: IValueType | IValueType[] | undefined,
+  operator: string | undefined,
+  compareTo: string | number | boolean | undefined
+): boolean => {
+  if (val === undefined || val === null) {
+    return operator === ***REMOVED***!=***REMOVED*** || operator === ***REMOVED***!eq***REMOVED***
+  }
+
+  if (compareTo === undefined) {
+    return val !== null && val !== undefined && val !== false && val !== ***REMOVED******REMOVED***
+  }
+
+  const op = operator ?? ***REMOVED***=***REMOVED***
+  if (op === ***REMOVED***=***REMOVED*** || op === ***REMOVED***eq***REMOVED***) {
+    // eslint-disable-next-line eqeqeq
+    return (val as any) == compareTo
+  }
+  if (op === ***REMOVED***!=***REMOVED*** || op === ***REMOVED***!eq***REMOVED***) {
+    // eslint-disable-next-line eqeqeq
+    return (val as any) != compareTo
+  }
+  if (op === ***REMOVED***>***REMOVED*** || op === ***REMOVED***gt***REMOVED***) {
+    return +val > +compareTo
+  }
+  if (op === ***REMOVED***>=***REMOVED*** || op === ***REMOVED***gte***REMOVED***) {
+    return +val >= +compareTo
+  }
+  if (op === ***REMOVED***<***REMOVED*** || op === ***REMOVED***lt***REMOVED***) {
+    return +val < +compareTo
+  }
+  if (op === ***REMOVED***<=***REMOVED*** || op === ***REMOVED***lte***REMOVED***) {
+    return +val <= +compareTo
+  }
+
+  return false
+}
+
+const shouldIncludeFieldForPayload = (field: IFormField, formValues: IFormValues): boolean => {
+  const evalSingleCondition = (condition: any): boolean => {
+    const fieldToEval = condition?.field ?? condition?.dependsOn
+    if (fieldToEval === undefined) {
+      return true
+    }
+
+    const dependsOn = Array.isArray(fieldToEval) ? fieldToEval : [fieldToEval]
+    return dependsOn.every((path: string) => {
+      const fieldValue = getValueFromRelativePath(field, path, formValues)
+      return compareConditionValue(fieldValue, condition?.operator, condition?.value)
+    })
+  }
+
+  let pass = true
+  let result: string = ***REMOVED***include***REMOVED***
+
+  if ((field as any).conditionsSet !== undefined) {
+    const conditionsSet = (field as any).conditionsSet
+    const passingConditions = (conditionsSet.conditions ?? []).filter((condition: any) =>
+      evalSingleCondition(condition)
+    )
+    pass =
+      conditionsSet.logic === ***REMOVED***or***REMOVED***
+        ? passingConditions.length > 0
+        : passingConditions.length === (conditionsSet.conditions?.length ?? 0)
+    if (pass) {
+      result = passingConditions[passingConditions.length - 1]?.result ?? conditionsSet.result ?? ***REMOVED***include***REMOVED***
+    }
+  }
+
+  if (pass && (field as any).conditions !== undefined) {
+    const singlePass = evalSingleCondition((field as any).conditions)
+    pass = singlePass
+    result = (field as any).conditions?.result ?? result
+  }
+
+  return (pass && result !== ***REMOVED***exclude***REMOVED***) || (!pass && result === ***REMOVED***exclude***REMOVED***)
+}
+
 const buildPayloadFromScopedFields = (
   fields: IFormField[] | undefined,
   scopedValues: IFormValues
@@ -319,8 +481,10 @@ const buildPayloadFromScopedFields = (
  * @returns Clean payload object with excluded fields removed
  */
 export function getFormPayload(formValues: IFormValues, form: IForm): IFormValues {
+  const formWithPaths = addPathsToFormForPayload(form)
+
   // Gather all fields from the form (including those nested in pages, wizard_steps, tabs)
-  const allFields = getFieldsFromFormSection(form)
+  const allFields = getFieldsFromFormSection(formWithPaths)
 
   if (!allFields || allFields.length === 0) {
     return {}
@@ -331,6 +495,11 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
   allFields.forEach((field) => {
     // Skip fields marked for exclusion
     if (field.excludeFromPayload === true) {
+      return
+    }
+
+    // Skip fields currently excluded by conditions (e.g. inactive oneOf branch)
+    if (!shouldIncludeFieldForPayload(field, formValues)) {
       return
     }
 

@@ -166,14 +166,16 @@ export function copyAndRemovePathFromFields(formOrContainer: IFormSection | IFor
 export function cleanFormValuesLevel(
   formValues: IFormValues,
   fields: IFormField[],
-  formValuesPath: string = ***REMOVED******REMOVED***
+  formValuesPath: string = ***REMOVED******REMOVED***,
+  rootFormValues?: IFormValues
 ): IFormValues {
+  const evalFormValues = rootFormValues ?? formValues
   const formValuesCopy = cloneObject(formValues)
   Object.keys(formValues).forEach((key) => {
     const path = formValuesPath !== ***REMOVED******REMOVED*** ? `${formValuesPath}.${key}` : key
     const field = fields?.find((f) => {
       const ff = getPathFromField(f) === path
-      const cc = ff ? checkCondition(f, formValues).pass : false
+      const cc = ff ? checkCondition(f, evalFormValues).pass : false
       return ff && cc
     })
     if (
@@ -190,7 +192,9 @@ export function cleanFormValuesLevel(
       })
     }
     const checkedCondition: ICheckConditionResult =
-      field !== undefined ? checkCondition(field, formValues) : { pass: true, result: ***REMOVED***include***REMOVED*** }
+      field !== undefined
+        ? checkCondition(field, evalFormValues)
+        : { pass: true, result: ***REMOVED***include***REMOVED*** }
     if (
       field !== undefined &&
       ((!checkedCondition.pass && checkedCondition.result === ***REMOVED***include***REMOVED***) ||
@@ -207,7 +211,8 @@ export function cleanFormValuesLevel(
       formValuesCopy[key] = cleanFormValuesLevel(
         (formValuesCopy[key] ?? {}) as IFormValues,
         fields,
-        path
+        path,
+        evalFormValues
       )
       /* } else if (field !== undefined && checkedCondition.pass && checkedCondition.newDefaultValue !== undefined) {
         formValuesCopy[key] = checkedCondition.newDefaultValue */
@@ -225,7 +230,7 @@ export function cleanUnusedDependenciesFromFormValues(
   formValues: IFormValues
 ): IFormValues {
   const fields = getFieldsFromFormSection(form as IFormSection)
-  const newFormValues = cleanFormValuesLevel(formValues, fields)
+  const newFormValues = cleanFormValuesLevel(formValues, fields, ***REMOVED******REMOVED***, formValues)
   return newFormValues
 }
 
