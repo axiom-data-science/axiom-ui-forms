@@ -6,67 +6,65 @@
   },
   "pages": [
     {
-        "id": "overview",
-        "label": "Overview",
-        "fields": [
-                {
-                "id": "station",
-                    "label": "Station",
-                    "description": "Station name/timeseries_id",
-                    "required": false,
-                    "type": "text"
-                },
-                {
-                    "id": "location",
-                    "type": "object",
-                    "skip_path": true,
-                    "layout": "grid2",
-                    "fields": [
-                                        {
-                    "id": "latitude",
-                    "label": "Latitude",
-                    "description": "Fixed latitude of the station",
-                    "defaultValue": null,
-                    "required": false,
-                    "type": "number"
-                },
-                {
-                    "id": "longitude",
-                    "label": "Longitude",
-                    "description": "Fixed longitude of the station",
-                    "defaultValue": null,
-                    "required": false,
-                    "type": "number"
-                }
-                    ]
-
-                },
-                
-    {
-      "id": "dataset_type",
-      "label": "Dataset Type",
-      "description": "Dateset type (timeseries or profile)",
-      "defaultValue": "timeseries",
-      "required": false,
-      "type": "select",
-      "options": [
+      "id": "overview",
+      "label": "Overview",
+      "fields": [
         {
-          "label": "Timeseries",
-          "value": "timeseries"
+          "id": "station",
+          "label": "Station",
+          "description": "Station name/timeseries_id",
+          "required": false,
+          "type": "text"
         },
         {
-          "label": "Profile",
-          "value": "profile"
+          "id": "location",
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid2",
+          "fields": [
+            {
+              "id": "latitude",
+              "label": "Latitude",
+              "description": "Fixed latitude of the station",
+              "defaultValue": null,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "id": "longitude",
+              "label": "Longitude",
+              "description": "Fixed longitude of the station",
+              "defaultValue": null,
+              "required": false,
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "dataset_type",
+          "label": "Dataset Type",
+          "description": "Dateset type (timeseries or profile)",
+          "defaultValue": "timeseries",
+          "required": false,
+          "type": "select",
+          "options": [
+            {
+              "label": "Timeseries",
+              "value": "timeseries"
+            },
+            {
+              "label": "Profile",
+              "value": "profile"
+            }
+          ]
+        },
+        {
+          "id": "start_date",
+          "label": "Start Date",
+          "required": false,
+          "type": "date"
         }
       ]
-    },
-                    {
-                "id": "start_date",
-                "label": "Start Date",
-                "required": false,
-                "type": "date"
-                }
-        ]
     },
     {
       "id": "s3",
@@ -134,170 +132,167 @@
             }
           ]
         },
+        {
+          "id": "file_pattern",
+          "label": "Source file name pattern",
+          "required": false,
+          "type": "object",
+          "fields": [
             {
-      "id": "file_pattern",
-      "label": "Source file name pattern",
-      "required": false,
-      "type": "object",
+              "id": "day_pattern",
+              "label": "Day Pattern",
+              "description": "\nGlob pattern for daily files.\nThe `partition_date` is available for formatting\n",
+              "defaultValue": null,
+              "required": false,
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "globals",
+      "label": "Global Attributes",
       "fields": [
         {
-          "id": "day_pattern",
-          "label": "Day Pattern",
-          "description": "\nGlob pattern for daily files.\nThe `partition_date` is available for formatting\n",
+          "id": "global_attributes",
+          "label": "Global Attributes",
+          "description": "Global attributes to add to the NetCDF file",
+          "required": false,
+          "type": "object",
+          "multiple": true,
+          "fields": [
+            {
+              "id": "attribute",
+              "label": "Attribute",
+              "type": "text"
+            },
+            {
+              "id": "value",
+              "label": "Value",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "id": "additional_attributes_file",
+          "label": "Additional Attributes File",
+          "description": "Path to the file that defines additional attributes for source",
           "defaultValue": null,
           "required": false,
           "type": "text"
         }
       ]
-    }
+    },
+    {
+      "id": "variables",
+      "label": "Variables",
+      "fields": [
+        {
+          "id": "source_time_var",
+          "label": "Source Time Var",
+          "defaultValue": "datetime",
+          "required": false,
+          "type": "text"
+        },
+        {
+          "id": "variable_mappings",
+          "label": "Variable Mappings",
+          "description": "Configure a single variable mapping",
+          "required": false,
+          "type": "object",
+          "fields": [
+            {
+              "id": "output",
+              "label": "Output",
+              "description": "The output variable name in the dataset",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "id": "source",
+              "label": "Source",
+              "description": "The source variable name in the input data",
+              "required": false,
+              "type": "text"
+            }
+          ],
+          "multiple": true
+        }
       ]
     },
     {
-        "id": "globals",
-        "label": "Global Attributes",
-        "fields": [
-            {
-                "id": "global_attributes",
-                "label": "Global Attributes",
-                "description": "Global attributes to add to the NetCDF file",
-                "required": false,
-                "type": "object",
-                "multiple": true,
-                "fields": [
-                    {
-                        "id": "attribute",
-                        "label": "Attribute",
-                        "type": "text"
-                    },
-                    {
-                        "id": "value",
-                        "label": "Value",
-                        "type": "text"
-                    }
-                ]
-            },
-            {
-                "id": "additional_attributes_file",
-                "label": "Additional Attributes File",
-                "description": "Path to the file that defines additional attributes for source",
-                "defaultValue": null,
-                "required": false,
-                "type": "text"
-            }
-        ]
-
-    },
-    {
-        "id": "variables",
-        "label": "Variables",
-        "fields": [
-            {
-                "id": "source_time_var",
-                "label": "Source Time Var",
-                "defaultValue": "datetime",
-                "required": false,
-                "type": "text"
-            },
-            {
-                "id": "variable_mappings",
-                "label": "Variable Mappings",
-                "description": "Configure a single variable mapping",
-                "required": false,
-                "type": "object",
-                "fields": [
-                    {
-                        "id": "output",
-                        "label": "Output",
-                        "description": "The output variable name in the dataset",
-                        "required": false,
-                        "type": "text"
-                    },
-                    {
-                        "id": "source",
-                        "label": "Source",
-                        "description": "The source variable name in the input data",
-                        "required": false,
-                        "type": "text"
-                    }
-                ],
-                "multiple": true
-            }
-        ]
-    },
-    {
-        "id": "conversions",
-        "label": "Conversions",
-        "fields": [
-                {
-      "id": "variable_converter",
-      "label": "Variable converter",
-      "required": false,
-      "type": "object",
-      
+      "id": "conversions",
+      "label": "Conversions",
       "fields": [
         {
-          "id": "split_operator",
-          "label": "Split Operator",
-          "description": "Takes the source variable, splits it on the separator and  maps the resulting array to new variables",
+          "id": "variable_converter",
+          "label": "Variable converter",
           "required": false,
           "type": "object",
-          "skip_path": true,
-          "layout": "grid2",
           "fields": [
             {
-              "id": "source_variable",
-              "label": "Source Variable",
-              "description": "The source variable to split into multiple columns",
+              "id": "split_operator",
+              "label": "Split Operator",
+              "description": "Takes the source variable, splits it on the separator and  maps the resulting array to new variables",
               "required": false,
-              "type": "text"
-            },
-            {
-              "id": "sep",
-              "label": "Sep",
-              "description": "The separator",
-              "required": false,
-              "type": "text"
-            },
-            {
-              "id": "col_data_type",
-              "label": "Col Data Type",
-              "description": "The data type of the new variables",
-              "defaultValue": "float",
-              "required": false,
-              "type": "select",
-              "options": [
+              "type": "object",
+              "skip_path": true,
+              "layout": "grid2",
+              "fields": [
                 {
-                    "label": "String",
-                    "value": "string"
+                  "id": "source_variable",
+                  "label": "Source Variable",
+                  "description": "The source variable to split into multiple columns",
+                  "required": false,
+                  "type": "text"
                 },
                 {
-                    "label": "Integer",
-                    "value": "int"
+                  "id": "sep",
+                  "label": "Sep",
+                  "description": "The separator",
+                  "required": false,
+                  "type": "text"
                 },
                 {
-                    "label": "Float",
-                    "value": "float"
+                  "id": "col_data_type",
+                  "label": "Col Data Type",
+                  "description": "The data type of the new variables",
+                  "defaultValue": "float",
+                  "required": false,
+                  "type": "select",
+                  "options": [
+                    {
+                      "label": "String",
+                      "value": "string"
+                    },
+                    {
+                      "label": "Integer",
+                      "value": "int"
+                    },
+                    {
+                      "label": "Float",
+                      "value": "float"
+                    }
+                  ],
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  }
+                },
+                {
+                  "id": "converter_type",
+                  "label": "Converter Type",
+                  "description": "The type of converter to use",
+                  "defaultValue": "split",
+                  "required": false,
+                  "type": "text",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  }
                 }
-              ],
-                                  "settings":{
-                        "descriptionPresentation": "tooltip"
-                    }
+              ]
             },
             {
-              "id": "converter_type",
-              "label": "Converter Type",
-              "description": "The type of converter to use",
-              "defaultValue": "split",
-              "required": false,
-              "type": "text",
-            "settings":{
-                        "descriptionPresentation": "tooltip"
-                    }
-              
-            }
-          ]
-        },
-        {
               "id": "output_variables",
               "label": "Output Variables",
               "description": "Mapping of index number to output variable.",
@@ -307,118 +302,111 @@
               "multiple": true,
               "fields": [
                 {
-                    "id": "index",
-                    "label": "Index",
-                    "description": "The index of the split array to map to the output variable",
-                    "required": false,
-                    "type": "number",
-                    "settings":{
-                        "descriptionPresentation": "tooltip"
-                    }
+                  "id": "index",
+                  "label": "Index",
+                  "description": "The index of the split array to map to the output variable",
+                  "required": false,
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  }
                 },
                 {
-                    "id": "output_variable",
-                    "label": "Output Variable",
-                    "description": "The output variable name in the dataset",
-                    "required": false,
-                    "type": "text",
-                    "settings":{
-                        "descriptionPresentation": "tooltip"
-                    }
+                  "id": "output_variable",
+                  "label": "Output Variable",
+                  "description": "The output variable name in the dataset",
+                  "required": false,
+                  "type": "text",
+                  "settings": {
+                    "descriptionPresentation": "tooltip"
+                  }
                 }
               ]
             },
-        {
-          "id": "drop_columns",
-          "label": "DropColumns",
-          "required": false,
-          "type": "object",
-          "fields": [
             {
-              "id": "converter_type",
-              "label": "Converter Type",
-              "defaultValue": "drop",
-              "required": false,
-              "type": "text"
-            },
-            {
-              "id": "column_names",
-              "label": "Column names",
-              "required": false,
-              "type": "text",
-              "description": "Columns to drop from the dataset",
-              "multiple": true
-            }
-          ],
-          "skip_path": true
-        },
-        {
-          "id": "profile_converter",
-          "label": "Profile Converter",
-          "required": false,
-          "type": "object",
-          "fields": [
-            {
-              "id": "profile_data",
-              "label": "Profile Depth Mappings",
+              "id": "drop_columns",
+              "label": "DropColumns",
               "required": false,
               "type": "object",
               "fields": [
                 {
-                  "id": "depth",
-                  "label": "Depth",
-                  "description": "Optional- fixed depth for the mapping.",
-                  "defaultValue": null,
+                  "id": "converter_type",
+                  "label": "Converter Type",
+                  "defaultValue": "drop",
                   "required": false,
-                  "type": "number"
+                  "type": "text"
                 },
                 {
-                  "id": "mappings",
-                  "label": "Mappings",
-                  "description": "Maps input variables to output variables at the current depth ",
+                  "id": "column_names",
+                  "label": "Column names",
                   "required": false,
-                  "type": "object",
-                  "layout": "grid2",
-                  "fields": [
-                    {
-                        "id": "input_variable",
-                        "label": "Input Variable",
-                        "description": "The input variable name in the dataset",
-                        "required": false,
-                        "type": "text",
-                        "settings": {
-                            "descriptionPresentation": "tooltip"
-                        }
-                    },
-                    {
-                        "id": "output_variable",
-                        "label": "Output Variable",
-                        "description": "The output variable name in the dataset",
-                        "required": false,
-                        "type": "text",
-                        "settings": {
-                            "descriptionPresentation": "tooltip"
-                        }
-                    }
-                  ]
+                  "type": "text",
+                  "description": "Columns to drop from the dataset",
+                  "multiple": true
                 }
               ],
-              "multiple": true
+              "skip_path": true
             },
             {
-              "id": "converter_type",
-              "label": "Converter Type",
-              "defaultValue": "profile",
+              "id": "profile_converter",
+              "label": "Profile Converter",
               "required": false,
-              "type": "text"
+              "type": "object",
+              "fields": [
+                {
+                  "id": "profile_data",
+                  "label": "Profile Depth Mappings",
+                  "required": false,
+                  "type": "object",
+                  "fields": [
+                    {
+                      "id": "depth",
+                      "label": "Depth",
+                      "description": "Optional- fixed depth for the mapping.",
+                      "defaultValue": null,
+                      "required": false,
+                      "type": "number"
+                    },
+                    {
+                      "id": "mappings",
+                      "label": "Mappings",
+                      "description": "Maps input variables to output variables at the current depth ",
+                      "required": false,
+                      "type": "object",
+                      "layout": "grid2",
+                      "fields": [
+                        {
+                          "id": "input_variable",
+                          "label": "Input Variable",
+                          "description": "The input variable name in the dataset",
+                          "required": false,
+                          "type": "text",
+                          "settings": {
+                            "descriptionPresentation": "tooltip"
+                          }
+                        },
+                        {
+                          "id": "output_variable",
+                          "label": "Output Variable",
+                          "description": "The output variable name in the dataset",
+                          "required": false,
+                          "type": "text",
+                          "settings": {
+                            "descriptionPresentation": "tooltip"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "multiple": true
+                }
+              ],
+              "skip_path": true
             }
           ],
-          "skip_path": true
+          "multiple": true
         }
-      ],
-      "multiple": true
-    }
-        ]
+      ]
     }
   ]
 }
