@@ -55,7 +55,8 @@ const SelectOrTextInput = ({
               field={{
                 ...field,
                 type: 'text',
-                label: ''
+                label: '',
+                description: ''
               }}
               onChange={onChange}
               value={initialValue}
