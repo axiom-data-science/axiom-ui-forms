@@ -20,7 +20,7 @@ const FieldMap = ({ field, mappingState }: { field: IFormField, mappingState: [I
       <Checkbox id={`${field.id}-include`} testId={`${field.id}-include`} value={include} onChange={(e) => {
         setInclude(e)
       }} />
-      <Input size='xs' wrapperClassName='flex-grow' id={`${field.id}-target`} testId={`${field.id}-target`} value={path} onChange={(e) => {
+      <Input size='xs' wrapperClassName='grow' id={`${field.id}-target`} testId={`${field.id}-target`} value={path} onChange={(e) => {
         setPath(e === '' ? undefined : e)
       }} />
       </div>
@@ -70,7 +70,7 @@ const MapTester = (): ReactElement => {
   return (
         <div className='p-20 h-full'>
             <h1 className='font-bold'>Map Tester</h1>
-            <div className='grid grid-cols-3 gap-8 flex-grow h-full'>
+            <div className='grid grid-cols-3 gap-8 grow h-full'>
                 <div className='h-full'>
                     { error !== undefined
                       ? <p className='text-red-500 py-4'>

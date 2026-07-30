@@ -116,6 +116,7 @@ interface IFormFieldSettingsBase {
   descriptionPresentation?: 'inline' | 'tooltip'
   boldLabel?: boolean
   boldDescription?: boolean
+  className?: string
 }
 
 interface IFormFieldRoot {
@@ -296,7 +297,7 @@ export interface IObjectListField extends Omit<IValidContainerField, 'fields'> {
   tabs?: IFormLayoutTab[]
   pages?: IPage[]
   wizard_steps?: IWizardStep[]
-  settings: {
+  settings: IFormFieldSettingsBase & {
     keyField: string
     valueField?: string
     onlyShowKeyUntilUniqueEntered?: boolean

@@ -31,7 +31,7 @@ const StationSearch = ({ field, onChange, value, disabled }: IFieldInputProps): 
   return <div className='relative'>
     {selectedRecord !== undefined
       ? <div className='p-2 bg-gray-100 flex flex-row align-middle gap-4'>
-        <Tooltip content={'Clear selection'} contentClassName='max-w-[200px]'>
+        <Tooltip content={'Clear selection'} contentClassName='max-w-50'>
        <Cross2Icon className='w-6 h-6 cursor-pointer flex-none opacity-40 hover:opacity-100' onClick={() => {
          setSelectedRecord(undefined)
        }} />

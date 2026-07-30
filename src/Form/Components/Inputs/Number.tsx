@@ -50,7 +50,7 @@ const SliderInput = ({
       />
     <div className='flex flex-row gap-4'>
       <Slider
-        wrapperClassName='flex-grow max-w-[400px] mt-1'
+        wrapperClassName='grow max-w-100 mt-1'
         size='sm'
         disabled={disabled}
         retainUndefinedOnLoad={true}
@@ -71,7 +71,7 @@ const SliderInput = ({
         {
           mode === 'slider'
             ? <>
-              <strong className={`w-[60px]${disabled ? ' text-slate-400 cursor-not-allowed' : ''}`}>{tempValue}</strong>
+              <strong className={`w-15${disabled ? ' text-slate-400 cursor-not-allowed' : ''}`}>{tempValue}</strong>
                 <Pencil1Icon className={`inline m-1 w-5 h-5 ${disabled ? ' opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => {
                   if (disabled) return
                   setMode('text')

@@ -80,7 +80,7 @@ const TimeInput = ({ field, onChange, value, disabled }: IFieldInputProps): Reac
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-2">
-        <label htmlFor={field.id} className="flex-1 min-w-[200px]">
+        <label htmlFor={field.id} className="flex-1 min-w-50">
           <FieldLabel field={field} disabled={disabled} />
         </label>
         {constraintMessage && (

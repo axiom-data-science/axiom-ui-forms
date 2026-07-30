@@ -57,7 +57,7 @@ const ObjectToSchema = ({
 }): ReactElement => {
   const [schema, setSchema] = useState<JSONSchema6 | undefined>(undefined)
   return (
-    <div className='flex flex-row flex-grow'>
+    <div className='flex flex-row grow'>
         <div className='w-[50%] h-full  p-5'>
         <JSONInputLoader
             field={{
@@ -72,8 +72,8 @@ const ObjectToSchema = ({
             }}
             />
         </div>
-        <div className='flex-grow p-5 relative'>
-          <div className='bg-slate-200 h-full p-4 overflow-auto max-h-[600px]'>
+        <div className='grow p-5 relative'>
+          <div className='bg-slate-200 h-full p-4 overflow-auto max-h-150'>
             {
               <pre className='whitespace-pre text-xs'>
                 {schema !== undefined

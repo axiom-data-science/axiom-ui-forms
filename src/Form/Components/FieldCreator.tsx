@@ -837,7 +837,7 @@ const FieldCreator = ({
   onChange,
   className = field.type === 'constant' ? 'hidden' : undefined,
   disabled,
-  defaultClassName = 'flex flex-col gap-8 flex-grow h-full',
+  defaultClassName = 'flex flex-col gap-8 grow h-full',
   conditionResult,
 }: IFieldCreator): ReactElement | null => {
   const { form, inputOverrides, setFormValues, onChange: contextOnChange } = useFormContext()

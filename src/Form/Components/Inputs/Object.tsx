@@ -92,6 +92,7 @@ ObjectFieldItem.displayName = 'ObjectFieldItem'
 
 const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
   const formValues = useFormValues()
+  const settingsClassName = field?.settings?.className
 
   const objectField =
     field.type === 'object' || field.type === 'objectWrapper' ? (field as any) : undefined

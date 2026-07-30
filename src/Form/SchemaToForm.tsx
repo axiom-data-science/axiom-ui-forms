@@ -59,7 +59,7 @@ const SchemaToForm = (): ReactElement => {
         <p>
             This page will allow you to convert a JSON schema to a form UI schema
         </p>
-       <div className='grid grid-cols-2 gap-8 flex-grow'>
+       <div className='grid grid-cols-2 gap-8 grow'>
             <div className='h-full bg-slate-100 p-8'>
                 {
                   form === undefined
@@ -135,7 +135,7 @@ const SchemaToForm = (): ReactElement => {
                                       <CopyButton string={JSON.stringify(form ?? '', null, 2)}
                                         wrapperClassName='absolute right-5 bottom-5 pointer-events-auto'
                                         />
-                                      <pre className='p-5 text-blue-200 text-xs max-h-[400px] shadow-inner-x bg-blue-900 font-mono whitespace-pre-wrap overflow-auto'>
+                                      <pre className='p-5 text-blue-200 text-xs max-h-100 shadow-inner-x bg-blue-900 font-mono whitespace-pre-wrap overflow-auto'>
                                         {JSON.stringify(form, null, 2)}
                                       </pre>
                                       </div>
@@ -155,7 +155,7 @@ const SchemaToForm = (): ReactElement => {
                             label: 'Paste JSON to convert to schema',
                             type: 'json'
                           }}
-                          className='h-full mt-0 w-full flex-grow max-h-[400px] shadow-inner-x bg-blue-900 text-white'
+                          className='h-full mt-0 w-full grow max-h-100 shadow-inner-x bg-blue-900 text-white'
                           />
 
                           {
@@ -172,7 +172,7 @@ const SchemaToForm = (): ReactElement => {
                                         id='convertedObject'
                                         testId='convertedObject'
                                         value={schemaFromObject !== undefined ? JSON.stringify(schemaFromObject, null, 2) : ''}
-                                        className='h-full mt-0 w-full flex-grow min-h-[600px] shadow-inner-x bg-green-900 text-white'
+                                        className='h-full mt-0 w-full grow min-h-150 shadow-inner-x bg-green-900 text-white'
                                         />
 
                                       </>
