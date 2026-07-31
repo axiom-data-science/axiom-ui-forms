@@ -93,6 +93,7 @@ const sampleSchema: JSONSchema6 = {
 const fieldTypeOptions: IFormField['type'][] = [
   'text',
   'long_text',
+  'constant',
   'number',
   'boolean',
   'checkbox',
@@ -273,6 +274,7 @@ const generateShortGuid = (): string => {
 const normalizeFieldType = (value: string | undefined): IFormField['type'] | undefined => {
   if (value === undefined) return undefined
   if (value === 'fileUpload') return 'file_upload'
+  if (value === 'state_selector') return 'stateSelector'
   return value as IFormField['type']
 }
 

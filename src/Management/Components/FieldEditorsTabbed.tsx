@@ -84,11 +84,18 @@ const createTypeSpecificSettingsTemplate = (
 ): Record<string, unknown> => {
   switch (fieldType) {
     case 'number':
-      return { step: 1, canBeNull: false }
+      return {
+        step: 1,
+        canBeNull: false,
+        nonNullDefaultValue: 0,
+        invertForDisplay: false,
+      }
     case 'json':
       return { exportAsString: false, allowEmpty: true }
     case 'select':
-      return { allowNull: true }
+    case 'stateSelector':
+    case 'selectOrText':
+      return { allowNull: true, showDescriptionForSelected: false }
     case 'radio':
       return { layout: 'vertical' }
     case 'geometry':
@@ -101,7 +108,15 @@ const createTypeSpecificSettingsTemplate = (
         height: '500px',
       }
     case 'objectList':
-      return { keyField: 'id' }
+      return {
+        keyField: 'id',
+        valueField: '',
+        onlyShowKeyUntilUniqueEntered: false,
+        showInitialObject: false,
+        excludeKeyFieldFromValue: false,
+      }
+    case 'file_upload':
+      return { acceptedFileTypes: ['.csv'] }
     default:
       return {}
   }
@@ -668,6 +683,19 @@ export const GeneralSettingsEditor = ({
       <label className="flex items-center gap-2 text-sm">
         <input
           type="checkbox"
+          checked={generalSettings.boldDescription === true}
+          onChange={(event) => {
+            onGeneralSettingsChange(
+              updateRecordValue(generalSettings, 'boldDescription', event.target.checked, true)
+            )
+          }}
+        />
+        Bold description
+      </label>
+
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
           checked={generalSettings.smallLabel === true}
           onChange={(event) => {
             onGeneralSettingsChange(
@@ -757,6 +785,34 @@ export const TypeSpecificSettingsEditor = ({
             />
             Can be null
           </label>
+          <label className="flex flex-col gap-1">
+            Non-null default value
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={
+                typeof typeSpecificSettings.nonNullDefaultValue === 'number'
+                  ? typeSpecificSettings.nonNullDefaultValue
+                  : ''
+              }
+              onChange={(event) => {
+                setTypeSpecific(
+                  'nonNullDefaultValue',
+                  event.target.value === '' ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+          <label className="flex items-center gap-2 mt-5">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.invertForDisplay === true}
+              onChange={(event) => {
+                setTypeSpecific('invertForDisplay', event.target.checked, true)
+              }}
+            />
+            Invert for display
+          </label>
         </div>
       ) : null}
 
@@ -785,17 +841,31 @@ export const TypeSpecificSettingsEditor = ({
         </div>
       ) : null}
 
-      {effectiveType === 'select' ? (
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={typeSpecificSettings.allowNull !== false}
-            onChange={(event) => {
-              setTypeSpecific('allowNull', event.target.checked, true)
-            }}
-          />
-          Allow null selection
-        </label>
+      {effectiveType === 'select' ||
+      effectiveType === 'stateSelector' ||
+      effectiveType === 'selectOrText' ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.allowNull !== false}
+              onChange={(event) => {
+                setTypeSpecific('allowNull', event.target.checked, true)
+              }}
+            />
+            Allow null selection
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.showDescriptionForSelected === true}
+              onChange={(event) => {
+                setTypeSpecific('showDescriptionForSelected', event.target.checked, true)
+              }}
+            />
+            Show selected option description
+          </label>
+        </div>
       ) : null}
 
       {effectiveType === 'radio' ? (
@@ -816,6 +886,205 @@ export const TypeSpecificSettingsEditor = ({
             <option value="horizontal">horizontal</option>
           </select>
         </label>
+      ) : null}
+
+      {effectiveType === 'geometry' ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.drawEnabled !== false}
+              onChange={(event) => {
+                setTypeSpecific('drawEnabled', event.target.checked, true)
+              }}
+            />
+            Draw enabled
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.drawPolygonEnabled === true}
+              onChange={(event) => {
+                setTypeSpecific('drawPolygonEnabled', event.target.checked, true)
+              }}
+            />
+            Draw polygon enabled
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.drawPathEnabled === true}
+              onChange={(event) => {
+                setTypeSpecific('drawPathEnabled', event.target.checked, true)
+              }}
+            />
+            Draw path enabled
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.drawPointEnabled === true}
+              onChange={(event) => {
+                setTypeSpecific('drawPointEnabled', event.target.checked, true)
+              }}
+            />
+            Draw point enabled
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.showCoordinateInput === true}
+              onChange={(event) => {
+                setTypeSpecific('showCoordinateInput', event.target.checked, true)
+              }}
+            />
+            Show coordinate input
+          </label>
+          <label className="flex flex-col gap-1">
+            Height
+            <input
+              className="border rounded px-2 py-1"
+              value={typeof typeSpecificSettings.height === 'string' ? typeSpecificSettings.height : ''}
+              onChange={(event) => {
+                setTypeSpecific('height', event.target.value)
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Enabled shapes field
+            <input
+              className="border rounded px-2 py-1"
+              value={
+                typeof typeSpecificSettings.enabledShapesField === 'string'
+                  ? typeSpecificSettings.enabledShapesField
+                  : ''
+              }
+              onChange={(event) => {
+                setTypeSpecific('enabledShapesField', event.target.value)
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Max line string points
+            <input
+              className="border rounded px-2 py-1"
+              type="number"
+              value={
+                typeof typeSpecificSettings.maxLineStringPoints === 'number'
+                  ? typeSpecificSettings.maxLineStringPoints
+                  : ''
+              }
+              onChange={(event) => {
+                setTypeSpecific(
+                  'maxLineStringPoints',
+                  event.target.value === '' ? undefined : Number(event.target.value)
+                )
+              }}
+            />
+          </label>
+        </div>
+      ) : null}
+
+      {effectiveType === 'objectList' ? (
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          <label className="flex flex-col gap-1">
+            Key field
+            <input
+              className="border rounded px-2 py-1"
+              value={typeof typeSpecificSettings.keyField === 'string' ? typeSpecificSettings.keyField : ''}
+              onChange={(event) => {
+                setTypeSpecific('keyField', event.target.value)
+              }}
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            Value field
+            <input
+              className="border rounded px-2 py-1"
+              value={
+                typeof typeSpecificSettings.valueField === 'string'
+                  ? typeSpecificSettings.valueField
+                  : ''
+              }
+              onChange={(event) => {
+                setTypeSpecific('valueField', event.target.value)
+              }}
+            />
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.onlyShowKeyUntilUniqueEntered === true}
+              onChange={(event) => {
+                setTypeSpecific('onlyShowKeyUntilUniqueEntered', event.target.checked, true)
+              }}
+            />
+            Only show key until unique entered
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.showInitialObject === true}
+              onChange={(event) => {
+                setTypeSpecific('showInitialObject', event.target.checked, true)
+              }}
+            />
+            Show initial object
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={typeSpecificSettings.excludeKeyFieldFromValue === true}
+              onChange={(event) => {
+                setTypeSpecific('excludeKeyFieldFromValue', event.target.checked, true)
+              }}
+            />
+            Exclude key field from value
+          </label>
+        </div>
+      ) : null}
+
+      {effectiveType === 'file_upload' ? (
+        <label className="flex flex-col gap-1 text-sm">
+          Accepted file types
+          <input
+            className="border rounded px-2 py-1"
+            placeholder=".csv, .xlsx, image/*"
+            value={
+              Array.isArray(typeSpecificSettings.acceptedFileTypes)
+                ? typeSpecificSettings.acceptedFileTypes.join(', ')
+                : typeof typeSpecificSettings.acceptedFileTypes === 'string'
+                  ? typeSpecificSettings.acceptedFileTypes
+                  : ''
+            }
+            onChange={(event) => {
+              const raw = event.target.value.trim()
+              if (raw === '') {
+                setTypeSpecific('acceptedFileTypes', undefined)
+                return
+              }
+
+              const parsed = raw
+                .split(',')
+                .map((candidate) => candidate.trim())
+                .filter((candidate) => candidate.length > 0)
+
+              setTypeSpecific('acceptedFileTypes', parsed.length <= 1 ? parsed[0] : parsed)
+            }}
+          />
+        </label>
+      ) : null}
+
+      {effectiveType !== 'number' &&
+      effectiveType !== 'json' &&
+      effectiveType !== 'select' &&
+      effectiveType !== 'stateSelector' &&
+      effectiveType !== 'selectOrText' &&
+      effectiveType !== 'radio' &&
+      effectiveType !== 'geometry' &&
+      effectiveType !== 'objectList' &&
+      effectiveType !== 'file_upload' ? (
+        <p className="text-xs text-slate-500">No dedicated type-specific settings for this field type yet.</p>
       ) : null}
     </div>
   )
