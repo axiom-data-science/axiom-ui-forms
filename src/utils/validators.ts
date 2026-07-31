@@ -92,8 +92,8 @@ export const checkCondition = (field: IFormField, formValues: IFormValues): IChe
       ? passingConditions.length > 0
       : passingConditions.length === field.conditionsSet.conditions.length
 
-    result = pass ? (passingConditions[passingConditions.length - 1].result ?? field.conditionsSet.result) : undefined
-    newDefaultValue = pass ? passingConditions[passingConditions.length - 1].newDefaultValue ?? field.conditionsSet.newDefaultValue : undefined
+    result = pass ? field.conditionsSet.result : undefined
+    newDefaultValue = pass ? field.conditionsSet.newDefaultValue : undefined
   }
 
   if (field.conditions !== undefined && pass) {

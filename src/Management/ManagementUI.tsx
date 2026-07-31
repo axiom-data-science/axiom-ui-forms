@@ -93,6 +93,7 @@ const sampleSchema: JSONSchema6 = {
 const fieldTypeOptions: IFormField[***REMOVED***type***REMOVED***][] = [
   ***REMOVED***text***REMOVED***,
   ***REMOVED***long_text***REMOVED***,
+  ***REMOVED***constant***REMOVED***,
   ***REMOVED***number***REMOVED***,
   ***REMOVED***boolean***REMOVED***,
   ***REMOVED***checkbox***REMOVED***,
@@ -273,6 +274,7 @@ const generateShortGuid = (): string => {
 const normalizeFieldType = (value: string | undefined): IFormField[***REMOVED***type***REMOVED***] | undefined => {
   if (value === undefined) return undefined
   if (value === ***REMOVED***fileUpload***REMOVED***) return ***REMOVED***file_upload***REMOVED***
+  if (value === ***REMOVED***state_selector***REMOVED***) return ***REMOVED***stateSelector***REMOVED***
   return value as IFormField[***REMOVED***type***REMOVED***]
 }
 
