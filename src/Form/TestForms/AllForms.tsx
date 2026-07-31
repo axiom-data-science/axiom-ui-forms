@@ -32,6 +32,7 @@ import {
 } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { ReactElement, useEffect, useRef, useState } from ***REMOVED***react***REMOVED***
 import { Link, useLocation } from ***REMOVED***react-router-dom***REMOVED***
+import MergeFieldTestForm from ***REMOVED***@/Form/TestForms/MergeFieldTest/MergeFieldTest***REMOVED***
 
 const forms = [
   {
@@ -189,6 +190,11 @@ const forms = [
     path: ***REMOVED***file-upload-edit***REMOVED***,
     view: PrePopulatedPopulateHeadersFromUpload,
   },
+  {
+    label: ***REMOVED***Merge field test***REMOVED***,
+    path: ***REMOVED***merge-field-test***REMOVED***,
+    view: MergeFieldTestForm
+  }
 ]
 
 const AllForms = (): ReactElement => {

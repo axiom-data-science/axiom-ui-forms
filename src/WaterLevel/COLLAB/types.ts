@@ -7,6 +7,7 @@ export interface IMetadataField {
   field_grouping: string | null
   form_section: string
   secondary_form_section?: string | null
+  example?: string | null
   description: string | null
   requirement_status: ***REMOVED***na***REMOVED*** | ***REMOVED***recommended***REMOVED*** | ***REMOVED***required***REMOVED*** | ***REMOVED***optional***REMOVED*** | ***REMOVED***unknown***REMOVED*** | null | string
   response_type:

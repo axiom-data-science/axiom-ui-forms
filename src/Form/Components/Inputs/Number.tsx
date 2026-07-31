@@ -128,6 +128,7 @@ const TextInput = ({ field, onChange, value, className, disabled }: IFieldInputP
         error={error}
         className={className}
         value={value !== undefined && value !== null ? String(value) : ***REMOVED******REMOVED***}
+        placeholder={field.example ?? ***REMOVED******REMOVED***}
         label={<FieldLabel
             field={field}
             disabled={disabled}

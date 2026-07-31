@@ -61,7 +61,7 @@ const CollabedWatterLevelFormSheetSchemaOnly = (
   const fieldOverridesFromSections = formSectionOverrides.map(s => getFieldsFromFormSection(s as IFormSection)).flat()
     .map(f => {
       const fO = f as IFormFieldOverride
-      const fieldO: Pick<IFormFieldOverride, ***REMOVED***prop***REMOVED*** | ***REMOVED***type***REMOVED***> = pick(fO, [***REMOVED***prop***REMOVED***, ***REMOVED***type***REMOVED***])
+      const fieldO: Pick<IFormFieldOverride, ***REMOVED***prop***REMOVED*** | ***REMOVED***type***REMOVED*** | ***REMOVED***example***REMOVED***> = pick(fO, [***REMOVED***prop***REMOVED***, ***REMOVED***type***REMOVED***, ***REMOVED***example***REMOVED***])
       return fieldO
     })
     .filter(f => {

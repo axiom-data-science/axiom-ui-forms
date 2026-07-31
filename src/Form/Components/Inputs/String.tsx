@@ -15,7 +15,7 @@ const StringInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
         disabled={disabled}
         testId={field.id}
         value={initialValue}
-        placeholder={textField.placeholder}
+        placeholder={textField.placeholder ?? textField.example ?? ***REMOVED******REMOVED***}
         label={<FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />}
         onChange={debounced}
       />

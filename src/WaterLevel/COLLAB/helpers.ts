@@ -473,8 +473,13 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
 }
 
 const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormFieldOverride => {
+  const path = (field.path ?? ***REMOVED******REMOVED***)
+    .trim()
+    .replace(/^\//, ***REMOVED******REMOVED***)
+    .replace(/\//g, ***REMOVED***.***REMOVED***)
+    .replace(/\[\]/g, ***REMOVED******REMOVED***)
   const fO: IFormFieldOverride = {
-    prop: field.id,
+    prop: path.length ? `${path}.${field.id}` : field.id,
   }
   if (field.response_type && field.response_type.toLowerCase().includes(***REMOVED***upload***REMOVED***)) {
     fO.type = ***REMOVED***file_upload***REMOVED***
@@ -492,6 +497,10 @@ const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormField
   if(options.length && options.find(o => o.toLowerCase() === ***REMOVED***other***REMOVED***)) {
     console.log(***REMOVED***setting selectorOrText for***REMOVED***, field.id, ***REMOVED***options***REMOVED***, options)
     fO.type = ***REMOVED***selectOrText***REMOVED***
+  }
+  if(field.example && field.example.trim() !== ***REMOVED******REMOVED***) {
+    fO.example = field.example
+    console.log(***REMOVED***adding placeholder for***REMOVED***, field.id, ***REMOVED***placeholder***REMOVED***, field.example)
   }
   return fO
 }
