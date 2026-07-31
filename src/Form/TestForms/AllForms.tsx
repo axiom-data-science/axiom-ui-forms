@@ -33,6 +33,7 @@ import {
 import { ReactElement, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import MergeFieldTestForm from '@/Form/TestForms/MergeFieldTest/MergeFieldTest'
+import DeepNestedObjectWrapper from '@/Form/TestForms/DeepNestedObjectWrapper/DeepNestedObjectWrapper'
 
 const forms = [
   {
@@ -194,6 +195,11 @@ const forms = [
     label: 'Merge field test',
     path: 'merge-field-test',
     view: MergeFieldTestForm
+  },
+  {
+    label: 'Deep nested object wrapper',
+    path: 'deep-nested-object-wrapper',
+    view: DeepNestedObjectWrapper
   }
 ]
 

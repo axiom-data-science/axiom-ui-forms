@@ -1,0 +1,59 @@
+[
+  {
+    "prop": "root_wrapper",
+    "type": "objectWrapper",
+    "label": "Root Wrapper",
+    "skip_path": true,
+    "fields": [
+      { "prop": "release_depth", "type": "number" },
+      { "prop": "strategy" },
+      {
+        "prop": "level_1_wrapper",
+        "type": "objectWrapper",
+        "label": "Level 1 Wrapper",
+        "skip_path": true,
+        "fields": [
+          { "prop": "l1_name" },
+          { "prop": "l1_toggle" },
+          {
+            "prop": "level_2_wrapper",
+            "type": "objectWrapper",
+            "label": "Level 2 Wrapper",
+            "skip_path": true,
+            "fields": [
+              { "prop": "l2_name" },
+              { "prop": "l2_count", "type": "number" },
+              {
+                "prop": "level_3_wrapper",
+                "type": "objectWrapper",
+                "label": "Level 3 Wrapper",
+                "skip_path": true,
+                "fields": [
+                  { "prop": "l3_name" },
+                  { "prop": "l3_notes", "type": "long_text" },
+                  {
+                    "prop": "level_4_wrapper",
+                    "type": "objectWrapper",
+                    "label": "Level 4 Wrapper",
+                    "skip_path": true,
+                    "fields": [
+                      { "prop": "l4_name" },
+                      { "prop": "l4_value", "type": "number" },
+                      {
+                        "prop": "level_5_wrapper",
+                        "type": "objectWrapper",
+                        "label": "Level 5 Wrapper",
+                        "skip_path": true,
+                        "fields": [{ "prop": "l5_name" }, { "prop": "l5_flag" }]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
