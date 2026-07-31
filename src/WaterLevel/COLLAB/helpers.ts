@@ -473,8 +473,13 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
 }
 
 const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormFieldOverride => {
+  const path = (field.path ?? '')
+    .trim()
+    .replace(/^\//, '')
+    .replace(/\//g, '.')
+    .replace(/\[\]/g, '')
   const fO: IFormFieldOverride = {
-    prop: field.id,
+    prop: path.length ? `${path}.${field.id}` : field.id,
   }
   if (field.response_type && field.response_type.toLowerCase().includes('upload')) {
     fO.type = 'file_upload'
@@ -492,6 +497,10 @@ const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormField
   if(options.length && options.find(o => o.toLowerCase() === 'other')) {
     console.log('setting selectorOrText for', field.id, 'options', options)
     fO.type = 'selectOrText'
+  }
+  if(field.example && field.example.trim() !== '') {
+    fO.example = field.example
+    console.log('adding placeholder for', field.id, 'placeholder', field.example)
   }
   return fO
 }

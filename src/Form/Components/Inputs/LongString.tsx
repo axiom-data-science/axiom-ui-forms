@@ -25,7 +25,7 @@ const LongStringInput = ({
         testId={field.id}
         disabled={disabled}
         label={<FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />}
-        placeholder={textField.placeholder}
+        placeholder={textField.placeholder ?? textField.example ?? ''}
         value={getValue()}
         onChange={debounced}
       />
