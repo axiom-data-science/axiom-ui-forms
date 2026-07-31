@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "title": "Deep Nested ObjectWrapper Schema",
+  "properties": {
+    "simulation_name": { "type": "string", "title": "Simulation Name" },
+    "region": { "type": "string", "title": "Region" },
+    "release_depth": { "type": "number", "title": "Release Depth" },
+    "strategy": { "type": "string", "title": "Strategy" },
+    "l1_name": { "type": "string", "title": "Level 1 Name" },
+    "l1_toggle": { "type": "boolean", "title": "Level 1 Toggle" },
+    "l2_name": { "type": "string", "title": "Level 2 Name" },
+    "l2_count": { "type": "number", "title": "Level 2 Count" },
+    "l3_name": { "type": "string", "title": "Level 3 Name" },
+    "l3_notes": { "type": "string", "title": "Level 3 Notes" },
+    "l4_name": { "type": "string", "title": "Level 4 Name" },
+    "l4_value": { "type": "number", "title": "Level 4 Value" },
+    "l5_name": { "type": "string", "title": "Level 5 Name" },
+    "l5_flag": { "type": "boolean", "title": "Level 5 Flag" }
+  }
+}

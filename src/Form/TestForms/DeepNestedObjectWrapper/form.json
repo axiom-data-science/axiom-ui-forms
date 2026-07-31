@@ -1,0 +1,11 @@
+{
+  "id": "deep_nested_object_wrapper",
+  "label": "Deep Nested ObjectWrapper",
+  "pages": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "fields": [{ "prop": "simulation_name" }, { "prop": "region" }, { "prop": "root_wrapper" }]
+    }
+  ]
+}
