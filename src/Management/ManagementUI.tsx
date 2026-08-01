@@ -2882,7 +2882,7 @@ const ManagementUI = (): ReactElement => {
               event.stopPropagation()
             }}
           >
-            <div className="flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center justify-between shrink-0">
               <h3 className="font-semibold">Edit Field</h3>
               <Button
                 size="xs"
