@@ -249,6 +249,92 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
       })
       expect(result2?.data).toBe(***REMOVED***new data field value***REMOVED***)
     })
+
+    it(***REMOVED***preserves nested json value when field is disabled by an enable condition***REMOVED***, () => {
+      const form: IForm = {
+        id: ***REMOVED***json-conditional-form***REMOVED***,
+        label: ***REMOVED***JSON Conditional Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***enabled***REMOVED***,
+            type: ***REMOVED***boolean***REMOVED***,
+          },
+          {
+            id: ***REMOVED***config***REMOVED***,
+            type: ***REMOVED***json***REMOVED***,
+            conditions: {
+              field: ***REMOVED***enabled***REMOVED***,
+              value: true,
+              result: ***REMOVED***enable***REMOVED***,
+            },
+          },
+        ],
+      }
+
+      const formValues: IFormValues = {
+        enabled: true,
+        config: {
+          nested: {
+            inner: { test: ***REMOVED***hi***REMOVED*** },
+            inner2: { val: ***REMOVED***hello***REMOVED*** },
+          },
+        },
+      }
+
+      const enabledField = form.fields?.[0] as IFormField
+      const result = cleanAndUpdateFormValuesWithFieldValue({
+        form,
+        field: enabledField,
+        value: false,
+        formValues,
+      })
+
+      expect(result.enabled).toBe(false)
+      expect(result.config).toEqual({
+        nested: {
+          inner: { test: ***REMOVED***hi***REMOVED*** },
+          inner2: { val: ***REMOVED***hello***REMOVED*** },
+        },
+      })
+    })
+
+    it(***REMOVED***preserves simple field value when field is disabled by an enable condition***REMOVED***, () => {
+      const form: IForm = {
+        id: ***REMOVED***simple-conditional-form***REMOVED***,
+        label: ***REMOVED***Simple Conditional Form***REMOVED***,
+        fields: [
+          {
+            id: ***REMOVED***enabled***REMOVED***,
+            type: ***REMOVED***boolean***REMOVED***,
+          },
+          {
+            id: ***REMOVED***name***REMOVED***,
+            type: ***REMOVED***text***REMOVED***,
+            conditions: {
+              field: ***REMOVED***enabled***REMOVED***,
+              value: true,
+              result: ***REMOVED***enable***REMOVED***,
+            },
+          },
+        ],
+      }
+
+      const formValues: IFormValues = {
+        enabled: true,
+        name: ***REMOVED***kept value***REMOVED***,
+      }
+
+      const enabledField = form.fields?.[0] as IFormField
+      const result = cleanAndUpdateFormValuesWithFieldValue({
+        form,
+        field: enabledField,
+        value: false,
+        formValues,
+      })
+
+      expect(result.enabled).toBe(false)
+      expect(result.name).toBe(***REMOVED***kept value***REMOVED***)
+    })
   })
 
   describe(***REMOVED***cleanAndUpdateFormValuesWithFieldValue - edge cases***REMOVED***, () => {
