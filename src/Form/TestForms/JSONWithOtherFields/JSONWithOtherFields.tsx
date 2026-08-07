@@ -55,9 +55,12 @@ const defaultFormValues: IFormValues = {
             "inner2": {
                 "val": "hello"
             }
-        }
+        },
+        "lots": Array.prototype.fill.call(new Array(500), "item")
     }
 }
+
+console.log(defaultFormValues)
 
 const initialForm: IForm = {
     "id": "json-with-other-fields-form",
