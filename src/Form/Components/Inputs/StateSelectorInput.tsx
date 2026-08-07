@@ -1,5 +1,5 @@
 
-import { SelectInput } from "@/Form/Components/Inputs";
+import SelectInput from "@/Form/Components/Inputs/SingleSelect";
 import { IFieldInputProps } from "@/Form/Creator/FormCreatorTypes";
 import type { ReactElement } from "react";
 

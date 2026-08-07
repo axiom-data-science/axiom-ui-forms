@@ -1,9 +1,7 @@
-import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import SingleSelectInput from ***REMOVED***@/Form/Components/Inputs/SingleSelect***REMOVED***
 import StringInput from ***REMOVED***@/Form/Components/Inputs/String***REMOVED***
-import { ISelectField, IValueChangeFn, IValueType, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
-import { SelectInput } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import React, { useState, type ReactElement } from ***REMOVED***react***REMOVED***
+import { ISelectField, IValueChangeFn, type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { useState, type ReactElement } from ***REMOVED***react***REMOVED***
 
 const SelectOrTextInput = ({
   field,
