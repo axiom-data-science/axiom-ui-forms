@@ -34,6 +34,7 @@ import { ReactElement, useEffect, useRef, useState } from ***REMOVED***react***R
 import { Link, useLocation } from ***REMOVED***react-router-dom***REMOVED***
 import MergeFieldTestForm from ***REMOVED***@/Form/TestForms/MergeFieldTest/MergeFieldTest***REMOVED***
 import DeepNestedObjectWrapper from ***REMOVED***@/Form/TestForms/DeepNestedObjectWrapper/DeepNestedObjectWrapper***REMOVED***
+import JSONWithOtherFields, { JSONWithOtherFieldsForm } from ***REMOVED***@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields***REMOVED***
 
 const forms = [
   {
@@ -200,6 +201,16 @@ const forms = [
     label: ***REMOVED***Deep nested object wrapper***REMOVED***,
     path: ***REMOVED***deep-nested-object-wrapper***REMOVED***,
     view: DeepNestedObjectWrapper
+  },
+  {
+    label: ***REMOVED***JSON with other fields***REMOVED***,
+    path: ***REMOVED***json-with-other-fields***REMOVED***,
+    view: JSONWithOtherFields
+  },
+  {
+    label: ***REMOVED***JSON with other fields form***REMOVED***,
+    path: ***REMOVED***json-with-other-fields-form***REMOVED***,
+    view: JSONWithOtherFieldsForm
   }
 ]
 
