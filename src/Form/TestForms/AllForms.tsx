@@ -34,6 +34,7 @@ import { ReactElement, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import MergeFieldTestForm from '@/Form/TestForms/MergeFieldTest/MergeFieldTest'
 import DeepNestedObjectWrapper from '@/Form/TestForms/DeepNestedObjectWrapper/DeepNestedObjectWrapper'
+import JSONWithOtherFields, { JSONWithOtherFieldsForm } from '@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields'
 
 const forms = [
   {
@@ -200,6 +201,16 @@ const forms = [
     label: 'Deep nested object wrapper',
     path: 'deep-nested-object-wrapper',
     view: DeepNestedObjectWrapper
+  },
+  {
+    label: 'JSON with other fields',
+    path: 'json-with-other-fields',
+    view: JSONWithOtherFields
+  },
+  {
+    label: 'JSON with other fields form',
+    path: 'json-with-other-fields-form',
+    view: JSONWithOtherFieldsForm
   }
 ]
 
