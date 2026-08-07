@@ -15,4 +15,3 @@ export { default as TimeInput } from ***REMOVED***./Time***REMOVED***
 export { default as ObjectInput } from ***REMOVED***./Object***REMOVED***
 export { default as RadioGroupInput } from ***REMOVED***./RadioGroup***REMOVED***
 export { default as ConstantInput } from ***REMOVED***./Constant***REMOVED***
-export { ObjectListCreator as ObjectListInput } from ***REMOVED***../FieldCreator***REMOVED***
