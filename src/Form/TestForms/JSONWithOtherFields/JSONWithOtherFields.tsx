@@ -67,8 +67,7 @@ const initialForm: IForm = {
         {"id": "enabled", "label": "enable it", "type": "boolean"},
         {"id": "description", "type": "text", "conditions": {
             "field": "enabled",
-            "value": true,
-            "result": "enable"
+            "value": true
         }},
         {"id": "config", "type": "json", "conditions":{
             "field": "enabled",
