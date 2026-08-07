@@ -173,11 +173,7 @@ export function cleanFormValuesLevel(
   const formValuesCopy = cloneObject(formValues)
   Object.keys(formValues).forEach((key) => {
     const path = formValuesPath !== '' ? `${formValuesPath}.${key}` : key
-    const field = fields?.find((f) => {
-      const ff = getPathFromField(f) === path
-      const cc = ff ? checkCondition(f, evalFormValues).pass : false
-      return ff && cc
-    })
+    const field = fields?.find((f) => getPathFromField(f) === path)
     if (
       field?.type === 'object' &&
       field?.multiple === true &&

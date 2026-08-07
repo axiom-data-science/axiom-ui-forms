@@ -249,6 +249,92 @@ describe('manipulators.ts', () => {
       })
       expect(result2?.data).toBe('new data field value')
     })
+
+    it('preserves nested json value when field is disabled by an enable condition', () => {
+      const form: IForm = {
+        id: 'json-conditional-form',
+        label: 'JSON Conditional Form',
+        fields: [
+          {
+            id: 'enabled',
+            type: 'boolean',
+          },
+          {
+            id: 'config',
+            type: 'json',
+            conditions: {
+              field: 'enabled',
+              value: true,
+              result: 'enable',
+            },
+          },
+        ],
+      }
+
+      const formValues: IFormValues = {
+        enabled: true,
+        config: {
+          nested: {
+            inner: { test: 'hi' },
+            inner2: { val: 'hello' },
+          },
+        },
+      }
+
+      const enabledField = form.fields?.[0] as IFormField
+      const result = cleanAndUpdateFormValuesWithFieldValue({
+        form,
+        field: enabledField,
+        value: false,
+        formValues,
+      })
+
+      expect(result.enabled).toBe(false)
+      expect(result.config).toEqual({
+        nested: {
+          inner: { test: 'hi' },
+          inner2: { val: 'hello' },
+        },
+      })
+    })
+
+    it('preserves simple field value when field is disabled by an enable condition', () => {
+      const form: IForm = {
+        id: 'simple-conditional-form',
+        label: 'Simple Conditional Form',
+        fields: [
+          {
+            id: 'enabled',
+            type: 'boolean',
+          },
+          {
+            id: 'name',
+            type: 'text',
+            conditions: {
+              field: 'enabled',
+              value: true,
+              result: 'enable',
+            },
+          },
+        ],
+      }
+
+      const formValues: IFormValues = {
+        enabled: true,
+        name: 'kept value',
+      }
+
+      const enabledField = form.fields?.[0] as IFormField
+      const result = cleanAndUpdateFormValuesWithFieldValue({
+        form,
+        field: enabledField,
+        value: false,
+        formValues,
+      })
+
+      expect(result.enabled).toBe(false)
+      expect(result.name).toBe('kept value')
+    })
   })
 
   describe('cleanAndUpdateFormValuesWithFieldValue - edge cases', () => {
