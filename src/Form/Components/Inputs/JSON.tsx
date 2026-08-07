@@ -221,10 +221,10 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
             setHasFocus(false)
           }}
         />
-        {disabled && (
-          <div className="absolute top-0 left-0 w-full h-full bg-white/40 z-20 cursor-not-allowed" />
-        )}
       </div>
+      {disabled && (
+          <div className="absolute top-0 left-0 right-0 h-full bg-white/40 z-20 cursor-not-allowed pointer-events-none" />
+        )}
     </div>
   )
 }
