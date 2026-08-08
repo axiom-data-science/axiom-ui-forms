@@ -200,7 +200,7 @@ const JsonYamlEditor = ({ field, onChange, value, disabled }: IFieldInputProps):
           size="xlg"
         />
       </span>
-      <div className="h-full grow overflow-auto min-h-[20vh] max-h-[90vh] relative">
+      <div className="h-full grow overflow-auto min-h-[20vh] max-h-[calc(max(50vh,500px))] relative">
         <CodeMirror
           readOnly={disabled}
           value={format === ***REMOVED***yaml***REMOVED*** && workingValue === ***REMOVED***{}***REMOVED*** ? ***REMOVED******REMOVED*** : workingValue}
