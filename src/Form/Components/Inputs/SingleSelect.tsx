@@ -1,4 +1,4 @@
-import FieldLabel from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
+import FieldLabel, { FieldDescriptionText } from ***REMOVED***@/Form/Components/FieldLabel***REMOVED***
 import { type IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { SelectInput } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import React, { type ReactElement } from ***REMOVED***react***REMOVED***
@@ -14,38 +14,34 @@ const SingleSelectInput = ({
 
   if (field.type === ***REMOVED***select***REMOVED*** && field.options !== undefined) {
     return (
-      <>
+      <div className="flex flex-col gap-2">
         <SelectInput
           id={field.id}
           className={className}
           label={<FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />}
           testId={field.id}
-          options={field.options.map((option) => (
-              {
-                label: option.label,
-                value: option.value
-              }
-            )
-          )}
+          options={field.options.map((option) => ({
+            label: option.label,
+            value: option.value,
+          }))}
           includePrompt={field?.settings?.allowNull !== false}
           value={initialValue !== undefined && initialValue !== null ? String(initialValue) : ***REMOVED******REMOVED***}
           onChange={(e) => {
             onChange(e?.value)
           }}
         />
-        {
-          field?.settings?.showDescriptionForSelected && field.options.find((option) => option.value === value)?.description && (
-            <FieldLabel
+        {field?.settings?.showDescriptionForSelected &&
+          field.options.find((option) => option.value === value)?.description && (
+            <FieldDescriptionText
               field={{
                 ...field,
                 label: ***REMOVED******REMOVED***,
-                description: field.options.find((option) => option.value === value)?.description
+                description: field.options.find((option) => option.value === value)?.description,
               }}
               disabled={disabled}
             />
-          )
-        }
-      </>
+          )}
+      </div>
     )
   }
   return <p>Field config for {field.id} is missing &apos;options&apos;</p>
