@@ -15,29 +15,11 @@
           "fields": [
             {
               "prop": "prepared-by"
-            },
-            {
-              "prop": "date-prepared"
             }
           ]
         },
         {
-          "prop": "update-or-new-station",
-          "type": "radio"
-        },
-        {
-          "prop": "previous-site-log",
-          "conditions": {
-            "field": "update-or-new-station",
-            "value": "Update"
-          }
-        },
-        {
-          "prop": "reason-for-update",
-          "conditions": {
-            "field": "update-or-new-station",
-            "value": "Update"
-          }
+          "prop": "reason-for-update"
         }
       ]
     },
@@ -146,28 +128,33 @@
     {
       "id": "contributors-list",
       "label": "Contributors List",
-      "description": "- **Custodian:** Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n- **Community Point of Contact:** Name of community contact, if applicable. This information is not reported to ERDDAP. It is only recorded for RA project tracking purposes. \n- **Owner:** Party that owns the resource\n- **Data Publisher:** Party who published the resource\n- **Data Processor:** Party that has processed the data in a manner such that the resource has been modified\n- **Funder:** Party providing monetary support for the resource\n- **Distributor:** Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nYou may enter the same information for multiple roles. Use the ***REMOVED***Duplicate***REMOVED*** button to copy information from a role and create a new one. Each role can only be entered once",
+      "description": "All roles are optional to complete. You may enter the same information for multiple roles. For example, you may submit 1 Custodian and 1 Community POC and use the same information for both.\nUse the ***REMOVED***Duplicate***REMOVED*** button to copy information from a role and create a new one.\n- **Owner**: Party that owns the resource\n - **Funder**: Party providing monetary support for the resource\n - **Custodian**: Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n - **Community Point of Contact**: Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - **Data Publisher**: Party who published the resource\n - **Data Processor**: Party that has processed the data in a manner such that the resource has been modified\n - **Distributor**: Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nExamples:\n - **Owner**: AOOS. The RA that purchased the equipment.  \n - **Funder**: AOOS, USGS. Any organizations that shared the cost of a station. Perhaps this was a pre-existing USGS station that was upgraded by an RA. \n - **Custodian**: JOA Surveys. The organization that is servicing the station.\n - **Community** Point of Contact: Person ABC. The POC who is aware of the station or provides access to the site. This will not be reported to ERDDAP. \n - **Data Publisher**: JOA Surveys. The organization that shares the data via API or other access point. \n - **Data Processor**: JOA Surveys. \n - **Distributor**: Hohonu",
       "fields": [
         {
           "prop": "contributor",
-          "type": "objectList",
+          "type": "object",
           "label": "",
+          "multiple": true,
           "settings": {
-            "keyField": "role",
-            "showInitialObject": true,
-            "excludeKeyFieldFromValue": true,
-            "boldLabel": true
+            "className": "bg-slate-100"
           },
           "fields": [
             {
               "prop": "role",
-              "type": "select"
+              "type": "select",
+              "settings": {
+                "showDescriptionForSelected": true,
+                "boldLabel": true
+              }
             },
             {
               "id": "contributor-fields",
               "label": "",
               "type": "objectWrapper",
               "layout": "grid3",
+              "settings": {
+                "className": "bg-transparent px-0 -mt-2"
+              },
               "fields": [
                 {
                   "prop": "name"
@@ -198,7 +185,7 @@
           "id": "station-wrapper",
           "label": "Station",
           "type": "objectWrapper",
-          "layout": "grid3",
+          "layout": "grid2",
           "settings": {
             "boldLabel": true
           },
@@ -219,31 +206,8 @@
             },
             {
               "prop": "platform",
-              "type": "select",
-              "defaultValue": "station",
-              "label": "Platform",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              },
-              "options": [
-                {
-                  "label": "Station",
-                  "value": "station"
-                },
-                {
-                  "label": "Buoy",
-                  "value": "buoy"
-                },
-                {
-                  "label": "Tide Gauge",
-                  "value": "tide_gauge"
-                },
-                {
-                  "label": "Other",
-                  "value": "other"
-                }
-              ]
+              "type": "constant",
+              "defaultValue": "station"
             }
           ]
         },
@@ -273,7 +237,7 @@
               }
             },
             {
-              "prop": "horizontal-datum-projection",
+              "prop": "horizontal-datum",
               "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
@@ -297,66 +261,6 @@
           ]
         },
         {
-          "id": "coops-wrapper",
-          "label": "COOPS identification",
-          "type": "objectWrapper",
-          "settings": {
-            "boldLabel": true
-          },
-          "fields": [
-            {
-              "prop": "is-coops-station",
-              "type": "boolean",
-              "settings": {
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "station-coops-id",
-              "conditions": {
-                "field": "is-coops-station",
-                "value": true
-              },
-              "type": "text",
-              "settings": {
-                "smallLabel": true
-              }
-            }
-          ]
-        },
-        {
-          "id": "ids-wrapper",
-          "label": "Other identifiers",
-          "type": "objectWrapper",
-          "settings": {
-            "boldLabel": true
-          },
-          "layout": "grid3",
-          "fields": [
-            {
-              "prop": "wmo_platform_code",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "other-id",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "shef-element-code",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ]
-        },
-        {
           "prop": "additional-information",
           "settings": {
             "boldLabel": true
@@ -365,7 +269,7 @@
       ]
     },
     {
-      "id": "sensor-information",
+      "id": "sensor-information-page",
       "label": "Sensor Information",
       "description": "Enter one or more sensors.  \nDefinitions:\n\n- **Instrument** is the large physical instrument that may house individual or smaller components, aka sensors.\n - **Components** are the individual sensors within an instrument. There may be multiple components within a single instrument. Example two radar gauges within one instrument.",
       "fields": [
@@ -387,10 +291,6 @@
                     "boldLabel": true
                   },
                   "fields": [
-                    {
-                      "prop": "sensors[].is-real-time",
-                      "type": "boolean"
-                    },
                     {
                       "id": "start-end-wrapper",
                       "label": "",
@@ -470,7 +370,7 @@
             },
             {
               "id": "sensor-information",
-              "label": "Instrument and installation",
+              "label": "Sensor Information",
               "fields": [
                 {
                   "id": "instrument-wrapper",
@@ -483,14 +383,6 @@
                   "fields": [
                     {
                       "prop": "sensors[].instrument",
-                      "type": "selectOrText",
-                      "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
-                    },
-                    {
-                      "prop": "sensors[].instrument_variable:component",
                       "type": "selectOrText",
                       "settings": {
                         "descriptionPresentation": "tooltip",
@@ -549,31 +441,265 @@
                 },
                 {
                   "prop": "sensors[].telemetry-method"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tidal-datum-offsets-relative-to-station",
+      "label": "Tidal Datum Offsets relative to station",
+      "fields": [
+        {
+          "id": "offsets-wrapper",
+          "label": "Offsets and elevation",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "offset-from-station-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-elevation-on-station-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-elevation-ortho",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-elevation-ellipsoidal",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-offset",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "reference-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "sensor-survey-reference-point",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "datum-offsets-wrapper",
+          "label": "Datum Offsets",
+          "description": "As related to the station datum, in meters. If not known, leave blank.",
+          "type": "objectWrapper",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "id": "geodetic-datum-wrapper",
+              "label": "Geodetic Vertical Datums",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true,
+                "className": "bg-transparent px-0"
+              },
+              "fields": [
+                {
+                  "prop": "navd88-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
                 },
                 {
-                  "id": "modem-wrapper",
-                  "label": "Modem",
-                  "type": "objectWrapper",
-                  "layout": "grid2",
+                  "prop": "nad83-m",
                   "settings": {
-                    "boldLabel": true
-                  },
-                  "fields": [
-                    {
-                      "prop": "sensors[].modem-communication-manufacturer-model",
-                      "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
-                    },
-                    {
-                      "prop": "sensors[].serial-number-for-modem",
-                      "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
-                    }
-                  ]
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "tidal-datum-wrapper",
+              "label": "Tidal Elevation Datums",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true,
+                "className": "bg-transparent px-0"
+              },
+              "fields": [
+                {
+                  "prop": "mhhw-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "mhw-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "msl-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "mtl-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "dtl-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "mlw-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "mllw-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+
+            {
+              "id": "time-range-datum-wrapper",
+              "label": "Time Range Datums / Tidal Characteristic",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true,
+                "className": "bg-transparent px-0"
+              },
+              "fields": [
+                {
+                  "prop": "gt-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "mn-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "dhq-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "dlq-m",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+
+            {
+              "id": "tidal-timing-datum-wrapper",
+              "label": "Tidal Timing Datums",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true,
+                "className": "bg-transparent px-0"
+              },
+              "fields": [
+                {
+                  "prop": "hwi-hr",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "lwi-hr",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+
+            {
+              "id": "great-lakes-wrapper",
+              "label": "Great Lakes Specific Datums",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true,
+                "className": "bg-transparent px-0"
+              },
+              "fields": [
+                {
+                  "prop": "igld",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "lwd",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
                 }
               ]
             }
@@ -727,13 +853,6 @@
                   }
                 },
                 {
-                  "prop": "surveys[].horizontal-datum",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
                   "prop": "surveys[].elevation",
                   "settings": {
                     "descriptionPresentation": "tooltip",
@@ -863,203 +982,6 @@
       ]
     },
     {
-      "id": "tidal-datum-offsets-relative-to-station",
-      "label": "Tidal Datum Offsets relative to station",
-      "fields": [
-        {
-          "id": "offsets-wrapper",
-          "label": "Offsets and elevation",
-          "type": "objectWrapper",
-          "layout": "grid2",
-          "settings": {
-            "boldLabel": true
-          },
-          "fields": [
-            {
-              "prop": "offset-from-station-datum",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-elevation-on-station-datum",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-elevation-ortho",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-elevation-ellipsoidal",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-offset",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "reference-datum",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-survey-reference-point",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ]
-        },
-        {
-          "id": "datum-offsets-wrapper",
-          "label": "Datum Offsets",
-          "description": "As related to the station datum, in meters. If not known, leave blank.",
-          "type": "objectWrapper",
-          "layout": "grid3",
-          "settings": {
-            "boldLabel": true
-          },
-          "fields": [
-            {
-              "prop": "navd88-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "nad83-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "mhhw-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "mhw-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "dtl-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "mtl-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "msl-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "mlw-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "mllw-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "gt-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "mn-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "dhq-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "dlq-m",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "hwi-hr",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "lwi-hr",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "igld",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "lwd",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "collocation-information",
       "label": "Collocation Information",
       "fields": [
@@ -1068,7 +990,8 @@
           "type": "boolean"
         },
         {
-          "prop": "additional-colocation-information"
+          "prop": "additional-colocation-information",
+          "multiple": true
         }
       ]
     },
@@ -1103,34 +1026,44 @@
         },
         {
           "prop": "other-attachment"
-        },
-        {
-          "prop": "license",
-          "type": "long_text"
-        },
-        {
-          "prop": "dissemination-flag"
         }
       ]
     },
     {
-      "id": "qartod-fields",
-      "label": "QARTOD fields",
+      "id": "external-data-access",
+      "label": "API and External Data Identifiers",
       "fields": [
         {
-          "prop": "gross-range"
+          "id": "ids-wrapper",
+          "label": "Other identifiers",
+          "type": "objectWrapper",
+          "settings": {
+            "boldLabel": true
+          },
+          "layout": "grid3",
+          "fields": [
+            {
+              "prop": "wmo_platform_code",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "shef-element-code",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
         },
         {
-          "prop": "spike"
+          "prop": "disclaimer",
+          "type": "long_text"
         },
         {
-          "prop": "flatline"
-        },
-        {
-          "prop": "rate-of-change"
-        },
-        {
-          "prop": "aggregate"
+          "prop": "dissemination-flag"
         }
       ]
     }
