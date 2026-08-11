@@ -1,7 +1,6 @@
-
-import SelectInput from "@/Form/Components/Inputs/SingleSelect";
-import { IFieldInputProps } from "@/Form/Creator/FormCreatorTypes";
-import type { ReactElement } from "react";
+import SelectInput from '@/Form/Components/Inputs/SingleSelect'
+import { IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import type { ReactElement } from 'react'
 
 const states = `"Alabama","AL"
 "Alaska","AK"
@@ -53,22 +52,31 @@ const states = `"Alabama","AL"
 "Washington","WA"
 "West Virginia","WV"
 "Wisconsin","WI"
-"Wyoming","WY"`.split("\n").map(line => {
-    const [label, value] = line.split(",")
-    return { label: label.replace(/"/g, ""), value: value.replace(/"/g, "") }
-})
+"Wyoming","WY"
+"American Samoa","AS"
+"Guam","Guam"
+"Northern Mariana Islands","MP"
+"Puerto Rico","PR"
+"U.S. Virgin Islands","VI"`
+  .split('\n')
+  .map((line) => {
+    const [label, value] = line.split(',')
+    return { label: label.replace(/"/g, ''), value: value.replace(/"/g, '') }
+  })
 
 const StateSelector = ({ field, onChange, value, disabled }: IFieldInputProps): ReactElement => {
-    return <SelectInput
-        field={{
-            ...field,
-            type: 'select',
-            options: states
-        }}
-        onChange={onChange}
-        value={value}
-        disabled={disabled}
+  return (
+    <SelectInput
+      field={{
+        ...field,
+        type: 'select',
+        options: states,
+      }}
+      onChange={onChange}
+      value={value}
+      disabled={disabled}
     />
+  )
 }
 
 export default StateSelector
