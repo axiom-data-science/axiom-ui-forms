@@ -180,72 +180,81 @@ const setSchemaPropertyByIdPath = (
 
 const contributorsSpecialCase = (): JSONSchema6 => {
   return {
-    "type": "object",
-    "additionalProperties": {
-      "type": "object",
-      "properties": {
-        "role": {
-          "type": "string",
-          "title": "Contributor role",
-          "enum": [
+    type: ***REMOVED***object***REMOVED***,
+    additionalProperties: {
+      type: ***REMOVED***object***REMOVED***,
+      properties: {
+        role: {
+          type: ***REMOVED***string***REMOVED***,
+          title: ***REMOVED***Contributor role***REMOVED***,
+          enum: [
             {
-              "const": "custodian",
-              "title": "Custodian"
+              const: ***REMOVED***owner***REMOVED***,
+              title: ***REMOVED***Owner***REMOVED***,
+              description: ***REMOVED***Party that owns the resource.\n - ***AOOS******REMOVED***,
             },
             {
-              "const": "community_poc",
-              "title": "Community Point of Contact"
+              const: ***REMOVED***funder***REMOVED***,
+              title: ***REMOVED***Funder***REMOVED***,
+              description:
+                ***REMOVED***Party providing monetary support for the resource.\n - ***AOOS***\n - ***USGS******REMOVED***,
             },
             {
-              "const": "owner",
-              "title": "Owner"
+              const: ***REMOVED***custodian***REMOVED***,
+              title: ***REMOVED***Custodian***REMOVED***,
+              description:
+                ***REMOVED***Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource.\n - ***JOA Surveys** (the organization that is servicing the station)****REMOVED***,
             },
             {
-              "const": "publisher",
-              "title": "Data Publisher"
+              const: ***REMOVED***community_poc***REMOVED***,
+              title: ***REMOVED***Community Point of Contact***REMOVED***,
+              description:
+                ***REMOVED***Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - ***Person ABC** (the POC who is aware of the station or provides access to the site)****REMOVED***,
             },
             {
-              "const": "distributor",
-              "title": "Distributor"
+              const: ***REMOVED***publisher***REMOVED***,
+              title: ***REMOVED***Data Publisher***REMOVED***,
+              description:
+                ***REMOVED***Party who published the resource.\n - ***JOA Surveys** (The organization that shares the data via API or other access point)****REMOVED***,
             },
             {
-              "const": "funder",
-              "title": "Funder"
+              const: ***REMOVED***processor***REMOVED***,
+              title: ***REMOVED***Data Processor***REMOVED***,
+              description:
+                ***REMOVED***Party that has processed the data in a manner such that the resource has been modified.\n - ***JOA Surveys******REMOVED***,
             },
             {
-              "const": "funder2",
-              "title": "Funder 2"
+              const: ***REMOVED***distributor***REMOVED***,
+              title: ***REMOVED***Distributor***REMOVED***,
+              description:
+                ***REMOVED***Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n - ***Hohonu******REMOVED***,
             },
-            {
-              "const": "funder3",
-              "title": "Funder 3"
-            }
           ],
         },
-         "name": {
-            "type": "string",
-            "title": "Name",
-          },
-          "phone": {
-            "type": "string",
-            "format": "phone",
-            "title": "Telephone (primary)",
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "title": "Email",
-          },
-          "url": {
-            "type": "string",
-            "title": "URL",
-          },
-          "affiliation": {
-            "type": "string",
-            "title": "Organization"
-          }
-      }
-    }
+        name: {
+          type: ***REMOVED***string***REMOVED***,
+          title: ***REMOVED***Name***REMOVED***,
+        },
+        phone: {
+          type: ***REMOVED***string***REMOVED***,
+          format: ***REMOVED***phone***REMOVED***,
+          title: ***REMOVED***Telephone (primary)***REMOVED***,
+        },
+        email: {
+          type: ***REMOVED***string***REMOVED***,
+          format: ***REMOVED***email***REMOVED***,
+          title: ***REMOVED***Email***REMOVED***,
+        },
+        url: {
+          type: ***REMOVED***string***REMOVED***,
+          title: ***REMOVED***URL***REMOVED***,
+        },
+        affiliation: {
+          type: ***REMOVED***string***REMOVED***,
+          title: ***REMOVED***Organization***REMOVED***,
+        },
+      },
+    },
   }
 }
 
@@ -270,7 +279,9 @@ const setContributorsSpecialCase = (
 
 const isRequiredMetadataField = (field: IMetadataField): boolean => {
   const requirementStatus =
-    typeof field.requirement_status === ***REMOVED***string***REMOVED*** ? field.requirement_status.trim().toLowerCase() : ***REMOVED******REMOVED***
+    typeof field.requirement_status === ***REMOVED***string***REMOVED***
+      ? field.requirement_status.trim().toLowerCase()
+      : ***REMOVED******REMOVED***
   return requirementStatus === ***REMOVED***required***REMOVED***
 }
 
@@ -302,7 +313,11 @@ const markSchemaFieldRequired = (schema: JSONSchema6, field: IMetadataField): vo
       const nextSchema = nextDefinition
       if (isArrayPart) {
         const arrayItems = nextSchema.items
-        if (arrayItems === undefined || Array.isArray(arrayItems) || typeof arrayItems === ***REMOVED***boolean***REMOVED***) {
+        if (
+          arrayItems === undefined ||
+          Array.isArray(arrayItems) ||
+          typeof arrayItems === ***REMOVED***boolean***REMOVED***
+        ) {
           return
         }
         currentSchema = arrayItems
@@ -315,7 +330,8 @@ const markSchemaFieldRequired = (schema: JSONSchema6, field: IMetadataField): vo
   for (let i = 0; i < idPathParts.length - 1; i += 1) {
     const part = idPathParts[i]
     const nextDefinition =
-      currentSchema.properties?.[part] ?? (currentSchema as unknown as Record<string, JSONSchema6Definition>)[part]
+      currentSchema.properties?.[part] ??
+      (currentSchema as unknown as Record<string, JSONSchema6Definition>)[part]
 
     if (nextDefinition === undefined || typeof nextDefinition === ***REMOVED***boolean***REMOVED***) {
       return
@@ -438,9 +454,11 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
   })
 
   // Apply required flags after schema structure is fully built.
-  fields.filter((field) => isRequiredMetadataField(field)).forEach((field) => {
-    markSchemaFieldRequired(schema, field)
-  })
+  fields
+    .filter((field) => isRequiredMetadataField(field))
+    .forEach((field) => {
+      markSchemaFieldRequired(schema, field)
+    })
 
   /* fields.forEach(f => {
     schema.properties = schema.properties ?? {}
@@ -473,11 +491,7 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
 }
 
 const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormFieldOverride => {
-  const path = (field.path ?? ***REMOVED******REMOVED***)
-    .trim()
-    .replace(/^\//, ***REMOVED******REMOVED***)
-    .replace(/\//g, ***REMOVED***.***REMOVED***)
-    .replace(/\[\]/g, ***REMOVED******REMOVED***)
+  const path = (field.path ?? ***REMOVED******REMOVED***).trim().replace(/^\//, ***REMOVED******REMOVED***).replace(/\//g, ***REMOVED***.***REMOVED***).replace(/\[\]/g, ***REMOVED******REMOVED***)
   const fO: IFormFieldOverride = {
     prop: path.length ? `${path}.${field.id}` : field.id,
   }
@@ -492,13 +506,13 @@ const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormField
     field.option5,
     field.option6,
     field.option7,
-    field.option8
-  ].filter(o => o !== null && o !== ***REMOVED******REMOVED*** && o !== undefined) as string[]
-  if(options.length && options.find(o => o.toLowerCase() === ***REMOVED***other***REMOVED***)) {
+    field.option8,
+  ].filter((o) => o !== null && o !== ***REMOVED******REMOVED*** && o !== undefined) as string[]
+  if (options.length && options.find((o) => o.toLowerCase() === ***REMOVED***other***REMOVED***)) {
     console.log(***REMOVED***setting selectorOrText for***REMOVED***, field.id, ***REMOVED***options***REMOVED***, options)
     fO.type = ***REMOVED***selectOrText***REMOVED***
   }
-  if(field.example && field.example.trim() !== ***REMOVED******REMOVED***) {
+  if (field.example && field.example.trim() !== ***REMOVED******REMOVED***) {
     fO.example = field.example
     console.log(***REMOVED***adding placeholder for***REMOVED***, field.id, ***REMOVED***placeholder***REMOVED***, field.example)
   }
