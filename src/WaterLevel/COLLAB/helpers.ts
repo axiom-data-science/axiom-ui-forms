@@ -180,72 +180,81 @@ const setSchemaPropertyByIdPath = (
 
 const contributorsSpecialCase = (): JSONSchema6 => {
   return {
-    "type": "object",
-    "additionalProperties": {
-      "type": "object",
-      "properties": {
-        "role": {
-          "type": "string",
-          "title": "Contributor role",
-          "enum": [
+    type: 'object',
+    additionalProperties: {
+      type: 'object',
+      properties: {
+        role: {
+          type: 'string',
+          title: 'Contributor role',
+          enum: [
             {
-              "const": "custodian",
-              "title": "Custodian"
+              const: 'owner',
+              title: 'Owner',
+              description: 'Party that owns the resource.\n - ***AOOS***',
             },
             {
-              "const": "community_poc",
-              "title": "Community Point of Contact"
+              const: 'funder',
+              title: 'Funder',
+              description:
+                'Party providing monetary support for the resource.\n - ***AOOS***\n - ***USGS***',
             },
             {
-              "const": "owner",
-              "title": "Owner"
+              const: 'custodian',
+              title: 'Custodian',
+              description:
+                'Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource.\n - ***JOA Surveys** (the organization that is servicing the station)*',
             },
             {
-              "const": "publisher",
-              "title": "Data Publisher"
+              const: 'community_poc',
+              title: 'Community Point of Contact',
+              description:
+                'Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - ***Person ABC** (the POC who is aware of the station or provides access to the site)*',
             },
             {
-              "const": "distributor",
-              "title": "Distributor"
+              const: 'publisher',
+              title: 'Data Publisher',
+              description:
+                'Party who published the resource.\n - ***JOA Surveys** (The organization that shares the data via API or other access point)*',
             },
             {
-              "const": "funder",
-              "title": "Funder"
+              const: 'processor',
+              title: 'Data Processor',
+              description:
+                'Party that has processed the data in a manner such that the resource has been modified.\n - ***JOA Surveys***',
             },
             {
-              "const": "funder2",
-              "title": "Funder 2"
+              const: 'distributor',
+              title: 'Distributor',
+              description:
+                'Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n - ***Hohonu***',
             },
-            {
-              "const": "funder3",
-              "title": "Funder 3"
-            }
           ],
         },
-         "name": {
-            "type": "string",
-            "title": "Name",
-          },
-          "phone": {
-            "type": "string",
-            "format": "phone",
-            "title": "Telephone (primary)",
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "title": "Email",
-          },
-          "url": {
-            "type": "string",
-            "title": "URL",
-          },
-          "affiliation": {
-            "type": "string",
-            "title": "Organization"
-          }
-      }
-    }
+        name: {
+          type: 'string',
+          title: 'Name',
+        },
+        phone: {
+          type: 'string',
+          format: 'phone',
+          title: 'Telephone (primary)',
+        },
+        email: {
+          type: 'string',
+          format: 'email',
+          title: 'Email',
+        },
+        url: {
+          type: 'string',
+          title: 'URL',
+        },
+        affiliation: {
+          type: 'string',
+          title: 'Organization',
+        },
+      },
+    },
   }
 }
 
@@ -270,7 +279,9 @@ const setContributorsSpecialCase = (
 
 const isRequiredMetadataField = (field: IMetadataField): boolean => {
   const requirementStatus =
-    typeof field.requirement_status === 'string' ? field.requirement_status.trim().toLowerCase() : ''
+    typeof field.requirement_status === 'string'
+      ? field.requirement_status.trim().toLowerCase()
+      : ''
   return requirementStatus === 'required'
 }
 
@@ -302,7 +313,11 @@ const markSchemaFieldRequired = (schema: JSONSchema6, field: IMetadataField): vo
       const nextSchema = nextDefinition
       if (isArrayPart) {
         const arrayItems = nextSchema.items
-        if (arrayItems === undefined || Array.isArray(arrayItems) || typeof arrayItems === 'boolean') {
+        if (
+          arrayItems === undefined ||
+          Array.isArray(arrayItems) ||
+          typeof arrayItems === 'boolean'
+        ) {
           return
         }
         currentSchema = arrayItems
@@ -315,7 +330,8 @@ const markSchemaFieldRequired = (schema: JSONSchema6, field: IMetadataField): vo
   for (let i = 0; i < idPathParts.length - 1; i += 1) {
     const part = idPathParts[i]
     const nextDefinition =
-      currentSchema.properties?.[part] ?? (currentSchema as unknown as Record<string, JSONSchema6Definition>)[part]
+      currentSchema.properties?.[part] ??
+      (currentSchema as unknown as Record<string, JSONSchema6Definition>)[part]
 
     if (nextDefinition === undefined || typeof nextDefinition === 'boolean') {
       return
@@ -438,9 +454,11 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
   })
 
   // Apply required flags after schema structure is fully built.
-  fields.filter((field) => isRequiredMetadataField(field)).forEach((field) => {
-    markSchemaFieldRequired(schema, field)
-  })
+  fields
+    .filter((field) => isRequiredMetadataField(field))
+    .forEach((field) => {
+      markSchemaFieldRequired(schema, field)
+    })
 
   /* fields.forEach(f => {
     schema.properties = schema.properties ?? {}
@@ -473,11 +491,7 @@ export const parseMetadataFieldsIntoSchema = (fields: IMetadataField[]): JSONSch
 }
 
 const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormFieldOverride => {
-  const path = (field.path ?? '')
-    .trim()
-    .replace(/^\//, '')
-    .replace(/\//g, '.')
-    .replace(/\[\]/g, '')
+  const path = (field.path ?? '').trim().replace(/^\//, '').replace(/\//g, '.').replace(/\[\]/g, '')
   const fO: IFormFieldOverride = {
     prop: path.length ? `${path}.${field.id}` : field.id,
   }
@@ -492,13 +506,13 @@ const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormField
     field.option5,
     field.option6,
     field.option7,
-    field.option8
-  ].filter(o => o !== null && o !== '' && o !== undefined) as string[]
-  if(options.length && options.find(o => o.toLowerCase() === 'other')) {
+    field.option8,
+  ].filter((o) => o !== null && o !== '' && o !== undefined) as string[]
+  if (options.length && options.find((o) => o.toLowerCase() === 'other')) {
     console.log('setting selectorOrText for', field.id, 'options', options)
     fO.type = 'selectOrText'
   }
-  if(field.example && field.example.trim() !== '') {
+  if (field.example && field.example.trim() !== '') {
     fO.example = field.example
     console.log('adding placeholder for', field.id, 'placeholder', field.example)
   }
