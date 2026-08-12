@@ -53,7 +53,7 @@ const FormSection = ({
       {hasWizardSteps ? (
         <WizardLayout sections={wizardSteps} level={level} SubmitButton={SubmitButton} />
       ) : hasPages ? (
-        <PageLayout sections={pages} level={level} />
+        <PageLayout sections={pages} level={level} SubmitButton={SubmitButton} />
       ) : hasTabs ? (
         <TabLayout sections={tabs} level={level} />
       ) : (

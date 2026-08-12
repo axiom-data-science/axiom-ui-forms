@@ -35,6 +35,7 @@ import { Link, useLocation } from ***REMOVED***react-router-dom***REMOVED***
 import MergeFieldTestForm from ***REMOVED***@/Form/TestForms/MergeFieldTest/MergeFieldTest***REMOVED***
 import DeepNestedObjectWrapper from ***REMOVED***@/Form/TestForms/DeepNestedObjectWrapper/DeepNestedObjectWrapper***REMOVED***
 import JSONWithOtherFields, { JSONWithOtherFieldsForm } from ***REMOVED***@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields***REMOVED***
+import FormWithPagesAndSubmitButton from ***REMOVED***@/Form/TestForms/FormWithPagesAndSubmitButton/FormWithPagesAndSubmitButton***REMOVED***
 
 const forms = [
   {
@@ -211,6 +212,11 @@ const forms = [
     label: ***REMOVED***JSON with other fields form***REMOVED***,
     path: ***REMOVED***json-with-other-fields-form***REMOVED***,
     view: JSONWithOtherFieldsForm
+  },
+  {
+    label: ***REMOVED***Form with pages and submit button***REMOVED***,
+    path: ***REMOVED***form-with-pages-and-submit-button***REMOVED***,
+    view: FormWithPagesAndSubmitButton
   }
 ]
 
