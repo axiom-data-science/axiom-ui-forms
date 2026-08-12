@@ -32,7 +32,6 @@ export const pamSchema: JSONSchema6 = {
       title: 'PAM Deployment',
       description: 'One deployment event including recorders, recording configurations, and analyses',
       properties: {
-        deployment_organization_code: { type: 'string', title: 'Organization Code', description: 'PARS controlled vocabulary organization code for the deploying org' },
         deployment_code: { type: 'string', title: 'Deployment Code', description: 'Unique deployment identifier (links all PARS CSVs)' },
         deployment_water_depth_m: { type: 'number', title: 'Water Depth (m)', minimum: 0 },
         monitoring_start_datetime: { type: 'string', format: 'date-time', title: 'Monitoring Start' },
@@ -120,7 +119,6 @@ export const pamSchema: JSONSchema6 = {
         },
       },
       required: [
-        'deployment_organization_code',
         'deployment_code',
         'monitoring_start_datetime',
         'monitoring_end_datetime',
@@ -167,7 +165,6 @@ export const pamForm: IFormOverride = {
       description: 'Deployment event details',
       fields: [
         { prop: '_pam_deployment', type: 'object', skip_path: true, label: '', fields: [
-          { prop: 'pam_deployment.deployment_organization_code' },
           { prop: 'pam_deployment.deployment_code' },
           { prop: 'pam_deployment.monitoring_start_datetime', type: 'datetime' },
           { prop: 'pam_deployment.monitoring_end_datetime', type: 'datetime' },
