@@ -32,7 +32,6 @@ export const pamSchema: JSONSchema6 = {
       title: ***REMOVED***PAM Deployment***REMOVED***,
       description: ***REMOVED***One deployment event including recorders, recording configurations, and analyses***REMOVED***,
       properties: {
-        deployment_organization_code: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Organization Code***REMOVED***, description: ***REMOVED***PARS controlled vocabulary organization code for the deploying org***REMOVED*** },
         deployment_code: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Deployment Code***REMOVED***, description: ***REMOVED***Unique deployment identifier (links all PARS CSVs)***REMOVED*** },
         deployment_water_depth_m: { type: ***REMOVED***number***REMOVED***, title: ***REMOVED***Water Depth (m)***REMOVED***, minimum: 0 },
         monitoring_start_datetime: { type: ***REMOVED***string***REMOVED***, format: ***REMOVED***date-time***REMOVED***, title: ***REMOVED***Monitoring Start***REMOVED*** },
@@ -120,7 +119,6 @@ export const pamSchema: JSONSchema6 = {
         },
       },
       required: [
-        ***REMOVED***deployment_organization_code***REMOVED***,
         ***REMOVED***deployment_code***REMOVED***,
         ***REMOVED***monitoring_start_datetime***REMOVED***,
         ***REMOVED***monitoring_end_datetime***REMOVED***,
@@ -167,7 +165,6 @@ export const pamForm: IFormOverride = {
       description: ***REMOVED***Deployment event details***REMOVED***,
       fields: [
         { prop: ***REMOVED***_pam_deployment***REMOVED***, type: ***REMOVED***object***REMOVED***, skip_path: true, label: ***REMOVED******REMOVED***, fields: [
-          { prop: ***REMOVED***pam_deployment.deployment_organization_code***REMOVED*** },
           { prop: ***REMOVED***pam_deployment.deployment_code***REMOVED*** },
           { prop: ***REMOVED***pam_deployment.monitoring_start_datetime***REMOVED***, type: ***REMOVED***datetime***REMOVED*** },
           { prop: ***REMOVED***pam_deployment.monitoring_end_datetime***REMOVED***, type: ***REMOVED***datetime***REMOVED*** },
