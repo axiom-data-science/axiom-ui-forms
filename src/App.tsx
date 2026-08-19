@@ -67,6 +67,7 @@ import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInM
 import AllForms from ***REMOVED***@/Form/TestForms/AllForms***REMOVED***
 import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 import { DragDropSandbox, ManagementUI } from ***REMOVED***@/Management***REMOVED***
+import PARSForm from ***REMOVED***@/Form/PAM/PARS/PARS***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -282,6 +283,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/PAM" element={<PAMForm />}>
               <Route path="*" element={<PAMForm />} />
+            </Route>
+            <Route path="/PARS" element={<PARSForm />}>
+              <Route path="*" element={<PARSForm />} />
             </Route>
             <Route path="/water-level-test" element={<TestForm />}>
               <Route path="*" element={<TestForm />} />
