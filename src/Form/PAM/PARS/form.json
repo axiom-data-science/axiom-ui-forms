@@ -1,0 +1,85 @@
+{
+      "id": "pam-deployment-form",
+      "label": "PAM Deployment",
+      "pages": [
+        {
+          "id": "deployment-info",
+          "label": "Deployment Information",
+          "description": "Deployment event details",
+          "fields": [
+            { "prop": "deployment_code" },
+            { "prop": "monitoring_start_datetime" },
+            { "prop": "monitoring_end_datetime" },
+            { "prop": "deployment_platform_type_code" },
+            { "prop": "deployment_platform_id" },
+            { "prop": "deployment_water_depth_m" },
+            { "prop": "points_of_contact" },
+            { "prop": "deployment_url" },
+            { "prop": "dynamic_management_platform" },
+            { "prop": "gps_data_uri", "type": "file_upload" }
+          ]
+        },
+        {
+          "id": "pam_recordings",
+          "label": "Recordings",
+          "description": "Recording devices and analysis runs for this deployment",
+          "fields": [
+            {
+              "prop": "recordings",
+              "type": "object",
+              "multiple": true,
+              "tabs": [
+                {
+                  "id": "recording_info",
+                  "label": "Device & Config",
+                  "fields": [
+                    { "prop": "recordings[].recording_device_code" },
+                    { "prop": "recordings[].recording_device_type_code" },
+                    { "prop": "recordings[].recording_device_depth_m" },
+                    { "prop": "recordings[].recording_sample_rate_khz" },
+                    { "prop": "recordings[].recording_duration_secs" },
+                    { "prop": "recordings[].recording_interval_secs" },
+                    { "prop": "recordings[].recording_bit_depth" },
+                    { "prop": "recordings[].recording_n_channels" },
+                    { "prop": "recordings[].recording_timezone" }
+                  ]
+                },
+                {
+                  "id": "analyses",
+                  "label": "Analyses",
+                  "fields": [
+                    {
+                      "prop": "recordings[].analyses",
+                      "type": "object",
+                      "multiple": true,
+                      "tabs": [
+                        {
+                          "id": "analysis_info",
+                          "label": "Analysis",
+                          "fields": [
+                            { "prop": "recordings[].analyses[].analysis_organization_code" },
+                            { "prop": "recordings[].analyses[].analysis_sound_source_codes" },
+                            { "prop": "recordings[].analyses[].analysis_start_datetime" },
+                            { "prop": "recordings[].analyses[].analysis_end_datetime" },
+                            { "prop": "recordings[].analyses[].analysis_processing_code" },
+                            { "prop": "recordings[].analyses[].analysis_detector_code" },
+                            { "prop": "recordings[].analyses[].analysis_detector_version" },
+                            { "prop": "recordings[].analyses[].analysis_sample_rate_khz" },
+                            { "prop": "recordings[].analyses[].analysis_min_frequency_khz" },
+                            { "prop": "recordings[].analyses[].analysis_max_frequency_khz" },
+                            { "prop": "recordings[].analyses[].analysis_protocol_reference" },
+                            { "prop": "recordings[].analyses[].analysis_citations" },
+                            { "prop": "recordings[].analyses[].detections_data_uri" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  
