@@ -67,6 +67,7 @@ import NestedLayoutInMultiTab from '@/Form/TestForms/NestedLayoutInMultiTab'
 import AllForms from '@/Form/TestForms/AllForms'
 import NestedDependents from '@/Form/TestForms/NestedDependents/NestedDependents'
 import { DragDropSandbox, ManagementUI } from '@/Management'
+import COLLABDebug from '@/WaterLevel/COLLAB/Debug/COLLABDebug'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -260,8 +261,14 @@ const App = (): ReactElement => {
             <Route path="/water-level-collab-sheet" element={<COLLABWaterLevelFormSheet />}>
               <Route path="*" element={<COLLABWaterLevelFormSheet />} />
             </Route>
-            <Route path="/water-level-collab-sheet-so" element={<COLLABWaterLevelFormSheet useSchemaOnly={true} />}>
+            <Route
+              path="/water-level-collab-sheet-so"
+              element={<COLLABWaterLevelFormSheet useSchemaOnly={true} />}
+            >
               <Route path="*" element={<COLLABWaterLevelFormSheet useSchemaOnly={true} />} />
+            </Route>
+            <Route path="/water-level-collab-debug" element={<COLLABDebug />}>
+              <Route path="*" element={<COLLABDebug />} />
             </Route>
             <Route path="/water-level-collab-dev" element={<COLLABWaterLevelFormDev />}>
               <Route path="*" element={<COLLABWaterLevelFormDev />} />
