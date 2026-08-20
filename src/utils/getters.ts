@@ -23,7 +23,10 @@ const getFieldExtra = (field: IFormField, index?: number): string => {
 }
 
 const isPathContainerToSkip = (field: IFormField): boolean => {
-  return field.type === ***REMOVED***objectWrapper***REMOVED*** || ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.skip_path === true)
+  return (
+    field.type === ***REMOVED***objectWrapper***REMOVED*** ||
+    ((field.type === ***REMOVED***object***REMOVED*** || field.type === ***REMOVED***section***REMOVED***) && field.skip_path === true)
+  )
 }
 
 /**
@@ -209,7 +212,10 @@ export function getPathFromField(field: IFormField): string | undefined {
     return field.destPath
   }
   return field.path !== undefined
-    ? field.path.filter((f) => !isPathContainerToSkip(f)).map((f) => f.id).join(***REMOVED***.***REMOVED***)
+    ? field.path
+        .filter((f) => !isPathContainerToSkip(f))
+        .map((f) => f.id)
+        .join(***REMOVED***.***REMOVED***)
     : field.id
   // return makeJsonPath(field)
 }
@@ -231,7 +237,10 @@ export function getFieldsFromFormSection(formSection: IFormSection | IForm): IFo
   return fields
 }
 
-const addPathsToFieldForPayload = (field: IFormField, parentPath: IFormField[] = []): IFormField => {
+const addPathsToFieldForPayload = (
+  field: IFormField,
+  parentPath: IFormField[] = []
+): IFormField => {
   const skipAsPathSegment = field.type === ***REMOVED***object***REMOVED*** && field.skip_path === true
   const nextPath = skipAsPathSegment ? parentPath.slice() : parentPath.slice().concat(field)
 
@@ -242,7 +251,9 @@ const addPathsToFieldForPayload = (field: IFormField, parentPath: IFormField[] =
   }
 
   if (
-    (nextField.type === ***REMOVED***object***REMOVED*** || nextField.type === ***REMOVED***objectWrapper***REMOVED*** || nextField.type === ***REMOVED***section***REMOVED***) &&
+    (nextField.type === ***REMOVED***object***REMOVED*** ||
+      nextField.type === ***REMOVED***objectWrapper***REMOVED*** ||
+      nextField.type === ***REMOVED***section***REMOVED***) &&
     nextField.fields !== undefined
   ) {
     nextField.fields = nextField.fields.map((childField) =>
@@ -284,21 +295,23 @@ const addPathsToSectionForPayload = (
   }
 
   if (section.fields !== undefined) {
-    section.fields = section.fields.map((field) => addPathsToFieldForPayload(field, parentPath.slice()))
+    section.fields = section.fields.map((field) =>
+      addPathsToFieldForPayload(field, parentPath.slice())
+    )
   }
   if (section.pages !== undefined) {
-    section.pages = section.pages.map((page) =>
-      addPathsToSectionForPayload(page, parentPath.slice()) as any
+    section.pages = section.pages.map(
+      (page) => addPathsToSectionForPayload(page, parentPath.slice()) as any
     )
   }
   if (section.wizard_steps !== undefined) {
-    section.wizard_steps = section.wizard_steps.map((wizardStep) =>
-      addPathsToSectionForPayload(wizardStep, parentPath.slice()) as any
+    section.wizard_steps = section.wizard_steps.map(
+      (wizardStep) => addPathsToSectionForPayload(wizardStep, parentPath.slice()) as any
     )
   }
   if (section.tabs !== undefined) {
-    section.tabs = section.tabs.map((tab) =>
-      addPathsToSectionForPayload(tab, parentPath.slice()) as any
+    section.tabs = section.tabs.map(
+      (tab) => addPathsToSectionForPayload(tab, parentPath.slice()) as any
     )
   }
 
@@ -380,7 +393,8 @@ const shouldIncludeFieldForPayload = (field: IFormField, formValues: IFormValues
         ? passingConditions.length > 0
         : passingConditions.length === (conditionsSet.conditions?.length ?? 0)
     if (pass) {
-      result = passingConditions[passingConditions.length - 1]?.result ?? conditionsSet.result ?? ***REMOVED***include***REMOVED***
+      result =
+        passingConditions[passingConditions.length - 1]?.result ?? conditionsSet.result ?? ***REMOVED***include***REMOVED***
     }
   }
 
@@ -447,7 +461,7 @@ const buildPayloadFromScopedFields = (
           const itemPayload = buildPayloadFromScopedFields(childFields, item as IFormValues)
           return Object.keys(itemPayload).length > 0 ? itemPayload : undefined
         })
-        .filter((v) => v !== undefined) as IFormValues[]
+        .filter((v) => v !== undefined)
 
       if (arrayPayload.length > 0) {
         scopedPayload[field.id] = arrayPayload
@@ -522,7 +536,7 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
             const itemPayload = buildPayloadFromScopedFields(field.fields, item)
             return Object.keys(itemPayload).length > 0 ? itemPayload : undefined
           })
-          .filter((v) => v !== undefined) as IFormValues[]
+          .filter((v) => v !== undefined)
         set(payload, path, arrayPayload)
       } else if (field.skip_path) {
         // For skip_path objects, process children at current level (no-op in this function)
