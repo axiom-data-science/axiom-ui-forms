@@ -136,7 +136,11 @@ const hasSchemaProperties = (schema: TraversableSchema): schema is SchemaWithPro
 }
 
 const isObjectLikeSchema = (schema: TraversableSchema): boolean => {
-  return schema !== undefined && hasSchemaProperties(schema) && (schema.type === undefined || schema.type === ***REMOVED***object***REMOVED***)
+  return (
+    schema !== undefined &&
+    hasSchemaProperties(schema) &&
+    (schema.type === undefined || schema.type === ***REMOVED***object***REMOVED***)
+  )
 }
 
 const getAdditionalPropertiesSchema = (schema: TraversableSchema): JSONSchema6 | undefined => {
@@ -314,7 +318,9 @@ const applyConditionToDescendants = (
 
   const nextField = { ...field }
   if ((nextField as any).fields !== undefined && Array.isArray((nextField as any).fields)) {
-    ;(nextField as any).fields = (nextField as any).fields.map((child: IFormField) => applyToField(child))
+    ;(nextField as any).fields = (nextField as any).fields.map((child: IFormField) =>
+      applyToField(child)
+    )
   }
   if ((nextField as any).tabs !== undefined && Array.isArray((nextField as any).tabs)) {
     ;(nextField as any).tabs = (nextField as any).tabs.map((tab: any) => ({
@@ -328,7 +334,10 @@ const applyConditionToDescendants = (
       fields: page.fields?.map((child: IFormField) => applyToField(child)),
     }))
   }
-  if ((nextField as any).wizard_steps !== undefined && Array.isArray((nextField as any).wizard_steps)) {
+  if (
+    (nextField as any).wizard_steps !== undefined &&
+    Array.isArray((nextField as any).wizard_steps)
+  ) {
     ;(nextField as any).wizard_steps = (nextField as any).wizard_steps.map((step: any) => ({
       ...step,
       fields: step.fields?.map((child: IFormField) => applyToField(child)),
@@ -396,10 +405,14 @@ const schemaToFormField = ({
   ])
   const label = makeLabel([schemaField.title, property])
   const schemaRequired = schema.required ?? []
-  const exampleString = schemaField.examples && Array.isArray(schemaField.examples) && schemaField.examples.length > 0
+  const exampleString =
+    schemaField.examples && Array.isArray(schemaField.examples) && schemaField.examples.length > 0
       ? `Examples:\n\n - ${schemaField.examples.map((e) => String(e)).join(***REMOVED***\n - ***REMOVED***)}`
       : undefined
-  const hasDescription = schemaField.description !== undefined && schemaField.description !== null && String(schemaField.description).trim().length > 0
+  const hasDescription =
+    schemaField.description !== undefined &&
+    schemaField.description !== null &&
+    String(schemaField.description).trim().length > 0
   const baseFieldProps = {
     id,
     label,
@@ -472,7 +485,8 @@ const schemaToFormField = ({
     // const anyOfAsProps = schemaField.anyOf !== undefined && schemaField.anyOf.filter(d => typeof d !== ***REMOVED***boolean***REMOVED*** && d.type !== ***REMOVED***null***REMOVED***).length > 0
     const additionalPropertiesSchema = getAdditionalPropertiesSchema(schemaField)
     const properties = schemaField.properties ?? additionalPropertiesSchema?.properties ?? {}
-    const propertyOwnerSchema = schemaField.properties !== undefined ? schemaField : additionalPropertiesSchema
+    const propertyOwnerSchema =
+      schemaField.properties !== undefined ? schemaField : additionalPropertiesSchema
     const fields: IFormField[] = []
     for (const key in properties) {
       if (properties[key] !== undefined && typeof properties[key] !== ***REMOVED***boolean***REMOVED***) {
@@ -579,7 +593,6 @@ const schemaToFormField = ({
         fields.push(field)
       }
     })
-
     ;(schemaField.allOf ?? []).forEach((allOf) => {
       const allOfId = schemaField.$id
       if (typeof allOf !== ***REMOVED***boolean***REMOVED*** && allOf.type !== ***REMOVED***null***REMOVED***) {
@@ -643,7 +656,39 @@ const mergeFormField = ({
 }): IFormField => {
   const normalizePath = (value?: string): string | undefined => value?.replace(/\[\]/g, ***REMOVED******REMOVED***)
 
-  const rawOverridePath = fieldOverride?.prop
+  const resolveScopedOverridePath = (overridePath?: string): string | undefined => {
+    if (overridePath === undefined) {
+      return undefined
+    }
+
+    const normalized = normalizePath(overridePath)
+    if (
+      schemaFieldMap[overridePath] !== undefined ||
+      (normalized !== undefined && schemaFieldMap[normalized] !== undefined)
+    ) {
+      return overridePath
+    }
+
+    if (containerPathPrefix !== undefined) {
+      const dotCandidate = `${containerPathPrefix}.${overridePath}`
+      const bracketCandidate = `${containerPathPrefix}[].${overridePath}`
+      const dotNormalized = normalizePath(dotCandidate)
+      const bracketNormalized = normalizePath(bracketCandidate)
+
+      if (
+        schemaFieldMap[dotCandidate] !== undefined ||
+        schemaFieldMap[bracketCandidate] !== undefined ||
+        (dotNormalized !== undefined && schemaFieldMap[dotNormalized] !== undefined) ||
+        (bracketNormalized !== undefined && schemaFieldMap[bracketNormalized] !== undefined)
+      ) {
+        return dotCandidate
+      }
+    }
+
+    return overridePath
+  }
+
+  const rawOverridePath = resolveScopedOverridePath(fieldOverride?.prop)
   const normalizedOverridePath = normalizePath(rawOverridePath)
   const fieldPath = field ? makeJsonPath(field) : undefined
   const path = normalizedOverridePath ?? fieldPath
@@ -678,7 +723,7 @@ const mergeFormField = ({
     ...mergeObjects<IFormFieldOverride | IFormField>([
       field ? { ...field, destPath: path } : ({ destPath: path } as any),
       formFieldOverrides,
-      (fieldOverride ?? {}),
+      fieldOverride ?? {},
     ]),
   }
 
@@ -726,9 +771,7 @@ const mergeFormField = ({
     const overrideFieldTabs = (fieldOverride as IObjectFormFieldOverride)?.tabs
     const overrideFieldPages = (fieldOverride as IObjectFormFieldOverride)?.pages
     const overrideFieldWizardSteps = (fieldOverride as IObjectFormFieldOverride)?.wizard_steps
-    const buildOverrideMap = (
-      fieldsToMap: unknown[]
-    ): Record<string, IFormFieldOverride> => {
+    const buildOverrideMap = (fieldsToMap: unknown[]): Record<string, IFormFieldOverride> => {
       const entries = fieldsToMap
         .map((candidate) => {
           const fieldLike = candidate as { prop?: string; id?: string }
@@ -850,8 +893,8 @@ const mergeFormField = ({
 
       const schemaFieldByContainerPath =
         childPathPrefix !== undefined
-          ? schemaFieldMap[`${childPathPrefix}.${leafKey}`] ??
-            schemaFieldMap[`${childPathPrefix}[].${leafKey}`]
+          ? (schemaFieldMap[`${childPathPrefix}.${leafKey}`] ??
+            schemaFieldMap[`${childPathPrefix}[].${leafKey}`])
           : undefined
 
       const schemaFieldByFallbackMatch =
@@ -905,6 +948,7 @@ const mergeFormField = ({
             sectionOverrides: mergedTabs as IFormSectionOverride[],
             schemaForm,
             formFieldsOverrideMap,
+            containerPathPrefix: childPathPrefix,
           }) as IFormLayoutTab[])
         : schemaFieldTabs
     mergedField.pages =
@@ -913,6 +957,7 @@ const mergeFormField = ({
             sectionOverrides: mergedPages as IFormSectionOverride[],
             schemaForm,
             formFieldsOverrideMap,
+            containerPathPrefix: childPathPrefix,
           }) as IPage[])
         : schemaFieldPages
     mergedField.wizard_steps =
@@ -921,6 +966,7 @@ const mergeFormField = ({
             sectionOverrides: mergedWizardSteps as IFormSectionOverride[],
             schemaForm,
             formFieldsOverrideMap,
+            containerPathPrefix: childPathPrefix,
           }) as IWizardStep[])
         : schemaFieldWizardSteps
   }
@@ -928,7 +974,7 @@ const mergeFormField = ({
   // Enforce skip_path: true for objectWrapper fields
   // objectWrapper is a UI-only container that should never nest data
   if ((mergedField.type ?? ***REMOVED***text***REMOVED***) === ***REMOVED***objectWrapper***REMOVED***) {
-    (mergedField as Record<string, unknown>).skip_path = true
+    ;(mergedField as Record<string, unknown>).skip_path = true
   }
 
   return {
@@ -948,7 +994,7 @@ const mergeFormField = ({
 export const ensureObjectWrappersHaveSkipPath = (form: IForm): IForm => {
   const ensureFieldSkipPath = (field: IFormField): IFormField => {
     if (field.type === ***REMOVED***objectWrapper***REMOVED***) {
-      (field as unknown as Record<string, unknown>).skip_path = true
+      ;(field as unknown as Record<string, unknown>).skip_path = true
     }
     // Recursively process nested fields
     if (***REMOVED***fields***REMOVED*** in field && Array.isArray((field as any).fields)) {
@@ -980,17 +1026,20 @@ const mergeFormFields = ({
   fieldOverrides,
   schemaForm,
   formFieldsOverrideMap,
+  containerPathPrefix,
 }: {
   fieldOverrides?: IFormFieldOverride[]
   schemaForm: IForm
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
+  containerPathPrefix?: string
 }): IFormField[] => {
   const schemaFieldMap = buildFieldMapFromForm(schemaForm)
 
   return (fieldOverrides ?? []).map((fieldOverride) => {
     const normalizedProp = fieldOverride.prop?.replace(/\[\]/g, ***REMOVED******REMOVED***)
     const schemaField = fieldOverride.prop
-      ? schemaFieldMap[fieldOverride.prop] ?? (normalizedProp ? schemaFieldMap[normalizedProp] : undefined)
+      ? (schemaFieldMap[fieldOverride.prop] ??
+        (normalizedProp ? schemaFieldMap[normalizedProp] : undefined))
       : undefined
     return mergeFormField({
       field: schemaField,
@@ -998,6 +1047,7 @@ const mergeFormFields = ({
       formFieldsOverrideMap,
       schemaFieldMap,
       schemaForm,
+      containerPathPrefix,
     })
   })
 }
@@ -1006,16 +1056,19 @@ const mergeFormSections = ({
   sectionOverrides,
   schemaForm,
   formFieldsOverrideMap,
+  containerPathPrefix,
 }: {
   sectionOverrides?: IFormSectionOverride[]
   schemaForm: IForm
   formFieldsOverrideMap: Array<Record<string, IFormFieldOverride>>
+  containerPathPrefix?: string
 }): IFormSection[] => {
   const sections = (sectionOverrides ?? []).map((sectionToMerge, index) => {
     const sectionFields = mergeFormFields({
       fieldOverrides: sectionToMerge.fields,
       schemaForm,
       formFieldsOverrideMap,
+      containerPathPrefix,
     })
     const sectionId = sectionToMerge.id ?? makeFormFieldId([sectionToMerge.id, index])
     return {
@@ -1029,6 +1082,7 @@ const mergeFormSections = ({
               sectionOverrides: sectionToMerge.wizard_steps,
               schemaForm,
               formFieldsOverrideMap,
+              containerPathPrefix,
             })
           : undefined,
       pages:
@@ -1037,6 +1091,7 @@ const mergeFormSections = ({
               sectionOverrides: sectionToMerge.pages,
               schemaForm,
               formFieldsOverrideMap,
+              containerPathPrefix,
             })
           : undefined,
       tabs:
@@ -1045,6 +1100,7 @@ const mergeFormSections = ({
               sectionOverrides: sectionToMerge.tabs,
               schemaForm,
               formFieldsOverrideMap,
+              containerPathPrefix,
             })
           : undefined,
     }
@@ -1287,7 +1343,10 @@ export const getSchemaPaths = (schema: TraversableSchema, prefix = ***REMOVED***
   const hasDirectProperties = hasSchemaProperties(schema)
   const hasAdditionalObjectProperties = hasSchemaProperties(additionalProperties)
 
-  if ((schema?.type === ***REMOVED***object***REMOVED*** || schema?.type === undefined) && (hasDirectProperties || hasAdditionalObjectProperties)) {
+  if (
+    (schema?.type === ***REMOVED***object***REMOVED*** || schema?.type === undefined) &&
+    (hasDirectProperties || hasAdditionalObjectProperties)
+  ) {
     if (hasDirectProperties) {
       for (const key of Object.keys(schema.properties)) {
         const propSchema = schema.properties[key]
@@ -1348,7 +1407,10 @@ export const getSchemaPathDescriptors = (
   const hasDirectProperties = hasSchemaProperties(schema)
   const hasAdditionalObjectProperties = hasSchemaProperties(additionalProperties)
 
-  if ((schema?.type === ***REMOVED***object***REMOVED*** || schema?.type === undefined) && (hasDirectProperties || hasAdditionalObjectProperties)) {
+  if (
+    (schema?.type === ***REMOVED***object***REMOVED*** || schema?.type === undefined) &&
+    (hasDirectProperties || hasAdditionalObjectProperties)
+  ) {
     if (hasDirectProperties) {
       for (const key of Object.keys(schema.properties)) {
         const propSchema = schema.properties[key]
@@ -1361,9 +1423,7 @@ export const getSchemaPathDescriptors = (
           type: getSchemaTypeLabel(propSchema),
           required: schema.required ? schema.required.includes(key) : false,
         })
-        pathDescriptors = pathDescriptors.concat(
-          getSchemaPathDescriptors(propSchema, newPrefix)
-        )
+        pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(propSchema, newPrefix))
       }
     }
 
@@ -1377,7 +1437,9 @@ export const getSchemaPathDescriptors = (
         pathDescriptors.push({
           path: newPrefix,
           type: getSchemaTypeLabel(additionalProp),
-          required: additionalProperties.required ? additionalProperties.required.includes(key) : false,
+          required: additionalProperties.required
+            ? additionalProperties.required.includes(key)
+            : false,
         })
         pathDescriptors = pathDescriptors.concat(
           getSchemaPathDescriptors(additionalProp, newPrefix)
@@ -1400,9 +1462,7 @@ export const getSchemaPathDescriptors = (
         }
       }
     } else if (typeof schema.items !== ***REMOVED***boolean***REMOVED***) {
-      pathDescriptors = pathDescriptors.concat(
-        getSchemaPathDescriptors(schema.items, arrayPrefix)
-      )
+      pathDescriptors = pathDescriptors.concat(getSchemaPathDescriptors(schema.items, arrayPrefix))
     }
   } else if (schema.oneOf ?? schema.anyOf ?? schema.allOf) {
     const composedSchemas = schema.oneOf ?? schema.anyOf ?? schema.allOf

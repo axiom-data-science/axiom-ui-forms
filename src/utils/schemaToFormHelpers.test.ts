@@ -420,6 +420,86 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion (schema has properties)
     })
 
+    it(***REMOVED***resolves relative nested tab props against array scope and preserves schema labels***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          sensors: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                elevations: {
+                  type: ***REMOVED***array***REMOVED***,
+                  items: {
+                    type: ***REMOVED***object***REMOVED***,
+                    properties: {
+                      ***REMOVED***sensor-elevation-survey-date***REMOVED***: {
+                        type: ***REMOVED***string***REMOVED***,
+                        title: ***REMOVED***Sensor Elevation Survey Date***REMOVED***,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            id: ***REMOVED***collab-like-relative-nested***REMOVED***,
+            fields: [
+              {
+                prop: ***REMOVED***sensors***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                multiple: true,
+                tabs: [
+                  {
+                    id: ***REMOVED***sensor-elevations-tab***REMOVED***,
+                    fields: [
+                      {
+                        prop: ***REMOVED***elevations***REMOVED***,
+                        type: ***REMOVED***object***REMOVED***,
+                        multiple: true,
+                        fields: [
+                          {
+                            id: ***REMOVED***sensor-elevation-wrapper***REMOVED***,
+                            type: ***REMOVED***objectWrapper***REMOVED***,
+                            fields: [{ prop: ***REMOVED***sensor-elevation-survey-date***REMOVED*** }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const sensorsField = form.fields?.find((f) => f.id === ***REMOVED***sensors***REMOVED***) as any
+      expect(sensorsField).toBeDefined()
+
+      const elevationsField = sensorsField.tabs?.[0]?.fields?.find(
+        (f: any) => f.id === ***REMOVED***elevations***REMOVED***
+      )
+      expect(elevationsField).toBeDefined()
+
+      const wrapper = elevationsField.fields?.find((f: any) => f.id === ***REMOVED***sensor-elevation-wrapper***REMOVED***)
+      expect(wrapper).toBeDefined()
+
+      const surveyDateField = wrapper.fields?.find(
+        (f: any) => f.id === ***REMOVED***sensor-elevation-survey-date***REMOVED***
+      )
+      expect(surveyDateField).toBeDefined()
+      expect(surveyDateField.label).toBe(***REMOVED***Sensor Elevation Survey Date***REMOVED***)
+    })
+
     it(***REMOVED***does not auto-exclude override-only fields when schema has no properties***REMOVED***, () => {
       const schema: JSONSchema6 = { type: ***REMOVED***object***REMOVED*** } // no properties
 
@@ -810,7 +890,10 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
                 prop: ***REMOVED***testObject***REMOVED***,
                 fields: [
                   { prop: ***REMOVED***testObject[].field1***REMOVED*** },
-                  { prop: ***REMOVED***testObject[].field2***REMOVED***, label: ***REMOVED***Custom Field 2 Label (from form override)***REMOVED*** },
+                  {
+                    prop: ***REMOVED***testObject[].field2***REMOVED***,
+                    label: ***REMOVED***Custom Field 2 Label (from form override)***REMOVED***,
+                  },
                 ],
               } as any,
             ],
