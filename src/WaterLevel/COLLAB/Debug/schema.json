@@ -1,0 +1,667 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "COLLAB Water Level Metadata",
+  "properties": {
+    "prepared-by": {
+      "type": "string",
+      "title": "Prepared by",
+      "description": "Person completing form"
+    },
+    "reason-for-update": {
+      "type": "string",
+      "title": "Reason for update",
+      "description": "If this is an update to an existing station, please provide a brief (1-3 sentences) explaining why this update occurred. "
+    },
+    "creator": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Creator Name",
+          "description": "Name of the person that collected the data. "
+        },
+        "address": {
+          "type": "string",
+          "title": "Creator address",
+          "description": "Street address of the person or organization that collected the data."
+        },
+        "city": {
+          "type": "string",
+          "title": "Creator city",
+          "description": "City of the person or organization that collected the data."
+        },
+        "postal_code": {
+          "type": "string",
+          "title": "Creator postal code",
+          "description": "The postal code of the person or organization that collected the data."
+        },
+        "country": {
+          "type": "string",
+          "title": "Creator country",
+          "description": "Country of the person or organization that collected the data."
+        },
+        "email": {
+          "type": "string",
+          "title": "Creator email",
+          "description": "Email address of the person or organization that collected the data."
+        },
+        "institution": {
+          "type": "string",
+          "title": "Creator institution",
+          "description": "Name of the organization that collected the data."
+        },
+        "phone": {
+          "type": "string",
+          "title": "Creator phone",
+          "description": "The phone number of the person or group that collected the data. "
+        },
+        "sector": {
+          "type": "string",
+          "title": "Creator sector",
+          "description": "The sector of the organization that collected the data. If you are submitting for an IOOS Regional Association (RA), select ***REMOVED***ioos_ra***REMOVED***",
+          "enum": [
+            "ioos_ra",
+            "citizen",
+            "municipal government",
+            "academic",
+            "industry",
+            "gov_federal",
+            "gov_state",
+            "nonprofit",
+            "tribal",
+            "community",
+            "international",
+            "other"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "title": "Creator state",
+          "description": "State of the person or organization that collected the data."
+        },
+        "url": {
+          "type": "string",
+          "title": "Creator url",
+          "description": "URL of the person or organization that collected the data."
+        }
+      },
+      "required": ["country", "email", "institution", "sector", "url"]
+    },
+    "contributor": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Contributor role",
+            "enum": [
+              {
+                "const": "owner",
+                "title": "Owner",
+                "description": "Party that owns the resource.\n - ***AOOS***"
+              },
+              {
+                "const": "funder",
+                "title": "Funder",
+                "description": "Party providing monetary support for the resource.\n - ***AOOS***\n - ***USGS***"
+              },
+              {
+                "const": "custodian",
+                "title": "Custodian",
+                "description": "Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource.\n - ***JOA Surveys** (the organization that is servicing the station)*"
+              },
+              {
+                "const": "community_poc",
+                "title": "Community Point of Contact",
+                "description": "Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - ***Person ABC** (the POC who is aware of the station or provides access to the site)*"
+              },
+              {
+                "const": "publisher",
+                "title": "Data Publisher",
+                "description": "Party who published the resource.\n - ***JOA Surveys** (The organization that shares the data via API or other access point)*"
+              },
+              {
+                "const": "processor",
+                "title": "Data Processor",
+                "description": "Party that has processed the data in a manner such that the resource has been modified.\n - ***JOA Surveys***"
+              },
+              {
+                "const": "distributor",
+                "title": "Distributor",
+                "description": "Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n - ***Hohonu***"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "phone": {
+            "type": "string",
+            "format": "phone",
+            "title": "Telephone (primary)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "url": {
+            "type": "string",
+            "title": "URL"
+          },
+          "affiliation": {
+            "type": "string",
+            "title": "Organization"
+          }
+        }
+      }
+    },
+    "platform": {
+      "type": "string",
+      "title": "Platform"
+    },
+    "platform_name": {
+      "type": "string",
+      "title": "Station Name",
+      "description": "The station name should be descriptive of its location. The station name should be the same on all records (metadata form, field data sheet, etc). "
+    },
+    "station-id": {
+      "type": "string",
+      "title": "Station ID",
+      "description": "Optional. RA dependent."
+    },
+    "latitude": {
+      "type": "string",
+      "title": "Latitude (DD, N is +)",
+      "description": "Latitude in decimal degrees"
+    },
+    "longitude": {
+      "type": "string",
+      "title": "Longitude (DD, E is +)",
+      "description": "Longitude in decimal degrees"
+    },
+    "horizontal-datum": {
+      "type": "string",
+      "title": "Horizontal reference system ",
+      "description": "Horizontal datum for the lat/lon (eg: NAD83) / projection",
+      "enum": ["NAD83 (2011)", "WGS84 (G2139)", "ITRF2014", "Other"]
+    },
+    "wmo_platform_code": {
+      "type": "string",
+      "title": "NWS Location Identifier",
+      "description": "NOAA requirement for NWS use. It may be requested via local WFOs, or the IOOS program office can facilitate a mass request directly with NWS."
+    },
+    "water-body-setting": {
+      "type": "string",
+      "title": "Water body setting",
+      "enum": ["Inlet", "River", "Ocean coastline", "Lake", "Other"]
+    },
+    "approximate-position": {
+      "type": "string",
+      "title": "Site Description",
+      "description": "Text description of installation location. "
+    },
+    "additional-information": {
+      "type": "string",
+      "title": "Additional information",
+      "description": "Provide any additional information for the station such as power source (AC, solar, etc) or other site specifics that may be relevant"
+    },
+    "total-water-level-error-cm": {
+      "type": "string",
+      "title": "Total Water level Error (cm):",
+      "description": "For reference, see [Estimating Total Vertical Uncertainty Of Short Term And Partner Water Level Observations April 2025 from NOAA/CO-OPS](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://repository.library.noaa.gov/view/noaa/70293/noaa_70293_DS1.pdf&ved=2ahUKEwiByKSvtPOVAxUxADQIHRA3MJEQFnoECBUQAQ&usg=AOvVaw2t1WoQiXWD9_MPhwa2s9mk)"
+    },
+    "sensor-error-cm": {
+      "type": "string",
+      "title": "Sensor Error (cm):"
+    },
+    "survey-error-cm": {
+      "type": "string",
+      "title": "Survey Error (cm):",
+      "description": "AKA leveling error"
+    },
+    "data-processing-error-cm": {
+      "type": "string",
+      "title": "Data Processing Error (cm):"
+    },
+    "record-start-date": {
+      "type": "string",
+      "format": "date",
+      "title": "Record Start Date:"
+    },
+    "record-end-date": {
+      "type": "string",
+      "format": "date",
+      "title": "Record End Date:"
+    },
+    "computation-tool": {
+      "type": "string",
+      "title": "Tidal datum computation method",
+      "description": "The [NOAA CO-OPS Tidal Datum Calculator](https://access.co-ops.nos.noaa.gov/datumcalc/) includes links to resources, including a [user guide](https://access.co-ops.nos.noaa.gov/datumcalc/docs/UserGuide.pdf).",
+      "enum": [
+        "VDatum",
+        "WALI",
+        "CO-OPS Tidal Datum Analysis Calculator",
+        "Tidelab",
+        "Manual",
+        "JOA Calculator",
+        "Other"
+      ]
+    },
+    "computation-period": {
+      "type": "string",
+      "title": "Computation period",
+      "description": "Period of data that was used to compute the datums. If VDatum was used, leave this field blank."
+    },
+    "computation-method": {
+      "type": "string",
+      "title": "Computation method",
+      "enum": ["TBYT", "MMSC", "FRED"]
+    },
+    "nwlon-control-station": {
+      "type": "string",
+      "title": "NWLON Control Station:"
+    },
+    "control-station-epoch": {
+      "type": "string",
+      "title": "Control Station Epoch:",
+      "enum": ["Present: 1983-2001", "Superceded: 1960-1978"]
+    },
+    "datum-type": {
+      "type": "string",
+      "title": "Datum Type:",
+      "description": "Standard NTDE Datum Type: Identifies the National Tidal Datum Epoch (NTDE) used to compute the reported tidal datums. The NTDE is NOAA***REMOVED***s official 19-year period for calculating standard tidal datums (e.g., MHHW, MHW, MSL, MLW, MLLW), ensuring consistency among stations and over time.  Modified Procedure refers to the method used to compute tidal datums when a station does not have a full 19-year record spanning the National Tidal Datum Epoch (NTDE).",
+      "enum": ["Standard NTDE", "Modified Procedure", "Direct"]
+    },
+    "computation-date": {
+      "type": "string",
+      "format": "date",
+      "title": "Computation Date:"
+    },
+    "computed-by": {
+      "type": "string",
+      "title": "Computed by"
+    },
+    "station-datum": {
+      "type": "string",
+      "title": "Station Datum Reference Point and Description",
+      "description": "Text description of how station datum is defined. Include bench mark stampings or other specific information to record the establishment. "
+    },
+    "station-datum-establishment-date": {
+      "type": "string",
+      "format": "date",
+      "title": "Station Datum Establishment Date"
+    },
+    "navd88-m": {
+      "type": "string",
+      "title": "NAVD88 (m): ",
+      "description": "Offset between station datum and NAVD88"
+    },
+    "nad83-m": {
+      "type": "string",
+      "title": "Ellipsoidal Height (NAD83) (m): ",
+      "description": "Offset between station datum and NAD83"
+    },
+    "mhhw-m": {
+      "type": "string",
+      "title": "Mean Higher High Water (MHHW) (m):",
+      "description": "Offset between station datum and mean higher high water (MHHW) in meters."
+    },
+    "mhw-m": {
+      "type": "string",
+      "title": "Mean High Water (MHW) (m):",
+      "description": "Offset between station datum and mean high water (MHW) in meters."
+    },
+    "mlw-m": {
+      "type": "string",
+      "title": "Mean Low Water (MLW) (m):",
+      "description": "Offset between station datum and mean low water (MLW) in meters."
+    },
+    "mllw-m": {
+      "type": "string",
+      "title": "Mean Lower Low Water (MLLW) (m):",
+      "description": "Offset between station datum and mean lower low water (MLLW) in meters."
+    },
+    "dtl-m": {
+      "type": "string",
+      "title": "Diurnal Tide Level (DTL) (m):",
+      "description": "The arithmetic mean of mean higher high water and mean lower low water."
+    },
+    "mtl-m": {
+      "type": "string",
+      "title": "Mean Tide Level (MTL) (m):",
+      "description": "The arithmetic mean of mean high water and mean low water."
+    },
+    "msl-m": {
+      "type": "string",
+      "title": "Mean Sea Level (MSL) (m):",
+      "description": "The arithmetic mean of hourly heights observed over the National Tidal Datum Epoch. Shorter series are specified in the name; e.g. monthly mean sea level and yearly mean sea level."
+    },
+    "gt-m": {
+      "type": "string",
+      "title": "Great Diurnal Range (GT) (m)",
+      "description": "The difference in height between mean higher high water and mean lower low water."
+    },
+    "mn-m": {
+      "type": "string",
+      "title": "Mean Range of Tide (MN) (m):",
+      "description": "The difference in height between mean high water and mean low water."
+    },
+    "dhq-m": {
+      "type": "string",
+      "title": "Mean Diurnal High Water Inequality (DHQ) (m):",
+      "description": "One-half the average difference between the two high waters of each tidal day observed over the National Tidal Datum Epoch. It is obtained by subtracting the mean of all the high waters from the mean of the higher high waters."
+    },
+    "dlq-m": {
+      "type": "string",
+      "title": "Mean Diurnal High Water Inequality (DLQ) (m):",
+      "description": "One-half the average difference between the two low waters of each tidal day observed over the National Tidal Datum Epoch. It is obtained by subtracting the mean of the lower low waters from the mean of all the low waters."
+    },
+    "hwi-hr": {
+      "type": "string",
+      "title": "High Water Interval (HWI) (hr):",
+      "description": "The average interval (in hours) between the moon***REMOVED***s transit over the Greenwich meridian and the following high water at a location."
+    },
+    "lwi-hr": {
+      "type": "string",
+      "title": "Low Water Interval (LWI) (hr): ",
+      "description": "The average interval (in hours) between the moon***REMOVED***s transit over the Greenwich meridian and the following low water at a location."
+    },
+    "igld": {
+      "type": "string",
+      "title": "International Great Lakes Datum (IGLD):"
+    },
+    "lwd": {
+      "type": "string",
+      "title": "Low Water Datum (LWD):",
+      "description": "Low water datum (Great Lakes)"
+    },
+    "is-collocation": {
+      "type": "string",
+      "title": "Is this a collocation? (yes/no)"
+    },
+    "additional-colocation-information[]": {
+      "type": "string",
+      "title": "Additional information",
+      "description": "Add link to collocated dataset (ERDDAP link, portal link, if available)"
+    },
+    "benchmarks-photo": {
+      "type": "string",
+      "title": "Photo of bench mark(s)",
+      "description": "Suggested 4 minimum photos include: Bench mark face clearly showing stamping, setting (generally taken from chest height) and 2 directional photos. Ideally, provide photos of all 4 directions to help find the mark on future visits and/or to help validate suitability for things such as GPS/GNSS (things that could obstruct a signal: tree, fence, building, etc)"
+    },
+    "underwater-components": {
+      "type": "string",
+      "title": "Water level sensor",
+      "description": "Photos of the water level sensor. Suggestion to take a close up of the sensor and related equipment, data logger, etc. "
+    },
+    "vicinity": {
+      "type": "string",
+      "title": "Vicinity",
+      "description": "Additional photos of the area surrounding the water level sensor"
+    },
+    "bench-mark-diagram": {
+      "type": "string",
+      "title": "Bench mark diagram"
+    },
+    "sensor-test-worksheet": {
+      "type": "string",
+      "title": "Sensor test worksheet"
+    },
+    "sensor-elevation-drawing": {
+      "type": "string",
+      "title": "Sensor elevation drawing"
+    },
+    "other-attachment": {
+      "type": "string",
+      "title": "Other attachment"
+    },
+    "disclaimer": {
+      "type": "string",
+      "title": "Disclaimer ",
+      "description": "NOAA specific req for NWS ingestion. specify uncertainty and limitations of use"
+    },
+    "dissemination-flag": {
+      "type": "string",
+      "title": "Dissemination flag",
+      "description": "NOAA specific req for NWS ingestion"
+    },
+    "shef-element-code": {
+      "type": "string",
+      "title": "SHEF physical element code",
+      "description": "For tidal stations, the SHEF physical element must be \"HC\" (which NWPS parses as MHHW), while riverine or inundation stations must use \"HG\" (parsed as stage height)"
+    },
+    "sensors": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "instrument": {
+            "type": "string",
+            "title": "Instrument Technology",
+            "description": "Instrument is the large physical instrument that may house individual or smaller components, aka sensors.",
+            "enum": [
+              "Microwave radar",
+              "Radar",
+              "Vented pressure",
+              "Non-Vented Pressure",
+              "Acoustic",
+              "GNSS-R",
+              "GNSS Buoy",
+              "Ultrasonic"
+            ]
+          },
+          "instrument_variable:make_model": {
+            "type": "string",
+            "title": "Instrument make/model",
+            "description": "The make and model of the instrument.",
+            "enum": [
+              "ToughSonic 50",
+              "YSI Nile 502",
+              "Campbell Scientific LevelVUE B10",
+              "VEGA VEGAPULS C22",
+              "DAA H350XL",
+              "Other"
+            ]
+          },
+          "sensor-serial-number": {
+            "type": "string",
+            "title": "Serial number of instrument or component",
+            "description": "The serial number of the instrument. If you have multiple sensors within an instrument, add each sensor serial number. "
+          },
+          "sample-interval-min": {
+            "type": "string",
+            "title": "Sample interval (min)",
+            "enum": ["1 min", "6 min", "15 min", "60 min", "Other"]
+          },
+          "sample-average-window-sec": {
+            "type": "string",
+            "title": "Sample average window (sec)",
+            "enum": ["0 sec", "60 sec", "181 sec", "360 sec", "Other"]
+          },
+          "mounting-structure": {
+            "type": "string",
+            "title": "Mounting structure",
+            "enum": ["Bridge", "Seawall", "Dock", "Bedrock", "Anchor", "Other"]
+          },
+          "geophysical_variable:accuracy": {
+            "type": "string",
+            "title": "Sensor accuracy"
+          },
+          "time_coverage_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Date installed"
+          },
+          "time_coverage_end": {
+            "type": "string",
+            "format": "date",
+            "title": "Date removed, if applicable"
+          },
+          "telemetry-method": {
+            "type": "string",
+            "title": "Telemetry method",
+            "enum": ["Cellular", "Satellite", "Iridium", "GOES", "Wifi"]
+          },
+          "date-removed": {
+            "type": "string",
+            "format": "date",
+            "title": "Date removed, if applicable"
+          },
+          "difference-since-last-survey": {
+            "type": "string",
+            "title": "If so, what is the difference?"
+          },
+          "difference-within-5-cm": {
+            "type": "string",
+            "title": "Is the difference within 6 mm?",
+            "enum": ["Yes", "No"]
+          },
+          "additional-sensor-information": {
+            "type": "string",
+            "title": "Additional information"
+          },
+          "sensor-offset": {
+            "type": "string",
+            "title": "Sensor Vertical Offset from Survey Reference Point (m, + is above STND, - is below STND)",
+            "description": "Physical offset between sensor zero and a survey reference point (offset calibration). This should be a numerical entry, measured in meters. (+) values are above station datum, (-) values are below station datum"
+          },
+          "sensor-survey-reference-point": {
+            "type": "string",
+            "title": "Sensor survey reference point",
+            "description": "Text description of the location on the sensor that was surveyed to measure the elevation of the sensor"
+          },
+          "elevations": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "sensor-elevation-on-station-datum": {
+                  "type": "string",
+                  "title": "Sensor Zero Elevation Relative to Station Datum (m)",
+                  "description": "Distance from station datum (STND) to sensor zero, or the point at which the instrument measures"
+                },
+                "sensor-elevation-survey-date": {
+                  "type": "string",
+                  "format": "date",
+                  "title": "Sensor Elevation Survey Date (if different from install date)",
+                  "description": "Date when sensor elevations were surveyed. If the sensor was previously installed but the elevation changed (i.e., sensor was moved), this date is critical. "
+                },
+                "sensor-elevation-ortho": {
+                  "type": "string",
+                  "title": "Sensor Zero Elevation Relative to Orthometric Datum (m, + is above STND, - is below STND)",
+                  "description": "Measured elevation in meters of sensor zero relative to a specified orthometric datum"
+                },
+                "sensor-elevation-ortho-datum": {
+                  "type": "string",
+                  "title": "Datum used for orthometric elevation",
+                  "enum": ["NAVD88", "NGVD"]
+                },
+                "sensor-elevation-ortho-geoid": {
+                  "type": "string",
+                  "title": "Geoid model used",
+                  "enum": ["GEOID18", "GEOID12B", "GEOID12A"]
+                },
+                "sensor-elevation-ellipsoidal": {
+                  "type": "string",
+                  "title": "Sensor Zero Elevation Relative to Ellipsoidal Reference (m, + is above STND, - is below STND)",
+                  "description": "Measured elevation in meters of sensor zero relative to a specified ellipsoidal reference"
+                },
+                "sensor-elevation-ellipsoidal-refsys": {
+                  "type": "string",
+                  "title": "Reference system used for ellipsoidal elevation",
+                  "enum": ["NAD83", "WGS84", "ITRF", "Other"]
+                },
+                "sensor-elevation-ellipsoidal-epoch": {
+                  "type": "string",
+                  "title": "Epoch of reference system used",
+                  "enum": ["2011", "PA11", "MA11", "G2139", "G2296", "2014"]
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "type": "object",
+
+        "required": ["sensor-offset"]
+      }
+    },
+    "surveys": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "marker-stamping": {
+            "type": "string",
+            "title": "Bench mark stamping"
+          },
+          "marker-ngs-pid": {
+            "type": "string",
+            "title": "Bench mark NGS PID",
+            "description": "National Geodetic Survey (NGS) Permanent Identifier (PID)",
+            "enum": ["Other (enter PID)", "Not available - this opens up the VM# field"]
+          },
+          "marker-co-ops-vm": {
+            "type": "string",
+            "title": "Bench mark CO-OPS VM#",
+            "description": "A NOAA CO-OPS Vertical Mark Number (VM #) is a unique numeric identifier assigned to a specific tidal or water level bench mark in the Center for Operational Oceanographic Products and Services database"
+          },
+          "marker-other-identifier": {
+            "type": "string",
+            "title": "Bench mark alias"
+          },
+          "survey-method": {
+            "type": "string",
+            "title": "Survey method",
+            "description": "Survey / measurement method. ",
+            "enum": ["Static GNSS", "RTK", "Optical Level", "Digital Level", "RTN"]
+          },
+          "date-of-most-recent-survey": {
+            "type": "string",
+            "format": "date",
+            "title": "Date of survey"
+          },
+          "measurement-by-at-most-recent-survey": {
+            "type": "string",
+            "title": "Surveyed by",
+            "description": "Name of organization responsible for survey"
+          },
+          "bench-mark-descriptions": {
+            "type": "string",
+            "title": "Bench mark description",
+            "description": "[For guidance on how best to describe a bench mark, utilize the NGS documentation](https://geodesy.noaa.gov/surveys/mark-recovery/mark-descriptions-help.shtml#notes)"
+          },
+          "latitude": {
+            "type": "string",
+            "title": "Latitude (DD, N is +)",
+            "description": "Latitude in decimal degrees"
+          },
+          "longitude": {
+            "type": "string",
+            "title": "Longitude (DD, E is +)",
+            "description": "Longitude in decimal degrees"
+          },
+          "elevation": {
+            "type": "string",
+            "title": "Bench mark height on Station Datum (STND) (m)"
+          },
+          "additional-survey-information": {
+            "type": "string",
+            "title": "Additional survey information"
+          },
+          "gnss-rtk-unit": {
+            "type": "string",
+            "title": "GNSS/RTK Unit (Make and Model)"
+          },
+          "processing-software": {
+            "type": "string",
+            "title": "Processing software"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "required": ["platform_name", "latitude", "longitude", "station-datum", "navd88-m", "nad83-m"]
+}

@@ -1,0 +1,1102 @@
+{
+  "id": "collab-sheet",
+  "label": "COLLAB Metadata from sheet",
+  "pages": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "fields": [
+        {
+          "id": "overview1",
+          "label": "",
+          "type": "object",
+          "skip_path": true,
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "prepared-by"
+            }
+          ]
+        },
+        {
+          "prop": "reason-for-update"
+        }
+      ]
+    },
+    {
+      "id": "creator",
+      "label": "Creator",
+      "description": "Party responsible for collecting the data and/or creating the resource",
+      "settings": {
+        "boldDescription": true
+      },
+      "fields": [
+        {
+          "prop": "creator.name",
+          "label": "Name"
+        },
+        {
+          "id": "creator2",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "horizontal",
+          "fields": [
+            {
+              "prop": "creator.institution",
+              "label": "Organization",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.sector",
+              "label": "Sector",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
+        },
+        {
+          "prop": "creator.address",
+          "label": "Address",
+          "settings": {
+            "descriptionPresentation": "tooltip"
+          }
+        },
+        {
+          "id": "creator1",
+          "label": "",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "creator.city",
+              "label": "City",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.postal_code",
+              "label": "Postal Code",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.country",
+              "label": "Country",
+              "defaultValue": "United States",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.state",
+              "label": "State",
+              "type": "stateSelector",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.email",
+              "label": "Email",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.phone",
+              "label": "Phone",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            },
+            {
+              "prop": "creator.url",
+              "label": "URL",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contributors-list",
+      "label": "Contributors List",
+      "description": "All roles are optional to complete. You may enter the same information for multiple roles. For example, you may submit 1 Custodian and 1 Community POC and use the same information for both.\nUse the ***REMOVED***Duplicate***REMOVED*** button to copy information from a role and create a new one.\n- **Owner**: Party that owns the resource\n - **Funder**: Party providing monetary support for the resource\n - **Custodian**: Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n - **Community Point of Contact**: Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - **Data Publisher**: Party who published the resource\n - **Data Processor**: Party that has processed the data in a manner such that the resource has been modified\n - **Distributor**: Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nExamples:\n - **Owner**: AOOS. The RA that purchased the equipment.  \n - **Funder**: AOOS, USGS. Any organizations that shared the cost of a station. Perhaps this was a pre-existing USGS station that was upgraded by an RA. \n - **Custodian**: JOA Surveys. The organization that is servicing the station.\n - **Community** Point of Contact: Person ABC. The POC who is aware of the station or provides access to the site. This will not be reported to ERDDAP. \n - **Data Publisher**: JOA Surveys. The organization that shares the data via API or other access point. \n - **Data Processor**: JOA Surveys. \n - **Distributor**: Hohonu",
+      "fields": [
+        {
+          "prop": "contributor",
+          "type": "object",
+          "label": "",
+          "multiple": true,
+          "settings": {
+            "className": "bg-slate-100"
+          },
+          "fields": [
+            {
+              "prop": "role",
+              "type": "select",
+              "settings": {
+                "showDescriptionForSelected": true,
+                "boldLabel": true
+              }
+            },
+            {
+              "id": "contributor-fields",
+              "label": "",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "className": "bg-transparent px-0 -mt-2"
+              },
+              "fields": [
+                {
+                  "prop": "name"
+                },
+                {
+                  "prop": "phone"
+                },
+                {
+                  "prop": "email"
+                },
+                {
+                  "prop": "url"
+                },
+                {
+                  "prop": "affiliation"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "station-information",
+      "label": "Station Information",
+      "fields": [
+        {
+          "id": "station-wrapper",
+          "label": "Station",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "platform_name",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "station-id",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "platform",
+              "type": "constant",
+              "defaultValue": "station"
+            }
+          ]
+        },
+        {
+          "id": "location-wrapper",
+          "label": "Location",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "latitude",
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "longitude",
+              "type": "number",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "horizontal-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "water-body-setting",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              },
+              "defaultValue": "Ocean coastline"
+            },
+            {
+              "prop": "approximate-position",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "station-vertical-datum-wrapper",
+          "label": "Vertical Reference",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "station-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "station-datum-establishment-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "prop": "additional-information",
+          "settings": {
+            "boldLabel": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "sensor-information-page",
+      "label": "Sensor Information",
+      "description": "**Enter one or more sensors.**  \nDefinitions:\n\n- **Instrument** is the large physical instrument that may house individual or smaller components, aka sensors.\n - **Components** are the individual sensors within an instrument. There may be multiple components within a single instrument. Example two radar gauges within one instrument.",
+      "fields": [
+        {
+          "prop": "sensors",
+          "label": "",
+          "tabs": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "fields": [
+                {
+                  "id": "time-coverage-wrapper",
+                  "label": "Time coverage",
+                  "type": "objectWrapper",
+                  "settings": {
+                    "boldLabel": true
+                  },
+                  "fields": [
+                    {
+                      "id": "start-end-wrapper",
+                      "label": "",
+                      "type": "objectWrapper",
+                      "layout": "grid2",
+                      "settings": {
+                        "className": "bg-slate-100 p-0"
+                      },
+                      "fields": [
+                        {
+                          "prop": "sensors[].time_coverage_start",
+                          "type": "date",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensors[].time_coverage_end",
+                          "description": "Only if not real-time. If real-time, leave blank.",
+                          "type": "date",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "sample-wrapper",
+                  "label": "Sampling",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "settings": {
+                    "boldLabel": true
+                  },
+                  "fields": [
+                    {
+                      "prop": "sensors[].sample-interval-min",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].sample-average-window-sec",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "sensor-other-wrapper",
+                  "label": "Other details",
+                  "settings": {
+                    "boldLabel": true
+                  },
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "sensors[].mounting-structure",
+                      "type": "selectOrText"
+                    },
+                    {
+                      "prop": "sensors[].geophysical_variable:accuracy"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "sensor-information",
+              "label": "Sensor Technology",
+              "fields": [
+                {
+                  "id": "instrument-wrapper",
+                  "label": "Instrument",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "settings": {
+                    "boldLabel": true
+                  },
+                  "fields": [
+                    {
+                      "prop": "sensors[].instrument",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].instrument_variable:make_model",
+                      "type": "selectOrText",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].sensor-serial-number",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "sensors[].additional-sensor-information",
+                      "type": "long_text",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "prop": "sensors[].telemetry-method"
+                }
+              ]
+            },
+            {
+              "id": "sensor-elevations-tab",
+              "label": "Sensor Elevations",
+              "fields": [
+                {
+                  "multiple": true,
+                  "prop": "elevations",
+                  "type": "object",
+                  "fields": [
+                    {
+                      "id": "sensor-elevation-wrapper",
+                      "label": "",
+                      "settings": {
+                        "className": "bg-slate-100 p-0"
+                      },
+                      "type": "objectWrapper",
+                      "layout": "grid2",
+                      "fields": [
+                        {
+                          "prop": "sensor-elevation-survey-date",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-on-station-datum",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "sensor-elevation-wrapper2",
+                      "label": "",
+                      "settings": {
+                        "className": "bg-slate-100 p-0"
+                      },
+                      "type": "objectWrapper",
+                      "layout": "grid3",
+                      "fields": [
+                        {
+                          "prop": "sensor-elevation-ortho",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ortho-datum",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ortho-geoid",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ellipsoidal",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ellipsoidal-refsys",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ellipsoidal-epoch",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "prop": "sensors[].sensor-offset",
+                  "settings": {
+                    "boldLabel": "true"
+                  }
+                },
+                {
+                  "prop": "sensors[].sensor-survey-reference-point",
+                  "settings": {
+                    "boldLabel": "true"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tidal-datum-offsets-relative-to-station",
+      "label": "Datum Relationships and Offsets",
+      "description": "Datum Offsets as related to the station datum, in meters. If not known, leave blank. **[Click here](https://files.axds.co/portals/water-level-metadata/coops-datum-figure.png)** for figure describing datum conversions.",
+      "settings": {
+        "largeDescription": true
+      },
+      "fields": [
+        {
+          "id": "geodetic-datum-wrapper",
+          "label": "Geodetic Vertical Datums",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "navd88-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "nad83-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "tidal-datum-wrapper",
+          "label": "Tidal Elevation Datums",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "mhhw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mhw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "msl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mtl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dtl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mlw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mllw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "time-range-datum-wrapper",
+          "label": "Time Range Datums / Tidal Characteristic",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "gt-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mn-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dhq-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dlq-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "tidal-timing-datum-wrapper",
+          "label": "Tidal Timing Datums",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "hwi-hr",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "lwi-hr",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "great-lakes-wrapper",
+          "label": "Great Lakes Specific Datums",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "igld",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "lwd",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "survey-information",
+      "label": "Survey Information",
+      "fields": [
+        {
+          "prop": "surveys",
+          "label": "Marker information and stamping",
+          "multiple": true,
+          "fields": [
+            {
+              "id": "survey-wrapper-1",
+              "label": "Overview",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].date-of-most-recent-survey",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].measurement-by-at-most-recent-survey",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "survey-wrapper-2",
+              "label": "Methods",
+              "type": "objectWrapper",
+              "layout": "grid3",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].survey-method",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].gnss-rtk-unit",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].processing-software",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "survey-wrapper-3",
+              "label": "Bench Mark Identification",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].marker-stamping",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].marker-other-identifier",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].marker-co-ops-vm",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].marker-ngs-pid",
+                  "type": "selectOrText",
+                  "options": [
+                    {
+                      "label": "Not available (enter VIM)",
+                      "value": "not_available"
+                    },
+                    {
+                      "label": "Other (enter PID)",
+                      "value": "other"
+                    }
+                  ],
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].bench-mark-descriptions",
+                  "type": "long_text"
+                }
+              ]
+            },
+            {
+              "id": "survey-wrapper-4",
+              "label": "Location",
+              "type": "objectWrapper",
+              "layout": "grid2",
+              "settings": {
+                "boldLabel": true
+              },
+              "fields": [
+                {
+                  "prop": "surveys[].latitude",
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].longitude",
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].elevation",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                },
+                {
+                  "prop": "surveys[].movement-since-last-survey",
+                  "type": "number",
+                  "settings": {
+                    "descriptionPresentation": "tooltip",
+                    "smallLabel": true
+                  }
+                }
+              ]
+            },
+            {
+              "prop": "surveys[].additional-survey-information",
+              "type": "long_text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "station-error-analysis",
+      "label": "Station Error Analysis",
+      "fields": [
+        {
+          "prop": "total-water-level-error-cm"
+        },
+        {
+          "prop": "sensor-error-cm"
+        },
+        {
+          "prop": "survey-error-cm"
+        },
+        {
+          "prop": "data-processing-error-cm"
+        }
+      ]
+    },
+    {
+      "id": "local-tidal-datum-establishment",
+      "label": "Local tidal datum establishment",
+      "fields": [
+        {
+          "id": "time-range-wrapper",
+          "label": "Time Range",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "record-start-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "record-end-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "computation-wrapper",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "label": "Computation",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "computation-tool",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computation-period",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computation-method",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computation-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "computed-by",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "prop": "nwlon-control-station"
+        },
+        {
+          "prop": "control-station-epoch"
+        },
+        {
+          "prop": "datum-type"
+        }
+      ]
+    },
+    {
+      "id": "collocation-information",
+      "label": "Collocation Information",
+      "fields": [
+        {
+          "prop": "is-collocation",
+          "type": "boolean"
+        },
+        {
+          "prop": "additional-colocation-information",
+          "multiple": true
+        }
+      ]
+    },
+    {
+      "id": "photos",
+      "label": "Photos",
+      "fields": [
+        {
+          "prop": "benchmarks-photo",
+          "multiple": true
+        },
+        {
+          "prop": "underwater-components"
+        },
+        {
+          "prop": "vicinity"
+        }
+      ]
+    },
+    {
+      "id": "attachments",
+      "label": "Attachments",
+      "fields": [
+        {
+          "prop": "bench-mark-diagram"
+        },
+        {
+          "prop": "sensor-test-worksheet"
+        },
+        {
+          "prop": "sensor-elevation-drawing"
+        },
+        {
+          "prop": "other-attachment"
+        }
+      ]
+    },
+    {
+      "id": "external-data-access",
+      "label": "API and External Data Identifiers",
+      "fields": [
+        {
+          "id": "ids-wrapper",
+          "label": "Other identifiers",
+          "type": "objectWrapper",
+          "settings": {
+            "boldLabel": true
+          },
+          "layout": "grid3",
+          "fields": [
+            {
+              "prop": "wmo_platform_code",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "shef-element-code",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
+          "prop": "disclaimer",
+          "type": "long_text"
+        },
+        {
+          "prop": "dissemination-flag"
+        }
+      ]
+    }
+  ]
+}
