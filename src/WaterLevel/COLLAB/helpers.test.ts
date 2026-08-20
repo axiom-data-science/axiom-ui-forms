@@ -104,7 +104,11 @@ describe('parseMetadataFieldsIntoSchema', () => {
   it('uses contributors special-case once under nested path groups', () => {
     const schema = parseMetadataFieldsIntoSchema([
       makeField({ id: 'contributors.phone', label: 'Contributor Phone', path: '/organization' }),
-      makeField({ id: 'contributors.affiliation', label: 'Contributor Org', path: '/organization' }),
+      makeField({
+        id: 'contributors.affiliation',
+        label: 'Contributor Org',
+        path: '/organization',
+      }),
       makeField({ id: 'profile.id', label: 'Profile ID', path: '/organization' }),
     ])
 
@@ -186,5 +190,45 @@ describe('parseMetadataFieldsIntoSchema', () => {
 
     const specs = (schema.properties?.instrument as any)?.properties?.sensor?.properties?.specs
     expect(specs?.required).toContain('model')
+  })
+
+  it('builds nested array schemas under items.properties for array path groups', () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: 'sensor-elevation-ortho',
+        label: 'Sensor elevation ortho',
+        path: '/sensors[]/elevations[]',
+      }),
+    ])
+
+    const sensors = schema.properties?.sensors as any
+    expect(sensors?.type).toBe('array')
+    expect(sensors?.items?.type).toBe('object')
+
+    const elevations = sensors?.items?.properties?.elevations
+    expect(elevations?.type).toBe('array')
+    expect(elevations?.items?.type).toBe('object')
+
+    const ortho = elevations?.items?.properties?.['sensor-elevation-ortho']
+    expect(ortho?.type).toBe('string')
+    expect(ortho?.title).toBe('Sensor elevation ortho')
+  })
+
+  it('builds top-level array schemas under items.properties for single array path groups', () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: 'sensor-offset',
+        label: 'Sensor offset',
+        path: '/sensors[]',
+      }),
+    ])
+
+    const sensors = schema.properties?.sensors as any
+    expect(sensors?.type).toBe('array')
+    expect(sensors?.items?.type).toBe('object')
+
+    const sensorOffset = sensors?.items?.properties?.['sensor-offset']
+    expect(sensorOffset?.type).toBe('string')
+    expect(sensorOffset?.title).toBe('Sensor offset')
   })
 })
