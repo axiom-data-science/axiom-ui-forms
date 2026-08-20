@@ -1,9 +1,13 @@
 import MODLS3Form from '@/Form/MODL/s3/MODLS3Form'
 import MODLS3SchemaForm from '@/Form/MODL/s3/MODLS3SchemaForm'
-import AnyOfObjectSchema, { AnyOfObjectSchemaSingleProp } from '@/Form/AnyOfSchema/AnyOfObjectSchema'
+import AnyOfObjectSchema, {
+  AnyOfObjectSchemaSingleProp,
+} from '@/Form/AnyOfSchema/AnyOfObjectSchema'
 import AnyOfSimpleSchema from '@/Form/AnyOfSchema/AnyOfSimpleSchema'
 import AnyOfObjectSchemaWithOverrides from '@/Form/AnyOfSchema/AnyOfObjectSchemaWithOverrides'
-import OneOfObjectSchema, { OneOfObjectSchemaSingleProp } from '@/Form/OneOfSchema/OneOfObjectSchema'
+import OneOfObjectSchema, {
+  OneOfObjectSchemaSingleProp,
+} from '@/Form/OneOfSchema/OneOfObjectSchema'
 import OneOfSimpleSchema from '@/Form/OneOfSchema/OneOfSimpleSchema'
 import OneOfObjectSchemaWithOverrides from '@/Form/OneOfSchema/OneOfObjectSchemaWithOverrides'
 import ArrayWithTabs from '@/Form/TestForms/ArrayWithTabs/ArrayWithTabs'
@@ -13,29 +17,37 @@ import FormWithCustomGeom from '@/Form/TestForms/Geom/FormWithCustomGeom'
 import MultiTabs from '@/Form/TestForms/MultiTabs/MultiTabs'
 import NestedDependents from '@/Form/TestForms/NestedDependents/NestedDependents'
 import NestedLayoutInMultiTab from '@/Form/TestForms/NestedLayoutInMultiTab'
-import ObjectListExample, { NestedObjectListExample } from '@/Form/TestForms/ObjectListExample/ObjectListExample'
+import ObjectListExample, {
+  NestedObjectListExample,
+} from '@/Form/TestForms/ObjectListExample/ObjectListExample'
 import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField'
 import ObjectListKeyValueExample from '@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample'
-import ObjectListWithSchemaExample, { ObjectListKeyValueWithSchemaExample } from '@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample'
+import ObjectListWithSchemaExample, {
+  ObjectListKeyValueWithSchemaExample,
+} from '@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample'
 import ObjectWrapper from '@/Form/TestForms/ObjectWrapper/ObjectWrapper'
 import ObjectWrapperWithSchema from '@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema'
-import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from '@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray'
+import OverrideOfSchemaArray, {
+  OverrideOfSchemaArrayWithTabs,
+} from '@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray'
 import PopulateHeadersFromUpload, {
   PrePopulatedPopulateHeadersFromUpload,
 } from '@/Form/TestForms/PopulateHeadersFromUpload.tsx/PopulateHeadersFromUpload'
 import TabsInPagesWithWrapper from '@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper'
 import { Tooltip } from '@axdspub/axiom-ui-utilities'
-import {
-  CaretLeftIcon,
-  CaretRightIcon,
-  ListBulletIcon,
-} from '@radix-ui/react-icons'
+import { CaretLeftIcon, CaretRightIcon, ListBulletIcon } from '@radix-ui/react-icons'
 import { ReactElement, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import MergeFieldTestForm from '@/Form/TestForms/MergeFieldTest/MergeFieldTest'
 import DeepNestedObjectWrapper from '@/Form/TestForms/DeepNestedObjectWrapper/DeepNestedObjectWrapper'
-import JSONWithOtherFields, { JSONWithOtherFieldsForm } from '@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields'
+import JSONWithOtherFields, {
+  JSONWithOtherFieldsForm,
+} from '@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields'
 import FormWithPagesAndSubmitButton from '@/Form/TestForms/FormWithPagesAndSubmitButton/FormWithPagesAndSubmitButton'
+import {
+  EmbeddedArraysForm,
+  EmbeddedArraysFromSchemaWithOverrides,
+} from '@/Form/TestForms/EmbeddedArrays/EmbeddedArrays'
 
 const forms = [
   {
@@ -196,28 +208,38 @@ const forms = [
   {
     label: 'Merge field test',
     path: 'merge-field-test',
-    view: MergeFieldTestForm
+    view: MergeFieldTestForm,
   },
   {
     label: 'Deep nested object wrapper',
     path: 'deep-nested-object-wrapper',
-    view: DeepNestedObjectWrapper
+    view: DeepNestedObjectWrapper,
   },
   {
     label: 'JSON with other fields',
     path: 'json-with-other-fields',
-    view: JSONWithOtherFields
+    view: JSONWithOtherFields,
   },
   {
     label: 'JSON with other fields form',
     path: 'json-with-other-fields-form',
-    view: JSONWithOtherFieldsForm
+    view: JSONWithOtherFieldsForm,
   },
   {
     label: 'Form with pages and submit button',
     path: 'form-with-pages-and-submit-button',
-    view: FormWithPagesAndSubmitButton
-  }
+    view: FormWithPagesAndSubmitButton,
+  },
+  {
+    label: 'Embedded Arrays',
+    path: 'embedded-arrays',
+    view: EmbeddedArraysForm,
+  },
+  {
+    label: 'Embedded Arrays from schema with overrides',
+    path: 'embedded-arrays-schema-with-overrides',
+    view: EmbeddedArraysFromSchemaWithOverrides,
+  },
 ]
 
 const AllForms = (): ReactElement => {
