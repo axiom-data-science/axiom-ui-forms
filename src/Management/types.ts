@@ -1,4 +1,8 @@
-import { type IFormField, type IFormOverride, type IFormFieldOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import {
+  type IFormField,
+  type IFormOverride,
+  type IFormFieldOverride,
+} from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 
 export type IManagementNavigationMode = ***REMOVED***fields***REMOVED*** | ***REMOVED***pages***REMOVED*** | ***REMOVED***tabs***REMOVED*** | ***REMOVED***wizard_steps***REMOVED***
 
@@ -23,6 +27,9 @@ export interface IManagementFieldNode {
   overrideConditions?: IFormField[***REMOVED***conditions***REMOVED***]
   overrideConditionsSet?: IFormField[***REMOVED***conditionsSet***REMOVED***]
   overrideSettings?: IFormField[***REMOVED***settings***REMOVED***]
+  overrideConstraints?: Record<string, unknown>
+  overrideExtras?: Record<string, unknown>
+  destPath?: string
 }
 
 export interface IManagementGroupNode {

@@ -65,7 +65,10 @@ const buildNextPrefix = (prefix: string, field: IFormField): string => {
   return selfPath
 }
 
-const flattenFields = (fields: IFormField[], prefix = ***REMOVED******REMOVED***): Array<{ prop: string; field: IFormField }> => {
+const flattenFields = (
+  fields: IFormField[],
+  prefix = ***REMOVED******REMOVED***
+): Array<{ prop: string; field: IFormField }> => {
   const result: Array<{ prop: string; field: IFormField }> = []
 
   fields.forEach((field) => {
@@ -168,7 +171,9 @@ const buildChildren = (model: IManagementModel, parentRef: string): IFormFieldOv
   })
 }
 
-const buildSectionPayload = (model: IManagementModel): Array<{
+const buildSectionPayload = (
+  model: IManagementModel
+): Array<{
   id: string
   label?: string
   order?: number
@@ -273,11 +278,18 @@ export const createOverridesFromModel = (model: IManagementModel): IManagementEx
         field.overrideLabel !== undefined ||
         field.overrideConditions !== undefined ||
         field.overrideConditionsSet !== undefined ||
-        field.overrideSettings !== undefined
+        field.overrideSettings !== undefined ||
+        field.overrideConstraints !== undefined ||
+        field.destPath !== undefined ||
+        (field.overrideExtras !== undefined && Object.keys(field.overrideExtras).length > 0)
     )
     .map((field) => {
       const result: IFormFieldOverride = {
         prop: field.prop,
+      }
+
+      if (field.overrideExtras !== undefined) {
+        Object.assign(result, field.overrideExtras)
       }
 
       if (field.overrideType !== undefined) {
@@ -298,6 +310,17 @@ export const createOverridesFromModel = (model: IManagementModel): IManagementEx
 
       if (field.overrideSettings !== undefined) {
         result.settings = field.overrideSettings
+      }
+
+      if (
+        field.overrideConstraints !== undefined &&
+        Object.keys(field.overrideConstraints).length > 0
+      ) {
+        result.constraints = field.overrideConstraints
+      }
+
+      if (field.destPath !== undefined && field.destPath.trim() !== ***REMOVED******REMOVED***) {
+        result.destPath = field.destPath
       }
 
       return result
