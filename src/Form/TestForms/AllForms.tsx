@@ -1,9 +1,13 @@
 import MODLS3Form from ***REMOVED***@/Form/MODL/s3/MODLS3Form***REMOVED***
 import MODLS3SchemaForm from ***REMOVED***@/Form/MODL/s3/MODLS3SchemaForm***REMOVED***
-import AnyOfObjectSchema, { AnyOfObjectSchemaSingleProp } from ***REMOVED***@/Form/AnyOfSchema/AnyOfObjectSchema***REMOVED***
+import AnyOfObjectSchema, {
+  AnyOfObjectSchemaSingleProp,
+} from ***REMOVED***@/Form/AnyOfSchema/AnyOfObjectSchema***REMOVED***
 import AnyOfSimpleSchema from ***REMOVED***@/Form/AnyOfSchema/AnyOfSimpleSchema***REMOVED***
 import AnyOfObjectSchemaWithOverrides from ***REMOVED***@/Form/AnyOfSchema/AnyOfObjectSchemaWithOverrides***REMOVED***
-import OneOfObjectSchema, { OneOfObjectSchemaSingleProp } from ***REMOVED***@/Form/OneOfSchema/OneOfObjectSchema***REMOVED***
+import OneOfObjectSchema, {
+  OneOfObjectSchemaSingleProp,
+} from ***REMOVED***@/Form/OneOfSchema/OneOfObjectSchema***REMOVED***
 import OneOfSimpleSchema from ***REMOVED***@/Form/OneOfSchema/OneOfSimpleSchema***REMOVED***
 import OneOfObjectSchemaWithOverrides from ***REMOVED***@/Form/OneOfSchema/OneOfObjectSchemaWithOverrides***REMOVED***
 import ArrayWithTabs from ***REMOVED***@/Form/TestForms/ArrayWithTabs/ArrayWithTabs***REMOVED***
@@ -13,29 +17,37 @@ import FormWithCustomGeom from ***REMOVED***@/Form/TestForms/Geom/FormWithCustom
 import MultiTabs from ***REMOVED***@/Form/TestForms/MultiTabs/MultiTabs***REMOVED***
 import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 import NestedLayoutInMultiTab from ***REMOVED***@/Form/TestForms/NestedLayoutInMultiTab***REMOVED***
-import ObjectListExample, { NestedObjectListExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
+import ObjectListExample, {
+  NestedObjectListExample,
+} from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExample***REMOVED***
 import ObjectListExampleWithSelectAsKeyField from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListExampleWithSelectAsKeyField***REMOVED***
 import ObjectListKeyValueExample from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample***REMOVED***
-import ObjectListWithSchemaExample, { ObjectListKeyValueWithSchemaExample } from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample***REMOVED***
+import ObjectListWithSchemaExample, {
+  ObjectListKeyValueWithSchemaExample,
+} from ***REMOVED***@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample***REMOVED***
 import ObjectWrapper from ***REMOVED***@/Form/TestForms/ObjectWrapper/ObjectWrapper***REMOVED***
 import ObjectWrapperWithSchema from ***REMOVED***@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema***REMOVED***
-import OverrideOfSchemaArray, { OverrideOfSchemaArrayWithTabs } from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
+import OverrideOfSchemaArray, {
+  OverrideOfSchemaArrayWithTabs,
+} from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/OverrideOfSchemaArray***REMOVED***
 import PopulateHeadersFromUpload, {
   PrePopulatedPopulateHeadersFromUpload,
 } from ***REMOVED***@/Form/TestForms/PopulateHeadersFromUpload.tsx/PopulateHeadersFromUpload***REMOVED***
 import TabsInPagesWithWrapper from ***REMOVED***@/Form/TestForms/TabsInPagesWithWrapper/TabsInPagesWithWrapper***REMOVED***
 import { Tooltip } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
-import {
-  CaretLeftIcon,
-  CaretRightIcon,
-  ListBulletIcon,
-} from ***REMOVED***@radix-ui/react-icons***REMOVED***
+import { CaretLeftIcon, CaretRightIcon, ListBulletIcon } from ***REMOVED***@radix-ui/react-icons***REMOVED***
 import { ReactElement, useEffect, useRef, useState } from ***REMOVED***react***REMOVED***
 import { Link, useLocation } from ***REMOVED***react-router-dom***REMOVED***
 import MergeFieldTestForm from ***REMOVED***@/Form/TestForms/MergeFieldTest/MergeFieldTest***REMOVED***
 import DeepNestedObjectWrapper from ***REMOVED***@/Form/TestForms/DeepNestedObjectWrapper/DeepNestedObjectWrapper***REMOVED***
-import JSONWithOtherFields, { JSONWithOtherFieldsForm } from ***REMOVED***@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields***REMOVED***
+import JSONWithOtherFields, {
+  JSONWithOtherFieldsForm,
+} from ***REMOVED***@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields***REMOVED***
 import FormWithPagesAndSubmitButton from ***REMOVED***@/Form/TestForms/FormWithPagesAndSubmitButton/FormWithPagesAndSubmitButton***REMOVED***
+import {
+  EmbeddedArraysForm,
+  EmbeddedArraysFromSchemaWithOverrides,
+} from ***REMOVED***@/Form/TestForms/EmbeddedArrays/EmbeddedArrays***REMOVED***
 
 const forms = [
   {
@@ -196,28 +208,38 @@ const forms = [
   {
     label: ***REMOVED***Merge field test***REMOVED***,
     path: ***REMOVED***merge-field-test***REMOVED***,
-    view: MergeFieldTestForm
+    view: MergeFieldTestForm,
   },
   {
     label: ***REMOVED***Deep nested object wrapper***REMOVED***,
     path: ***REMOVED***deep-nested-object-wrapper***REMOVED***,
-    view: DeepNestedObjectWrapper
+    view: DeepNestedObjectWrapper,
   },
   {
     label: ***REMOVED***JSON with other fields***REMOVED***,
     path: ***REMOVED***json-with-other-fields***REMOVED***,
-    view: JSONWithOtherFields
+    view: JSONWithOtherFields,
   },
   {
     label: ***REMOVED***JSON with other fields form***REMOVED***,
     path: ***REMOVED***json-with-other-fields-form***REMOVED***,
-    view: JSONWithOtherFieldsForm
+    view: JSONWithOtherFieldsForm,
   },
   {
     label: ***REMOVED***Form with pages and submit button***REMOVED***,
     path: ***REMOVED***form-with-pages-and-submit-button***REMOVED***,
-    view: FormWithPagesAndSubmitButton
-  }
+    view: FormWithPagesAndSubmitButton,
+  },
+  {
+    label: ***REMOVED***Embedded Arrays***REMOVED***,
+    path: ***REMOVED***embedded-arrays***REMOVED***,
+    view: EmbeddedArraysForm,
+  },
+  {
+    label: ***REMOVED***Embedded Arrays from schema with overrides***REMOVED***,
+    path: ***REMOVED***embedded-arrays-schema-with-overrides***REMOVED***,
+    view: EmbeddedArraysFromSchemaWithOverrides,
+  },
 ]
 
 const AllForms = (): ReactElement => {
