@@ -261,6 +261,31 @@
           ]
         },
         {
+          "id": "station-vertical-datum-wrapper",
+          "label": "Vertical Reference",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true
+          },
+          "fields": [
+            {
+              "prop": "station-datum",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "station-datum-establishment-date",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+        {
           "prop": "additional-information",
           "settings": {
             "boldLabel": true
@@ -271,13 +296,11 @@
     {
       "id": "sensor-information-page",
       "label": "Sensor Information",
-      "description": "Enter one or more sensors.  \nDefinitions:\n\n- **Instrument** is the large physical instrument that may house individual or smaller components, aka sensors.\n - **Components** are the individual sensors within an instrument. There may be multiple components within a single instrument. Example two radar gauges within one instrument.",
+      "description": "**Enter one or more sensors.**  \nDefinitions:\n\n- **Instrument** is the large physical instrument that may house individual or smaller components, aka sensors.\n - **Components** are the individual sensors within an instrument. There may be multiple components within a single instrument. Example two radar gauges within one instrument.",
       "fields": [
         {
           "prop": "sensors",
-          "type": "object",
           "label": "",
-          "multiple": true,
           "tabs": [
             {
               "id": "overview",
@@ -370,7 +393,7 @@
             },
             {
               "id": "sensor-information",
-              "label": "Sensor Information",
+              "label": "Sensor Technology",
               "fields": [
                 {
                   "id": "instrument-wrapper",
@@ -415,32 +438,111 @@
                   ]
                 },
                 {
-                  "id": "prior-wrapper",
-                  "type": "objectWrapper",
-                  "label": "Prior CO-OPS installation",
-                  "layout": "grid2",
-                  "settings": {
-                    "boldLabel": true
-                  },
+                  "prop": "sensors[].telemetry-method"
+                }
+              ]
+            },
+            {
+              "id": "sensor-elevations-tab",
+              "label": "Sensor Elevations",
+              "fields": [
+                {
+                  "multiple": true,
+                  "prop": "elevations",
+                  "type": "object",
                   "fields": [
                     {
-                      "prop": "sensors[].prior-wmo-id",
+                      "id": "sensor-elevation-wrapper",
+                      "label": "",
                       "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
+                        "className": "bg-slate-100 p-0"
+                      },
+                      "type": "objectWrapper",
+                      "layout": "grid2",
+
+                      "fields": [
+                        {
+                          "prop": "sensor-elevation-survey-date",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-on-station-datum",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        }
+                      ]
                     },
                     {
-                      "prop": "sensors[].prior-wmo-coordinates",
+                      "id": "sensor-elevation-wrapper2",
+                      "label": "",
                       "settings": {
-                        "descriptionPresentation": "tooltip",
-                        "smallLabel": true
-                      }
+                        "className": "bg-slate-100 p-0"
+                      },
+                      "type": "objectWrapper",
+                      "layout": "grid3",
+                      "fields": [
+                        {
+                          "prop": "sensor-elevation-ortho",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ortho-datum",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ortho-geoid",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ellipsoidal",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ellipsoidal-refsys",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        },
+                        {
+                          "prop": "sensor-elevation-ellipsoidal-epoch",
+                          "settings": {
+                            "descriptionPresentation": "tooltip",
+                            "smallLabel": true
+                          }
+                        }
+                      ]
                     }
                   ]
                 },
                 {
-                  "prop": "sensors[].telemetry-method"
+                  "prop": "sensors[].sensor-offset",
+                  "settings": {
+                    "boldLabel": "true"
+                  }
+                },
+                {
+                  "prop": "sensors[].sensor-survey-reference-point",
+                  "settings": {
+                    "boldLabel": "true"
+                  }
                 }
               ]
             }
@@ -450,61 +552,32 @@
     },
     {
       "id": "tidal-datum-offsets-relative-to-station",
-      "label": "Tidal Datum Offsets relative to station",
+      "label": "Datum Relationships and Offsets",
+      "description": "Datum Offsets as related to the station datum, in meters. If not known, leave blank. **[Click here](https://files.axds.co/portals/water-level-metadata/coops-datum-figure.png)** for figure describing datum conversions.",
+      "settings": {
+        "largeDescription": true
+      },
+
       "fields": [
         {
-          "id": "offsets-wrapper",
-          "label": "Offsets and elevation",
+          "id": "geodetic-datum-wrapper",
+          "label": "Geodetic Vertical Datums",
           "type": "objectWrapper",
-          "layout": "grid2",
+          "layout": "grid3",
           "settings": {
-            "boldLabel": true
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
           },
           "fields": [
             {
-              "prop": "offset-from-station-datum",
+              "prop": "navd88-m",
               "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
               }
             },
             {
-              "prop": "sensor-elevation-on-station-datum",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-elevation-ortho",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-elevation-ellipsoidal",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-offset",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "reference-datum",
-              "settings": {
-                "descriptionPresentation": "tooltip",
-                "smallLabel": true
-              }
-            },
-            {
-              "prop": "sensor-survey-reference-point",
+              "prop": "nad83-m",
               "settings": {
                 "descriptionPresentation": "tooltip",
                 "smallLabel": true
@@ -513,195 +586,158 @@
           ]
         },
         {
-          "id": "datum-offsets-wrapper",
-          "label": "Datum Offsets",
-          "description": "As related to the station datum, in meters. If not known, leave blank.",
+          "id": "tidal-datum-wrapper",
+          "label": "Tidal Elevation Datums",
           "type": "objectWrapper",
+          "layout": "grid3",
           "settings": {
-            "boldLabel": true
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
           },
           "fields": [
             {
-              "id": "geodetic-datum-wrapper",
-              "label": "Geodetic Vertical Datums",
-              "type": "objectWrapper",
-              "layout": "grid3",
+              "prop": "mhhw-m",
               "settings": {
-                "boldLabel": true,
-                "className": "bg-transparent px-0"
-              },
-              "fields": [
-                {
-                  "prop": "navd88-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "nad83-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                }
-              ]
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             },
             {
-              "id": "tidal-datum-wrapper",
-              "label": "Tidal Elevation Datums",
-              "type": "objectWrapper",
-              "layout": "grid3",
+              "prop": "mhw-m",
               "settings": {
-                "boldLabel": true,
-                "className": "bg-transparent px-0"
-              },
-              "fields": [
-                {
-                  "prop": "mhhw-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "mhw-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "msl-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "mtl-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "dtl-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "mlw-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "mllw-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                }
-              ]
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             },
+            {
+              "prop": "msl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mtl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dtl-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mlw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "mllw-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
 
+        {
+          "id": "time-range-datum-wrapper",
+          "label": "Time Range Datums / Tidal Characteristic",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
             {
-              "id": "time-range-datum-wrapper",
-              "label": "Time Range Datums / Tidal Characteristic",
-              "type": "objectWrapper",
-              "layout": "grid3",
+              "prop": "gt-m",
               "settings": {
-                "boldLabel": true,
-                "className": "bg-transparent px-0"
-              },
-              "fields": [
-                {
-                  "prop": "gt-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "mn-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "dhq-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "dlq-m",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                }
-              ]
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             },
-
             {
-              "id": "tidal-timing-datum-wrapper",
-              "label": "Tidal Timing Datums",
-              "type": "objectWrapper",
-              "layout": "grid3",
+              "prop": "mn-m",
               "settings": {
-                "boldLabel": true,
-                "className": "bg-transparent px-0"
-              },
-              "fields": [
-                {
-                  "prop": "hwi-hr",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "lwi-hr",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                }
-              ]
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             },
-
             {
-              "id": "great-lakes-wrapper",
-              "label": "Great Lakes Specific Datums",
-              "type": "objectWrapper",
-              "layout": "grid3",
+              "prop": "dhq-m",
               "settings": {
-                "boldLabel": true,
-                "className": "bg-transparent px-0"
-              },
-              "fields": [
-                {
-                  "prop": "igld",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "lwd",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                }
-              ]
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "dlq-m",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+
+        {
+          "id": "tidal-timing-datum-wrapper",
+          "label": "Tidal Timing Datums",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "hwi-hr",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "lwi-hr",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            }
+          ]
+        },
+
+        {
+          "id": "great-lakes-wrapper",
+          "label": "Great Lakes Specific Datums",
+          "type": "objectWrapper",
+          "layout": "grid3",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-transparent px-0"
+          },
+          "fields": [
+            {
+              "prop": "igld",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
+            },
+            {
+              "prop": "lwd",
+              "settings": {
+                "descriptionPresentation": "tooltip",
+                "smallLabel": true
+              }
             }
           ]
         }

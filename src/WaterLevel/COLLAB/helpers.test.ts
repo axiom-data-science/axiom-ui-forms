@@ -104,7 +104,11 @@ describe(***REMOVED***parseMetadataFieldsIntoSchema***REMOVED***, () => {
   it(***REMOVED***uses contributors special-case once under nested path groups***REMOVED***, () => {
     const schema = parseMetadataFieldsIntoSchema([
       makeField({ id: ***REMOVED***contributors.phone***REMOVED***, label: ***REMOVED***Contributor Phone***REMOVED***, path: ***REMOVED***/organization***REMOVED*** }),
-      makeField({ id: ***REMOVED***contributors.affiliation***REMOVED***, label: ***REMOVED***Contributor Org***REMOVED***, path: ***REMOVED***/organization***REMOVED*** }),
+      makeField({
+        id: ***REMOVED***contributors.affiliation***REMOVED***,
+        label: ***REMOVED***Contributor Org***REMOVED***,
+        path: ***REMOVED***/organization***REMOVED***,
+      }),
       makeField({ id: ***REMOVED***profile.id***REMOVED***, label: ***REMOVED***Profile ID***REMOVED***, path: ***REMOVED***/organization***REMOVED*** }),
     ])
 
@@ -186,5 +190,45 @@ describe(***REMOVED***parseMetadataFieldsIntoSchema***REMOVED***, () => {
 
     const specs = (schema.properties?.instrument as any)?.properties?.sensor?.properties?.specs
     expect(specs?.required).toContain(***REMOVED***model***REMOVED***)
+  })
+
+  it(***REMOVED***builds nested array schemas under items.properties for array path groups***REMOVED***, () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: ***REMOVED***sensor-elevation-ortho***REMOVED***,
+        label: ***REMOVED***Sensor elevation ortho***REMOVED***,
+        path: ***REMOVED***/sensors[]/elevations[]***REMOVED***,
+      }),
+    ])
+
+    const sensors = schema.properties?.sensors as any
+    expect(sensors?.type).toBe(***REMOVED***array***REMOVED***)
+    expect(sensors?.items?.type).toBe(***REMOVED***object***REMOVED***)
+
+    const elevations = sensors?.items?.properties?.elevations
+    expect(elevations?.type).toBe(***REMOVED***array***REMOVED***)
+    expect(elevations?.items?.type).toBe(***REMOVED***object***REMOVED***)
+
+    const ortho = elevations?.items?.properties?.[***REMOVED***sensor-elevation-ortho***REMOVED***]
+    expect(ortho?.type).toBe(***REMOVED***string***REMOVED***)
+    expect(ortho?.title).toBe(***REMOVED***Sensor elevation ortho***REMOVED***)
+  })
+
+  it(***REMOVED***builds top-level array schemas under items.properties for single array path groups***REMOVED***, () => {
+    const schema = parseMetadataFieldsIntoSchema([
+      makeField({
+        id: ***REMOVED***sensor-offset***REMOVED***,
+        label: ***REMOVED***Sensor offset***REMOVED***,
+        path: ***REMOVED***/sensors[]***REMOVED***,
+      }),
+    ])
+
+    const sensors = schema.properties?.sensors as any
+    expect(sensors?.type).toBe(***REMOVED***array***REMOVED***)
+    expect(sensors?.items?.type).toBe(***REMOVED***object***REMOVED***)
+
+    const sensorOffset = sensors?.items?.properties?.[***REMOVED***sensor-offset***REMOVED***]
+    expect(sensorOffset?.type).toBe(***REMOVED***string***REMOVED***)
+    expect(sensorOffset?.title).toBe(***REMOVED***Sensor offset***REMOVED***)
   })
 })
