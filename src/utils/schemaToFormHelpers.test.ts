@@ -420,6 +420,86 @@ describe('schemaToFormHelpers', () => {
       expect(shapeTypeField?.excludeFromPayload).toBe(true) // auto-marked for exclusion (schema has properties)
     })
 
+    it('resolves relative nested tab props against array scope and preserves schema labels', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          sensors: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                elevations: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      'sensor-elevation-survey-date': {
+                        type: 'string',
+                        title: 'Sensor Elevation Survey Date',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            id: 'collab-like-relative-nested',
+            fields: [
+              {
+                prop: 'sensors',
+                type: 'object',
+                multiple: true,
+                tabs: [
+                  {
+                    id: 'sensor-elevations-tab',
+                    fields: [
+                      {
+                        prop: 'elevations',
+                        type: 'object',
+                        multiple: true,
+                        fields: [
+                          {
+                            id: 'sensor-elevation-wrapper',
+                            type: 'objectWrapper',
+                            fields: [{ prop: 'sensor-elevation-survey-date' }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const sensorsField = form.fields?.find((f) => f.id === 'sensors') as any
+      expect(sensorsField).toBeDefined()
+
+      const elevationsField = sensorsField.tabs?.[0]?.fields?.find(
+        (f: any) => f.id === 'elevations'
+      )
+      expect(elevationsField).toBeDefined()
+
+      const wrapper = elevationsField.fields?.find((f: any) => f.id === 'sensor-elevation-wrapper')
+      expect(wrapper).toBeDefined()
+
+      const surveyDateField = wrapper.fields?.find(
+        (f: any) => f.id === 'sensor-elevation-survey-date'
+      )
+      expect(surveyDateField).toBeDefined()
+      expect(surveyDateField.label).toBe('Sensor Elevation Survey Date')
+    })
+
     it('does not auto-exclude override-only fields when schema has no properties', () => {
       const schema: JSONSchema6 = { type: 'object' } // no properties
 
@@ -810,7 +890,10 @@ describe('schemaToFormHelpers', () => {
                 prop: 'testObject',
                 fields: [
                   { prop: 'testObject[].field1' },
-                  { prop: 'testObject[].field2', label: 'Custom Field 2 Label (from form override)' },
+                  {
+                    prop: 'testObject[].field2',
+                    label: 'Custom Field 2 Label (from form override)',
+                  },
                 ],
               } as any,
             ],
