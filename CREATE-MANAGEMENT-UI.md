@@ -1,18 +1,22 @@
 Please help create an interface for managing form configs. There are two different use cases:
 
 A schema is provided and the user would like to create a custom form layout (`IFormOverride`). A user should be able to:
+
 - place fields in pages (`IPageOverride`), wizard steps (`IWizardStep`), tabs (`IFormLayoutTab`), and object (`IObject`) - generally with `skip_path` assigned as `true` so as not to write new fields to the form output
 - update the field type from the default assigned by schemaToForm
 - add type-specific constraints (extend `IFieldConstraints`)
 - add type-specific settings (extend `IFormFieldSettingsBase`)
 - add conditions:
+
 ```
 conditions?: IFieldCondition
 conditionsSet?: IFieldConditionsSet
 ```
+
 - update other properties that are overridable give `IFormFieldOverride` interface
 
- For example, given this schema:
+For example, given this schema:
+
 ```
 {
     "properties":{
@@ -35,6 +39,7 @@ conditionsSet?: IFieldConditionsSet
 ```
 
 A user might want to produce a form override config like:
+
 ```
 {
   "label": "Test form",
@@ -114,12 +119,13 @@ A user might want to produce a form override config like:
 ```
 
 Guidelines:
+
 - Start simple, and consider re-use of components and logic
 - Ideally, creation of pages and new groups of fields is a drag/drop interface
 - This UI should be usable within this project, but also exported and used elsewhere. Given this, consider that there might be cases where a consumer might want to apply certain settings to the form creation interface that limit which field types are elements are available
 
-
 Rules:
+
 - New packages can be added
 - Please limit work to a single directory (`/src/Management`) - work will be continuing on this library in other branches, and I would like merging to be as simple as possible
 - Use existing form elements provided by `@axdspub/axiom-ui-utilities`
@@ -182,6 +188,7 @@ Below is a concise timeline of follow-up prompts used to iteratively shape the c
 50. "group is not working"
 51. "organize ManagementUI into Management/Components while isolating field list"
 52. "add temporary drag instrumentation to field list and drop handlers"
+53. "please used attached CREATE-MANAGEMENT-TODO.md to do the next steps"
 
 ### Current Functional State Summary
 
@@ -244,7 +251,11 @@ Below is a concise timeline of follow-up prompts used to iteratively shape the c
 57. Extended the structured General Settings editor with `boldLabel` (boolean), `smallLabel` (boolean), and `className` (string), and updated settings split logic so these keys persist as global settings rather than type-specific settings.
 58. Added nested container behavior for field nodes typed `object`/`objectWrapper`: fields and groups can now be dropped into these field nodes, nested children render under the field, cycle-safe drag/drop validation prevents self/descendant parenting, and container fields disable inline rename shortcuts so edits are performed via the explicit edit icon/modal.
 59. Corrected container nesting scope so drag/drop parenting into `object`/`objectWrapper` field nodes is restricted to **unmapped** field containers only (mapped schema fields no longer act as drop parents).
-60. Rebased this branch onto `main`; the rebase introduced additional field types and settings in the broader codebase that are not yet fully represented in the Management UI editors/import-export paths.
+60. Added field-override passthrough support in the Management model/export so non-modeled override keys (for example `defaultValue`, `constraints`, `options`, `description`, etc.) are preserved when overrides are imported from form-override field entries and/or field-override arrays.
+61. Added an **Unused Schema Properties** panel under the left Hierarchy column that lists schema field title + path and supports drag/drop into any valid field drop target (sections, groups, and eligible container fields).
+62. Enhanced hierarchy drag affordances so section drop zones visibly highlight while dragging (including pulse/ring state), improving placement discoverability in the left sidebar.
+63. Added a **Seed Presets** overlay tab that loads known schema/form-override/field-override sets into the Management builder, including PTT HAB/Oil/Larval (with shared `src/PTT/fieldOverrides.ts` merged) and representative `src/Form/TestForms` schema+form+field combinations.
+64. Rebased this branch onto `main`; the rebase introduced additional field types and settings in the broader codebase that are not yet fully represented in the Management UI editors/import-export paths.
 
 ## Rebase Note
 

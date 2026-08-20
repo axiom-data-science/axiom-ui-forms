@@ -2,7 +2,7 @@ import React, { type DragEvent, type KeyboardEvent, type ReactElement } from 're
 import { Button, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { DragHandleDots2Icon } from '@radix-ui/react-icons'
 import { type IManagementFieldNode } from '@/Management/types'
-import { Pencil, X, ListStart, ListEnd } from 'lucide-react'
+import { Pencil, X, ListStart, ListEnd, ChevronDown, ChevronRight } from 'lucide-react'
 
 type FieldNodeRowProps = {
   field: IManagementFieldNode
@@ -26,6 +26,9 @@ type FieldNodeRowProps = {
   onAddAfter: () => void
   onEdit: () => void
   onDelete: () => void
+  canToggleChildren?: boolean
+  isChildrenCollapsed?: boolean
+  onToggleChildren?: () => void
 }
 
 const FieldNodeRow = ({
@@ -50,13 +53,15 @@ const FieldNodeRow = ({
   onAddAfter,
   onEdit,
   onDelete,
+  canToggleChildren = false,
+  isChildrenCollapsed = false,
+  onToggleChildren,
 }: FieldNodeRowProps): ReactElement => {
-  const fieldColor = mapped
-    ? 'border-emerald-300 bg-emerald-50'
-    : 'border-amber-300 bg-amber-50'
+  const fieldColor = mapped ? 'border-emerald-300 bg-emerald-50' : 'border-amber-300 bg-amber-50'
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-    if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return
+    if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)
+      return
 
     if (allowInlineEdit && !isInlineEditing && event.key.toLowerCase() === 'e') {
       event.preventDefault()
@@ -128,11 +133,13 @@ const FieldNodeRow = ({
                 {displayLabel.trim() !== '' ? displayLabel : '(unnamed field)'}
               </span>
             )}
-            <span className="text-xs text-slate-500 truncate min-w-0">{field.prop.trim() !== '' ? field.prop : '(unmapped field)'}</span>
+            <span className="text-xs text-slate-500 truncate min-w-0">
+              {field.prop.trim() !== '' ? field.prop : '(unmapped field)'}
+            </span>
           </div>
           <div className="flex items-center gap-1.5 min-w-0">
             <select
-              className="h-5 text-[10px] rounded border border-slate-300 bg-white px-1 py-0 leading-none max-w-[92px]"
+              className="h-5 text-[10px] rounded border border-slate-300 bg-white px-1 py-0 leading-none max-w-23"
               value={field.overrideType ?? ''}
               aria-label="Field type"
               onClick={(event) => {
@@ -145,24 +152,44 @@ const FieldNodeRow = ({
             >
               <option value="">auto</option>
               {fieldTypeOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </select>
           </div>
         </div>
-        <span className={`text-[11px] px-2 py-0.5 rounded ${mapped ? 'bg-emerald-200 text-emerald-800' : 'bg-amber-200 text-amber-900'}`}>
+        <span
+          className={`text-[11px] px-2 py-0.5 rounded ${mapped ? 'bg-emerald-200 text-emerald-800' : 'bg-amber-200 text-amber-900'}`}
+        >
           {mapped ? 'mapped' : 'unmapped'}
         </span>
       </div>
       <div className="inline-flex items-center gap-0.5 shrink-0">
+        {canToggleChildren ? (
+          <Tooltip
+            dark={true}
+            content={isChildrenCollapsed ? 'Expand nested fields' : 'Collapse nested fields'}
+            side="top"
+            useSpan={true}
+          >
+            <Button variant="ghost" size="xs" className="px-1 min-w-0" onClick={onToggleChildren}>
+              {isChildrenCollapsed ? (
+                <ChevronRight className="w-3 h-3" />
+              ) : (
+                <ChevronDown className="w-3 h-3" />
+              )}
+            </Button>
+          </Tooltip>
+        ) : null}
         <Tooltip dark={true} content="Add field before" side="top" useSpan={true}>
           <Button variant="ghost" size="xs" className="px-1 min-w-0 relative" onClick={onAddBefore}>
-                <ListStart className="w-3 h-3" />
+            <ListStart className="w-3 h-3" />
           </Button>
         </Tooltip>
         <Tooltip dark={true} content="Add field after" side="top" useSpan={true}>
           <Button variant="ghost" size="xs" className="px-1 min-w-0 relative" onClick={onAddAfter}>
-                <ListEnd className="w-3 h-3" />
+            <ListEnd className="w-3 h-3" />
           </Button>
         </Tooltip>
         <Tooltip dark={true} content="Edit field" side="top" useSpan={true}>

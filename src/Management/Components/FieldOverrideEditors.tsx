@@ -63,10 +63,7 @@ const updateRecordValue = (
 ): Record<string, unknown> => {
   const next = { ...current }
   const shouldDelete =
-    value === undefined ||
-    value === null ||
-    value === '' ||
-    (!keepFalse && value === false)
+    value === undefined || value === null || value === '' || (!keepFalse && value === false)
 
   if (shouldDelete) {
     delete next[key]
@@ -92,8 +89,11 @@ const createTypeSpecificSettingsTemplate = (
         allowEmpty: true,
       }
     case 'select':
+    case 'stateSelector':
+    case 'selectOrText':
       return {
         allowNull: true,
+        showDescriptionForSelected: false,
       }
     case 'radio':
       return {
@@ -111,6 +111,11 @@ const createTypeSpecificSettingsTemplate = (
     case 'objectList':
       return {
         keyField: 'id',
+      }
+    case 'file_upload':
+    case 'fileUpload':
+      return {
+        acceptedFileTypes: ['.csv'],
       }
     default:
       return {}
@@ -161,7 +166,12 @@ const FieldOverrideEditors = ({
     index: number,
     updater: (condition: IFieldCondition) => IFieldCondition
   ): void => {
-    const existing = conditionRows[index] ?? { field: fieldProp, operator: 'eq', result: 'include', value: '' }
+    const existing = conditionRows[index] ?? {
+      field: fieldProp,
+      operator: 'eq',
+      result: 'include',
+      value: '',
+    }
     const nextRows = conditionRows.slice()
     nextRows[index] = updater(existing)
 
@@ -253,7 +263,9 @@ const FieldOverrideEditors = ({
                 }}
               >
                 {conditionOperatorOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
             </label>
@@ -272,7 +284,9 @@ const FieldOverrideEditors = ({
                 }}
               >
                 {conditionResultOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
             </label>
@@ -314,7 +328,11 @@ const FieldOverrideEditors = ({
                 type={conditionValueKind === 'number' ? 'number' : 'text'}
                 value={conditionValueText}
                 onChange={(event) => {
-                  setSingleConditionValue(conditionValueKind, event.target.value, conditionValueBool)
+                  setSingleConditionValue(
+                    conditionValueKind,
+                    event.target.value,
+                    conditionValueBool
+                  )
                 }}
               />
             </label>
@@ -333,7 +351,7 @@ const FieldOverrideEditors = ({
               onConditionsSetChange({
                 logic: 'and',
                 result: 'include',
-                conditions: [{ field: fieldProp, operator: 'eq', value: '', result: 'include' }],
+                conditions: [{ field: fieldProp, operator: 'eq', value: '' }],
               })
             }}
           >
@@ -346,7 +364,7 @@ const FieldOverrideEditors = ({
               onConditionsSetChange({
                 logic: 'or',
                 result: 'include',
-                conditions: [{ field: fieldProp, operator: 'eq', value: '', result: 'include' }],
+                conditions: [{ field: fieldProp, operator: 'eq', value: '' }],
               })
             }}
           >
@@ -373,9 +391,10 @@ const FieldOverrideEditors = ({
                 onConditionsSetChange({
                   logic: event.target.value as 'and' | 'or',
                   result: conditionsSet?.result ?? 'include',
-                  conditions: conditionRows.length > 0
-                    ? conditionRows
-                    : [{ field: fieldProp, operator: 'eq', value: '', result: 'include' }],
+                  conditions:
+                    conditionRows.length > 0
+                      ? conditionRows
+                      : [{ field: fieldProp, operator: 'eq', value: '' }],
                 })
               }}
             >
@@ -393,14 +412,17 @@ const FieldOverrideEditors = ({
                 onConditionsSetChange({
                   logic: conditionsSet?.logic ?? 'and',
                   result: event.target.value as IFieldConditionResult,
-                  conditions: conditionRows.length > 0
-                    ? conditionRows
-                    : [{ field: fieldProp, operator: 'eq', value: '', result: 'include' }],
+                  conditions:
+                    conditionRows.length > 0
+                      ? conditionRows
+                      : [{ field: fieldProp, operator: 'eq', value: '' }],
                 })
               }}
             >
               {conditionResultOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </select>
           </label>
@@ -410,7 +432,6 @@ const FieldOverrideEditors = ({
           {conditionRows.map((row, index) => {
             const rowField = typeof row.field === 'string' ? row.field : ''
             const rowOperator = row.operator ?? 'eq'
-            const rowResult = row.result ?? 'include'
             const rowValueKind = getValueKind(row.value)
             const rowValueText = getValueText(row.value)
             const rowValueBool = getValueBool(row.value)
@@ -445,25 +466,9 @@ const FieldOverrideEditors = ({
                       }}
                     >
                       {conditionOperatorOptions.map((option) => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="flex flex-col gap-1">
-                    Result
-                    <select
-                      className="border rounded px-2 py-1"
-                      value={rowResult}
-                      onChange={(event) => {
-                        updateConditionSetRow(index, (existing) => ({
-                          ...existing,
-                          result: event.target.value as IFieldConditionResult,
-                        }))
-                      }}
-                    >
-                      {conditionResultOptions.map((option) => (
-                        <option key={option} value={option}>{option}</option>
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
                       ))}
                     </select>
                   </label>
@@ -515,7 +520,11 @@ const FieldOverrideEditors = ({
                       type={rowValueKind === 'number' ? 'number' : 'text'}
                       value={rowValueText}
                       onChange={(event) => {
-                        const parsed = parseConditionValue(rowValueKind, event.target.value, rowValueBool)
+                        const parsed = parseConditionValue(
+                          rowValueKind,
+                          event.target.value,
+                          rowValueBool
+                        )
                         updateConditionSetRow(index, (existing) => ({
                           ...existing,
                           value: parsed,
@@ -547,7 +556,12 @@ const FieldOverrideEditors = ({
               onClick={() => {
                 const nextRows = [
                   ...conditionRows,
-                  { field: fieldProp, operator: 'eq', value: '', result: 'include' } as IFieldCondition,
+                  {
+                    field: fieldProp,
+                    operator: 'eq',
+                    value: '',
+                    result: 'include',
+                  } as IFieldCondition,
                 ]
                 onConditionsSetChange({
                   logic: conditionsSet?.logic ?? 'and',
@@ -564,7 +578,9 @@ const FieldOverrideEditors = ({
 
       <div className="border rounded p-2">
         <h4 className="text-sm font-semibold mb-1">General Settings</h4>
-        <p className="text-xs text-slate-600 mb-2">Shared settings (description presentation, label style, class name)</p>
+        <p className="text-xs text-slate-600 mb-2">
+          Shared settings (description presentation, label style, class name)
+        </p>
         <div className="mb-2 flex items-center gap-2">
           <Button
             size="xs"
@@ -594,9 +610,15 @@ const FieldOverrideEditors = ({
           Description Presentation
           <select
             className="border rounded px-2 py-1"
-            value={typeof generalSettings.descriptionPresentation === 'string' ? generalSettings.descriptionPresentation : ''}
+            value={
+              typeof generalSettings.descriptionPresentation === 'string'
+                ? generalSettings.descriptionPresentation
+                : ''
+            }
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, 'descriptionPresentation', event.target.value))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, 'descriptionPresentation', event.target.value)
+              )
             }}
           >
             <option value="">(none)</option>
@@ -610,7 +632,9 @@ const FieldOverrideEditors = ({
             type="checkbox"
             checked={generalSettings.boldLabel === true}
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, 'boldLabel', event.target.checked, true))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, 'boldLabel', event.target.checked, true)
+              )
             }}
           />
           Bold label
@@ -621,7 +645,9 @@ const FieldOverrideEditors = ({
             type="checkbox"
             checked={generalSettings.smallLabel === true}
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, 'smallLabel', event.target.checked, true))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, 'smallLabel', event.target.checked, true)
+              )
             }}
           />
           Small label
@@ -633,7 +659,9 @@ const FieldOverrideEditors = ({
             className="border rounded px-2 py-1"
             value={typeof generalSettings.className === 'string' ? generalSettings.className : ''}
             onChange={(event) => {
-              onGeneralSettingsChange(updateRecordValue(generalSettings, 'className', event.target.value))
+              onGeneralSettingsChange(
+                updateRecordValue(generalSettings, 'className', event.target.value)
+              )
             }}
           />
         </label>
@@ -671,9 +699,14 @@ const FieldOverrideEditors = ({
               <input
                 className="border rounded px-2 py-1"
                 type="number"
-                value={typeof typeSpecificSettings.step === 'number' ? typeSpecificSettings.step : ''}
+                value={
+                  typeof typeSpecificSettings.step === 'number' ? typeSpecificSettings.step : ''
+                }
                 onChange={(event) => {
-                  setTypeSpecific('step', event.target.value === '' ? undefined : Number(event.target.value))
+                  setTypeSpecific(
+                    'step',
+                    event.target.value === '' ? undefined : Number(event.target.value)
+                  )
                 }}
               />
             </label>
@@ -692,7 +725,11 @@ const FieldOverrideEditors = ({
               <input
                 className="border rounded px-2 py-1"
                 type="number"
-                value={typeof typeSpecificSettings.nonNullDefaultValue === 'number' ? typeSpecificSettings.nonNullDefaultValue : ''}
+                value={
+                  typeof typeSpecificSettings.nonNullDefaultValue === 'number'
+                    ? typeSpecificSettings.nonNullDefaultValue
+                    : ''
+                }
                 onChange={(event) => {
                   setTypeSpecific(
                     'nonNullDefaultValue',
@@ -739,17 +776,31 @@ const FieldOverrideEditors = ({
           </div>
         ) : null}
 
-        {effectiveType === 'select' ? (
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={typeSpecificSettings.allowNull !== false}
-              onChange={(event) => {
-                setTypeSpecific('allowNull', event.target.checked, true)
-              }}
-            />
-            Allow null selection
-          </label>
+        {effectiveType === 'select' ||
+        effectiveType === 'stateSelector' ||
+        effectiveType === 'selectOrText' ? (
+          <div className="grid grid-cols-1 gap-2 text-sm">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={typeSpecificSettings.allowNull !== false}
+                onChange={(event) => {
+                  setTypeSpecific('allowNull', event.target.checked, true)
+                }}
+              />
+              Allow null selection
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={typeSpecificSettings.showDescriptionForSelected === true}
+                onChange={(event) => {
+                  setTypeSpecific('showDescriptionForSelected', event.target.checked, true)
+                }}
+              />
+              Show selected option description
+            </label>
+          </div>
         ) : null}
 
         {effectiveType === 'radio' ? (
@@ -757,7 +808,11 @@ const FieldOverrideEditors = ({
             Layout
             <select
               className="border rounded px-2 py-1"
-              value={typeof typeSpecificSettings.layout === 'string' ? typeSpecificSettings.layout : 'vertical'}
+              value={
+                typeof typeSpecificSettings.layout === 'string'
+                  ? typeSpecificSettings.layout
+                  : 'vertical'
+              }
               onChange={(event) => {
                 setTypeSpecific('layout', event.target.value)
               }}
@@ -824,7 +879,9 @@ const FieldOverrideEditors = ({
               Height
               <input
                 className="border rounded px-2 py-1"
-                value={typeof typeSpecificSettings.height === 'string' ? typeSpecificSettings.height : ''}
+                value={
+                  typeof typeSpecificSettings.height === 'string' ? typeSpecificSettings.height : ''
+                }
                 onChange={(event) => {
                   setTypeSpecific('height', event.target.value)
                 }}
@@ -834,7 +891,11 @@ const FieldOverrideEditors = ({
               Enabled shapes field
               <input
                 className="border rounded px-2 py-1"
-                value={typeof typeSpecificSettings.enabledShapesField === 'string' ? typeSpecificSettings.enabledShapesField : ''}
+                value={
+                  typeof typeSpecificSettings.enabledShapesField === 'string'
+                    ? typeSpecificSettings.enabledShapesField
+                    : ''
+                }
                 onChange={(event) => {
                   setTypeSpecific('enabledShapesField', event.target.value)
                 }}
@@ -845,7 +906,11 @@ const FieldOverrideEditors = ({
               <input
                 className="border rounded px-2 py-1"
                 type="number"
-                value={typeof typeSpecificSettings.maxLineStringPoints === 'number' ? typeSpecificSettings.maxLineStringPoints : ''}
+                value={
+                  typeof typeSpecificSettings.maxLineStringPoints === 'number'
+                    ? typeSpecificSettings.maxLineStringPoints
+                    : ''
+                }
                 onChange={(event) => {
                   setTypeSpecific(
                     'maxLineStringPoints',
@@ -862,9 +927,44 @@ const FieldOverrideEditors = ({
             Key Field
             <input
               className="border rounded px-2 py-1"
-              value={typeof typeSpecificSettings.keyField === 'string' ? typeSpecificSettings.keyField : ''}
+              value={
+                typeof typeSpecificSettings.keyField === 'string'
+                  ? typeSpecificSettings.keyField
+                  : ''
+              }
               onChange={(event) => {
                 setTypeSpecific('keyField', event.target.value)
+              }}
+            />
+          </label>
+        ) : null}
+
+        {effectiveType === 'file_upload' || effectiveType === 'fileUpload' ? (
+          <label className="flex flex-col gap-1 text-sm">
+            Accepted file types
+            <input
+              className="border rounded px-2 py-1"
+              placeholder=".csv, .xlsx, image/*"
+              value={
+                Array.isArray(typeSpecificSettings.acceptedFileTypes)
+                  ? typeSpecificSettings.acceptedFileTypes.join(', ')
+                  : typeof typeSpecificSettings.acceptedFileTypes === 'string'
+                    ? typeSpecificSettings.acceptedFileTypes
+                    : ''
+              }
+              onChange={(event) => {
+                const raw = event.target.value.trim()
+                if (raw === '') {
+                  setTypeSpecific('acceptedFileTypes', undefined)
+                  return
+                }
+
+                const values = raw
+                  .split(',')
+                  .map((candidate) => candidate.trim())
+                  .filter((candidate) => candidate.length > 0)
+
+                setTypeSpecific('acceptedFileTypes', values.length <= 1 ? values[0] : values)
               }}
             />
           </label>
@@ -873,10 +973,16 @@ const FieldOverrideEditors = ({
         {effectiveType !== 'number' &&
         effectiveType !== 'json' &&
         effectiveType !== 'select' &&
+        effectiveType !== 'stateSelector' &&
+        effectiveType !== 'selectOrText' &&
         effectiveType !== 'radio' &&
         effectiveType !== 'geometry' &&
-        effectiveType !== 'objectList' ? (
-          <p className="text-xs text-slate-500">No dedicated type-specific settings for this field type yet.</p>
+        effectiveType !== 'objectList' &&
+        effectiveType !== 'file_upload' &&
+        effectiveType !== 'fileUpload' ? (
+          <p className="text-xs text-slate-500">
+            No dedicated type-specific settings for this field type yet.
+          </p>
         ) : null}
       </div>
     </div>
