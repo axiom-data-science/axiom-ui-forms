@@ -824,6 +824,212 @@ describe('schemaToFormHelpers', () => {
       expect(testObjectField.fields?.length).toBe(2)
     })
 
+    it('preserves array-level label/description for array-of-strings fields', () => {
+      const arrayMetadataSchema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          analysis_sound_source_codes: {
+            type: 'array',
+            title: 'Sound Source Codes',
+            description: 'PARS species/sound source codes, e.g. RIWH, HUWH',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      }
+
+      const form = schemaToFormObject(arrayMetadataSchema)
+      const field = form.fields?.find((f) => f.id === 'analysis_sound_source_codes') as any
+
+      expect(field).toBeDefined()
+      expect(field.multiple).toBe(true)
+      expect(field.label).toBe('Sound Source Codes')
+      expect(field.description).toBe('PARS species/sound source codes, e.g. RIWH, HUWH')
+    })
+
+    it('preserves schema label/description for deeply nested analysis_sound_source_codes in override layouts', () => {
+      const deepSchema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          deployments: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                recordings: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      analyses: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            analysis_sound_source_codes: {
+                              type: 'array',
+                              title: 'Sound Source Codes',
+                              description: 'PARS species/sound source codes, e.g. RIWH, HUWH',
+                              items: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: deepSchema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'deployments',
+                type: 'object',
+                multiple: true,
+                fields: [
+                  {
+                    prop: 'deployments[].recordings',
+                    type: 'object',
+                    multiple: true,
+                    fields: [
+                      {
+                        prop: 'deployments[].recordings[].analyses',
+                        type: 'object',
+                        multiple: true,
+                        fields: [{ prop: 'analysis_sound_source_codes' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const deploymentsField = form.fields?.find((f) => f.id === 'deployments') as any
+      expect(deploymentsField).toBeDefined()
+
+      const recordingsField = deploymentsField.fields?.find((f: any) => f.id === 'recordings')
+      expect(recordingsField).toBeDefined()
+
+      const analysesField = recordingsField.fields?.find((f: any) => f.id === 'analyses')
+      expect(analysesField).toBeDefined()
+
+      const soundSourceCodesField = analysesField.fields?.find(
+        (f: any) => f.id === 'analysis_sound_source_codes'
+      )
+      expect(soundSourceCodesField).toBeDefined()
+      expect(soundSourceCodesField.multiple).toBe(true)
+      expect(soundSourceCodesField.label).toBe('Sound Source Codes')
+      expect(soundSourceCodesField.description).toBe(
+        'PARS species/sound source codes, e.g. RIWH, HUWH'
+      )
+    })
+
+    it('preserves schema metadata for analysis_sound_source_codes when using fully qualified nested prop path', () => {
+      const deepSchema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          deployments: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                recordings: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      analyses: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            analysis_sound_source_codes: {
+                              type: 'array',
+                              title: 'Sound Source Codes',
+                              description: 'PARS species/sound source codes, e.g. RIWH, HUWH',
+                              items: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: deepSchema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: 'deployments',
+                type: 'object',
+                multiple: true,
+                fields: [
+                  {
+                    prop: 'deployments[].recordings',
+                    type: 'object',
+                    multiple: true,
+                    fields: [
+                      {
+                        prop: 'deployments[].recordings[].analyses',
+                        type: 'object',
+                        multiple: true,
+                        fields: [
+                          {
+                            prop: 'deployments[].recordings[].analyses[].analysis_sound_source_codes',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const deploymentsField = form.fields?.find((f) => f.id === 'deployments') as any
+      expect(deploymentsField).toBeDefined()
+
+      const recordingsField = deploymentsField.fields?.find((f: any) => f.id === 'recordings')
+      expect(recordingsField).toBeDefined()
+
+      const analysesField = recordingsField.fields?.find((f: any) => f.id === 'analyses')
+      expect(analysesField).toBeDefined()
+
+      const soundSourceCodesField = analysesField.fields?.find(
+        (f: any) => f.id === 'analysis_sound_source_codes'
+      )
+      expect(soundSourceCodesField).toBeDefined()
+      expect(soundSourceCodesField.multiple).toBe(true)
+      expect(soundSourceCodesField.label).toBe('Sound Source Codes')
+      expect(soundSourceCodesField.description).toBe(
+        'PARS species/sound source codes, e.g. RIWH, HUWH'
+      )
+    })
+
     it('applies field overrides to array item properties using bracket notation', () => {
       const form = overridesAndSchemaToFormObject({
         schema,
