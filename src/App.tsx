@@ -48,7 +48,6 @@ import PlatformsMetadata from '@/Platforms/PlatformsMetadata'
 import MODLForm from '@/Form/MODL/MODLForm'
 import COLLABWaterLevelForm from '@/WaterLevel/COLLAB/COLLABWaterLevelForm'
 import COLLABWaterLevelFormSheet from '@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet'
-import PAMForm from '@/Form/PAM/PAMForm'
 import COLLABWaterLevelFormDev from '@/WaterLevel/COLLAB/COLLABWaterLevelFormDev'
 import TestForm from '@/WaterLevel/tester/Form'
 import AssetForm from '@/WaterLevel/COLLAB/AssetManager/Form'
@@ -68,6 +67,7 @@ import AllForms from '@/Form/TestForms/AllForms'
 import NestedDependents from '@/Form/TestForms/NestedDependents/NestedDependents'
 import { DragDropSandbox, ManagementUI } from '@/Management'
 import PARSForm from '@/Form/PAM/PARS/PARS'
+import { ProjectForm as PAMProjectForm, SiteForm as PAMSiteForm } from '@/Form/PAM/PAMForms'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -281,8 +281,11 @@ const App = (): ReactElement => {
             <Route path="/modl" element={<MODLForm />}>
               <Route path="*" element={<MODLForm />} />
             </Route>
-            <Route path="/PAM" element={<PAMForm />}>
-              <Route path="*" element={<PAMForm />} />
+            <Route path="/PAM/project" element={<PAMProjectForm />}>
+              <Route path="*" element={<PAMProjectForm />} />
+            </Route>
+            <Route path="/PAM/site" element={<PAMSiteForm />}>
+              <Route path="*" element={<PAMSiteForm />} />
             </Route>
             <Route path="/PARS" element={<PARSForm />}>
               <Route path="*" element={<PARSForm />} />
