@@ -228,7 +228,7 @@
                           "layout": "grid3",
                           "label": "",
                           "settings":{
-                            "className": "px-0 pb-0"
+                            "className": "px-0 py-0"
                           },
                           "fields": [
                             {
