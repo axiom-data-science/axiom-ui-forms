@@ -24,5 +24,6 @@
       "type": "string",
       "enum": ["option1", "option2", "option3"]
     }
-  }
+  },
+  "required": ["testEnum"]
 }

@@ -51,12 +51,14 @@ describe('schemaToFormHelpers', () => {
     it('returns errors for invalid data', () => {
       const errors = validateAgainstSchema(schema, { age: -5 })
       expect(errors).toBeDefined()
-      expect(errors?.[0]).toContain('must be >= 0')
+      expect(errors?.[0]?.message).toContain('must be >= 0')
+      expect(errors?.[0]?.field).toBe('age')
     })
     it('returns errors for missing required field', () => {
       const errors = validateAgainstSchema(schema, {})
       expect(errors).toBeDefined()
-      expect(errors?.[0]).toContain('required')
+      expect(errors?.[0]?.message).toContain('required')
+      expect(errors?.[0]?.field).toBe('age')
     })
     it('returns errors for invalid schema', () => {
       // Invalid: "properties" must be an object, not an array
@@ -67,7 +69,8 @@ describe('schemaToFormHelpers', () => {
       const errors = validateAgainstSchema(invalidSchema, { age: 10 })
       console.log(errors)
       expect(errors).toBeDefined()
-      expect(errors?.[0]).toContain('properties must be object')
+      expect(errors?.[0]?.message).toContain('properties must be object')
+      expect(errors?.[0]?.field).toBe('$schema')
     })
   })
 
