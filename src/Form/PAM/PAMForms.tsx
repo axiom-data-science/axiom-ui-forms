@@ -30,7 +30,6 @@ const SiteForm = (): ReactElement => {
 
   return (
     <FormWithEditorOverlay
-    debug={true}
       label="PAM Site"
       schemaState={schemaState}
       fieldOverrideState={fieldOverrideState}
