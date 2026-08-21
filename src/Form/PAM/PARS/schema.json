@@ -1,0 +1,72 @@
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PAM Deployment",
+      "description": "One deployment event including recordings and analyses",
+      "type": "object",
+      "properties": {
+        "deployment_code": { "type": "string", "title": "Deployment Code", "description": "Unique deployment identifier (links all PARS CSVs)" },
+        "monitoring_start_datetime": { "type": "string", "format": "date-time", "title": "Monitoring Start" },
+        "monitoring_end_datetime": { "type": "string", "format": "date-time", "title": "Monitoring End" },
+        "deployment_platform_type_code": { "type": "string", "title": "Platform Type", "enum": ["BOTTOM_MOUNTED_MOORING", "DRIFTING_BUOY", "ELECTRIC_GLIDER", "MOORED_SURFACE_BUOY", "TOWED_ARRAY", "WAVE_GLIDER"] },
+        "deployment_platform_id": { "type": "string", "title": "Platform ID" },
+        "deployment_url": { "type": "string", "format": "uri", "title": "Deployment URL" },
+        "dynamic_management_platform": { "type": "boolean", "title": "Dynamic Management Platform" },
+        "deployment_water_depth_m": { "type": "number", "title": "Water Depth (m)", "minimum": 0 },
+        "points_of_contact": {
+          "type": "array",
+          "title": "Points of Contact",
+          "items": {
+            "type": "object",
+            "properties": {
+              "contact_name": { "type": "string", "title": "Full Name" },
+              "contact_email": { "type": "string", "format": "email", "title": "Email" }
+            },
+            "required": ["contact_name", "contact_email"]
+          }
+        },
+        "gps_data_uri": { "type": "string", "format": "uri", "title": "GPS Track File", "description": "URI to gpsdata.csv for mobile deployments" },
+        "recordings": {
+          "type": "array",
+          "title": "Recordings",
+          "items": {
+            "type": "object",
+            "properties": {
+              "recording_device_code": { "type": "string", "title": "Device Code", "description": "e.g. SOUNDTRAP-6078" },
+              "recording_device_type_code": { "type": "string", "title": "Device Type Code", "description": "e.g. SOUNDTRAP, DMON" },
+              "recording_device_depth_m": { "type": "number", "title": "Hydrophone Depth (m)", "minimum": 0 },
+              "recording_sample_rate_khz": { "type": "number", "title": "Sample Rate (kHz)", "minimum": 0 },
+              "recording_duration_secs": { "type": "number", "title": "Recording Duration (s)", "minimum": 0 },
+              "recording_interval_secs": { "type": "number", "title": "Recording Interval (s)", "minimum": 0 },
+              "recording_bit_depth": { "type": "integer", "title": "Bit Depth", "minimum": 0 },
+              "recording_n_channels": { "type": "integer", "title": "Number of Channels", "minimum": 0, "default": 1 },
+              "recording_timezone": { "type": "string", "title": "Recording Timezone" },
+              "analyses": {
+                "type": "array",
+                "title": "Analyses",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "analysis_organization_code": { "type": "string", "title": "Analysis Organization Code" },
+                    "analysis_sound_source_codes": { "type": "array", "title": "Sound Source Codes", "items": { "type": "string" } },
+                    "analysis_start_datetime": { "type": "string", "format": "date-time", "title": "Analysis Start" },
+                    "analysis_end_datetime": { "type": "string", "format": "date-time", "title": "Analysis End" },
+                    "analysis_sample_rate_khz": { "type": "number", "title": "Analysis Sample Rate (kHz)", "minimum": 0 },
+                    "analysis_min_frequency_khz": { "type": "number", "title": "Min Frequency (kHz)", "minimum": 0, "default": 0 },
+                    "analysis_max_frequency_khz": { "type": "number", "title": "Max Frequency (kHz)", "minimum": 0 },
+                    "analysis_processing_code": { "type": "string", "title": "Processing Code", "enum": ["POST_PROCESSED", "REAL_TIME"] },
+                    "analysis_protocol_reference": { "type": "string", "title": "Protocol Reference" },
+                    "analysis_citations": { "type": "string", "title": "Citations" },
+                    "analysis_detector_code": { "type": "string", "title": "Detector Code" },
+                    "analysis_detector_version": { "type": "string", "title": "Detector Version" },
+                    "detections_data_uri": { "type": "string", "format": "uri", "title": "Detections File" }
+                  },
+                  "required": ["analysis_organization_code", "analysis_sound_source_codes", "analysis_start_datetime", "analysis_end_datetime", "analysis_sample_rate_khz", "analysis_min_frequency_khz", "analysis_max_frequency_khz", "analysis_processing_code", "analysis_protocol_reference", "analysis_detector_code", "analysis_detector_version"]
+                }
+              }
+            },
+            "required": ["recording_device_code", "recording_device_type_code", "recording_device_depth_m", "recording_sample_rate_khz", "recording_duration_secs", "recording_interval_secs", "recording_bit_depth", "recording_n_channels", "recording_timezone"]
+          }
+        }
+      },
+      "required": ["deployment_code", "monitoring_start_datetime", "monitoring_end_datetime", "deployment_platform_type_code", "deployment_water_depth_m", "points_of_contact", "recordings"]
+    }

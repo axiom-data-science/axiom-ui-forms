@@ -48,7 +48,6 @@ import PlatformsMetadata from ***REMOVED***@/Platforms/PlatformsMetadata***REMOV
 import MODLForm from ***REMOVED***@/Form/MODL/MODLForm***REMOVED***
 import COLLABWaterLevelForm from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelForm***REMOVED***
 import COLLABWaterLevelFormSheet from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelFormFromSheet***REMOVED***
-import MakaraForm from ***REMOVED***@/Form/PAM/MakaraForm***REMOVED***
 import COLLABWaterLevelFormDev from ***REMOVED***@/WaterLevel/COLLAB/COLLABWaterLevelFormDev***REMOVED***
 import TestForm from ***REMOVED***@/WaterLevel/tester/Form***REMOVED***
 import AssetForm from ***REMOVED***@/WaterLevel/COLLAB/AssetManager/Form***REMOVED***
@@ -68,6 +67,8 @@ import AllForms from ***REMOVED***@/Form/TestForms/AllForms***REMOVED***
 import NestedDependents from ***REMOVED***@/Form/TestForms/NestedDependents/NestedDependents***REMOVED***
 import { DragDropSandbox, ManagementUI } from ***REMOVED***@/Management***REMOVED***
 import COLLABDebug from ***REMOVED***@/WaterLevel/COLLAB/Debug/COLLABDebug***REMOVED***
+import PARSForm from ***REMOVED***@/Form/PAM/PARS/PARS***REMOVED***
+import { ProjectForm as PAMProjectForm, SiteForm as PAMSiteForm } from ***REMOVED***@/Form/PAM/PAMForms***REMOVED***
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -287,8 +288,14 @@ const App = (): ReactElement => {
             <Route path="/modl" element={<MODLForm />}>
               <Route path="*" element={<MODLForm />} />
             </Route>
-            <Route path="/PAM/makara" element={<MakaraForm />}>
-              <Route path="*" element={<MakaraForm />} />
+            <Route path="/PAM/project" element={<PAMProjectForm />}>
+              <Route path="*" element={<PAMProjectForm />} />
+            </Route>
+            <Route path="/PAM/site" element={<PAMSiteForm />}>
+              <Route path="*" element={<PAMSiteForm />} />
+            </Route>
+            <Route path="/PARS" element={<PARSForm />}>
+              <Route path="*" element={<PARSForm />} />
             </Route>
             <Route path="/water-level-test" element={<TestForm />}>
               <Route path="*" element={<TestForm />} />

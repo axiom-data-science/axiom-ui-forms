@@ -1,8 +1,9 @@
 import { parseCSV, type ParsedCSV } from ***REMOVED***./csvParser***REMOVED***
-import { CloudUpload, File, FileImage, FilePlay, FileSpreadsheet, FileText, X } from ***REMOVED***lucide-react***REMOVED***
+import { CloudUpload, File, FileImage, FilePlay, FileSpreadsheet, FileText, Map as MapIcon, X } from ***REMOVED***lucide-react***REMOVED***
 import { useEffect, useState, useRef, type ReactElement } from ***REMOVED***react***REMOVED***
 import { Loader, Table, Tooltip, utils } from ***REMOVED***@axdspub/axiom-ui-utilities***REMOVED***
 import { IFieldInputProps } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { IMap, IStyleableMapProps, MapLoader } from ***REMOVED***@axdspub/axiom-maps***REMOVED***
 
 type IStoredFileEntry = {
   file: File
@@ -21,6 +22,7 @@ type FileTypeFlags = {
   isPdf: boolean
   isCsv: boolean
   isText: boolean
+  isGeojson: boolean
 }
 
 const getFileTypeFlags = (file?: File | null, fileName?: string | null): FileTypeFlags => {
@@ -34,7 +36,8 @@ const getFileTypeFlags = (file?: File | null, fileName?: string | null): FileTyp
     isAudio: type.startsWith(***REMOVED***audio/***REMOVED***) || /\.(mp3|wav|ogg|m4a|flac|aac)$/i.test(lowerName),
     isPdf: type === ***REMOVED***application/pdf***REMOVED*** || lowerName.endsWith(***REMOVED***.pdf***REMOVED***),
     isCsv: Boolean(type.match(/csv/)) || lowerName.endsWith(***REMOVED***.csv***REMOVED***),
-    isText: type.startsWith(***REMOVED***text/***REMOVED***) || /\.(txt|md|csv|log)$/i.test(lowerName)
+    isText: type.startsWith(***REMOVED***text/***REMOVED***) || /\.(txt|md|csv|log)$/i.test(lowerName),
+    isGeojson: Boolean(type.match(/geojson/)) || lowerName.endsWith(***REMOVED***.geojson***REMOVED***)
   }
 }
 
@@ -49,6 +52,8 @@ const FileTypeIcon = ({ fileType }: { fileType: FileTypeFlags }) => {
     return <FileText size={14} />
   } else if (fileType.isCsv) {
     return <FileSpreadsheet size={14} />
+  } else if(fileType.isGeojson) {
+    return <MapIcon size={14} />
   } else if(fileType.isText) {
     return <FileText size={14} />
   }
@@ -95,6 +100,61 @@ const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | 
       )
     }
     </>
+  )
+}
+
+const GeojsonPreview = ({ file }: { file: File }) => {
+  const [geoJson, setGeoJson] = useState<object | null>(null)
+
+  useEffect(() => {
+    file.text().then((text) => {
+      try {
+        setGeoJson(JSON.parse(text))
+      } catch {
+        setGeoJson(null)
+      }
+    })
+  }, [file])
+
+  if (!geoJson) {
+    return <Loader size=***REMOVED***xs***REMOVED*** className=***REMOVED***align-left***REMOVED*** />
+  }
+
+  const MAP_CONFIG: IStyleableMapProps = {
+    baseLayerKey: ***REMOVED***hybrid***REMOVED***,
+    height: ***REMOVED***500px***REMOVED***,
+    width: ***REMOVED***100%***REMOVED***,
+    mapLibraryKey: ***REMOVED***mapbox***REMOVED***,
+    
+
+    onMapLoaded: (mapInstance) => {
+      const m = mapInstance?.data?.map
+      if (m) {
+        m.addLayer({
+          id: ***REMOVED***geojson-layer***REMOVED***,
+          type: ***REMOVED***geoJson***REMOVED***,
+          label: ***REMOVED******REMOVED***,
+          zIndex: 0,
+          isBaseLayer: false,
+          options: {
+            geoJson:(geoJson as {features: any[]}).features.map(f=>{
+              return {
+                ...f,
+                properties:{
+                  color:***REMOVED***#FFF***REMOVED***,
+                  ...f.properties
+                }
+              }
+            })
+          }
+        })
+
+
+      }
+    }
+  }
+  return (
+    <MapLoader {...MAP_CONFIG} />
   )
 }
 
@@ -154,7 +214,9 @@ const FileUploadPreview = ({
             title="Uploaded PDF preview"
             className="mt-2 h-125 w-full rounded-md border border-slate-200 shadow-lg"
           />
-        ) : fileType.isCsv && file ?  (
+        ) : fileType.isGeojson && file ?  (
+          <GeojsonPreview file={file} />
+        )  : fileType.isCsv && file ?  (
           <CSVPreview file={file} parsedData={csvData} />
         ) : resolvedPreviewUrl ? (
           <a
