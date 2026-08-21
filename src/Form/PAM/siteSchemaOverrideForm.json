@@ -15,6 +15,10 @@
           "type": "objectWrapper",
           "skip_path": true,
           "label": "Location",
+          "settings":{
+            "boldLabel": true
+          },
+          "layout": "grid3",
           "fields": [
             {
               "prop": "latitude",
@@ -27,6 +31,12 @@
               "settings": {
 
               }
+            },
+            {
+              "prop": "water_depth_m"
+            },
+            {
+              "prop": "time_zone"
             }
           ]
         }
@@ -49,8 +59,8 @@
             "boldLabel": true
           },
           "fields": [
-            {"prop": "monitoring_start_datetime"},
-            {"prop": "monitoring_end_datetime"}
+            {"prop": "deployments[].monitoring_start_datetime"},
+            {"prop": "deployments[].monitoring_end_datetime"}
           ]
         },
         {
@@ -62,11 +72,11 @@
             "boldLabel": true
           },
           "fields": [
-            {"prop": "deployment_platform_type_code"},
+            {"prop": "deployments[].deployment_platform_type_code"},
             {
-              "prop": "deployment_platform_id",
+              "prop": "deployments[].deployment_platform_id",
               "settings": {
-                "descriptionPresentation": "inline"
+                "descriptionPresentation": "tooltip"
               }
             }
           ]
@@ -74,19 +84,31 @@
         {
           "id": "misc_deployment_info",
           "type": "objectWrapper",
-          "layout": "grid2",
           "label": "Misc",
           "settings":{
             "boldLabel": true
           },
           "fields": [
-            {"prop": "deployment_water_depth_m"},
-            {"prop": "deployment_url"},
-            {"prop": "dynamic_management_platform"}
+            {
+                  "prop": "deployments[].deployment_depth_m"
+            },
+            {
+              "prop": "deployments[].deployment_url",
+              "settings": {
+                "descriptionPresentation": "tooltip"
+              }
+          },
+            {"prop": "deployments[].dynamic_management_platform"}
 
           ]
         },
-        {"prop": "gps_data_uri", "type": "file_upload"}
+        {
+          "prop": "deployments[].gps_data_uri", "type": "file_upload",
+          "description": "Upload a GPS file if deployment is a trajectory",
+          "settings": {
+            "boldLabel": true
+          }
+        }
       ]
     },
     {
@@ -95,7 +117,7 @@
       "description": "Recording devices and analysis runs for this deployment",
       "fields": [
         {
-          "prop": "deployment[].recordings",
+          "prop": "deployments[].recordings",
           "type": "object",
           "multiple": true,
           "tabs": [
@@ -104,31 +126,59 @@
               "label": "Device & Config",
               "fields": [
                 {
-                  "prop": "recording_device_code"
+                  "id": "device_id_wrap",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "label": "Device identifiers",
+                  "settings":{
+                    "boldLabel": true
+                  },
+                  "fields": [
+                    {
+                      "prop": "deployments[].recordings[].recording_device_code"
+                    },
+                    {
+                      "prop": "deployments[].recordings[].recording_device_type_code"
+                    }
+                  ]
                 },
                 {
-                  "prop": "recording_device_type_code"
+                  "id": "device_config_wrap",
+                  "type": "objectWrapper",
+                  "layout": "grid3",
+                  "label": "Configurations",
+                  "settings":{
+                    "boldLabel": true
+                  },
+                  "fields": [
+                    {
+                      "prop": "deployments[].recordings[].recording_bit_depth"
+                    },
+                    {
+                      "prop": "deployments[].recordings[].recording_n_channels"
+                    },
+                    {
+                      "prop": "deployments[].recordings[].recording_sample_rate_khz"
+                    }
+
+                  ]
                 },
                 {
-                  "prop": "recording_device_depth_m"
-                },
-                {
-                  "prop": "recording_sample_rate_khz"
-                },
-                {
-                  "prop": "recording_duration_secs"
-                },
-                {
-                  "prop": "recording_interval_secs"
-                },
-                {
-                  "prop": "recording_bit_depth"
-                },
-                {
-                  "prop": "recording_n_channels"
-                },
-                {
-                  "prop": "recording_timezone"
+                  "id": "device_duration_wrap",
+                  "type": "objectWrapper",
+                  "label": "Duration & Interval",
+                  "settings":{
+                    "boldLabel": true
+                  },
+                  "fields": [
+                    {
+                      "prop": "deployments[].recordings[].recording_duration_secs"
+                    },
+                    {
+                      "prop": "deployments[].recordings[].recording_interval_secs"
+                    }
+
+                  ]
                 }
               ]
             },
@@ -137,39 +187,107 @@
               "label": "Analyses",
               "fields": [
                 {
-                  "prop": "deployment[].recordings[].analyses",
+                  "prop": "deployments[].recordings[].analyses",
+                  "label": "",
                   "fields": [
                     {
                       "prop": "analysis_organization_code"
                     },
                     {
-                      "prop": "analysis_sound_source_codes"
+                      "id": "analyses_time_wrap",
+                      "type": "objectWrapper",
+                      "layout": "grid2",
+                      "label": "Time range",
+                      "settings":{
+                        "boldLabel": true,
+                         "className": "bg-slate-100 px-0"
+                      },
+                      "fields": [
+                        {
+                          "prop": "analysis_start_datetime",
+                          "type": "datetime"
+                        },
+                        {
+                          "prop": "analysis_end_datetime",
+                          "type": "datetime"
+                        }
+                      ]
                     },
                     {
-                      "prop": "analysis_start_datetime",
-                      "type": "datetime"
+                      "id": "analyses_configuration_wrap",
+                      "label": "Analysis Configuration",
+                      "type": "objectWrapper",
+                      "settings":{
+                        "boldLabel": true,
+                         "className": "bg-slate-100 px-0"
+                      },
+                      "fields":[
+                        {
+                          "id": "analyses_configuration_wrap2",
+                          "type": "objectWrapper",
+                          "layout": "grid3",
+                          "label": "",
+                          "settings":{
+                            "className": "px-0 pb-0"
+                          },
+                          "fields": [
+                            {
+                              "prop": "analysis_sample_rate_khz",
+                              "settings": {
+                                "descriptionPresentation": "tooltip"
+                              }
+                            },
+                            {
+                              "prop": "analysis_min_frequency_khz",
+                              "settings": {
+                                "descriptionPresentation": "tooltip"
+                              }
+                            },
+                            {
+                              "prop": "analysis_max_frequency_khz",
+                              "settings": {
+                                "descriptionPresentation": "tooltip"
+                              }
+                            }
+
+                          ]
+                        },
+
+                        {
+                          "prop": "analysis_sound_source_codes",
+                          "settings": {
+                            "className": "p-4 bg-slate-200"
+                          }
+                        }
+                      ]
                     },
                     {
-                      "prop": "analysis_end_datetime",
-                      "type": "datetime"
+                      "id": "analyses_detector_wrap",
+                      "type": "objectWrapper",
+                      "layout": "grid2",
+                      "label": "Detector",
+                      "settings":{
+                        "boldLabel": true,
+                         "className": "bg-slate-100 px-0"
+                      },
+                      "fields": [
+                       {
+                          "prop": "analysis_detector_code",
+                          "settings": {
+                            "descriptionPresentation": "tooltip"
+                          }
+                        },
+                        {
+                          "prop": "analysis_detector_version",
+                          "settings": {
+                            "descriptionPresentation": "tooltip"
+                          }
+                        }
+                      ]
                     },
+
                     {
                       "prop": "analysis_processing_code"
-                    },
-                    {
-                      "prop": "analysis_detector_code"
-                    },
-                    {
-                      "prop": "analysis_detector_version"
-                    },
-                    {
-                      "prop": "analysis_sample_rate_khz"
-                    },
-                    {
-                      "prop": "analysis_min_frequency_khz"
-                    },
-                    {
-                      "prop": "analysis_max_frequency_khz"
                     },
                     {
                       "prop": "analysis_protocol_reference"
@@ -179,7 +297,8 @@
                       "type": "long_text"
                     },
                     {
-                      "prop": "detections_data_uri"
+                      "prop": "detections_data_uri",
+                      "type": "file_upload"
                     }
                   ]
                 }
