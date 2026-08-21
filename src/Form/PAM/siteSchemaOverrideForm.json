@@ -1,0 +1,193 @@
+{
+  "id": "pam-site-form",
+  "label": "PAM Site",
+  "pages": [
+    {
+      "id": "pam_site",
+      "label": "Site",
+      "description": "Fixed monitoring location",
+      "fields": [
+        {
+              "prop": "site_code"
+        },
+        {
+          "id": "location",
+          "type": "objectWrapper",
+          "skip_path": true,
+          "label": "Location",
+          "fields": [
+            {
+              "prop": "latitude",
+              "settings": {
+
+              }
+            },
+            {
+              "prop": "longitude",
+              "settings": {
+
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pam_deployment",
+      "label": "Deployment",
+      "description": "Deployment event details",
+      "fields":  [
+        {
+          "prop": "deployment_code"
+        },
+        {
+          "id": "deployment_time_range",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "label": "Time range",
+          "settings":{
+            "boldLabel": true
+          },
+          "fields": [
+            {"prop": "monitoring_start_datetime"},
+            {"prop": "monitoring_end_datetime"}
+          ]
+        },
+        {
+          "id": "deployment_platform_description",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "label": "Platform",
+          "settings":{
+            "boldLabel": true
+          },
+          "fields": [
+            {"prop": "deployment_platform_type_code"},
+            {
+              "prop": "deployment_platform_id",
+              "settings": {
+                "descriptionPresentation": "inline"
+              }
+            }
+          ]
+        },
+        {
+          "id": "misc_deployment_info",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "label": "Misc",
+          "settings":{
+            "boldLabel": true
+          },
+          "fields": [
+            {"prop": "deployment_water_depth_m"},
+            {"prop": "deployment_url"},
+            {"prop": "dynamic_management_platform"}
+
+          ]
+        },
+        {"prop": "gps_data_uri", "type": "file_upload"}
+      ]
+    },
+    {
+      "id": "pam_recordings",
+      "label": "Recordings",
+      "description": "Recording devices and analysis runs for this deployment",
+      "fields": [
+        {
+          "prop": "deployment[].recordings",
+          "type": "object",
+          "multiple": true,
+          "tabs": [
+            {
+              "id": "recording_info",
+              "label": "Device & Config",
+              "fields": [
+                {
+                  "prop": "recording_device_code"
+                },
+                {
+                  "prop": "recording_device_type_code"
+                },
+                {
+                  "prop": "recording_device_depth_m"
+                },
+                {
+                  "prop": "recording_sample_rate_khz"
+                },
+                {
+                  "prop": "recording_duration_secs"
+                },
+                {
+                  "prop": "recording_interval_secs"
+                },
+                {
+                  "prop": "recording_bit_depth"
+                },
+                {
+                  "prop": "recording_n_channels"
+                },
+                {
+                  "prop": "recording_timezone"
+                }
+              ]
+            },
+            {
+              "id": "analyses_tab",
+              "label": "Analyses",
+              "fields": [
+                {
+                  "prop": "deployment[].recordings[].analyses",
+                  "fields": [
+                    {
+                      "prop": "analysis_organization_code"
+                    },
+                    {
+                      "prop": "analysis_sound_source_codes"
+                    },
+                    {
+                      "prop": "analysis_start_datetime",
+                      "type": "datetime"
+                    },
+                    {
+                      "prop": "analysis_end_datetime",
+                      "type": "datetime"
+                    },
+                    {
+                      "prop": "analysis_processing_code"
+                    },
+                    {
+                      "prop": "analysis_detector_code"
+                    },
+                    {
+                      "prop": "analysis_detector_version"
+                    },
+                    {
+                      "prop": "analysis_sample_rate_khz"
+                    },
+                    {
+                      "prop": "analysis_min_frequency_khz"
+                    },
+                    {
+                      "prop": "analysis_max_frequency_khz"
+                    },
+                    {
+                      "prop": "analysis_protocol_reference"
+                    },
+                    {
+                      "prop": "analysis_citations",
+                      "type": "long_text"
+                    },
+                    {
+                      "prop": "detections_data_uri"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

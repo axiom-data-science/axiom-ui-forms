@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PAM",
+  "type": "object",
+  "properties": {
+    "pam_project": {
+      "type": "object",
+      "title": "PAM Project",
+      "properties": {
+        "project_organization_code": {
+          "type": "string",
+          "title": "Organization Code",
+          "description": "PARS controlled vocabulary organization code"
+        },
+        "project_name": {
+          "type": "string",
+          "title": "Project Name"
+        },
+        "project_funding": {
+          "type": "string",
+          "title": "Project Funding",
+          "description": "Funding source or award number"
+        },
+        "points_of_contact": {
+            "type": "array",
+            "title": "Points of Contact",
+            "items": {
+            "type": "object",
+            "properties": {
+                "contact_name": {
+                "type": "string",
+                "title": "Full Name"
+                },
+                "contact_email": {
+                "type": "string",
+                "format": "email",
+                "title": "Email"
+                }
+            },
+            "required": [
+                "contact_name",
+                "contact_email"
+            ]
+            }
+        }
+      },
+      "required": [
+        "project_organization_code",
+        "project_name"
+      ]
+    }
+  }
+}
