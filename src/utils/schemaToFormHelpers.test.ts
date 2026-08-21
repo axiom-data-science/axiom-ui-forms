@@ -824,6 +824,212 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(testObjectField.fields?.length).toBe(2)
     })
 
+    it(***REMOVED***preserves array-level label/description for array-of-strings fields***REMOVED***, () => {
+      const arrayMetadataSchema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          analysis_sound_source_codes: {
+            type: ***REMOVED***array***REMOVED***,
+            title: ***REMOVED***Sound Source Codes***REMOVED***,
+            description: ***REMOVED***PARS species/sound source codes, e.g. RIWH, HUWH***REMOVED***,
+            items: {
+              type: ***REMOVED***string***REMOVED***,
+            },
+          },
+        },
+      }
+
+      const form = schemaToFormObject(arrayMetadataSchema)
+      const field = form.fields?.find((f) => f.id === ***REMOVED***analysis_sound_source_codes***REMOVED***) as any
+
+      expect(field).toBeDefined()
+      expect(field.multiple).toBe(true)
+      expect(field.label).toBe(***REMOVED***Sound Source Codes***REMOVED***)
+      expect(field.description).toBe(***REMOVED***PARS species/sound source codes, e.g. RIWH, HUWH***REMOVED***)
+    })
+
+    it(***REMOVED***preserves schema label/description for deeply nested analysis_sound_source_codes in override layouts***REMOVED***, () => {
+      const deepSchema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          deployments: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                recordings: {
+                  type: ***REMOVED***array***REMOVED***,
+                  items: {
+                    type: ***REMOVED***object***REMOVED***,
+                    properties: {
+                      analyses: {
+                        type: ***REMOVED***array***REMOVED***,
+                        items: {
+                          type: ***REMOVED***object***REMOVED***,
+                          properties: {
+                            analysis_sound_source_codes: {
+                              type: ***REMOVED***array***REMOVED***,
+                              title: ***REMOVED***Sound Source Codes***REMOVED***,
+                              description: ***REMOVED***PARS species/sound source codes, e.g. RIWH, HUWH***REMOVED***,
+                              items: {
+                                type: ***REMOVED***string***REMOVED***,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: deepSchema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***deployments***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                multiple: true,
+                fields: [
+                  {
+                    prop: ***REMOVED***deployments[].recordings***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    multiple: true,
+                    fields: [
+                      {
+                        prop: ***REMOVED***deployments[].recordings[].analyses***REMOVED***,
+                        type: ***REMOVED***object***REMOVED***,
+                        multiple: true,
+                        fields: [{ prop: ***REMOVED***analysis_sound_source_codes***REMOVED*** }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const deploymentsField = form.fields?.find((f) => f.id === ***REMOVED***deployments***REMOVED***) as any
+      expect(deploymentsField).toBeDefined()
+
+      const recordingsField = deploymentsField.fields?.find((f: any) => f.id === ***REMOVED***recordings***REMOVED***)
+      expect(recordingsField).toBeDefined()
+
+      const analysesField = recordingsField.fields?.find((f: any) => f.id === ***REMOVED***analyses***REMOVED***)
+      expect(analysesField).toBeDefined()
+
+      const soundSourceCodesField = analysesField.fields?.find(
+        (f: any) => f.id === ***REMOVED***analysis_sound_source_codes***REMOVED***
+      )
+      expect(soundSourceCodesField).toBeDefined()
+      expect(soundSourceCodesField.multiple).toBe(true)
+      expect(soundSourceCodesField.label).toBe(***REMOVED***Sound Source Codes***REMOVED***)
+      expect(soundSourceCodesField.description).toBe(
+        ***REMOVED***PARS species/sound source codes, e.g. RIWH, HUWH***REMOVED***
+      )
+    })
+
+    it(***REMOVED***preserves schema metadata for analysis_sound_source_codes when using fully qualified nested prop path***REMOVED***, () => {
+      const deepSchema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          deployments: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                recordings: {
+                  type: ***REMOVED***array***REMOVED***,
+                  items: {
+                    type: ***REMOVED***object***REMOVED***,
+                    properties: {
+                      analyses: {
+                        type: ***REMOVED***array***REMOVED***,
+                        items: {
+                          type: ***REMOVED***object***REMOVED***,
+                          properties: {
+                            analysis_sound_source_codes: {
+                              type: ***REMOVED***array***REMOVED***,
+                              title: ***REMOVED***Sound Source Codes***REMOVED***,
+                              description: ***REMOVED***PARS species/sound source codes, e.g. RIWH, HUWH***REMOVED***,
+                              items: {
+                                type: ***REMOVED***string***REMOVED***,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema: deepSchema,
+        formOverrides: [
+          {
+            fields: [
+              {
+                prop: ***REMOVED***deployments***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                multiple: true,
+                fields: [
+                  {
+                    prop: ***REMOVED***deployments[].recordings***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    multiple: true,
+                    fields: [
+                      {
+                        prop: ***REMOVED***deployments[].recordings[].analyses***REMOVED***,
+                        type: ***REMOVED***object***REMOVED***,
+                        multiple: true,
+                        fields: [
+                          {
+                            prop: ***REMOVED***deployments[].recordings[].analyses[].analysis_sound_source_codes***REMOVED***,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const deploymentsField = form.fields?.find((f) => f.id === ***REMOVED***deployments***REMOVED***) as any
+      expect(deploymentsField).toBeDefined()
+
+      const recordingsField = deploymentsField.fields?.find((f: any) => f.id === ***REMOVED***recordings***REMOVED***)
+      expect(recordingsField).toBeDefined()
+
+      const analysesField = recordingsField.fields?.find((f: any) => f.id === ***REMOVED***analyses***REMOVED***)
+      expect(analysesField).toBeDefined()
+
+      const soundSourceCodesField = analysesField.fields?.find(
+        (f: any) => f.id === ***REMOVED***analysis_sound_source_codes***REMOVED***
+      )
+      expect(soundSourceCodesField).toBeDefined()
+      expect(soundSourceCodesField.multiple).toBe(true)
+      expect(soundSourceCodesField.label).toBe(***REMOVED***Sound Source Codes***REMOVED***)
+      expect(soundSourceCodesField.description).toBe(
+        ***REMOVED***PARS species/sound source codes, e.g. RIWH, HUWH***REMOVED***
+      )
+    })
+
     it(***REMOVED***applies field overrides to array item properties using bracket notation***REMOVED***, () => {
       const form = overridesAndSchemaToFormObject({
         schema,

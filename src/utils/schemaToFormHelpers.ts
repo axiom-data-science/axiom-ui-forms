@@ -379,10 +379,20 @@ const schemaToFormField = ({
     }
   }
   if (schemaField.type === ***REMOVED***array***REMOVED*** && schemaField.items !== undefined) {
+    const arrayItemSchema = schemaField.items as JSONSchema6
+    // Array field metadata (title/description/etc.) should apply to the rendered
+    // multi-value field when item schema doesn***REMOVED***t define its own metadata.
+    const itemSchemaWithArrayMetadata: JSONSchema6 = {
+      ...arrayItemSchema,
+      title: arrayItemSchema.title ?? schemaField.title,
+      description: arrayItemSchema.description ?? schemaField.description,
+      examples: arrayItemSchema.examples ?? schemaField.examples,
+      default: arrayItemSchema.default ?? schemaField.default,
+    }
     return schemaToFormField({
-      schema: schemaField,
+      schema,
       property,
-      schemaField: schemaField.items as JSONSchema6,
+      schemaField: itemSchemaWithArrayMetadata,
       multiple: true,
       path: path.slice(),
     })
