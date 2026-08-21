@@ -6,6 +6,8 @@ import { IFormFieldOverride, IFormOverride } from ***REMOVED***@/Form/Creator/Fo
 import projectSchema from ***REMOVED***./project.json***REMOVED***
 import siteSchema from ***REMOVED***./site.json***REMOVED***
 import siteSchemaOverrideForm from ***REMOVED***./siteSchemaOverrideForm.json***REMOVED***
+import formValuesAtom from ***REMOVED***@/state/formValuesAtom***REMOVED***
+import { useAtom } from ***REMOVED***jotai***REMOVED***
 
 
 const ProjectForm = (): ReactElement => {
@@ -27,6 +29,7 @@ const SiteForm = (): ReactElement => {
   const schemaState = useState<JSONSchema6 | undefined>(siteSchema as JSONSchema6)
   const fieldOverrideState = useState<IFormFieldOverride[]>([])
   const formOverrideState = useState<IFormOverride | undefined>(siteSchemaOverrideForm as IFormOverride)
+  const [formValues, setFormValues] = useAtom(formValuesAtom)
 
   return (
     <FormWithEditorOverlay
@@ -34,6 +37,7 @@ const SiteForm = (): ReactElement => {
       schemaState={schemaState}
       fieldOverrideState={fieldOverrideState}
       formOverrideState={formOverrideState}
+      formValueState={[formValues, setFormValues]}
     />
   )
 }
