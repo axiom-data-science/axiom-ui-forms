@@ -44,6 +44,7 @@ import JSONWithOtherFields, {
   JSONWithOtherFieldsForm,
 } from ***REMOVED***@/Form/TestForms/JSONWithOtherFields/JSONWithOtherFields***REMOVED***
 import FormWithPagesAndSubmitButton from ***REMOVED***@/Form/TestForms/FormWithPagesAndSubmitButton/FormWithPagesAndSubmitButton***REMOVED***
+import SchemaValidationExample from ***REMOVED***@/Form/TestForms/OverrideOfSchemaArray/SchemaValidationExample***REMOVED***
 import {
   EmbeddedArraysForm,
   EmbeddedArraysFromSchemaWithOverrides,
@@ -239,6 +240,11 @@ const forms = [
     label: ***REMOVED***Embedded Arrays from schema with overrides***REMOVED***,
     path: ***REMOVED***embedded-arrays-schema-with-overrides***REMOVED***,
     view: EmbeddedArraysFromSchemaWithOverrides,
+  },
+  {
+    label: ***REMOVED***Schema validation examples***REMOVED***,
+    path: ***REMOVED***schema-validation-examples***REMOVED***,
+    view: SchemaValidationExample
   },
 ]
 

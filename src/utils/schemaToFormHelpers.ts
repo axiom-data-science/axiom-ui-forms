@@ -76,10 +76,13 @@ export const validateSchema = (
 export const validateAgainstSchema = (
   schema: JSONSchema6,
   formValues: IFormValues
-): string[] | undefined => {
+): Array<{ field: string; message: string }> | undefined => {
   const validSchema = validateSchema(schema)
   if (validSchema.error !== undefined) {
-    return [validSchema.error]
+    return [{
+      field: ***REMOVED***$schema***REMOVED***,
+      message: validSchema.error
+    }]
   }
   const ajv = new Ajv({ strict: false, allErrors: true })
   addFormats(ajv)
@@ -87,7 +90,11 @@ export const validateAgainstSchema = (
   const valid = validator(formValues)
   if (validator.errors !== null && validator.errors !== undefined && !valid) {
     return validator.errors.map((e) => {
-      return `${e.instancePath} ${e.message}`
+      const fieldPath = (`${(e.instancePath?.length ? e.instancePath : ***REMOVED******REMOVED***)}${e.params?.missingProperty ? `/${e.params.missingProperty}` : ***REMOVED******REMOVED***}`).replace(/^\//, ***REMOVED******REMOVED***).replace(/\//g,***REMOVED***.***REMOVED***)
+      return {
+        field: fieldPath,
+        message: `${e.instancePath} ${e.message}`
+      }
     })
   }
   return undefined

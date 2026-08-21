@@ -80,7 +80,7 @@ const SchemaToForm = (): ReactElement => {
                               <div>{formOutputErrors !== undefined
                                 ? <>Errors: <ul className=***REMOVED***text-rose-800 text-xs list-disc p-4***REMOVED***>{
                                   formOutputErrors.map((e) => {
-                                    return <li key={e}>{e}</li>
+                                    return <li key={e.field ?? e.message}>{e.message}</li>
                                   })
                                   }</ul></>
                                 : ***REMOVED***Form output is valid***REMOVED***}</div>

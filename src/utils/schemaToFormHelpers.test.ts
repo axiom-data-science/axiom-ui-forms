@@ -51,12 +51,14 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
     it(***REMOVED***returns errors for invalid data***REMOVED***, () => {
       const errors = validateAgainstSchema(schema, { age: -5 })
       expect(errors).toBeDefined()
-      expect(errors?.[0]).toContain(***REMOVED***must be >= 0***REMOVED***)
+      expect(errors?.[0]?.message).toContain(***REMOVED***must be >= 0***REMOVED***)
+      expect(errors?.[0]?.field).toBe(***REMOVED***age***REMOVED***)
     })
     it(***REMOVED***returns errors for missing required field***REMOVED***, () => {
       const errors = validateAgainstSchema(schema, {})
       expect(errors).toBeDefined()
-      expect(errors?.[0]).toContain(***REMOVED***required***REMOVED***)
+      expect(errors?.[0]?.message).toContain(***REMOVED***required***REMOVED***)
+      expect(errors?.[0]?.field).toBe(***REMOVED***age***REMOVED***)
     })
     it(***REMOVED***returns errors for invalid schema***REMOVED***, () => {
       // Invalid: "properties" must be an object, not an array
@@ -67,7 +69,8 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       const errors = validateAgainstSchema(invalidSchema, { age: 10 })
       console.log(errors)
       expect(errors).toBeDefined()
-      expect(errors?.[0]).toContain(***REMOVED***properties must be object***REMOVED***)
+      expect(errors?.[0]?.message).toContain(***REMOVED***properties must be object***REMOVED***)
+      expect(errors?.[0]?.field).toBe(***REMOVED***$schema***REMOVED***)
     })
   })
 
