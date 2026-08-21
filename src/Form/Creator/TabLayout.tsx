@@ -224,6 +224,7 @@ const TabLayoutContent = ({
   level,
   scopedValue,
   scopedOnChange,
+  SubmitButton,
 }: ITabLayoutProps): ReactElement => {
   if (sections === undefined) {
     return <></>
@@ -236,6 +237,7 @@ const TabLayoutContent = ({
   const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
   return (
+    <>
     <div className={className}>
       <Tabs
         className="w-full"
@@ -266,6 +268,16 @@ const TabLayoutContent = ({
         })}
       />
     </div>
+        {SubmitButton && (
+          <div className=***REMOVED***flex flex-row gap-4 justify-end  p-4 mt-10 sticky bottom-0 bg-white/80 z-10***REMOVED***>
+            {typeof SubmitButton === ***REMOVED***function***REMOVED*** ? (
+              <SubmitButton formValues={useFormValues()} />
+            ) : (
+              SubmitButton
+            )}
+          </div>
+        )}
+    </>
   )
 }
 
