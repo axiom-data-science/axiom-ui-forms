@@ -125,6 +125,7 @@ const GeojsonPreview = ({ file }: { file: File }) => {
     height: '500px',
     width: '100%',
     mapLibraryKey: 'mapbox',
+    
 
     onMapLoaded: (mapInstance) => {
       const m = mapInstance?.data?.map
@@ -147,11 +148,13 @@ const GeojsonPreview = ({ file }: { file: File }) => {
             })
           }
         })
+
+
       }
     }
   }
   return (
-    <MapLoader {...MAP_CONFIG} mapLibraryKey='openlayers' />
+    <MapLoader {...MAP_CONFIG} />
   )
 }
 
