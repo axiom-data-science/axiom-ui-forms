@@ -1,8 +1,9 @@
 import { parseCSV, type ParsedCSV } from './csvParser'
-import { CloudUpload, File, FileImage, FilePlay, FileSpreadsheet, FileText, X } from 'lucide-react'
+import { CloudUpload, File, FileImage, FilePlay, FileSpreadsheet, FileText, Map as MapIcon, X } from 'lucide-react'
 import { useEffect, useState, useRef, type ReactElement } from 'react'
 import { Loader, Table, Tooltip, utils } from '@axdspub/axiom-ui-utilities'
 import { IFieldInputProps } from '@/Form/Creator/FormCreatorTypes'
+import { IMap, IStyleableMapProps, MapLoader } from '@axdspub/axiom-maps'
 
 type IStoredFileEntry = {
   file: File
@@ -21,6 +22,7 @@ type FileTypeFlags = {
   isPdf: boolean
   isCsv: boolean
   isText: boolean
+  isGeojson: boolean
 }
 
 const getFileTypeFlags = (file?: File | null, fileName?: string | null): FileTypeFlags => {
@@ -34,7 +36,8 @@ const getFileTypeFlags = (file?: File | null, fileName?: string | null): FileTyp
     isAudio: type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|flac|aac)$/i.test(lowerName),
     isPdf: type === 'application/pdf' || lowerName.endsWith('.pdf'),
     isCsv: Boolean(type.match(/csv/)) || lowerName.endsWith('.csv'),
-    isText: type.startsWith('text/') || /\.(txt|md|csv|log)$/i.test(lowerName)
+    isText: type.startsWith('text/') || /\.(txt|md|csv|log)$/i.test(lowerName),
+    isGeojson: Boolean(type.match(/geojson/)) || lowerName.endsWith('.geojson')
   }
 }
 
@@ -49,6 +52,8 @@ const FileTypeIcon = ({ fileType }: { fileType: FileTypeFlags }) => {
     return <FileText size={14} />
   } else if (fileType.isCsv) {
     return <FileSpreadsheet size={14} />
+  } else if(fileType.isGeojson) {
+    return <MapIcon size={14} />
   } else if(fileType.isText) {
     return <FileText size={14} />
   }
@@ -95,6 +100,61 @@ const CSVPreview = ({ file, parsedData }: { file: File, parsedData: ParsedCSV | 
       )
     }
     </>
+  )
+}
+
+const GeojsonPreview = ({ file }: { file: File }) => {
+  const [geoJson, setGeoJson] = useState<object | null>(null)
+
+  useEffect(() => {
+    file.text().then((text) => {
+      try {
+        setGeoJson(JSON.parse(text))
+      } catch {
+        setGeoJson(null)
+      }
+    })
+  }, [file])
+
+  if (!geoJson) {
+    return <Loader size='xs' className='align-left' />
+  }
+
+  const MAP_CONFIG: IStyleableMapProps = {
+    baseLayerKey: 'hybrid',
+    height: '500px',
+    width: '100%',
+    mapLibraryKey: 'mapbox',
+    
+
+    onMapLoaded: (mapInstance) => {
+      const m = mapInstance?.data?.map
+      if (m) {
+        m.addLayer({
+          id: 'geojson-layer',
+          type: 'geoJson',
+          label: '',
+          zIndex: 0,
+          isBaseLayer: false,
+          options: {
+            geoJson:(geoJson as {features: any[]}).features.map(f=>{
+              return {
+                ...f,
+                properties:{
+                  color:'#FFF',
+                  ...f.properties
+                }
+              }
+            })
+          }
+        })
+
+
+      }
+    }
+  }
+  return (
+    <MapLoader {...MAP_CONFIG} />
   )
 }
 
@@ -154,7 +214,9 @@ const FileUploadPreview = ({
             title="Uploaded PDF preview"
             className="mt-2 h-125 w-full rounded-md border border-slate-200 shadow-lg"
           />
-        ) : fileType.isCsv && file ?  (
+        ) : fileType.isGeojson && file ?  (
+          <GeojsonPreview file={file} />
+        )  : fileType.isCsv && file ?  (
           <CSVPreview file={file} parsedData={csvData} />
         ) : resolvedPreviewUrl ? (
           <a
