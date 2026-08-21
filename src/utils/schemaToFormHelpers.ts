@@ -469,7 +469,7 @@ const schemaToFormField = ({
         const value = getValueFromSchema(e)
         const label = getLabelFromSchema(e)
         const description: string | undefined =
-          typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e)
+          typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) && e.description !== undefined && e.description !== null 
             ? String(e.description)
             : undefined
         return value !== undefined
@@ -483,7 +483,7 @@ const schemaToFormField = ({
       .filter((d) => d !== null)
     return {
       ...baseFieldProps,
-      type: options.find((d) => d.description !== undefined) ? ***REMOVED***radio***REMOVED*** : type,
+      type: options.find((d) => d.description !== undefined && d.description !== null) ? ***REMOVED***radio***REMOVED*** : type,
       options,
       multiple,
     }
