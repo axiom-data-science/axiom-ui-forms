@@ -1,7 +1,8 @@
 import FieldCreator from '@/Form/Components/FieldCreator'
-import { type IFormField } from '@/Form/Creator/FormCreatorTypes'
+import { IFormValues, type IFormField } from '@/Form/Creator/FormCreatorTypes'
 import { getLayoutClassName } from '@/utils/layoutHelpers'
-import React, { memo, type ReactElement } from 'react'
+import React, { memo, ReactNode, type ReactElement } from 'react'
+import { useFormValues } from '@/Form/Creator/FormContextProvider'
 
 export type LayoutType = 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 
@@ -9,10 +10,12 @@ const FormFields = ({
   fields,
   className,
   layout,
+  SubmitButton
 }: {
   fields?: IFormField[]
   className?: string
   layout?: LayoutType
+  SubmitButton?: React.FC<{ formValues: IFormValues }> | ReactNode
 }): ReactElement => {
   // If layout is provided, use it; otherwise use className; otherwise use default
   const computedClassName =
@@ -29,6 +32,15 @@ const FormFields = ({
           {fields?.map((field) => {
             return <FieldCreator field={field} key={field.id} />
           })}
+          {SubmitButton && (
+            <div className='flex flex-row gap-4 justify-end  p-4 mt-10 sticky bottom-0 bg-white/80 z-10'>
+              {typeof SubmitButton === 'function' ? (
+                <SubmitButton formValues={useFormValues()} />
+              ) : (
+                SubmitButton
+              )}
+            </div>
+          )}
         </div>
       )}
     </>

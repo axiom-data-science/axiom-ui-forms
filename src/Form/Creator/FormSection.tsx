@@ -8,6 +8,7 @@ import FormFields from '@/Form/Creator/FormFields'
 import PageLayout from '@/Form/Creator/Page'
 import TabLayout from '@/Form/Creator/TabLayout'
 import WizardLayout from '@/Form/Creator/Wizard'
+import { useFormValues } from '@/utils/formEngine/index'
 import React, { memo, ReactNode, type ReactElement } from 'react'
 
 const FormSection = ({
@@ -55,13 +56,17 @@ const FormSection = ({
       ) : hasPages ? (
         <PageLayout sections={pages} level={level} SubmitButton={SubmitButton} />
       ) : hasTabs ? (
-        <TabLayout sections={tabs} level={level} />
+        <TabLayout sections={tabs} level={level} SubmitButton={SubmitButton} />
       ) : (
+        <>
         <FormFields
           fields={fields}
           className={level === 0 ? 'flex flex-col gap-8' : undefined}
           layout={(formSection as any)?.layout}
+          SubmitButton={SubmitButton}
         />
+
+        </>
       )}
     </>
   )
