@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import React from 'react'
-import { vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import LongStringInput from './LongString'
 
 describe('LongStringInput', () => {

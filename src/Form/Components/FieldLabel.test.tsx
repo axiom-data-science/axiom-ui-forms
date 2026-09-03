@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import FieldLabel, { FieldDescriptionTooltip, FieldLabelText, FieldDescriptionText } from './FieldLabel'
 import { type IFormField } from '@/Form/Creator/FormCreatorTypes'
@@ -93,7 +92,7 @@ describe('FieldLabel Component', () => {
     render(<FieldLabelText field={fieldWithDefaultValue} disabled={false} value={'something else'} onChange={onChange} />)
     const el = screen.getByTestId('revert-to-default')
     expect(el).toBeInTheDocument()
-    userEvent.click(el)
+    fireEvent.click(el)
     expect(onChange).toHaveBeenCalledTimes(1)
   })
   it('renders FieldLabelText with revert button visible and clicking button does not call onChange when disabled', async () => {
@@ -102,7 +101,7 @@ describe('FieldLabel Component', () => {
     render(<FieldLabelText field={fieldWithDefaultValue} disabled={true} value={'something else'} onChange={onChange} />)
     const el = screen.getByTestId('revert-to-default')
     expect(el).toBeInTheDocument()
-    userEvent.click(el)
+    fireEvent.click(el)
     expect(onChange).toHaveBeenCalledTimes(0)
   })
 })
