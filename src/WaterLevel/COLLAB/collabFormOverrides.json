@@ -1186,11 +1186,29 @@
               },
               "layout": "grid2",
               "fields": [
-                  {"prop": "api-external-identifier"},
-                  {"prop": "api-documentation"}
+                   {
+                    "prop": "api-provider",
+                    "type": "select"
+                  },
+                  {"prop": "api-external-identifier"}
                 ]
               },
-              {"prop": "api-access"},
+              {
+                "prop": "api-documentation",
+                "conditions": {
+                  "field": "api-provider",
+                  "value": "Other provider",
+                  "result": "include"
+                }
+              },
+              {
+                "prop": "api-access", 
+                "conditions": {
+                  "field": "api-provider",
+                  "value": "Other provider",
+                  "result": "include"
+                }
+              },
               {"prop": "api-additional-information", "type": "long_text"}
 
           ]
