@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from ***REMOVED***@testing-library/react***REMOVED***
 import React from ***REMOVED***react***REMOVED***
-import { vi } from ***REMOVED***vitest***REMOVED***
+import { describe, it, expect, vi } from ***REMOVED***vitest***REMOVED***
 import StringInput from ***REMOVED***./String***REMOVED***
 
 describe(***REMOVED***StringInput***REMOVED***, () => {

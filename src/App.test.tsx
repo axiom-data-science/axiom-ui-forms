@@ -1,5 +1,5 @@
 import { render, screen } from ***REMOVED***@testing-library/react***REMOVED***
-import { vi } from ***REMOVED***vitest***REMOVED***
+import { describe, it, expect, vi } from ***REMOVED***vitest***REMOVED***
 import App from ***REMOVED***./AppTry***REMOVED***
 import React from ***REMOVED***react***REMOVED***
 

@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from ***REMOVED***@testing-library/react***REMOVED***
-import userEvent from ***REMOVED***@testing-library/user-event***REMOVED***
 import { describe, it, expect, vi } from ***REMOVED***vitest***REMOVED***
 import FieldLabel, { FieldDescriptionTooltip, FieldLabelText, FieldDescriptionText } from ***REMOVED***./FieldLabel***REMOVED***
 import { type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
@@ -93,7 +92,7 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
     render(<FieldLabelText field={fieldWithDefaultValue} disabled={false} value={***REMOVED***something else***REMOVED***} onChange={onChange} />)
     const el = screen.getByTestId(***REMOVED***revert-to-default***REMOVED***)
     expect(el).toBeInTheDocument()
-    userEvent.click(el)
+    fireEvent.click(el)
     expect(onChange).toHaveBeenCalledTimes(1)
   })
   it(***REMOVED***renders FieldLabelText with revert button visible and clicking button does not call onChange when disabled***REMOVED***, async () => {
@@ -102,7 +101,7 @@ describe(***REMOVED***FieldLabel Component***REMOVED***, () => {
     render(<FieldLabelText field={fieldWithDefaultValue} disabled={true} value={***REMOVED***something else***REMOVED***} onChange={onChange} />)
     const el = screen.getByTestId(***REMOVED***revert-to-default***REMOVED***)
     expect(el).toBeInTheDocument()
-    userEvent.click(el)
+    fireEvent.click(el)
     expect(onChange).toHaveBeenCalledTimes(0)
   })
 })
