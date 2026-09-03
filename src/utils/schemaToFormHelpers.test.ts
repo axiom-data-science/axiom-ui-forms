@@ -715,6 +715,250 @@ describe('schemaToFormHelpers', () => {
       expect(nestedName?.excludeFromPayload === true).toBe(false)
       expect(nestedValue?.excludeFromPayload === true).toBe(false)
     })
+
+    it('resolves EmbeddedArrays relative and fully-qualified nested props to equivalent render fields', () => {
+      const embeddedSchema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          topLevel: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                nestedArray: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      thing: { type: 'string', title: 'A thing!' },
+                      other: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const relativeOnly: IFormOverride = {
+        id: 'embedded-arrays',
+        pages: [
+          {
+            id: 'page1',
+            tabs: [
+              {
+                id: 'tab1',
+                fields: [
+                  {
+                    prop: 'topLevel',
+                    type: 'object',
+                    multiple: true,
+                    tabs: [
+                      {
+                        id: 'overviewTab',
+                        fields: [
+                          {
+                            id: 'nameWrapper',
+                            type: 'objectWrapper',
+                            fields: [{ prop: 'name' }],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'nestedArrayTab',
+                        fields: [
+                          {
+                            multiple: true,
+                            prop: 'nestedArray',
+                            type: 'object',
+                            fields: [
+                              {
+                                id: 'nestedArrayWrapper',
+                                type: 'objectWrapper',
+                                fields: [{ prop: 'thing' }, { prop: 'other' }],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+
+      const fullyQualifiedOnly: IFormOverride = {
+        id: 'embedded-arrays',
+        pages: [
+          {
+            id: 'page1',
+            tabs: [
+              {
+                id: 'tab1',
+                fields: [
+                  {
+                    prop: 'topLevel',
+                    type: 'object',
+                    multiple: true,
+                    tabs: [
+                      {
+                        id: 'overviewTab',
+                        fields: [
+                          {
+                            id: 'nameWrapper',
+                            type: 'objectWrapper',
+                            fields: [{ prop: 'topLevel[].name' }],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'nestedArrayTab',
+                        fields: [
+                          {
+                            multiple: true,
+                            prop: 'topLevel[].nestedArray',
+                            type: 'object',
+                            fields: [
+                              {
+                                id: 'nestedArrayWrapper',
+                                type: 'objectWrapper',
+                                fields: [
+                                  { prop: 'topLevel[].nestedArray[].thing' },
+                                  { prop: 'topLevel[].nestedArray[].other' },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+
+      const relativeForm = overridesAndSchemaToFormObject({
+        schema: embeddedSchema,
+        formOverrides: [relativeOnly],
+      })
+
+      const qualifiedForm = overridesAndSchemaToFormObject({
+        schema: embeddedSchema,
+        formOverrides: [fullyQualifiedOnly],
+      })
+
+      const getNestedWrapperFields = (form: any): any[] => {
+        const topLevel = form.pages?.[0]?.tabs?.[0]?.fields?.find((f: any) => f.id === 'topLevel')
+        const nestedArray = topLevel?.tabs?.[1]?.fields?.find((f: any) => f.id === 'nestedArray')
+        const wrapper = nestedArray?.fields?.find((f: any) => f.id === 'nestedArrayWrapper')
+        return wrapper?.fields ?? []
+      }
+
+      const relativeWrapperFields = getNestedWrapperFields(relativeForm)
+      const qualifiedWrapperFields = getNestedWrapperFields(qualifiedForm)
+
+      expect(relativeWrapperFields.map((f: any) => f.id)).toEqual(['thing', 'other'])
+      expect(qualifiedWrapperFields.map((f: any) => f.id)).toEqual(['thing', 'other'])
+
+      expect(relativeWrapperFields.find((f: any) => f.id === 'thing')?.label).toBe('A thing!')
+      expect(qualifiedWrapperFields.find((f: any) => f.id === 'thing')?.label).toBe('A thing!')
+
+      // Guard against literal-path field ids leaking into rendered structure.
+      expect(qualifiedWrapperFields.some((f: any) => String(f.id).includes('[]'))).toBe(false)
+      expect(qualifiedWrapperFields.some((f: any) => String(f.id).includes('.'))).toBe(false)
+    })
+
+    it('keeps EmbeddedArrays mixed mode nested array field scoped to nestedArray id', () => {
+      const embeddedSchema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          topLevel: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                nestedArray: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      thing: { type: 'string', title: 'A thing!' },
+                      other: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const mixedOverride: IFormOverride = {
+        id: 'embedded-arrays',
+        pages: [
+          {
+            id: 'page1',
+            tabs: [
+              {
+                id: 'tab1',
+                fields: [
+                  {
+                    prop: 'topLevel',
+                    type: 'object',
+                    multiple: true,
+                    tabs: [
+                      {
+                        id: 'nestedArrayTab',
+                        fields: [
+                          {
+                            multiple: true,
+                            prop: 'nestedArray',
+                            type: 'object',
+                            fields: [
+                              {
+                                id: 'nestedArrayWrapper',
+                                type: 'objectWrapper',
+                                fields: [{ prop: 'thing' }, { prop: 'other' }],
+                              },
+                            ],
+                          },
+                          {
+                            prop: 'topLevel[].name',
+                            label: 'Name (full path sibling)',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+
+      const mixedForm = overridesAndSchemaToFormObject({
+        schema: embeddedSchema,
+        formOverrides: [mixedOverride],
+      })
+
+      const topLevel = mixedForm.pages?.[0]?.tabs?.[0]?.fields?.find((f: any) => f.id === 'topLevel') as any
+      const nestedArrayTabFields = topLevel?.tabs?.[0]?.fields ?? []
+      const nestedArrayField = nestedArrayTabFields.find((f: any) => f.id === 'nestedArray')
+
+      expect(nestedArrayField).toBeDefined()
+      expect(nestedArrayField?.id).toBe('nestedArray')
+      expect(nestedArrayTabFields.some((f: any) => String(f.id).includes('topLevel[].nestedArray'))).toBe(false)
+    })
   })
 
   describe('getSchemaPaths', () => {

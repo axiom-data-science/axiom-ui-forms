@@ -49,6 +49,7 @@ import {
   EmbeddedArraysForm,
   EmbeddedArraysFromSchemaWithOverrides,
 } from '@/Form/TestForms/EmbeddedArrays/EmbeddedArrays'
+import ObjectSchemaOverride from '@/Form/TestForms/ObjectSchemaOverride/ObjectSchemaOverride'
 
 const forms = [
   {
@@ -246,6 +247,11 @@ const forms = [
     path: 'schema-validation-examples',
     view: SchemaValidationExample
   },
+  {
+    label: 'Object schema override',
+    path: 'object-schema-override',
+    view: ObjectSchemaOverride
+  }
 ]
 
 const AllForms = (): ReactElement => {

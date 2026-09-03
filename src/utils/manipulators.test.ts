@@ -9,8 +9,8 @@ import {
   createOneOfMultipleField,
   copyAndAddPathToFields,
 } from '@/utils/manipulators'
-import { getPathFromField } from '@/utils/getters'
-import { schemaToFormObject } from '@/utils/schemaToFormHelpers'
+import { getFieldsFromFormSection, getFormPayload, getPathFromField } from '@/utils/getters'
+import { overridesAndSchemaToFormObject, schemaToFormObject } from '@/utils/schemaToFormHelpers'
 import { describe, it, expect } from 'vitest'
 
 describe('manipulators.ts', () => {
@@ -98,6 +98,70 @@ describe('manipulators.ts', () => {
   })
 
   describe('cleanAndUpdateFormValuesWithFieldValue', () => {
+    it('writes wrapper child values under schema-referenced object path (no top-level leakage)', () => {
+      const schema = {
+        type: 'object',
+        properties: {
+          parent: {
+            type: 'object',
+            properties: {
+              prop1: { type: 'string' },
+              prop4: { type: 'string' },
+            },
+          },
+        },
+      } as const
+
+      const form = overridesAndSchemaToFormObject({
+        schema: schema as any,
+        formOverrides: [
+          {
+            id: 'object-schema-override',
+            fields: [
+              {
+                prop: 'parent',
+                type: 'object',
+                fields: [
+                  { prop: 'prop1' },
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    fields: [{ prop: 'prop4' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const formWithPaths = copyAndAddPathToFields(form)
+      const prop4Field = getFieldsFromFormSection(formWithPaths).find((f) => f.id === 'prop4') as IFormField
+      expect(prop4Field).toBeDefined()
+      expect(getPathFromField(prop4Field)).toBe('parent.prop4')
+
+      const updatedValues = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: prop4Field,
+        value: 'k',
+        formValues: {},
+      })
+
+      expect(updatedValues).toEqual({
+        parent: {
+          prop4: 'k',
+        },
+      })
+      expect((updatedValues as any).prop4).toBeUndefined()
+
+      const payload = getFormPayload(updatedValues, form)
+      expect(payload).toEqual({
+        parent: {
+          prop4: 'k',
+        },
+      })
+    })
+
     it('should update form values with field value', () => {
       const formValues = {
         field1: 'value1',
