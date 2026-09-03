@@ -221,7 +221,7 @@ const contributorsSpecialCase = (): JSONSchema6 => {
               const: 'processor',
               title: 'Data Processor',
               description:
-                'Party that has processed the data in a manner such that the resource has been modified.\n - ***JOA Surveys***',
+                'Party that has processed the data in a manner such that the resource has been modified.\n - ***Tetra Tech***',
             },
             {
               const: 'distributor',
