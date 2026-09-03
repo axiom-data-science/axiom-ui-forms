@@ -24,7 +24,7 @@
       ]
     },
     {
-      "id": "creator",
+      "id": "creator-page",
       "label": "Creator",
       "description": "Party responsible for collecting the data and/or creating the resource",
       "settings": {
@@ -128,7 +128,7 @@
     {
       "id": "contributors-list",
       "label": "Contributors List",
-      "description": "All roles are optional to complete. You may enter the same information for multiple roles. For example, you may submit 1 Custodian and 1 Community POC and use the same information for both.\nUse the ***REMOVED***Duplicate***REMOVED*** button to copy information from a role and create a new one.\n- **Owner**: Party that owns the resource\n - **Funder**: Party providing monetary support for the resource\n - **Custodian**: Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n - **Community Point of Contact**: Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - **Data Publisher**: Party who published the resource\n - **Data Processor**: Party that has processed the data in a manner such that the resource has been modified\n - **Distributor**: Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nExamples:\n - **Owner**: AOOS. The RA that purchased the equipment.  \n - **Funder**: AOOS, USGS. Any organizations that shared the cost of a station. Perhaps this was a pre-existing USGS station that was upgraded by an RA. \n - **Custodian**: JOA Surveys. The organization that is servicing the station.\n - **Community** Point of Contact: Person ABC. The POC who is aware of the station or provides access to the site. This will not be reported to ERDDAP. \n - **Data Publisher**: JOA Surveys. The organization that shares the data via API or other access point. \n - **Data Processor**: JOA Surveys. \n - **Distributor**: Hohonu",
+      "description": "All roles are optional to complete. You may enter the same information for multiple roles. For example, you may submit 1 Custodian and 1 Community POC and use the same information for both.\nUse the ***REMOVED***Duplicate***REMOVED*** button to copy information from a role and create a new one.\n- **Owner**: Party that owns the resource\n - **Funder**: Party providing monetary support for the resource\n - **Custodian**: Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n - **Community Point of Contact**: Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - **Data Publisher**: Party who published the resource\n - **Data Processor**: Party that has processed the data in a manner such that the resource has been modified\n - **Distributor**: Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nExamples:\n - **Owner**: AOOS. The RA that purchased the equipment.  \n - **Funder**: AOOS, USGS. Any organizations that shared the cost of a station. Perhaps this was a pre-existing USGS station that was upgraded by an RA. \n - **Custodian**: JOA Surveys. The organization that is servicing the station.\n - **Community** Point of Contact: Person ABC. The POC who is aware of the station or provides access to the site. This will not be reported to ERDDAP. \n - **Data Publisher**: JOA Surveys. The organization that shares the data via API or other access point. \n - **Data Processor**: Tetra Tech. \n - **Distributor**: Hohonu",
       "fields": [
         {
           "prop": "contributor",
@@ -296,7 +296,7 @@
     {
       "id": "sensor-information-page",
       "label": "Sensor Information",
-      "description": "**Enter one or more sensors.**  \nDefinitions:\n\n- **Instrument** is the large physical instrument that may house individual or smaller components, aka sensors.\n - **Components** are the individual sensors within an instrument. There may be multiple components within a single instrument. Example two radar gauges within one instrument.",
+      "description": "**Enter one or more sensors.**  **[Click here](https://files.axds.co/portals/water-level-metadata/coops-datum-figure.png)** for figure describing datum conversions.",
       "fields": [
         {
           "prop": "sensors",
@@ -449,7 +449,11 @@
                 {
                   "multiple": true,
                   "prop": "elevations",
+                  "label": "Elevations",
                   "type": "object",
+                  "settings": {
+                    "boldLabel": true
+                  },
                   "fields": [
                     {
                       "id": "sensor-elevation-wrapper",
@@ -479,12 +483,12 @@
                     },
                     {
                       "id": "sensor-elevation-wrapper2",
-                      "label": "",
+                      "label": "Orthometric",
                       "settings": {
-                        "className": "bg-slate-100 p-0"
+                        "className": "bg-slate-100 px-0",
+                        "boldLabel": true
                       },
                       "type": "objectWrapper",
-                      "layout": "grid3",
                       "fields": [
                         {
                           "prop": "sensor-elevation-ortho",
@@ -494,19 +498,42 @@
                           }
                         },
                         {
-                          "prop": "sensor-elevation-ortho-datum",
+                          "id": "sensor-elevation-wrapper2.5",
+                          "label": "",
                           "settings": {
-                            "descriptionPresentation": "tooltip",
-                            "smallLabel": true
-                          }
-                        },
-                        {
-                          "prop": "sensor-elevation-ortho-geoid",
-                          "settings": {
-                            "descriptionPresentation": "tooltip",
-                            "smallLabel": true
-                          }
-                        },
+                            "className": "bg-slate-100 p-0",
+                            "boldLabel": true
+                          },
+                          "type": "objectWrapper",
+                          "layout": "grid2",
+                          "fields": [
+                            {
+                              "prop": "sensor-elevation-ortho-datum",
+                              "settings": {
+                                "descriptionPresentation": "tooltip",
+                                "smallLabel": true
+                              }
+                            },
+                            {
+                              "prop": "sensor-elevation-ortho-geoid",
+                              "settings": {
+                                "descriptionPresentation": "tooltip",
+                                "smallLabel": true
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "sensor-elevation-wrapper3",
+                      "label": "Ellipsoidal",
+                      "settings": {
+                        "className": "bg-slate-100 px-0",
+                        "boldLabel": true
+                      },
+                      "type": "objectWrapper",
+                      "fields": [
                         {
                           "prop": "sensor-elevation-ellipsoidal",
                           "settings": {
@@ -515,18 +542,74 @@
                           }
                         },
                         {
-                          "prop": "sensor-elevation-ellipsoidal-refsys",
+                          "id": "sensor-elevation-wrapper3.5",
+                          "settings": {
+                            "className": "bg-slate-100 p-0",
+                            "boldLabel": true
+                          },
+                          "type": "objectWrapper",
+                          "label":"",
+                          "layout": "grid2",
+                          "fields": [
+                            {
+                              "prop": "sensor-elevation-ellipsoidal-refsys",
+                              "settings": {
+                                "descriptionPresentation": "tooltip",
+                                "smallLabel": true
+                              }
+                            },
+                            {
+                              "prop": "sensor-elevation-ellipsoidal-epoch",
+                              "settings": {
+                                "descriptionPresentation": "tooltip",
+                                "smallLabel": true
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "sensor-elevation-wrapper4",
+                      "label": "Dynamic",
+                      "settings": {
+                        "className": "bg-slate-100 p-0",
+                        "boldLabel": true
+                      },
+                      "type": "objectWrapper",
+                      "fields": [
+                        {
+                          "prop": "sensor-elevation-dynamic",
                           "settings": {
                             "descriptionPresentation": "tooltip",
                             "smallLabel": true
                           }
                         },
                         {
-                          "prop": "sensor-elevation-ellipsoidal-epoch",
+                          "id": "sensor-elevation-wrapper4.5",
+                          "label": "",
                           "settings": {
-                            "descriptionPresentation": "tooltip",
-                            "smallLabel": true
-                          }
+                            "className": "bg-slate-100 p-0",
+                            "boldLabel": true
+                          },
+                          "type": "objectWrapper",
+                          "layout": "grid2",
+                          "fields": [
+                            {
+                              "prop": "sensor-elevation-dynamic-refsys",
+                              "settings": {
+                                "descriptionPresentation": "tooltip",
+                                "smallLabel": true
+                              }
+                            },
+                            {
+                              "prop": "sensor-elevation-dynamic-epoch",
+                              "settings": {
+                                "descriptionPresentation": "tooltip",
+                                "smallLabel": true
+                              }
+                            }
+                          ]
                         }
                       ]
                     }
@@ -553,7 +636,7 @@
     {
       "id": "tidal-datum-offsets-relative-to-station",
       "label": "Datum Relationships and Offsets",
-      "description": "Datum Offsets as related to the station datum, in meters. If not known, leave blank. **[Click here](https://files.axds.co/portals/water-level-metadata/coops-datum-figure.png)** for figure describing datum conversions.",
+      "description": "Datum Offsets as related to the station datum, in meters. If not known, leave blank. **[Click here](https://tidesandcurrents.noaa.gov/datums.html?id=8730561)** for a graphic that shows datum conversions at an example CO-OPS station.",
       "settings": {
         "largeDescription": true
       },
@@ -1018,11 +1101,11 @@
       ]
     },
     {
-      "id": "collocation-information",
-      "label": "Collocation Information",
+      "id": "colocation-information",
+      "label": "Colocation Information",
       "fields": [
         {
-          "prop": "is-collocation",
+          "prop": "is-colocation",
           "type": "boolean"
         },
         {
@@ -1037,13 +1120,22 @@
       "fields": [
         {
           "prop": "benchmarks-photo",
+          "settings": {
+            "acceptedFileTypes": "image/*,application/pdf"
+          },
           "multiple": true
         },
         {
-          "prop": "underwater-components"
+          "prop": "underwater-components",
+          "settings": {
+            "acceptedFileTypes": "image/*,application/pdf"
+          }
         },
         {
-          "prop": "vicinity"
+          "prop": "vicinity",
+          "settings": {
+            "acceptedFileTypes": "image/*,application/pdf"
+          }
         }
       ]
     },
@@ -1052,13 +1144,19 @@
       "label": "Attachments",
       "fields": [
         {
-          "prop": "bench-mark-diagram"
+          "prop": "bench-mark-diagram",
+          "settings": {
+            "acceptedFileTypes": "image/*,application/pdf"
+          }
         },
         {
           "prop": "sensor-test-worksheet"
         },
         {
-          "prop": "sensor-elevation-drawing"
+          "prop": "sensor-elevation-drawing",
+          "settings": {
+            "acceptedFileTypes": "image/*,application/pdf"
+          }
         },
         {
           "prop": "other-attachment"
@@ -1069,6 +1167,34 @@
       "id": "external-data-access",
       "label": "API and External Data Identifiers",
       "fields": [
+        {
+          "id": "api-wrapper",
+          "label": "API",
+          "description": "Provide information for the API that is used to access the data. If no API is used, leave blank.",
+          "type": "objectWrapper",
+          "settings": {
+            "boldLabel": true,
+            "className": "bg-slate-100 p-4"
+          },
+          "fields": [
+            {
+              "id": "api-wrapper2",
+              "label": "",
+              "type": "objectWrapper",
+              "settings": {
+                "className": "p-0"
+              },
+              "layout": "grid2",
+              "fields": [
+                  {"prop": "api-external-identifier"},
+                  {"prop": "api-documentation"}
+                ]
+              },
+              {"prop": "api-access"},
+              {"prop": "api-additional-information", "type": "long_text"}
+
+          ]
+        },
         {
           "id": "ids-wrapper",
           "label": "Other identifiers",

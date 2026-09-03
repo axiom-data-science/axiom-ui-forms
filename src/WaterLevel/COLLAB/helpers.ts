@@ -221,7 +221,7 @@ const contributorsSpecialCase = (): JSONSchema6 => {
               const: ***REMOVED***processor***REMOVED***,
               title: ***REMOVED***Data Processor***REMOVED***,
               description:
-                ***REMOVED***Party that has processed the data in a manner such that the resource has been modified.\n - ***JOA Surveys******REMOVED***,
+                ***REMOVED***Party that has processed the data in a manner such that the resource has been modified.\n - ***Tetra Tech******REMOVED***,
             },
             {
               const: ***REMOVED***distributor***REMOVED***,
