@@ -373,7 +373,6 @@ const FileUpload = ({
 
       <label className="block">
         {error && <span className="text-red-500 text-sm mb-2 block">{error}</span>}
-        <span className="sr-only">Choose profile photo</span>
         <input
           type="file"
           id="file_input"
