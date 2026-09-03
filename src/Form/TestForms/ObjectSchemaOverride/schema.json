@@ -1,0 +1,31 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ObjectSchemaOverride",
+    "type": "object",
+    "properties": {
+        "parent": {
+            "type": "object",
+            "properties": {
+                "prop1": {
+                    "type": "string"
+                },
+                "prop2": {
+                    "type": "string"
+                },
+                "prop3": {
+                    "type": "string"
+                },
+                            "prop4": {
+                    "type": "string"
+                },
+                            "prop5": {
+                    "type": "string"
+                },
+                            "prop6": {
+                    "type": "string"
+                }
+            
+            }
+        }
+    }
+}

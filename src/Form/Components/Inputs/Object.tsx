@@ -184,8 +184,8 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
     // In that case children must propagate changes through onChange rather than writing
     // directly to root formValues, so we cannot use the skip_path rendering shortcut.
     const isParentSkipPath =
-      (field.skip_path === true || (field as any).type === ***REMOVED***objectWrapper***REMOVED***) &&
-      typeof onChange !== ***REMOVED***function***REMOVED***
+      (field.skip_path === true || (field as {type:string}).type === ***REMOVED***objectWrapper***REMOVED***) &&
+      !shouldUseScopedRenderingDespiteSkipPath
 
     // Use formEngine for consistent condition evaluation
     // Always pass ROOT formValues context, not the nested object

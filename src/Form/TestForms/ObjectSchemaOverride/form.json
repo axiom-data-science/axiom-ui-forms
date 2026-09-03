@@ -1,0 +1,19 @@
+{
+    "id": "object-schema-override",
+    "fields": [
+        {"prop": "parent.prop1"},
+        {"prop": "parent.prop2"},
+        {"prop": "parent.prop3"},
+        {
+            "id": "wrapper",
+            "type": "objectWrapper",
+            "label": "Wrapper",
+            "layout": "grid3",
+            "fields": [
+                {"prop": "parent.prop4"},
+                {"prop": "parent.prop5"},
+                {"prop": "parent.prop6"}
+            ]
+        }
+    ]
+}

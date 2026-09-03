@@ -715,6 +715,250 @@ describe(***REMOVED***schemaToFormHelpers***REMOVED***, () => {
       expect(nestedName?.excludeFromPayload === true).toBe(false)
       expect(nestedValue?.excludeFromPayload === true).toBe(false)
     })
+
+    it(***REMOVED***resolves EmbeddedArrays relative and fully-qualified nested props to equivalent render fields***REMOVED***, () => {
+      const embeddedSchema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          topLevel: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+                nestedArray: {
+                  type: ***REMOVED***array***REMOVED***,
+                  items: {
+                    type: ***REMOVED***object***REMOVED***,
+                    properties: {
+                      thing: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***A thing!***REMOVED*** },
+                      other: { type: ***REMOVED***string***REMOVED*** },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const relativeOnly: IFormOverride = {
+        id: ***REMOVED***embedded-arrays***REMOVED***,
+        pages: [
+          {
+            id: ***REMOVED***page1***REMOVED***,
+            tabs: [
+              {
+                id: ***REMOVED***tab1***REMOVED***,
+                fields: [
+                  {
+                    prop: ***REMOVED***topLevel***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    multiple: true,
+                    tabs: [
+                      {
+                        id: ***REMOVED***overviewTab***REMOVED***,
+                        fields: [
+                          {
+                            id: ***REMOVED***nameWrapper***REMOVED***,
+                            type: ***REMOVED***objectWrapper***REMOVED***,
+                            fields: [{ prop: ***REMOVED***name***REMOVED*** }],
+                          },
+                        ],
+                      },
+                      {
+                        id: ***REMOVED***nestedArrayTab***REMOVED***,
+                        fields: [
+                          {
+                            multiple: true,
+                            prop: ***REMOVED***nestedArray***REMOVED***,
+                            type: ***REMOVED***object***REMOVED***,
+                            fields: [
+                              {
+                                id: ***REMOVED***nestedArrayWrapper***REMOVED***,
+                                type: ***REMOVED***objectWrapper***REMOVED***,
+                                fields: [{ prop: ***REMOVED***thing***REMOVED*** }, { prop: ***REMOVED***other***REMOVED*** }],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+
+      const fullyQualifiedOnly: IFormOverride = {
+        id: ***REMOVED***embedded-arrays***REMOVED***,
+        pages: [
+          {
+            id: ***REMOVED***page1***REMOVED***,
+            tabs: [
+              {
+                id: ***REMOVED***tab1***REMOVED***,
+                fields: [
+                  {
+                    prop: ***REMOVED***topLevel***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    multiple: true,
+                    tabs: [
+                      {
+                        id: ***REMOVED***overviewTab***REMOVED***,
+                        fields: [
+                          {
+                            id: ***REMOVED***nameWrapper***REMOVED***,
+                            type: ***REMOVED***objectWrapper***REMOVED***,
+                            fields: [{ prop: ***REMOVED***topLevel[].name***REMOVED*** }],
+                          },
+                        ],
+                      },
+                      {
+                        id: ***REMOVED***nestedArrayTab***REMOVED***,
+                        fields: [
+                          {
+                            multiple: true,
+                            prop: ***REMOVED***topLevel[].nestedArray***REMOVED***,
+                            type: ***REMOVED***object***REMOVED***,
+                            fields: [
+                              {
+                                id: ***REMOVED***nestedArrayWrapper***REMOVED***,
+                                type: ***REMOVED***objectWrapper***REMOVED***,
+                                fields: [
+                                  { prop: ***REMOVED***topLevel[].nestedArray[].thing***REMOVED*** },
+                                  { prop: ***REMOVED***topLevel[].nestedArray[].other***REMOVED*** },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+
+      const relativeForm = overridesAndSchemaToFormObject({
+        schema: embeddedSchema,
+        formOverrides: [relativeOnly],
+      })
+
+      const qualifiedForm = overridesAndSchemaToFormObject({
+        schema: embeddedSchema,
+        formOverrides: [fullyQualifiedOnly],
+      })
+
+      const getNestedWrapperFields = (form: any): any[] => {
+        const topLevel = form.pages?.[0]?.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***topLevel***REMOVED***)
+        const nestedArray = topLevel?.tabs?.[1]?.fields?.find((f: any) => f.id === ***REMOVED***nestedArray***REMOVED***)
+        const wrapper = nestedArray?.fields?.find((f: any) => f.id === ***REMOVED***nestedArrayWrapper***REMOVED***)
+        return wrapper?.fields ?? []
+      }
+
+      const relativeWrapperFields = getNestedWrapperFields(relativeForm)
+      const qualifiedWrapperFields = getNestedWrapperFields(qualifiedForm)
+
+      expect(relativeWrapperFields.map((f: any) => f.id)).toEqual([***REMOVED***thing***REMOVED***, ***REMOVED***other***REMOVED***])
+      expect(qualifiedWrapperFields.map((f: any) => f.id)).toEqual([***REMOVED***thing***REMOVED***, ***REMOVED***other***REMOVED***])
+
+      expect(relativeWrapperFields.find((f: any) => f.id === ***REMOVED***thing***REMOVED***)?.label).toBe(***REMOVED***A thing!***REMOVED***)
+      expect(qualifiedWrapperFields.find((f: any) => f.id === ***REMOVED***thing***REMOVED***)?.label).toBe(***REMOVED***A thing!***REMOVED***)
+
+      // Guard against literal-path field ids leaking into rendered structure.
+      expect(qualifiedWrapperFields.some((f: any) => String(f.id).includes(***REMOVED***[]***REMOVED***))).toBe(false)
+      expect(qualifiedWrapperFields.some((f: any) => String(f.id).includes(***REMOVED***.***REMOVED***))).toBe(false)
+    })
+
+    it(***REMOVED***keeps EmbeddedArrays mixed mode nested array field scoped to nestedArray id***REMOVED***, () => {
+      const embeddedSchema: JSONSchema6 = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          topLevel: {
+            type: ***REMOVED***array***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                name: { type: ***REMOVED***string***REMOVED*** },
+                nestedArray: {
+                  type: ***REMOVED***array***REMOVED***,
+                  items: {
+                    type: ***REMOVED***object***REMOVED***,
+                    properties: {
+                      thing: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***A thing!***REMOVED*** },
+                      other: { type: ***REMOVED***string***REMOVED*** },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      const mixedOverride: IFormOverride = {
+        id: ***REMOVED***embedded-arrays***REMOVED***,
+        pages: [
+          {
+            id: ***REMOVED***page1***REMOVED***,
+            tabs: [
+              {
+                id: ***REMOVED***tab1***REMOVED***,
+                fields: [
+                  {
+                    prop: ***REMOVED***topLevel***REMOVED***,
+                    type: ***REMOVED***object***REMOVED***,
+                    multiple: true,
+                    tabs: [
+                      {
+                        id: ***REMOVED***nestedArrayTab***REMOVED***,
+                        fields: [
+                          {
+                            multiple: true,
+                            prop: ***REMOVED***nestedArray***REMOVED***,
+                            type: ***REMOVED***object***REMOVED***,
+                            fields: [
+                              {
+                                id: ***REMOVED***nestedArrayWrapper***REMOVED***,
+                                type: ***REMOVED***objectWrapper***REMOVED***,
+                                fields: [{ prop: ***REMOVED***thing***REMOVED*** }, { prop: ***REMOVED***other***REMOVED*** }],
+                              },
+                            ],
+                          },
+                          {
+                            prop: ***REMOVED***topLevel[].name***REMOVED***,
+                            label: ***REMOVED***Name (full path sibling)***REMOVED***,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+
+      const mixedForm = overridesAndSchemaToFormObject({
+        schema: embeddedSchema,
+        formOverrides: [mixedOverride],
+      })
+
+      const topLevel = mixedForm.pages?.[0]?.tabs?.[0]?.fields?.find((f: any) => f.id === ***REMOVED***topLevel***REMOVED***) as any
+      const nestedArrayTabFields = topLevel?.tabs?.[0]?.fields ?? []
+      const nestedArrayField = nestedArrayTabFields.find((f: any) => f.id === ***REMOVED***nestedArray***REMOVED***)
+
+      expect(nestedArrayField).toBeDefined()
+      expect(nestedArrayField?.id).toBe(***REMOVED***nestedArray***REMOVED***)
+      expect(nestedArrayTabFields.some((f: any) => String(f.id).includes(***REMOVED***topLevel[].nestedArray***REMOVED***))).toBe(false)
+    })
   })
 
   describe(***REMOVED***getSchemaPaths***REMOVED***, () => {

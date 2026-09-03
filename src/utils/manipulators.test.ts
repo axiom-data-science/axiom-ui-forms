@@ -9,8 +9,8 @@ import {
   createOneOfMultipleField,
   copyAndAddPathToFields,
 } from ***REMOVED***@/utils/manipulators***REMOVED***
-import { getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
-import { schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
+import { getFieldsFromFormSection, getFormPayload, getPathFromField } from ***REMOVED***@/utils/getters***REMOVED***
+import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***@/utils/schemaToFormHelpers***REMOVED***
 import { describe, it, expect } from ***REMOVED***vitest***REMOVED***
 
 describe(***REMOVED***manipulators.ts***REMOVED***, () => {
@@ -98,6 +98,70 @@ describe(***REMOVED***manipulators.ts***REMOVED***, () => {
   })
 
   describe(***REMOVED***cleanAndUpdateFormValuesWithFieldValue***REMOVED***, () => {
+    it(***REMOVED***writes wrapper child values under schema-referenced object path (no top-level leakage)***REMOVED***, () => {
+      const schema = {
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          parent: {
+            type: ***REMOVED***object***REMOVED***,
+            properties: {
+              prop1: { type: ***REMOVED***string***REMOVED*** },
+              prop4: { type: ***REMOVED***string***REMOVED*** },
+            },
+          },
+        },
+      } as const
+
+      const form = overridesAndSchemaToFormObject({
+        schema: schema as any,
+        formOverrides: [
+          {
+            id: ***REMOVED***object-schema-override***REMOVED***,
+            fields: [
+              {
+                prop: ***REMOVED***parent***REMOVED***,
+                type: ***REMOVED***object***REMOVED***,
+                fields: [
+                  { prop: ***REMOVED***prop1***REMOVED*** },
+                  {
+                    id: ***REMOVED***wrapper***REMOVED***,
+                    type: ***REMOVED***objectWrapper***REMOVED***,
+                    fields: [{ prop: ***REMOVED***prop4***REMOVED*** }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const formWithPaths = copyAndAddPathToFields(form)
+      const prop4Field = getFieldsFromFormSection(formWithPaths).find((f) => f.id === ***REMOVED***prop4***REMOVED***) as IFormField
+      expect(prop4Field).toBeDefined()
+      expect(getPathFromField(prop4Field)).toBe(***REMOVED***parent.prop4***REMOVED***)
+
+      const updatedValues = cleanAndUpdateFormValuesWithFieldValue({
+        form: formWithPaths,
+        field: prop4Field,
+        value: ***REMOVED***k***REMOVED***,
+        formValues: {},
+      })
+
+      expect(updatedValues).toEqual({
+        parent: {
+          prop4: ***REMOVED***k***REMOVED***,
+        },
+      })
+      expect((updatedValues as any).prop4).toBeUndefined()
+
+      const payload = getFormPayload(updatedValues, form)
+      expect(payload).toEqual({
+        parent: {
+          prop4: ***REMOVED***k***REMOVED***,
+        },
+      })
+    })
+
     it(***REMOVED***should update form values with field value***REMOVED***, () => {
       const formValues = {
         field1: ***REMOVED***value1***REMOVED***,
