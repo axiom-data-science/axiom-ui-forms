@@ -548,7 +548,7 @@
                             "boldLabel": true
                           },
                           "type": "objectWrapper",
-                          "label":"",
+                          "label": "",
                           "layout": "grid2",
                           "fields": [
                             {
@@ -896,49 +896,59 @@
               "id": "survey-wrapper-3",
               "label": "Bench Mark Identification",
               "type": "objectWrapper",
-              "layout": "grid2",
               "settings": {
                 "boldLabel": true
               },
               "fields": [
                 {
-                  "prop": "surveys[].marker-stamping",
+                  "id": "benchmark-wrapper-1",
+                  "label": "",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
                   "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "surveys[].marker-other-identifier",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "surveys[].marker-co-ops-vm",
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
-                },
-                {
-                  "prop": "surveys[].marker-ngs-pid",
-                  "type": "selectOrText",
-                  "options": [
+                    "className": "p-0 bg-transparent"
+                  },
+                  "fields": [
                     {
-                      "label": "Not available (enter VIM)",
-                      "value": "not_available"
+                      "prop": "surveys[].marker-stamping",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
                     },
                     {
-                      "label": "Other (enter PID)",
-                      "value": "other"
+                      "prop": "surveys[].marker-other-identifier",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "surveys[].marker-co-ops-vm",
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
+                    },
+                    {
+                      "prop": "surveys[].marker-ngs-pid",
+                      "type": "selectOrText",
+                      "options": [
+                        {
+                          "label": "Not available (enter VIM)",
+                          "value": "not_available"
+                        },
+                        {
+                          "label": "Other (enter PID)",
+                          "value": "other"
+                        }
+                      ],
+                      "settings": {
+                        "descriptionPresentation": "tooltip",
+                        "smallLabel": true
+                      }
                     }
-                  ],
-                  "settings": {
-                    "descriptionPresentation": "tooltip",
-                    "smallLabel": true
-                  }
+                  ]
                 },
                 {
                   "prop": "surveys[].bench-mark-descriptions",
@@ -1186,31 +1196,30 @@
               },
               "layout": "grid2",
               "fields": [
-                   {
-                    "prop": "api-provider",
-                    "type": "select"
-                  },
-                  {"prop": "api-external-identifier"}
-                ]
-              },
-              {
-                "prop": "api-documentation",
-                "conditions": {
-                  "field": "api-provider",
-                  "value": "Other provider",
-                  "result": "include"
-                }
-              },
-              {
-                "prop": "api-access", 
-                "conditions": {
-                  "field": "api-provider",
-                  "value": "Other provider",
-                  "result": "include"
-                }
-              },
-              {"prop": "api-additional-information", "type": "long_text"}
-
+                {
+                  "prop": "api-provider",
+                  "type": "select"
+                },
+                { "prop": "api-external-identifier" }
+              ]
+            },
+            {
+              "prop": "api-documentation",
+              "conditions": {
+                "field": "api-provider",
+                "value": "Other provider",
+                "result": "include"
+              }
+            },
+            {
+              "prop": "api-access",
+              "conditions": {
+                "field": "api-provider",
+                "value": "Other provider",
+                "result": "include"
+              }
+            },
+            { "prop": "api-additional-information", "type": "long_text" }
           ]
         },
         {

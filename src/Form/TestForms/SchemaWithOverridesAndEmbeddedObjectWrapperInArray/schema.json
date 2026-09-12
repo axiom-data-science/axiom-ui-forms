@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Schema with Array and Embedded Wrappers",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Report Title"
+    },
+    "surveys": {
+      "type": "array",
+      "title": "Surveys",
+      "items": {
+        "type": "object",
+        "properties": {
+          "survey_date": {
+            "type": "string",
+            "title": "Survey Date"
+          },
+          "surveyor": {
+            "type": "string",
+            "title": "Surveyor"
+          },
+          "survey_method": {
+            "type": "string",
+            "title": "Survey Method"
+          },
+          "elevation": {
+            "type": "number",
+            "title": "Elevation"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        }
+      }
+    }
+  }
+}

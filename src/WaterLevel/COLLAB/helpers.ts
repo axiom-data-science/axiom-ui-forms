@@ -524,7 +524,10 @@ const createFieldOverrideFromMetadataField = (field: IMetadataField): IFormField
     fO.type = ***REMOVED***selectOrText***REMOVED***
   }
   if (field.example && field.example.trim() !== ***REMOVED******REMOVED***) {
-    fO.example = field.example
+    if (!field.example.match(/^Ex/i)) {
+      console.log(***REMOVED***Adding Ex: for***REMOVED***, field.id)
+    }
+    fO.example = !field.example.match(/^Ex/i) ? `Ex: ${field.example}` : field.example
     console.log(***REMOVED***adding placeholder for***REMOVED***, field.id, ***REMOVED***placeholder***REMOVED***, field.example)
   }
   return fO

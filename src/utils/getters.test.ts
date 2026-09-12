@@ -7,7 +7,7 @@ import {
   getFieldValue,
   getPathFromField,
   getFieldsFromFormSection,
-  getFormPayload
+  getFormPayload,
 } from ***REMOVED***./getters***REMOVED***
 import { type IFormSection, type IFormField } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import { overridesAndSchemaToFormObject, schemaToFormObject } from ***REMOVED***./schemaToFormHelpers***REMOVED***
@@ -16,7 +16,13 @@ import type { JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
 describe(***REMOVED***getters.ts***REMOVED***, () => {
   describe(***REMOVED***makeJsonPath***REMOVED***, () => {
     it(***REMOVED***should return the correct JSON path for a field with destPath***REMOVED***, () => {
-      const field: IFormField = { id: ***REMOVED***field1***REMOVED***, type: ***REMOVED***text***REMOVED***, destPath: ***REMOVED***data***REMOVED***, multiple: true, index: 1 }
+      const field: IFormField = {
+        id: ***REMOVED***field1***REMOVED***,
+        type: ***REMOVED***text***REMOVED***,
+        destPath: ***REMOVED***data***REMOVED***,
+        multiple: true,
+        index: 1,
+      }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***data[1]***REMOVED***)
     })
@@ -31,7 +37,11 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field3***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***object***REMOVED***, fields: [] }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***object***REMOVED***, fields: [] }, { id: ***REMOVED***field3***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [
+          { id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***object***REMOVED***, fields: [] },
+          { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***object***REMOVED***, fields: [] },
+          { id: ***REMOVED***field3***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+        ],
       }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***parent[0].child.field3***REMOVED***)
@@ -40,7 +50,11 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***fieldWithIndex***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED***, index: 2 }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [
+          { id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***text***REMOVED***, index: 2 },
+          { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+          { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+        ],
       }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***parent[2].child.fieldWithIndex***REMOVED***)
@@ -51,7 +65,11 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         type: ***REMOVED***text***REMOVED***,
         multiple: true,
         index: 2,
-        path: [{ id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***object***REMOVED***, fields: [] }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***object***REMOVED***, fields: [] }, { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED***, multiple: true, index: 2 }]
+        path: [
+          { id: ***REMOVED***parent***REMOVED***, multiple: true, type: ***REMOVED***object***REMOVED***, fields: [] },
+          { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***object***REMOVED***, fields: [] },
+          { id: ***REMOVED***fieldWithIndex***REMOVED***, type: ***REMOVED***text***REMOVED***, multiple: true, index: 2 },
+        ],
       }
       const result = makeJsonPath(field)
       expect(result).toBe(***REMOVED***parent[0].child.fieldWithIndex[2]***REMOVED***)
@@ -63,10 +81,16 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field4***REMOVED***,
         type: ***REMOVED***object***REMOVED***,
-        fields: [{ id: ***REMOVED***child1***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child2***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        fields: [
+          { id: ***REMOVED***child1***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+          { id: ***REMOVED***child2***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+        ],
       }
       const result = getChildFields(field)
-      expect(result).toEqual([{ id: ***REMOVED***child1***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child2***REMOVED***, type: ***REMOVED***text***REMOVED*** }])
+      expect(result).toEqual([
+        { id: ***REMOVED***child1***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+        { id: ***REMOVED***child2***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+      ])
     })
 
     it(***REMOVED***should return an empty array if no child fields exist***REMOVED***, () => {
@@ -80,13 +104,13 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
     it(***REMOVED***should return all fields recursively***REMOVED***, () => {
       const fields: IFormField[] = [
         { id: ***REMOVED***field6***REMOVED***, type: ***REMOVED***object***REMOVED***, fields: [{ id: ***REMOVED***child3***REMOVED***, type: ***REMOVED***text***REMOVED*** }] },
-        { id: ***REMOVED***field7***REMOVED***, type: ***REMOVED***text***REMOVED*** }
+        { id: ***REMOVED***field7***REMOVED***, type: ***REMOVED***text***REMOVED*** },
       ]
       const result = getFields(fields)
       expect(result).toEqual([
         { id: ***REMOVED***field6***REMOVED***, type: ***REMOVED***object***REMOVED***, fields: [{ id: ***REMOVED***child3***REMOVED***, type: ***REMOVED***text***REMOVED*** }] },
         { id: ***REMOVED***child3***REMOVED***, type: ***REMOVED***text***REMOVED*** },
-        { id: ***REMOVED***field7***REMOVED***, type: ***REMOVED***text***REMOVED*** }
+        { id: ***REMOVED***field7***REMOVED***, type: ***REMOVED***text***REMOVED*** },
       ])
     })
 
@@ -137,7 +161,11 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
       const field: IFormField = {
         id: ***REMOVED***field12***REMOVED***,
         type: ***REMOVED***text***REMOVED***,
-        path: [{ id: ***REMOVED***parent***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** }, { id: ***REMOVED***field12***REMOVED***, type: ***REMOVED***text***REMOVED*** }]
+        path: [
+          { id: ***REMOVED***parent***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+          { id: ***REMOVED***child***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+          { id: ***REMOVED***field12***REMOVED***, type: ***REMOVED***text***REMOVED*** },
+        ],
       }
       const result = getPathFromField(field)
       expect(result).toBe(***REMOVED***parent.child.field12***REMOVED***)
@@ -157,13 +185,13 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
             id: ***REMOVED***parent***REMOVED***,
             type: ***REMOVED***object***REMOVED***,
             skip_path: true,
-            fields: []
+            fields: [],
           },
           {
             id: ***REMOVED***field1***REMOVED***,
-            type: ***REMOVED***text***REMOVED***
-          }
-        ]
+            type: ***REMOVED***text***REMOVED***,
+          },
+        ],
       }
       const result = getPathFromField(field)
       expect(result).toBe(***REMOVED***field1***REMOVED***)
@@ -177,13 +205,15 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         label: ***REMOVED***Section 1***REMOVED***,
         fields: [{ id: ***REMOVED***field14***REMOVED***, type: ***REMOVED***text***REMOVED*** }],
         pages: [{ id: ***REMOVED***page1***REMOVED***, label: ***REMOVED***Page 1***REMOVED***, fields: [{ id: ***REMOVED***field15***REMOVED***, type: ***REMOVED***text***REMOVED*** }] }],
-        wizard_steps: [{ id: ***REMOVED***step1***REMOVED***, order: 0, label: ***REMOVED***Step 1***REMOVED***, fields: [{ id: ***REMOVED***field16***REMOVED***, type: ***REMOVED***text***REMOVED*** }] }]
+        wizard_steps: [
+          { id: ***REMOVED***step1***REMOVED***, order: 0, label: ***REMOVED***Step 1***REMOVED***, fields: [{ id: ***REMOVED***field16***REMOVED***, type: ***REMOVED***text***REMOVED*** }] },
+        ],
       }
       const result = getFieldsFromFormSection(formSection)
       expect(result).toEqual([
         { id: ***REMOVED***field14***REMOVED***, type: ***REMOVED***text***REMOVED*** },
         { id: ***REMOVED***field15***REMOVED***, type: ***REMOVED***text***REMOVED*** },
-        { id: ***REMOVED***field16***REMOVED***, type: ***REMOVED***text***REMOVED*** }
+        { id: ***REMOVED***field16***REMOVED***, type: ***REMOVED***text***REMOVED*** },
       ])
     })
 
@@ -201,12 +231,12 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         label: ***REMOVED***Test Form***REMOVED***,
         fields: [
           { id: ***REMOVED***shape_type***REMOVED***, type: ***REMOVED***select***REMOVED***, excludeFromPayload: true } as any,
-          { id: ***REMOVED***geojson***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any
-        ]
+          { id: ***REMOVED***geojson***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any,
+        ],
       } as any
       const formValues = {
         shape_type: ***REMOVED***point***REMOVED***,
-        geojson: { type: ***REMOVED***Point***REMOVED***, coordinates: [0, 0] }
+        geojson: { type: ***REMOVED***Point***REMOVED***, coordinates: [0, 0] },
       }
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ geojson: { type: ***REMOVED***Point***REMOVED***, coordinates: [0, 0] } })
@@ -219,12 +249,12 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         label: ***REMOVED***Test Form***REMOVED***,
         fields: [
           { id: ***REMOVED***control_field***REMOVED***, type: ***REMOVED***select***REMOVED***, excludeFromPayload: false } as any,
-          { id: ***REMOVED***data_field***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any
-        ]
+          { id: ***REMOVED***data_field***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any,
+        ],
       } as any
       const formValues = {
         control_field: ***REMOVED***value1***REMOVED***,
-        data_field: ***REMOVED***value2***REMOVED***
+        data_field: ***REMOVED***value2***REMOVED***,
       }
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ control_field: ***REMOVED***value1***REMOVED***, data_field: ***REMOVED***value2***REMOVED*** })
@@ -236,8 +266,8 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
         label: ***REMOVED***Test Form***REMOVED***,
         fields: [
           { id: ***REMOVED***excluded1***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any,
-          { id: ***REMOVED***excluded2***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any
-        ]
+          { id: ***REMOVED***excluded2***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any,
+        ],
       } as any
       const formValues = { excluded1: ***REMOVED***val1***REMOVED***, excluded2: ***REMOVED***val2***REMOVED*** }
       const result = getFormPayload(formValues, form)
@@ -254,14 +284,14 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
             label: ***REMOVED***Page 1***REMOVED***,
             fields: [
               { id: ***REMOVED***field1***REMOVED***, type: ***REMOVED***text***REMOVED*** } as any,
-              { id: ***REMOVED***field2***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any
-            ]
-          }
-        ]
+              { id: ***REMOVED***field2***REMOVED***, type: ***REMOVED***text***REMOVED***, excludeFromPayload: true } as any,
+            ],
+          },
+        ],
       } as any
       const formValues = {
         field1: ***REMOVED***value1***REMOVED***,
-        field2: ***REMOVED***excluded_value***REMOVED***
+        field2: ***REMOVED***excluded_value***REMOVED***,
       }
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ field1: ***REMOVED***value1***REMOVED*** })
@@ -479,9 +509,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
           {
             converter_type: ***REMOVED***drop***REMOVED***,
             column_names: [***REMOVED***a***REMOVED***, ***REMOVED***b***REMOVED***],
-            output_variables: [
-              { index: 0, output_variable: ***REMOVED***depth***REMOVED*** },
-            ],
+            output_variables: [{ index: 0, output_variable: ***REMOVED***depth***REMOVED*** }],
           },
         ],
       }
@@ -501,9 +529,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
           {
             converter_type: ***REMOVED***drop***REMOVED***,
             column_names: [***REMOVED***a***REMOVED***, ***REMOVED***b***REMOVED***],
-            output_variables: [
-              { index: 0, output_variable: ***REMOVED***depth***REMOVED*** },
-            ],
+            output_variables: [{ index: 0, output_variable: ***REMOVED***depth***REMOVED*** }],
           },
         ],
       })
@@ -533,9 +559,7 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
                         id: ***REMOVED***meta***REMOVED***,
                         type: ***REMOVED***object***REMOVED***,
                         skip_path: true,
-                        fields: [
-                          { id: ***REMOVED***units***REMOVED***, type: ***REMOVED***text***REMOVED*** },
-                        ],
+                        fields: [{ id: ***REMOVED***units***REMOVED***, type: ***REMOVED***text***REMOVED*** }],
                       },
                     ],
                   },
@@ -587,6 +611,74 @@ describe(***REMOVED***getters.ts***REMOVED***, () => {
               { index: 0, output_variable: ***REMOVED***temp_surface***REMOVED*** },
               { index: 1, output_variable: ***REMOVED***temp_bottom***REMOVED*** },
             ],
+          },
+        ],
+      })
+    })
+
+    it(***REMOVED***should include child values of objectWrapper inside array items (multiple: true)***REMOVED***, () => {
+      const schema: JSONSchema6 = {
+        title: ***REMOVED***Surveys Schema***REMOVED***,
+        type: ***REMOVED***object***REMOVED***,
+        properties: {
+          surveys: {
+            type: ***REMOVED***array***REMOVED***,
+            title: ***REMOVED***Surveys***REMOVED***,
+            items: {
+              type: ***REMOVED***object***REMOVED***,
+              properties: {
+                survey_date: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Survey Date***REMOVED*** },
+                surveyor: { type: ***REMOVED***string***REMOVED***, title: ***REMOVED***Surveyor***REMOVED*** },
+                elevation: { type: ***REMOVED***number***REMOVED***, title: ***REMOVED***Elevation***REMOVED*** },
+              },
+            },
+          },
+        },
+      }
+
+      const formOverrides = [
+        {
+          fields: [
+            {
+              prop: ***REMOVED***surveys***REMOVED***,
+              multiple: true,
+              fields: [
+                {
+                  id: ***REMOVED***survey-wrapper***REMOVED***,
+                  type: ***REMOVED***objectWrapper***REMOVED***,
+                  fields: [{ prop: ***REMOVED***surveys[].survey_date***REMOVED*** }, { prop: ***REMOVED***surveys[].surveyor***REMOVED*** }],
+                },
+                {
+                  prop: ***REMOVED***surveys[].elevation***REMOVED***,
+                },
+              ],
+            },
+          ],
+        },
+      ]
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: formOverrides as any,
+      })
+
+      const formValues = {
+        surveys: [
+          {
+            survey_date: ***REMOVED***2026-01-15***REMOVED***,
+            surveyor: ***REMOVED***Jane Doe***REMOVED***,
+            elevation: 12.34,
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        surveys: [
+          {
+            survey_date: ***REMOVED***2026-01-15***REMOVED***,
+            surveyor: ***REMOVED***Jane Doe***REMOVED***,
+            elevation: 12.34,
           },
         ],
       })
