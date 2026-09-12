@@ -18,6 +18,8 @@ const SingleSelectInput = ({
         <SelectInput
           id={field.id}
           className={className}
+          variant="outline"
+          useNative={true}
           label={<FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />}
           testId={field.id}
           options={field.options.map((option) => ({
