@@ -7,7 +7,7 @@ import {
   getFieldValue,
   getPathFromField,
   getFieldsFromFormSection,
-  getFormPayload
+  getFormPayload,
 } from './getters'
 import { type IFormSection, type IFormField } from '@/Form/Creator/FormCreatorTypes'
 import { overridesAndSchemaToFormObject, schemaToFormObject } from './schemaToFormHelpers'
@@ -16,7 +16,13 @@ import type { JSONSchema6 } from 'json-schema'
 describe('getters.ts', () => {
   describe('makeJsonPath', () => {
     it('should return the correct JSON path for a field with destPath', () => {
-      const field: IFormField = { id: 'field1', type: 'text', destPath: 'data', multiple: true, index: 1 }
+      const field: IFormField = {
+        id: 'field1',
+        type: 'text',
+        destPath: 'data',
+        multiple: true,
+        index: 1,
+      }
       const result = makeJsonPath(field)
       expect(result).toBe('data[1]')
     })
@@ -31,7 +37,11 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'field3',
         type: 'text',
-        path: [{ id: 'parent', multiple: true, type: 'object', fields: [] }, { id: 'child', type: 'object', fields: [] }, { id: 'field3', type: 'text' }]
+        path: [
+          { id: 'parent', multiple: true, type: 'object', fields: [] },
+          { id: 'child', type: 'object', fields: [] },
+          { id: 'field3', type: 'text' },
+        ],
       }
       const result = makeJsonPath(field)
       expect(result).toBe('parent[0].child.field3')
@@ -40,7 +50,11 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'fieldWithIndex',
         type: 'text',
-        path: [{ id: 'parent', multiple: true, type: 'text', index: 2 }, { id: 'child', type: 'text' }, { id: 'fieldWithIndex', type: 'text' }]
+        path: [
+          { id: 'parent', multiple: true, type: 'text', index: 2 },
+          { id: 'child', type: 'text' },
+          { id: 'fieldWithIndex', type: 'text' },
+        ],
       }
       const result = makeJsonPath(field)
       expect(result).toBe('parent[2].child.fieldWithIndex')
@@ -51,7 +65,11 @@ describe('getters.ts', () => {
         type: 'text',
         multiple: true,
         index: 2,
-        path: [{ id: 'parent', multiple: true, type: 'object', fields: [] }, { id: 'child', type: 'object', fields: [] }, { id: 'fieldWithIndex', type: 'text', multiple: true, index: 2 }]
+        path: [
+          { id: 'parent', multiple: true, type: 'object', fields: [] },
+          { id: 'child', type: 'object', fields: [] },
+          { id: 'fieldWithIndex', type: 'text', multiple: true, index: 2 },
+        ],
       }
       const result = makeJsonPath(field)
       expect(result).toBe('parent[0].child.fieldWithIndex[2]')
@@ -63,10 +81,16 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'field4',
         type: 'object',
-        fields: [{ id: 'child1', type: 'text' }, { id: 'child2', type: 'text' }]
+        fields: [
+          { id: 'child1', type: 'text' },
+          { id: 'child2', type: 'text' },
+        ],
       }
       const result = getChildFields(field)
-      expect(result).toEqual([{ id: 'child1', type: 'text' }, { id: 'child2', type: 'text' }])
+      expect(result).toEqual([
+        { id: 'child1', type: 'text' },
+        { id: 'child2', type: 'text' },
+      ])
     })
 
     it('should return an empty array if no child fields exist', () => {
@@ -80,13 +104,13 @@ describe('getters.ts', () => {
     it('should return all fields recursively', () => {
       const fields: IFormField[] = [
         { id: 'field6', type: 'object', fields: [{ id: 'child3', type: 'text' }] },
-        { id: 'field7', type: 'text' }
+        { id: 'field7', type: 'text' },
       ]
       const result = getFields(fields)
       expect(result).toEqual([
         { id: 'field6', type: 'object', fields: [{ id: 'child3', type: 'text' }] },
         { id: 'child3', type: 'text' },
-        { id: 'field7', type: 'text' }
+        { id: 'field7', type: 'text' },
       ])
     })
 
@@ -137,7 +161,11 @@ describe('getters.ts', () => {
       const field: IFormField = {
         id: 'field12',
         type: 'text',
-        path: [{ id: 'parent', type: 'text' }, { id: 'child', type: 'text' }, { id: 'field12', type: 'text' }]
+        path: [
+          { id: 'parent', type: 'text' },
+          { id: 'child', type: 'text' },
+          { id: 'field12', type: 'text' },
+        ],
       }
       const result = getPathFromField(field)
       expect(result).toBe('parent.child.field12')
@@ -157,13 +185,13 @@ describe('getters.ts', () => {
             id: 'parent',
             type: 'object',
             skip_path: true,
-            fields: []
+            fields: [],
           },
           {
             id: 'field1',
-            type: 'text'
-          }
-        ]
+            type: 'text',
+          },
+        ],
       }
       const result = getPathFromField(field)
       expect(result).toBe('field1')
@@ -177,13 +205,15 @@ describe('getters.ts', () => {
         label: 'Section 1',
         fields: [{ id: 'field14', type: 'text' }],
         pages: [{ id: 'page1', label: 'Page 1', fields: [{ id: 'field15', type: 'text' }] }],
-        wizard_steps: [{ id: 'step1', order: 0, label: 'Step 1', fields: [{ id: 'field16', type: 'text' }] }]
+        wizard_steps: [
+          { id: 'step1', order: 0, label: 'Step 1', fields: [{ id: 'field16', type: 'text' }] },
+        ],
       }
       const result = getFieldsFromFormSection(formSection)
       expect(result).toEqual([
         { id: 'field14', type: 'text' },
         { id: 'field15', type: 'text' },
-        { id: 'field16', type: 'text' }
+        { id: 'field16', type: 'text' },
       ])
     })
 
@@ -201,12 +231,12 @@ describe('getters.ts', () => {
         label: 'Test Form',
         fields: [
           { id: 'shape_type', type: 'select', excludeFromPayload: true } as any,
-          { id: 'geojson', type: 'text' } as any
-        ]
+          { id: 'geojson', type: 'text' } as any,
+        ],
       } as any
       const formValues = {
         shape_type: 'point',
-        geojson: { type: 'Point', coordinates: [0, 0] }
+        geojson: { type: 'Point', coordinates: [0, 0] },
       }
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ geojson: { type: 'Point', coordinates: [0, 0] } })
@@ -219,12 +249,12 @@ describe('getters.ts', () => {
         label: 'Test Form',
         fields: [
           { id: 'control_field', type: 'select', excludeFromPayload: false } as any,
-          { id: 'data_field', type: 'text' } as any
-        ]
+          { id: 'data_field', type: 'text' } as any,
+        ],
       } as any
       const formValues = {
         control_field: 'value1',
-        data_field: 'value2'
+        data_field: 'value2',
       }
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ control_field: 'value1', data_field: 'value2' })
@@ -236,8 +266,8 @@ describe('getters.ts', () => {
         label: 'Test Form',
         fields: [
           { id: 'excluded1', type: 'text', excludeFromPayload: true } as any,
-          { id: 'excluded2', type: 'text', excludeFromPayload: true } as any
-        ]
+          { id: 'excluded2', type: 'text', excludeFromPayload: true } as any,
+        ],
       } as any
       const formValues = { excluded1: 'val1', excluded2: 'val2' }
       const result = getFormPayload(formValues, form)
@@ -254,14 +284,14 @@ describe('getters.ts', () => {
             label: 'Page 1',
             fields: [
               { id: 'field1', type: 'text' } as any,
-              { id: 'field2', type: 'text', excludeFromPayload: true } as any
-            ]
-          }
-        ]
+              { id: 'field2', type: 'text', excludeFromPayload: true } as any,
+            ],
+          },
+        ],
       } as any
       const formValues = {
         field1: 'value1',
-        field2: 'excluded_value'
+        field2: 'excluded_value',
       }
       const result = getFormPayload(formValues, form)
       expect(result).toEqual({ field1: 'value1' })
@@ -479,9 +509,7 @@ describe('getters.ts', () => {
           {
             converter_type: 'drop',
             column_names: ['a', 'b'],
-            output_variables: [
-              { index: 0, output_variable: 'depth' },
-            ],
+            output_variables: [{ index: 0, output_variable: 'depth' }],
           },
         ],
       }
@@ -501,9 +529,7 @@ describe('getters.ts', () => {
           {
             converter_type: 'drop',
             column_names: ['a', 'b'],
-            output_variables: [
-              { index: 0, output_variable: 'depth' },
-            ],
+            output_variables: [{ index: 0, output_variable: 'depth' }],
           },
         ],
       })
@@ -533,9 +559,7 @@ describe('getters.ts', () => {
                         id: 'meta',
                         type: 'object',
                         skip_path: true,
-                        fields: [
-                          { id: 'units', type: 'text' },
-                        ],
+                        fields: [{ id: 'units', type: 'text' }],
                       },
                     ],
                   },
@@ -587,6 +611,74 @@ describe('getters.ts', () => {
               { index: 0, output_variable: 'temp_surface' },
               { index: 1, output_variable: 'temp_bottom' },
             ],
+          },
+        ],
+      })
+    })
+
+    it('should include child values of objectWrapper inside array items (multiple: true)', () => {
+      const schema: JSONSchema6 = {
+        title: 'Surveys Schema',
+        type: 'object',
+        properties: {
+          surveys: {
+            type: 'array',
+            title: 'Surveys',
+            items: {
+              type: 'object',
+              properties: {
+                survey_date: { type: 'string', title: 'Survey Date' },
+                surveyor: { type: 'string', title: 'Surveyor' },
+                elevation: { type: 'number', title: 'Elevation' },
+              },
+            },
+          },
+        },
+      }
+
+      const formOverrides = [
+        {
+          fields: [
+            {
+              prop: 'surveys',
+              multiple: true,
+              fields: [
+                {
+                  id: 'survey-wrapper',
+                  type: 'objectWrapper',
+                  fields: [{ prop: 'surveys[].survey_date' }, { prop: 'surveys[].surveyor' }],
+                },
+                {
+                  prop: 'surveys[].elevation',
+                },
+              ],
+            },
+          ],
+        },
+      ]
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: formOverrides as any,
+      })
+
+      const formValues = {
+        surveys: [
+          {
+            survey_date: '2026-01-15',
+            surveyor: 'Jane Doe',
+            elevation: 12.34,
+          },
+        ],
+      }
+
+      const result = getFormPayload(formValues, form)
+      expect(result).toEqual({
+        surveys: [
+          {
+            survey_date: '2026-01-15',
+            surveyor: 'Jane Doe',
+            elevation: 12.34,
           },
         ],
       })

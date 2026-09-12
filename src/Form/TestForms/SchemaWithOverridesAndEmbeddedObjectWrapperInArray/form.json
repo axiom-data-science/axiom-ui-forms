@@ -1,0 +1,45 @@
+{
+  "fields": [
+    {
+      "prop": "title"
+    },
+    {
+      "prop": "surveys",
+      "label": "Survey Entries",
+      "multiple": true,
+      "fields": [
+        {
+          "id": "survey-overview-wrapper",
+          "label": "Overview",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "surveys[].survey_date"
+            },
+            {
+              "prop": "surveys[].surveyor"
+            }
+          ]
+        },
+        {
+          "id": "survey-details-wrapper",
+          "label": "Details",
+          "type": "objectWrapper",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "surveys[].survey_method"
+            },
+            {
+              "prop": "surveys[].elevation"
+            }
+          ]
+        },
+        {
+          "prop": "surveys[].notes"
+        }
+      ]
+    }
+  ]
+}
