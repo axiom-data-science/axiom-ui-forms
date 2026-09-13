@@ -27,20 +27,20 @@ const ClearForm = ({
     <>
       {
         confirm
-          ? <p className=***REMOVED***flex flex-row gap-2 text-sm***REMOVED***><span className=***REMOVED***text-slate-600***REMOVED***>Deleting: </span> Are you sure?
-            <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***submit***REMOVED***
+          ? <p className=***REMOVED***flex flex-row gap-2 text-sm items-center***REMOVED***> Are you sure?
+            <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***submit***REMOVED***
               onClick={() => {
                 onConfirm()
                 setConfirm(false)
               }}>Yes <CheckIcon className=***REMOVED***inline ml-2***REMOVED*** />
             </Button>
-            <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***alert***REMOVED***
+            <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***alert***REMOVED***
               onClick={() => {
                 setConfirm(false)
               }}>Cancel <Cross1Icon className=***REMOVED***inline ml-2***REMOVED*** />
             </Button>
           </p>
-          : <Button size=***REMOVED***sm***REMOVED*** type=***REMOVED***alert***REMOVED*** onClick={() => { setConfirm(true) }}>
+          : <Button size=***REMOVED***xs***REMOVED*** type=***REMOVED***alert***REMOVED*** onClick={() => { setConfirm(true) }}>
             {message} <TrashIcon className=***REMOVED***inline ml-2 fill-white***REMOVED*** />
           </Button>
       }
@@ -64,7 +64,7 @@ const SelectNewForm = ({
       id=***REMOVED***select-new-form***REMOVED***
       variant=***REMOVED***submit***REMOVED***
       testId=***REMOVED***select-new-form***REMOVED***
-      size=***REMOVED***sm***REMOVED***
+      size=***REMOVED***xs***REMOVED***
       placeholder=***REMOVED***Select new form config***REMOVED***
       value={formInitParam}
       options={Object.keys(files).map(k => {
@@ -111,7 +111,7 @@ const FormManager = ({
   }, [form])
   return (
     <div className=***REMOVED***flex flex-col h-full gap-4***REMOVED***>
-      <div className=***REMOVED***flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4***REMOVED***>
+      <div className=***REMOVED***flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4 items-center***REMOVED***>
         <SelectNewForm
           files={formConfigs}
           onChange={key => {

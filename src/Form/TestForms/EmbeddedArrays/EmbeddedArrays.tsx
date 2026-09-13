@@ -329,7 +329,7 @@ export const EmbeddedArraysFromSchemaWithOverrides = (): ReactElement => {
         Reset Form Values
       </Button>
       <Button
-        type={activeOverride === ***REMOVED***mixed***REMOVED*** ? ***REMOVED***primary***REMOVED*** : ***REMOVED***secondary***REMOVED***}
+        type={activeOverride === ***REMOVED***mixed***REMOVED*** ? ***REMOVED***default***REMOVED*** : ***REMOVED***secondary***REMOVED***}
         size="xs"
         className="mt-4 ml-2"
         onClick={() => setOverrideMode(***REMOVED***mixed***REMOVED***)}
@@ -337,7 +337,7 @@ export const EmbeddedArraysFromSchemaWithOverrides = (): ReactElement => {
         Mixed Paths
       </Button>
       <Button
-        type={activeOverride === ***REMOVED***relative***REMOVED*** ? ***REMOVED***primary***REMOVED*** : ***REMOVED***secondary***REMOVED***}
+        type={activeOverride === ***REMOVED***relative***REMOVED*** ? ***REMOVED***default***REMOVED*** : ***REMOVED***secondary***REMOVED***}
         size="xs"
         className="mt-4 ml-2"
         onClick={() => setOverrideMode(***REMOVED***relative***REMOVED***)}
@@ -345,7 +345,7 @@ export const EmbeddedArraysFromSchemaWithOverrides = (): ReactElement => {
         Relative Only
       </Button>
       <Button
-        type={activeOverride === ***REMOVED***qualified***REMOVED*** ? ***REMOVED***primary***REMOVED*** : ***REMOVED***secondary***REMOVED***}
+        type={activeOverride === ***REMOVED***qualified***REMOVED*** ? ***REMOVED***default***REMOVED*** : ***REMOVED***secondary***REMOVED***}
         size="xs"
         className="mt-4 ml-2"
         onClick={() => setOverrideMode(***REMOVED***qualified***REMOVED***)}
