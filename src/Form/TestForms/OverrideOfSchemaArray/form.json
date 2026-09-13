@@ -25,7 +25,6 @@
             {
               "prop": "testEnum",
               "label": "Custom Label for Enum (from array override)",
-              "type": "selectOrText",
               "settings": {
                 "smallLabel": true
               }

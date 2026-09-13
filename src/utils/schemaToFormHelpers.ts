@@ -163,7 +163,35 @@ const getAdditionalPropertiesSchema = (schema: TraversableSchema): JSONSchema6 |
   return undefined
 }
 
+const isSelectOrTextStringAnyOf = (schema: JSONSchema6): boolean => {
+  if (schema.anyOf === undefined || schema.anyOf.length !== 2) {
+    return false
+  }
+
+  const branches = schema.anyOf.filter(
+    (branch): branch is JSONSchema6 => typeof branch !== ***REMOVED***boolean***REMOVED***
+  )
+  if (branches.length !== 2) {
+    return false
+  }
+
+  const [left, right] = branches
+  const leftIsString = left.type === ***REMOVED***string***REMOVED***
+  const rightIsString = right.type === ***REMOVED***string***REMOVED***
+  if (!leftIsString || !rightIsString) {
+    return false
+  }
+
+  const leftHasEnum = Array.isArray(left.enum) && left.enum.length > 0
+  const rightHasEnum = Array.isArray(right.enum) && right.enum.length > 0
+  return (leftHasEnum && !rightHasEnum) || (!leftHasEnum && rightHasEnum)
+}
+
 const getFieldType = (schema: JSONSchema6): IFormFieldType => {
+  if (isSelectOrTextStringAnyOf(schema)) {
+    return ***REMOVED***selectOrText***REMOVED***
+  }
+
   const schemaType = schema.type
   if (schemaType === ***REMOVED***string***REMOVED*** || schemaType === ***REMOVED***number***REMOVED*** || schemaType === ***REMOVED***integer***REMOVED***) {
     if (schema.enum !== undefined || schema.oneOf !== undefined) {
@@ -472,28 +500,54 @@ const schemaToFormField = ({
     }
   }
 
-  if (type === ***REMOVED***select***REMOVED*** || type === ***REMOVED***checkbox***REMOVED*** || type === ***REMOVED***radio***REMOVED***) {
+  if (type === ***REMOVED***select***REMOVED*** || type === ***REMOVED***checkbox***REMOVED*** || type === ***REMOVED***radio***REMOVED*** || type === ***REMOVED***selectOrText***REMOVED***) {
     const schemaOptions = schemaField.oneOf ?? schemaField.anyOf ?? schemaField.enum ?? []
+    const toOption = (
+      optionSchema: JSONSchema6Type | JSONSchema6Definition | undefined,
+      description?: string
+    ): ISelectOptionProps | undefined => {
+      const value = getValueFromSchema(optionSchema)
+      const label = getLabelFromSchema(optionSchema)
+      return value !== undefined
+        ? {
+            value: String(value),
+            label: label ?? String(value),
+            ...(description !== undefined ? { description } : {}),
+          }
+        : undefined
+    }
+
     const options: ISelectOptionProps[] = schemaOptions
-      .map((e) => {
-        const value = getValueFromSchema(e)
-        const label = getLabelFromSchema(e)
+      .flatMap((e) => {
         const description: string | undefined =
-          typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) && e.description !== undefined && e.description !== null 
+          typeof e === ***REMOVED***object***REMOVED*** &&
+          e !== null &&
+          !Array.isArray(e) &&
+          e.description !== undefined &&
+          e.description !== null
             ? String(e.description)
             : undefined
-        return value !== undefined
-          ? {
-              value: String(value),
-              label: label ?? String(value),
-              ...(description !== undefined ? { description } : {}),
-            }
-          : null
+
+        if (typeof e === ***REMOVED***object***REMOVED*** && e !== null && !Array.isArray(e) && Array.isArray(e.enum)) {
+          return e.enum
+            .map((enumValue) => toOption(enumValue, description))
+            .filter((d): d is ISelectOptionProps => d !== undefined)
+        }
+
+        const option = toOption(e, description)
+        return option !== undefined ? [option] : []
       })
-      .filter((d) => d !== null)
+      .filter((option, index, allOptions) => {
+        return allOptions.findIndex((candidate) => candidate.value === option.value) === index
+      })
     return {
       ...baseFieldProps,
-      type: options.find((d) => d.description !== undefined && d.description !== null) ? ***REMOVED***radio***REMOVED*** : type,
+      type:
+        type === ***REMOVED***selectOrText***REMOVED***
+          ? ***REMOVED***selectOrText***REMOVED***
+          : options.find((d) => d.description !== undefined && d.description !== null)
+            ? ***REMOVED***radio***REMOVED***
+            : type,
       options,
       multiple,
     }

@@ -18,7 +18,7 @@ const SchemaValidationExample = (): ReactElement => {
   const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
   const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
   const formValueState = useState<IFormValues>({})
-  const [validationState, setValidationState] = useState<{ valid: boolean; errors: IValidationError[] }>({ valid: true, errors: [] })
+  const [validationState, setValidationState] = useState<{ valid: boolean; isValidated: boolean; errors: IValidationError[] }>({ valid: true, isValidated: false, errors: [] })
   const form: IForm = overridesAndSchemaToFormObject({
     formOverrides: [formOverride as IFormOverride],
     schema: schema as JSONSchema6,
@@ -61,16 +61,23 @@ const SchemaValidationExample = (): ReactElement => {
         
       }
     }
-    setValidationState({ valid, errors })
+    setValidationState({ valid, isValidated: true, errors })
   }
   return (
     <div className=***REMOVED***flex flex-col gap-4***REMOVED***>
       {
-        !validationState.valid && (
-          <div className=***REMOVED***text-red-500***REMOVED***>
+        !validationState.valid && validationState.isValidated && (
+          <div className=***REMOVED***text-red-500 py-8 pl-8***REMOVED***>
             {validationState.errors.map((error, index) => (
               <div key={index}>{error.message}</div>
             ))}
+          </div>
+        )
+      }
+      {
+        validationState.valid && validationState.isValidated && (
+          <div className=***REMOVED***text-green-500 py-8 pl-8***REMOVED***>
+            Form is valid.
           </div>
         )
       }
