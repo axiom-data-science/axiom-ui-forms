@@ -27,20 +27,20 @@ const ClearForm = ({
     <>
       {
         confirm
-          ? <p className='flex flex-row gap-2 text-sm'><span className='text-slate-600'>Deleting: </span> Are you sure?
-            <Button size='sm' type='submit'
+          ? <p className='flex flex-row gap-2 text-sm items-center'> Are you sure?
+            <Button size='xs' type='submit'
               onClick={() => {
                 onConfirm()
                 setConfirm(false)
               }}>Yes <CheckIcon className='inline ml-2' />
             </Button>
-            <Button size='sm' type='alert'
+            <Button size='xs' type='alert'
               onClick={() => {
                 setConfirm(false)
               }}>Cancel <Cross1Icon className='inline ml-2' />
             </Button>
           </p>
-          : <Button size='sm' type='alert' onClick={() => { setConfirm(true) }}>
+          : <Button size='xs' type='alert' onClick={() => { setConfirm(true) }}>
             {message} <TrashIcon className='inline ml-2 fill-white' />
           </Button>
       }
@@ -64,7 +64,7 @@ const SelectNewForm = ({
       id='select-new-form'
       variant='submit'
       testId='select-new-form'
-      size='sm'
+      size='xs'
       placeholder='Select new form config'
       value={formInitParam}
       options={Object.keys(files).map(k => {
@@ -111,7 +111,7 @@ const FormManager = ({
   }, [form])
   return (
     <div className='flex flex-col h-full gap-4'>
-      <div className='flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4'>
+      <div className='flex flex-row gap-4 bg-white sticky top-0 left-0 right-0 shadow-lg z-10 p-4 items-center'>
         <SelectNewForm
           files={formConfigs}
           onChange={key => {

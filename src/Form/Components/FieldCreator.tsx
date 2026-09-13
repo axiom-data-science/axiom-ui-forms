@@ -59,8 +59,8 @@ const DeleteMultiple = ({ doDelete }: { doDelete: () => void }): ReactElement =>
   return (
     <>
       {confirm ? (
-        <p className="flex flex-row gap-2 text-sm">
-          <span className="text-slate-600">Deleting: </span> Are you sure?
+        <p className="flex flex-row gap-2 items-center">
+          <span><span className="text-slate-600">Deleting: </span> Are you sure?</span>
           <Button
             size="xs"
             type="submit"

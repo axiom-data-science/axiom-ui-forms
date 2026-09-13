@@ -329,7 +329,7 @@ export const EmbeddedArraysFromSchemaWithOverrides = (): ReactElement => {
         Reset Form Values
       </Button>
       <Button
-        type={activeOverride === 'mixed' ? 'primary' : 'secondary'}
+        type={activeOverride === 'mixed' ? 'default' : 'secondary'}
         size="xs"
         className="mt-4 ml-2"
         onClick={() => setOverrideMode('mixed')}
@@ -337,7 +337,7 @@ export const EmbeddedArraysFromSchemaWithOverrides = (): ReactElement => {
         Mixed Paths
       </Button>
       <Button
-        type={activeOverride === 'relative' ? 'primary' : 'secondary'}
+        type={activeOverride === 'relative' ? 'default' : 'secondary'}
         size="xs"
         className="mt-4 ml-2"
         onClick={() => setOverrideMode('relative')}
@@ -345,7 +345,7 @@ export const EmbeddedArraysFromSchemaWithOverrides = (): ReactElement => {
         Relative Only
       </Button>
       <Button
-        type={activeOverride === 'qualified' ? 'primary' : 'secondary'}
+        type={activeOverride === 'qualified' ? 'default' : 'secondary'}
         size="xs"
         className="mt-4 ml-2"
         onClick={() => setOverrideMode('qualified')}
