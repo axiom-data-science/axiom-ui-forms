@@ -21,7 +21,9 @@ const external = [
   ***REMOVED***react-scripts***REMOVED***,
   ***REMOVED***react/jsx-runtime***REMOVED***,
   ***REMOVED***react-router-dom***REMOVED***,
-  ***REMOVED***@tanstack/react-query***REMOVED***
+  ***REMOVED***@tanstack/react-query***REMOVED***,
+  ***REMOVED***use-sync-external-store/shim***REMOVED***,
+  ***REMOVED***use-sync-external-store/shim/with-selector***REMOVED***
 ]
 
 const config = [
