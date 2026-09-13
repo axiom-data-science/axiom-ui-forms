@@ -21,7 +21,9 @@ const external = [
   'react-scripts',
   'react/jsx-runtime',
   'react-router-dom',
-  '@tanstack/react-query'
+  '@tanstack/react-query',
+  'use-sync-external-store/shim',
+  'use-sync-external-store/shim/with-selector'
 ]
 
 const config = [
