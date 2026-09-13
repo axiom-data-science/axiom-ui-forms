@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@axdspub/axiom-maps": "^1.1.1-alpha.0",
-    "@axdspub/axiom-ui-data-services": "^1.1.1-alpha.1",
     "@axdspub/axiom-ui-utilities": "^1.1.2-alpha.1",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-yaml": "^6.1.2",
@@ -83,6 +82,7 @@
     ]
   },
   "devDependencies": {
+    "@axdspub/axiom-ui-data-services": "^1.1.1-alpha.1",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-babel": "^6.0.4",
