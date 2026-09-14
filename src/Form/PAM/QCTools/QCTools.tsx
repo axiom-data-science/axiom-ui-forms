@@ -1,11 +1,9 @@
 import {FormWithEditorOverlay} from ***REMOVED***@/Form/FormWithEditorOverlay***REMOVED***
 import { ReactElement, useEffect, useMemo, useState } from ***REMOVED***react***REMOVED***
-import { type JSONSchema6 } from ***REMOVED***json-schema***REMOVED***
-import { IFormFieldOverride } from ***REMOVED***@/library***REMOVED***
-import { IFieldInputProps, IForm, type IFormOverride } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
+import { IFieldInputProps, IForm } from ***REMOVED***@/Form/Creator/FormCreatorTypes***REMOVED***
 import FolderUpload from ***REMOVED***@/Form/Components/Inputs/FolderUpload/FolderUpload***REMOVED***
 import { type FolderFileEntry, type FolderPreviewProps } from ***REMOVED***@/Form/Components/Inputs/FolderUpload/folderUploadTypes***REMOVED***
-import { ChevronDown, ChevronRight, Check, Copy, FileAudio, File, Loader, X, Folder } from ***REMOVED***lucide-react***REMOVED***
+import { ChevronDown, ChevronRight, Check, Copy, FileAudio, File, Loader, X } from ***REMOVED***lucide-react***REMOVED***
 
 
 const form:IForm = {
@@ -346,14 +344,14 @@ const useAudioDurationMap = (files: FolderFileEntry[]) => {
 
 type ValidationStatus = ***REMOVED***pass***REMOVED*** | ***REMOVED***fail***REMOVED*** | ***REMOVED***pending***REMOVED***
 
-const ValidationIndicator = ({ status }: { status: ValidationStatus }) => {
+const ValidationIndicator = ({ status, expanded = false }: { status: ValidationStatus, expanded: boolean }) => {
     if (status === ***REMOVED***pending***REMOVED***) {
         return <Loader className="text-slate-400" size={16} />
     }
 
     return status === ***REMOVED***pass***REMOVED***
-        ? <Check className="text-emerald-600" size={16} />
-        : <X className="text-rose-600" size={16} />
+        ? <Check className={expanded ? ***REMOVED***text-emerald-300***REMOVED*** : ***REMOVED***text-emerald-600***REMOVED***} size={16} />
+        : <X className={expanded ? ***REMOVED***text-rose-300***REMOVED*** : ***REMOVED***text-rose-600***REMOVED***} size={16} />
 }
 
 const ValidationOverviewItem = ({
@@ -374,7 +372,7 @@ const ValidationOverviewItem = ({
         <div className="flex min-w-65 flex-1 flex-col gap-2 px-4 py-3">
             <div className="flex items-center gap-2">
                 <div className={`text-sm font-medium ${labelClassName}`}>{label}</div>
-                <ValidationIndicator status={status} />
+                <ValidationIndicator status={status} expanded={false} />
             </div>
             <div className={`text-sm ${valueClassName}`}>{value}</div>
             {control ? <div>{control}</div> : null}
@@ -523,6 +521,8 @@ const FolderFileRow = ({
     durationSeconds,
     validationConfig,
     previousGapFailed,
+    isExpanded,
+    onToggle,
 }: {
     file: FolderFileEntry
     inferredTimestamp: Date | null
@@ -530,9 +530,10 @@ const FolderFileRow = ({
     durationSeconds: number | null | undefined
     validationConfig: RowValidationConfig
     previousGapFailed: boolean
+    isExpanded: boolean
+    onToggle: () => void
 }) => {
     const audioUrl = useObjectUrl(file.fileType.isAudio ? file.file : null)
-    const [isExpanded, setIsExpanded] = useState(false)
     const extension = file.file.name.split(***REMOVED***.***REMOVED***).pop() || ***REMOVED***unknown***REMOVED***
     const lastModified = useMemo(() => new Date(file.file.lastModified), [file.file.lastModified])
     const estimatedEndTime = useMemo(() => {
@@ -589,7 +590,7 @@ const FolderFileRow = ({
         [***REMOVED***Folder row path***REMOVED***, file.relativePath],
     ]
     const rowClassName = isExpanded
-        ? ***REMOVED***border-b border-slate-600 bg-slate-600 text-slate-100 last:border-b-0***REMOVED***
+        ? ***REMOVED***border-b border-slate-600 border-t-slate-200 bg-slate-600 text-slate-100 last:border-b-0 first:border-t-0***REMOVED***
         : ***REMOVED***border-b border-slate-200 last:border-b-0 hover:bg-slate-50***REMOVED***
     const rowTextClassName = isExpanded ? ***REMOVED***text-slate-100***REMOVED*** : ***REMOVED***text-slate-700***REMOVED***
     const mutedTextClassName = isExpanded ? ***REMOVED***text-slate-200***REMOVED*** : ***REMOVED***text-slate-500***REMOVED***
@@ -616,15 +617,15 @@ const FolderFileRow = ({
                         <button
                             type="button"
                             className={expandButtonClassName}
-                            onClick={() => setIsExpanded((current) => !current)}
+                            onClick={onToggle}
                             aria-label={isExpanded ? ***REMOVED***Collapse row***REMOVED*** : ***REMOVED***Expand row***REMOVED***}
                             aria-expanded={isExpanded}
                         >
                             {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                         </button>
-                        <ValidationIndicator status={rowValidation.rowStatus} />
+                        <ValidationIndicator status={rowValidation.rowStatus} expanded={isExpanded} />
                         {file.fileType.isAudio ? (
-                            <FileAudio className={`shrink-0 ${isExpanded ? ***REMOVED***text-emerald-200***REMOVED*** : ***REMOVED***text-emerald-600***REMOVED***}`} size={16} />
+                            <FileAudio className={`shrink-0`} size={16} />
                         ) : (
                             <File className={`shrink-0 ${iconClassName}`} size={16} />
                         )}
@@ -697,6 +698,7 @@ const FolderFileRow = ({
 const QCFolderPreview = ({folderName, files}: FolderPreviewProps) => {
     const [periodicityToleranceSeconds, setPeriodicityToleranceSeconds] = useState(1)
     const [durationToleranceSeconds, setDurationToleranceSeconds] = useState(1)
+    const [expandedRowKeys, setExpandedRowKeys] = useState<Set<string>>(new Set())
     const durationMap = useAudioDurationMap(files)
     const sortedFiles = useMemo(() => {
         return files
@@ -857,6 +859,39 @@ const QCFolderPreview = ({folderName, files}: FolderPreviewProps) => {
     const timestampValue = sortedFiles.length
         ? `${timestampedFileCount}/${sortedFiles.length} files parsed`
         : ***REMOVED***No files loaded***REMOVED***
+    const allExpanded = sortedFiles.length > 0 && expandedRowKeys.size === sortedFiles.length
+
+    useEffect(() => {
+        setExpandedRowKeys((current) => {
+            const availableKeys = new Set(sortedFiles.map((entry) => entry.file.relativePath))
+            const next = new Set(Array.from(current).filter((key) => availableKeys.has(key)))
+
+            return next.size === current.size ? current : next
+        })
+    }, [sortedFiles])
+
+    const toggleAllRows = () => {
+        if (allExpanded) {
+            setExpandedRowKeys(new Set())
+            return
+        }
+
+        setExpandedRowKeys(new Set(sortedFiles.map((entry) => entry.file.relativePath)))
+    }
+
+    const toggleRow = (rowKey: string) => {
+        setExpandedRowKeys((current) => {
+            const next = new Set(current)
+
+            if (next.has(rowKey)) {
+                next.delete(rowKey)
+            } else {
+                next.add(rowKey)
+            }
+
+            return next
+        })
+    }
 
     return (
         <div className="flex flex-col gap-6">
@@ -922,7 +957,23 @@ const QCFolderPreview = ({folderName, files}: FolderPreviewProps) => {
                 <table className="min-w-full table-fixed divide-y divide-slate-200">
                     <thead className="sticky top-0 z-10 bg-slate-50 shadow-[0_2px_6px_rgba(15,23,42,0.08)]">
                         <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            <th className="bg-slate-50 px-3 py-2">File</th>
+                            <th className="bg-slate-50 px-3 py-2">
+                                <div className="flex items-center gap-2">
+                                    {sortedFiles.length > 0 ? (
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center justify-center rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                                            onClick={toggleAllRows}
+                                            aria-label={allExpanded ? ***REMOVED***Collapse all rows***REMOVED*** : ***REMOVED***Expand all rows***REMOVED***}
+                                            aria-expanded={allExpanded}
+                                            title={allExpanded ? ***REMOVED***Collapse all rows***REMOVED*** : ***REMOVED***Expand all rows***REMOVED***}
+                                        >
+                                            {allExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                                        </button>
+                                    ) : null}
+                                    <span>File</span>
+                                </div>
+                            </th>
                             <th className="bg-slate-50 px-3 py-2">Timestamp</th>
                             <th className="w-36 bg-slate-50 px-3 py-2">Approx bitrate</th>
                             <th className="w-28 bg-slate-50 px-3 py-2">Duration</th>
@@ -940,6 +991,8 @@ const QCFolderPreview = ({folderName, files}: FolderPreviewProps) => {
                                 durationSeconds={entry.durationSeconds}
                                 validationConfig={rowValidationConfig}
                                 previousGapFailed={index > 0 ? gapFailuresByIndex[index - 1] : false}
+                                isExpanded={expandedRowKeys.has(entry.file.relativePath)}
+                                onToggle={() => toggleRow(entry.file.relativePath)}
                             />
                         ))}
                     </tbody>
