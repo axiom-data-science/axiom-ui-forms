@@ -143,6 +143,24 @@ const collectSelectedFiles = async (dataTransfer: DataTransfer): Promise<Selecte
   }))
 }
 
+const getSelectedFolderName = (files: SelectedFolderFile[]): string => {
+  const folderRoots = Array.from(
+    new Set(
+      files
+        .map(({ relativePath }) => relativePath.split(***REMOVED***/***REMOVED***))
+        .filter((segments) => segments.length > 1)
+        .map(([rootSegment]) => rootSegment)
+        .filter(Boolean)
+    )
+  )
+
+  if (folderRoots.length > 0) {
+    return folderRoots[0]
+  }
+
+  return files[0]?.file.name ?? ***REMOVED******REMOVED***
+}
+
 const FolderPreview = ({ files, folderName }: FolderPreviewProps) => {
   const totalBytes = useMemo<number>(() => files.reduce((total, entry) => total + entry.file.size, 0), [files])
 
@@ -234,7 +252,7 @@ const FolderUpload = ({
         }))
         .sort((left, right) => left.relativePath.localeCompare(right.relativePath))
 
-      const selectedFolderName = mappedFiles[0]?.relativePath.split(***REMOVED***/***REMOVED***)[0] || mappedFiles[0]?.file.name || ***REMOVED******REMOVED***
+      const selectedFolderName = getSelectedFolderName(selectedFiles)
 
       setFiles(mappedFiles)
       setFolderName(selectedFolderName)
