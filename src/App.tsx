@@ -69,6 +69,7 @@ import { DragDropSandbox, ManagementUI } from '@/Management'
 import COLLABDebug from '@/WaterLevel/COLLAB/Debug/COLLABDebug'
 import PARSForm from '@/Form/PAM/PARS/PARS'
 import { ProjectForm as PAMProjectForm, SiteForm as PAMSiteForm } from '@/Form/PAM/PAMForms'
+import QCToolsForm from '@/Form/PAM/QCTools/QCTools'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -287,6 +288,9 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/modl" element={<MODLForm />}>
               <Route path="*" element={<MODLForm />} />
+            </Route>
+            <Route path="/PAM/qc-tools" element={<QCToolsForm />}>
+              <Route path="*" element={<QCToolsForm />} />
             </Route>
             <Route path="/PAM/project" element={<PAMProjectForm />}>
               <Route path="*" element={<PAMProjectForm />} />
