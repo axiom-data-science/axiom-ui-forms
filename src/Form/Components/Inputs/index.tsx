@@ -7,6 +7,7 @@ export { default as SelectInput } from ***REMOVED***./SingleSelect***REMOVED***
 export { default as StateSelectorInput } from ***REMOVED***./StateSelectorInput***REMOVED***
 export { default as SelectOrTextInput } from ***REMOVED***./SelectOrText***REMOVED***
 export { default as FileUploadInput } from ***REMOVED***./FileUpload/FileUpload***REMOVED***
+export { default as FolderUploadInput } from ***REMOVED***./FolderUpload/FolderUpload***REMOVED***
 export { default as GeoJSONInput } from ***REMOVED***./GeoJSONInputLoader***REMOVED***
 export { default as GeometryInput } from ***REMOVED***./Geometry***REMOVED***
 export { default as DateTimeInput } from ***REMOVED***./DateTime***REMOVED***
