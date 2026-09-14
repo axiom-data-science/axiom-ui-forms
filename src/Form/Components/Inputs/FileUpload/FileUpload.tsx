@@ -257,6 +257,7 @@ const FileUpload = ({
   const [error, setError] = useState<string | null>(null)
   const [csvData, setCsvData] = useState<ParsedCSV | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isDropActive, setIsDropActive] = useState(false)
   const fileType = (file || fileRef) ? getFileTypeFlags(file, fileRef) : null
   const displayFileName = file?.name ?? fileRef ?? ***REMOVED******REMOVED***
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -366,83 +367,128 @@ const FileUpload = ({
     setFile(file)
     onUpload(file)
   }
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsDropActive(true)
+  }
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsDropActive(false)
+  }
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsDropActive(false)
+
+    const droppedFile = event.dataTransfer.files ? event.dataTransfer.files[0] : null
+    if (!droppedFile) {
+      return
+    }
+
+    setFile(droppedFile)
+    await onUpload(droppedFile)
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <p>{field.label}</p>
       {field.description && <p className="text-sm text-gray-600 mb-2">{field.description}</p>}
 
-      <label className="block">
-        {error && <span className="text-red-500 text-sm mb-2 block">{error}</span>}
-        <input
-          type="file"
-          id="file_input"
-          ref={fileInputRef}
-          className="sr-only"
-          disabled={file !== null}
-          onChange={handleFileChange}
-          accept={acceptFileTypeToUse ? acceptFileTypeToUse.join(***REMOVED***, ***REMOVED***) : undefined}
-        />
-        {!fileRef && !uploading && (
-          <div
-            className={`${utils.createButtonClass({
-              size: ***REMOVED***sm***REMOVED***,
-              variant: ***REMOVED***create***REMOVED***,
-            })} px-4 py-2 rounded-lg cursor-pointer inline-block ${file !== null ? ***REMOVED***bg-slate-200 text-slate-400***REMOVED*** : ***REMOVED******REMOVED***}`}
-          >
-            Browse Files
-          </div>
-        )}
-        {(file || fileRef) && (
-          <>
-          <span className="my-2 inline-flex max-w-full flex-nowrap items-center gap-2 text-sm text-gray-700">
-            <span className="inline-flex min-w-0 items-baseline gap-2 rounded-md bg-slate-200 p-2 shadow-md">
-              <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} />
-              <Tooltip content={displayFileName} dark={true}>
-                <span className=***REMOVED***inline-block max-w-[60vw] truncate whitespace-nowrap align-bottom sm:max-w-88***REMOVED***>
-                  {displayFileName}
-                </span>
-              </Tooltip>
-              {file?.size ? <span className=***REMOVED***whitespace-nowrap text-xs text-slate-500 border-b border-slate-400 border-dashed***REMOVED***>{(file.size / 1024).toFixed(2)} KB</span> : ***REMOVED******REMOVED***}
-              {
-                file?.type && <span className=***REMOVED***whitespace-nowrap rounded-md bg-slate-400 p-1 text-xs text-white shadow-sm***REMOVED***>{file.type}</span>
-              }
-            </span>
-            {!fileRef && (
-              <CloudUpload
+      <div
+        className={`rounded-md border border-dashed p-3 transition-colors ${
+          isDropActive ? ***REMOVED***border-amber-300 bg-amber-50***REMOVED*** : ***REMOVED***border-slate-200 bg-transparent***REMOVED***
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <label className="block">
+          {error && <span className="mb-2 block text-sm text-red-500">{error}</span>}
+          <input
+            type="file"
+            id="file_input"
+            ref={fileInputRef}
+            className="sr-only"
+            disabled={file !== null || uploading}
+            onChange={handleFileChange}
+            accept={acceptFileTypeToUse ? acceptFileTypeToUse.join(***REMOVED***, ***REMOVED***) : undefined}
+          />
+          {!fileRef && !uploading && (
+            <div
+              className={`${utils.createButtonClass({
+                size: ***REMOVED***sm***REMOVED***,
+                variant: ***REMOVED***create***REMOVED***,
+              })} px-4 py-2 rounded-lg cursor-pointer inline-block ${file !== null ? ***REMOVED***bg-slate-200 text-slate-400***REMOVED*** : ***REMOVED******REMOVED***}`}
+            >
+              Browse Files
+            </div>
+          )}
+          {uploading && (
+            <div className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm text-slate-600">
+              <span>Processing file...</span>
+              <Loader size="xs" className="align-left" />
+            </div>
+          )}
+          {(file || fileRef) && !uploading && (
+            <>
+            <span className="my-2 inline-flex max-w-full flex-nowrap items-center gap-2 text-sm text-gray-700">
+              <span className="inline-flex min-w-0 items-baseline gap-2 rounded-md bg-slate-200 p-2 shadow-md">
+                <FileTypeIcon fileType={fileType ?? getFileTypeFlags(file)} />
+                <Tooltip content={displayFileName} dark={true}>
+                  <span className=***REMOVED***inline-block max-w-[60vw] truncate whitespace-nowrap align-bottom sm:max-w-88***REMOVED***>
+                    {displayFileName}
+                  </span>
+                </Tooltip>
+                {file?.size ? <span className=***REMOVED***whitespace-nowrap text-xs text-slate-500 border-b border-slate-400 border-dashed***REMOVED***>{(file.size / 1024).toFixed(2)} KB</span> : ***REMOVED******REMOVED***}
+                {
+                  file?.type && <span className=***REMOVED***whitespace-nowrap rounded-md bg-slate-400 p-1 text-xs text-white shadow-sm***REMOVED***>{file.type}</span>
+                }
+              </span>
+              {!fileRef && (
+                <CloudUpload
+                  className="inline-block cursor-pointer shrink-0"
+                  onClick={() => onUpload()}
+                />
+              )}
+              <X
                 className="inline-block cursor-pointer shrink-0"
-                onClick={() => onUpload()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  if (fileRef) {
+                    inMemoryFileStore.delete(fileRef)
+                  }
+                  setFile(null)
+                  setFileRef(null)
+                  setCsvData(null)
+                  setPreviewUrl(null)
+                  onChange(null)
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = ***REMOVED******REMOVED***
+                  }
+                }}
               />
-            )}
-            <X
-              className="inline-block cursor-pointer shrink-0"
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                if (fileRef) {
-                  inMemoryFileStore.delete(fileRef)
-                }
-                setFile(null)
-                setFileRef(null)
-                setCsvData(null)
-                setPreviewUrl(null)
-                onChange(null)
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = ***REMOVED******REMOVED***
-                }
-              }}
-            />
-          </span>
-          {(file || previewUrl) && fileType &&
-            <FileUploadPreview
-              file={file}
-              previewUrl={previewUrl}
-              csvData={csvData}
-              fileType={fileType}
-            />
-          }
-          </>
-        )}
-      </label>
+            </span>
+            {(file || previewUrl) && fileType &&
+              <FileUploadPreview
+                file={file}
+                previewUrl={previewUrl}
+                csvData={csvData}
+                fileType={fileType}
+              />
+            }
+            </>
+          )}
+          {!fileRef && !uploading && (
+            <p className="mt-2 text-xs text-slate-500">Drag and drop a file here, or browse to select one.</p>
+          )}
+        </label>
+      </div>
       {/* {fileRef && (
         <div className="flex flex-row gap-2">
           {!file && (
