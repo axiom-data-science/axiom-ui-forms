@@ -4,6 +4,7 @@ import { IFieldInputProps, IForm } from '@/Form/Creator/FormCreatorTypes'
 import FolderUpload from '@/Form/Components/Inputs/FolderUpload/FolderUpload'
 import { type FolderFileEntry, type FolderPreviewProps } from '@/Form/Components/Inputs/FolderUpload/folderUploadTypes'
 import { ChevronDown, ChevronRight, Check, Copy, FileAudio, File, Loader, X } from 'lucide-react'
+import { Tooltip } from '@axdspub/axiom-ui-utilities'
 
 
 const form:IForm = {
@@ -91,54 +92,145 @@ const normalizeTwoDigitYear = (value: string): number => {
 }
 
 const parseDateTimeFromFilename = (filename: string): Date | null => {
-    const patterns = [
-        /(?:^|[^\d])(20\d{2})[-_.]?(0[1-9]|1[0-2])[-_.]?(0[1-9]|[12]\d|3[01])[T _-]?([01]\d|2[0-3])[:._-]?([0-5]\d)[:._-]?([0-5]\d)(?:[^\d]|$)/,
-        /(?:^|[^\d])(20\d{2})[-_.]?(0[1-9]|1[0-2])[-_.]?(0[1-9]|[12]\d|3[01])(?:[^\d]|$)/,
-        /_HMS_(\d{1,2})_\s*(\d{1,2})_\s*(\d{1,2})__DMY_(\d{1,2})_\s*(\d{1,2})_(\d{1,2})/,
+    const buildDate = (
+        year: number,
+        month: number,
+        day: number,
+        hour = 0,
+        minute = 0,
+        second = 0,
+        millisecond = 0
+    ): Date | null => {
+        const parsed = new Date(year, month - 1, day, hour, minute, second, millisecond)
+
+        if (Number.isNaN(parsed.getTime())) {
+            return null
+        }
+
+        if (
+            parsed.getFullYear() !== year ||
+            parsed.getMonth() !== month - 1 ||
+            parsed.getDate() !== day ||
+            parsed.getHours() !== hour ||
+            parsed.getMinutes() !== minute ||
+            parsed.getSeconds() !== second
+        ) {
+            return null
+        }
+
+        return parsed
+    }
+
+    const patterns: Array<{ pattern: RegExp, parse: (match: RegExpMatchArray) => Date | null }> = [
+        {
+            pattern: /(?:^|[^\d])(20\d{2})[-_.]?(0[1-9]|1[0-2])[-_.]?(0[1-9]|[12]\d|3[01])[T _-]?([01]\d|2[0-3])[:._-]?([0-5]\d)[:._-]?([0-5]\d)(?:[^\d]|$)/,
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /(?:^|[^\d])(20\d{2})[-_.]?(0[1-9]|1[0-2])[-_.]?(0[1-9]|[12]\d|3[01])(?:[^\d]|$)/,
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3])),
+        },
+        {
+            pattern: /_HMS_(\d{1,2})_\s*(\d{1,2})_\s*(\d{1,2})__DMY_(\d{1,2})_\s*(\d{1,2})_(\d{1,2})/, // _HMS_%H_%M_%S__DMY_%d_%m_%y
+            parse: (match) => buildDate(
+                normalizeTwoDigitYear(match[6]),
+                Number(match[5]),
+                Number(match[4]),
+                Number(match[1]),
+                Number(match[2]),
+                Number(match[3])
+            ),
+        },
+        {
+            pattern: /\.(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})\./, // AMAR_v0: .%Y-%m-%d-%H-%M-%S.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /_(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})\.(\d{3})Z\./, // AMAR_v1: _%Y%m%dT%H%M%S.%fZ.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6]), Number(match[7])),
+        },
+        {
+            pattern: /\.(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z\./, // AMARS_v2: .%Y%m%dT%H%M%SZ.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /\.(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\./, // SOUNDTRAPS: .%y%m%d%H%M%S.
+            parse: (match) => buildDate(
+                normalizeTwoDigitYear(match[1]),
+                Number(match[2]),
+                Number(match[3]),
+                Number(match[4]),
+                Number(match[5]),
+                Number(match[6])
+            ),
+        },
+        {
+            pattern: /_(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\./, // SOUNDTRAPS_UAberdeen: _%y%m%d%H%M%S.
+            parse: (match) => buildDate(
+                normalizeTwoDigitYear(match[1]),
+                Number(match[2]),
+                Number(match[3]),
+                Number(match[4]),
+                Number(match[5]),
+                Number(match[6])
+            ),
+        },
+        {
+            pattern: /_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})\./, // MARU: _%Y%m%d_%H%M%S.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})_(\d{3})\./, // MARU_with_ms: _%Y%m%d_%H%M%S_%f.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6]), Number(match[7])),
+        },
+        {
+            pattern: /_(\d{2})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})_/, // MARU_variant: _%y%m%d_%H%M%S_
+            parse: (match) => buildDate(
+                normalizeTwoDigitYear(match[1]),
+                Number(match[2]),
+                Number(match[3]),
+                Number(match[4]),
+                Number(match[5]),
+                Number(match[6])
+            ),
+        },
+        {
+            pattern: /-(\d{2})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})\./, // PMEL: -%y%m%d-%H%M%S.
+            parse: (match) => buildDate(
+                normalizeTwoDigitYear(match[1]),
+                Number(match[2]),
+                Number(match[3]),
+                Number(match[4]),
+                Number(match[5]),
+                Number(match[6])
+            ),
+        },
+        {
+            pattern: /_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\./, // SAMS: _%Y-%m-%d_%H-%M-%S.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})Z\./, // PAMGuard: _%Y%m%d_%H%M%SZ.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /\.(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\./, // NOAA_SOUNDTRAPS_v2: .%Y%m%d%H%M%S.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
+        {
+            pattern: /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})\./, // Loggerhead: %Y%m%dT%H%M%S.
+            parse: (match) => buildDate(Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6])),
+        },
     ]
 
-    for (const pattern of patterns) {
+    for (const { pattern, parse } of patterns) {
         const match = filename.match(pattern)
         if (!match) {
             continue
         }
 
-        if (pattern === patterns[2]) {
-            const [, hour, minute, second, day, month, year] = match
-            const parsed = new Date(
-                normalizeTwoDigitYear(year),
-                Number(month) - 1,
-                Number(day),
-                Number(hour),
-                Number(minute),
-                Number(second)
-            )
-
-            if (!Number.isNaN(parsed.getTime()) && isValidUtcDate(
-                parsed.getFullYear(),
-                parsed.getMonth() + 1,
-                parsed.getDate(),
-                parsed.getHours(),
-                parsed.getMinutes(),
-                parsed.getSeconds()
-            )) {
-                return parsed
-            }
-
-            continue
-        }
-
-        const [, year, month, day, hour = '00', minute = '00', second = '00'] = match
-        const parsed = new Date(
-            Number(year),
-            Number(month) - 1,
-            Number(day),
-            Number(hour),
-            Number(minute),
-            Number(second)
-        )
-
-        if (!Number.isNaN(parsed.getTime())) {
+        const parsed = parse(match)
+        if (parsed !== null) {
             return parsed
         }
     }
@@ -534,6 +626,7 @@ const FolderFileRow = ({
     onToggle: () => void
 }) => {
     const audioUrl = useObjectUrl(file.fileType.isAudio ? file.file : null)
+    const [isCopied, setIsCopied] = useState(false)
     const extension = file.file.name.split('.').pop() || 'unknown'
     const lastModified = useMemo(() => new Date(file.file.lastModified), [file.file.lastModified])
     const estimatedEndTime = useMemo(() => {
@@ -609,6 +702,20 @@ const FolderFileRow = ({
     const durationCellClassName = rowValidation.durationFailed ? failingCellClassName : rowTextClassName
     const gapCellClassName = rowValidation.gapFailed ? failingCellClassName : rowTextClassName
 
+    useEffect(() => {
+        if (!isCopied) {
+            return
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setIsCopied(false)
+        }, 1200)
+
+        return () => {
+            window.clearTimeout(timeoutId)
+        }
+    }, [isCopied])
+
     return (
         <>
             <tr className={rowClassName}>
@@ -633,19 +740,22 @@ const FolderFileRow = ({
                             <div className={`truncate text-sm font-medium ${rowTextClassName}`}>{file.file.name}</div>
                             <div className={`truncate text-xs ${mutedTextClassName}`}>{file.relativePath}</div>
                         </div>
+                        <Tooltip content={isCopied ? 'Copied filename' : 'Copy full filename'} dark={true}>
                         <button
                             type="button"
                             className={`shrink-0 rounded p-1 ${isExpanded ? 'text-slate-100 hover:bg-slate-500 hover:text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}
-                            title="Copy full filename"
-                            aria-label="Copy full filename"
+                            title={isCopied ? 'Copied filename' : 'Copy full filename'}
+                            aria-label={isCopied ? 'Filename copied' : 'Copy full filename'}
                             onClick={async (event) => {
                                 event.stopPropagation()
                                 event.preventDefault()
                                 await copyToClipboard(file.file.name)
+                                setIsCopied(true)
                             }}
                         >
-                            <Copy size={14} />
+                            {isCopied ? <Check size={14} /> : <Copy size={14} />}
                         </button>
+                        </Tooltip>
                     </div>
                 </td>
                 <td className={`whitespace-nowrap px-3 py-2 align-top text-sm ${timestampCellClassName}`}>
@@ -665,7 +775,7 @@ const FolderFileRow = ({
                 </td>
             </tr>
             {isExpanded && (
-                <tr className="border-b border-slate-600 bg-slate-600 last:border-b-0">
+                <tr className="border-b border-slate-600 bg-slate-600 border-b-slate-800 last:border-b-0">
                     <td colSpan={6} className=" px-3 py-3">
                         <div className="flex flex-col gap-3">
                             {file.fileType.isAudio && audioUrl ? (
@@ -975,7 +1085,7 @@ const QCFolderPreview = ({folderName, files}: FolderPreviewProps) => {
                                 </div>
                             </th>
                             <th className="bg-slate-50 px-3 py-2">Timestamp</th>
-                            <th className="w-36 bg-slate-50 px-3 py-2">Approx bitrate</th>
+                            <th className="w-36 bg-slate-50 px-3 py-2">~ bitrate</th>
                             <th className="w-28 bg-slate-50 px-3 py-2">Duration</th>
                             <th className="w-44 bg-slate-50 px-3 py-2">End time</th>
                             <th className="w-44 bg-slate-50 px-3 py-2">Gap</th>
