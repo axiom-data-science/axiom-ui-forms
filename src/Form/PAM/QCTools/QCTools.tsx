@@ -1015,7 +1015,7 @@ const FolderFileRow = ({
               </div>
               <div className={`truncate text-xs ${mutedTextClassName}`}>{file.relativePath}</div>
             </div>
-            <Tooltip content={isCopied ? 'Copied filename' : 'Copy full filename'} dark={true}>
+            <Tooltip content={isCopied ? 'Copied filename' : 'Copy full filename'} dark={true} useSpan={true}>
               <button
                 type="button"
                 className={`shrink-0 rounded p-1 ${isExpanded ? 'text-slate-100 hover:bg-slate-500 hover:text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}
