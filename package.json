@@ -82,7 +82,7 @@
     ]
   },
   "devDependencies": {
-    "@axdspub/axiom-ui-data-services": "^1.1.1-alpha.6",
+    "@axdspub/axiom-ui-data-services": "^1.1.1-alpha.7",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-babel": "^6.0.4",
