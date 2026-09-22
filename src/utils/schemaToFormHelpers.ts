@@ -76,7 +76,7 @@ export const validateSchema = (
 export const validateAgainstSchema = (
   schema: JSONSchema6,
   formValues: IFormValues
-): Array<{ field: string; message: string }> | undefined => {
+): Array<{ field: string; message: string }> => {
   const validSchema = validateSchema(schema)
   if (validSchema.error !== undefined) {
     return [{
@@ -97,7 +97,7 @@ export const validateAgainstSchema = (
       }
     })
   }
-  return undefined
+  return []
 }
 
 const makeRandom = (): string => {

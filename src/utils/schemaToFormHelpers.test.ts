@@ -45,18 +45,18 @@ describe('schemaToFormHelpers', () => {
 
     it('returns undefined for valid data', () => {
       const errors = validateAgainstSchema(schema, { age: 10 })
-      expect(errors).toBeUndefined()
+      expect(errors.length).toBe(0)
     })
 
     it('returns errors for invalid data', () => {
       const errors = validateAgainstSchema(schema, { age: -5 })
-      expect(errors).toBeDefined()
+      expect(errors.length).toBeGreaterThan(0)
       expect(errors?.[0]?.message).toContain('must be >= 0')
       expect(errors?.[0]?.field).toBe('age')
     })
     it('returns errors for missing required field', () => {
       const errors = validateAgainstSchema(schema, {})
-      expect(errors).toBeDefined()
+      expect(errors.length).toBeGreaterThan(0)
       expect(errors?.[0]?.message).toContain('required')
       expect(errors?.[0]?.field).toBe('age')
     })
@@ -68,7 +68,7 @@ describe('schemaToFormHelpers', () => {
       }
       const errors = validateAgainstSchema(invalidSchema, { age: 10 })
       console.log(errors)
-      expect(errors).toBeDefined()
+      expect(errors.length).toBeGreaterThan(0)
       expect(errors?.[0]?.message).toContain('properties must be object')
       expect(errors?.[0]?.field).toBe('$schema')
     })
