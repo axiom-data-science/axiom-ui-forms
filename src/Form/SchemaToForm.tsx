@@ -73,11 +73,11 @@ const SchemaToForm = (): ReactElement => {
                           },
                           {
                             id: ***REMOVED***output***REMOVED***,
-                            label: <>Form output {formOutputErrors !== undefined ? <ExclamationTriangleIcon className=***REMOVED***inline ml-2***REMOVED*** /> : ***REMOVED******REMOVED***}</>,
+                            label: <>Form output {formOutputErrors.length > 0 ? <ExclamationTriangleIcon className=***REMOVED***inline ml-2***REMOVED*** /> : ***REMOVED******REMOVED***}</>,
                             content: <div>{
                               schema !== undefined
                                 ? <>
-                              <div>{formOutputErrors !== undefined
+                              <div>{formOutputErrors.length > 0
                                 ? <>Errors: <ul className=***REMOVED***text-rose-800 text-xs list-disc p-4***REMOVED***>{
                                   formOutputErrors.map((e) => {
                                     return <li key={e.field ?? e.message}>{e.message}</li>
