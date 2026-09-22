@@ -93,7 +93,7 @@ export const validateAgainstSchema = (
       const fieldPath = (`${(e.instancePath?.length ? e.instancePath : '')}${e.params?.missingProperty ? `/${e.params.missingProperty}` : ''}`).replace(/^\//, '').replace(/\//g,'.')
       return {
         field: fieldPath,
-        message: `${e.instancePath} ${e.message}`
+        message: `${e.instancePath} ${e.message}${e.params?.additionalProperty ? `: ${e.params.additionalProperty}` : ''}`
       }
     })
   }
