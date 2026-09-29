@@ -99,51 +99,57 @@
             "recoveryTime": { "type": "string", "format": "date-time", "title": "Recovery Time" },
             "audioStartTime": { "type": "string", "format": "date-time", "title": "Audio Start Time" },
             "audioEndTime": { "type": "string", "format": "date-time", "title": "Audio End Time" },
-            "comments": { "type": "string", "title": "Comments", "description": "Additional information useful to future data users" }
-          },
-          "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue"]
-        },
-        "recordings": {
-          "type": "array",
-          "title": "Recordings",
-          "items": {
-            "type": "object",
-            "properties": {
-              "recording_device_code": { "type": "string", "title": "Device Code", "description": "e.g. SOUNDTRAP-6078" },
-              "recording_device_type_code": { "type": "string", "title": "Device Type Code", "description": "e.g. SOUNDTRAP, DMON" },
-              "recording_device_depth_m": { "type": "number", "title": "Hydrophone Depth (m)", "minimum": 0 },
-              "recording_sample_rate_khz": { "type": "number", "title": "Sample Rate (kHz)", "minimum": 0 },
-              "recording_duration_secs": { "type": "number", "title": "Recording Duration (s)", "minimum": 0 },
-              "recording_interval_secs": { "type": "number", "title": "Recording Interval (s)", "minimum": 0 },
-              "recording_bit_depth": { "type": "integer", "title": "Bit Depth", "minimum": 0 },
-              "recording_n_channels": { "type": "integer", "title": "Number of Channels", "minimum": 0, "default": 1 },
-              "recording_timezone": { "type": "string", "title": "Recording Timezone" },
-              "analyses": {
-                "type": "array",
-                "title": "Analyses",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "analysis_organization_code": { "type": "string", "title": "Analysis Organization Code" },
-                    "analysis_sound_source_codes": { "type": "array", "title": "Sound Source Codes", "items": { "type": "string" } },
-                    "analysis_start_datetime": { "type": "string", "format": "date-time", "title": "Analysis Start" },
-                    "analysis_end_datetime": { "type": "string", "format": "date-time", "title": "Analysis End" },
-                    "analysis_sample_rate_khz": { "type": "number", "title": "Analysis Sample Rate (kHz)", "minimum": 0 },
-                    "analysis_min_frequency_khz": { "type": "number", "title": "Min Frequency (kHz)", "minimum": 0, "default": 0 },
-                    "analysis_max_frequency_khz": { "type": "number", "title": "Max Frequency (kHz)", "minimum": 0 },
-                    "analysis_processing_code": { "type": "string", "title": "Processing Code", "enum": ["POST_PROCESSED", "REAL_TIME"] },
-                    "analysis_protocol_reference": { "type": "string", "title": "Protocol Reference" },
-                    "analysis_citations": { "type": "string", "title": "Citations" },
-                    "analysis_detector_code": { "type": "string", "title": "Detector Code" },
-                    "analysis_detector_version": { "type": "string", "title": "Detector Version" },
-                    "detections_data_uri": { "type": "string", "format": "uri", "title": "Detections File" }
-                  },
-                  "required": ["analysis_organization_code", "analysis_sound_source_codes", "analysis_start_datetime", "analysis_end_datetime", "analysis_sample_rate_khz", "analysis_min_frequency_khz", "analysis_max_frequency_khz", "analysis_processing_code", "analysis_protocol_reference", "analysis_detector_code", "analysis_detector_version"]
-                }
+            "comments": { "type": "string", "title": "Comments", "description": "Additional information useful to future data users" },
+            "recordings": {
+              "type": "array",
+              "title": "Recordings",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "channels": {
+                    "type": "array",
+                    "title": "Channels",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "startTime": { "type": "string", "format": "date-time", "title": "Start Time", "description": "Start time for this channel's audio data" },
+                        "endTime": { "type": "string", "format": "date-time", "title": "End Time", "description": "End time for this channel's audio data" },
+                        "sampleRates": {
+                          "type": "array",
+                          "title": "Sample Rate Intervals",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "startTime": { "type": "string", "format": "date-time", "title": "Start Time" },
+                              "endTime": { "type": "string", "format": "date-time", "title": "End Time" },
+                              "sampleRate": { "type": "number", "title": "Sample Rate (Hz)", "description": "Audio sample rate in hertz", "minimum": 0 },
+                              "sampleBits": { "type": "integer", "title": "Sample Bits", "description": "Bit depth in bits per sample", "minimum": 0 }
+                            }
+                          }
+                        },
+                        "dutyCycles": {
+                          "type": "array",
+                          "title": "Duty Cycle Intervals",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "startTime": { "type": "string", "format": "date-time", "title": "Start Time" },
+                              "endTime": { "type": "string", "format": "date-time", "title": "End Time" },
+                              "duration": { "type": "number", "title": "Duration (seconds)", "description": "Continuous recording duration", "minimum": 0 },
+                              "interval": { "type": "number", "title": "Interval (seconds)", "description": "Time between starts of consecutive recording periods", "minimum": 0 }
+                            },
+                            "required": ["duration", "interval"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["channels"]
               }
-            },
-            "required": ["recording_device_code", "recording_device_type_code", "recording_device_depth_m", "recording_sample_rate_khz", "recording_duration_secs", "recording_interval_secs", "recording_bit_depth", "recording_n_channels", "recording_timezone"]
-          }
+            }
+          },
+          "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue", "recordings"]
         }
       },
       "definitions": {
@@ -158,5 +164,5 @@
           "required": ["latitude", "longitude", "instrumentDepth"]
         }
       },
-      "required": ["project", "site", "deployment", "recordings"]
+      "required": ["project", "site", "deployment"]
     }

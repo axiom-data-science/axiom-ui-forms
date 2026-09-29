@@ -70,56 +70,40 @@
         {
           "id": "pam_recordings",
           "label": "Recordings",
-          "description": "Recording devices and analysis runs for this deployment",
+          "description": "Audio channels, sample rates, and duty cycles for this deployment",
           "fields": [
             {
-              "prop": "recordings",
+              "prop": "deployment.recordings",
               "type": "object",
               "multiple": true,
-              "tabs": [
+              "fields": [
                 {
-                  "id": "recording_info",
-                  "label": "Device & Config",
+                  "prop": "deployment.recordings[].channels",
+                  "type": "object",
+                  "multiple": true,
                   "fields": [
-                    { "prop": "recordings[].recording_device_code" },
-                    { "prop": "recordings[].recording_device_type_code" },
-                    { "prop": "recordings[].recording_device_depth_m" },
-                    { "prop": "recordings[].recording_sample_rate_khz" },
-                    { "prop": "recordings[].recording_duration_secs" },
-                    { "prop": "recordings[].recording_interval_secs" },
-                    { "prop": "recordings[].recording_bit_depth" },
-                    { "prop": "recordings[].recording_n_channels" },
-                    { "prop": "recordings[].recording_timezone" }
-                  ]
-                },
-                {
-                  "id": "analyses",
-                  "label": "Analyses",
-                  "fields": [
+                    { "prop": "deployment.recordings[].channels[].startTime" },
+                    { "prop": "deployment.recordings[].channels[].endTime" },
                     {
-                      "prop": "recordings[].analyses",
+                      "prop": "deployment.recordings[].channels[].sampleRates",
                       "type": "object",
                       "multiple": true,
-                      "tabs": [
-                        {
-                          "id": "analysis_info",
-                          "label": "Analysis",
-                          "fields": [
-                            { "prop": "recordings[].analyses[].analysis_organization_code" },
-                            { "prop": "recordings[].analyses[].analysis_sound_source_codes" },
-                            { "prop": "recordings[].analyses[].analysis_start_datetime" },
-                            { "prop": "recordings[].analyses[].analysis_end_datetime" },
-                            { "prop": "recordings[].analyses[].analysis_processing_code" },
-                            { "prop": "recordings[].analyses[].analysis_detector_code" },
-                            { "prop": "recordings[].analyses[].analysis_detector_version" },
-                            { "prop": "recordings[].analyses[].analysis_sample_rate_khz" },
-                            { "prop": "recordings[].analyses[].analysis_min_frequency_khz" },
-                            { "prop": "recordings[].analyses[].analysis_max_frequency_khz" },
-                            { "prop": "recordings[].analyses[].analysis_protocol_reference" },
-                            { "prop": "recordings[].analyses[].analysis_citations" },
-                            { "prop": "recordings[].analyses[].detections_data_uri" }
-                          ]
-                        }
+                      "fields": [
+                        { "prop": "deployment.recordings[].channels[].sampleRates[].startTime" },
+                        { "prop": "deployment.recordings[].channels[].sampleRates[].endTime" },
+                        { "prop": "deployment.recordings[].channels[].sampleRates[].sampleRate" },
+                        { "prop": "deployment.recordings[].channels[].sampleRates[].sampleBits" }
+                      ]
+                    },
+                    {
+                      "prop": "deployment.recordings[].channels[].dutyCycles",
+                      "type": "object",
+                      "multiple": true,
+                      "fields": [
+                        { "prop": "deployment.recordings[].channels[].dutyCycles[].startTime" },
+                        { "prop": "deployment.recordings[].channels[].dutyCycles[].endTime" },
+                        { "prop": "deployment.recordings[].channels[].dutyCycles[].duration" },
+                        { "prop": "deployment.recordings[].channels[].dutyCycles[].interval" }
                       ]
                     }
                   ]
