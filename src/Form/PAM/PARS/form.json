@@ -3,6 +3,21 @@
       "label": "PAM Deployment",
       "pages": [
         {
+          "id": "project",
+          "label": "Project",
+          "description": "Project ownership and submission details",
+          "fields": [
+            { "prop": "_project", "type": "object", "skip_path": true, "label": "", "fields": [
+              { "prop": "project.project" },
+              { "prop": "project.dataSubmitter" },
+              { "prop": "project.sources" },
+              { "prop": "project.funders" },
+              { "prop": "project.scientists" },
+              { "prop": "project.relatedProjects" }
+            ]}
+          ]
+        },
+        {
           "id": "deployment-info",
           "label": "Deployment Information",
           "description": "Deployment event details",

@@ -4,6 +4,19 @@
       "description": "One deployment event including recordings and analyses",
       "type": "object",
       "properties": {
+        "project": {
+          "type": "object",
+          "title": "Project",
+          "properties": {
+            "project": { "type": "string", "title": "Project", "description": "Project name", "minLength": 1 },
+            "dataSubmitter": { "type": "string", "title": "Data Submitter", "description": "Person responsible for submitting the data" },
+            "sources": { "type": "array", "title": "Sources", "description": "Organizations responsible for data collection", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+            "funders": { "type": "array", "title": "Funders", "description": "Organizations that funded the data collection", "items": { "type": "string" } },
+            "scientists": { "type": "array", "title": "Scientists", "description": "People involved in collecting or processing the data", "items": { "type": "string" } },
+            "relatedProjects": { "type": "array", "title": "Related Projects", "description": "Overarching projects for which the data were collected", "items": { "type": "string", "minLength": 1 } }
+          },
+          "required": ["project", "dataSubmitter", "sources"]
+        },
         "deployment_code": { "type": "string", "title": "Deployment Code", "description": "Unique deployment identifier (links all PARS CSVs)" },
         "monitoring_start_datetime": { "type": "string", "format": "date-time", "title": "Monitoring Start" },
         "monitoring_end_datetime": { "type": "string", "format": "date-time", "title": "Monitoring End" },
