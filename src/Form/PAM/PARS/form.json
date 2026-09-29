@@ -18,6 +18,19 @@
           ]
         },
         {
+          "id": "site",
+          "label": "Site",
+          "description": "Site identity, platform, and location details",
+          "fields": [
+            { "prop": "site", "type": "object", "label": "", "fields": [
+              { "prop": "site.siteOrCruiseName" },
+              { "prop": "site.alternateSiteName" },
+              { "prop": "site.platform" },
+              { "prop": "site.locationDetail" }
+            ]}
+          ]
+        },
+        {
           "id": "deployment-info",
           "label": "Deployment Information",
           "description": "Deployment event details",

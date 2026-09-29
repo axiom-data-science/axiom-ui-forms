@@ -17,6 +17,62 @@
           },
           "required": ["project", "dataSubmitter", "sources"]
         },
+        "site": {
+          "type": "object",
+          "title": "Site",
+          "properties": {
+            "siteOrCruiseName": { "type": "string", "title": "Site or Cruise Name", "description": "Location name, cruise ID, or site" },
+            "alternateSiteName": { "type": "string", "title": "Alternate Site Name", "description": "Alternate site label" },
+            "platform": { "type": "string", "title": "Platform", "description": "Platform on which the acoustic recorders were deployed", "minLength": 1 },
+            "locationDetail": {
+              "type": "object",
+              "title": "Location Detail",
+              "oneOf": [
+                {
+                  "title": "Mobile Marine Location",
+                  "type": "object",
+                  "properties": {
+                    "seaArea": { "type": "string", "title": "Sea Area" },
+                    "locationDerivationDescription": { "type": "string", "title": "Location Derivation Description", "minLength": 1 },
+                    "navigationFileURIList": { "type": "array", "title": "Navigation Files", "items": { "type": "string", "format": "uri" }, "minItems": 1 }
+                  },
+                  "required": ["locationDerivationDescription", "navigationFileURIList"]
+                },
+                {
+                  "title": "Multipoint Stationary Marine Location",
+                  "type": "object",
+                  "properties": {
+                    "seaArea": { "type": "string", "title": "Sea Area" },
+                    "locations": { "type": "array", "title": "Locations", "items": { "$ref": "#/definitions/marineInstrumentLocation" }, "minItems": 1 }
+                  },
+                  "required": ["locations"]
+                },
+                {
+                  "title": "Stationary Marine Location",
+                  "type": "object",
+                  "properties": {
+                    "seaArea": { "type": "string", "title": "Sea Area" },
+                    "deploymentLocation": { "$ref": "#/definitions/marineInstrumentLocation" },
+                    "recoveryLocation": { "$ref": "#/definitions/marineInstrumentLocation" }
+                  },
+                  "required": ["deploymentLocation", "recoveryLocation"]
+                },
+                {
+                  "title": "Stationary Terrestrial Location",
+                  "type": "object",
+                  "properties": {
+                    "latitude": { "type": "number", "title": "Latitude", "minimum": -90, "maximum": 90 },
+                    "longitude": { "type": "number", "title": "Longitude", "minimum": -180, "maximum": 180 },
+                    "surfaceElevation": { "type": "number", "title": "Surface Elevation" },
+                    "instrumentElevation": { "type": "number", "title": "Instrument Elevation" }
+                  },
+                  "required": ["latitude", "longitude", "surfaceElevation", "instrumentElevation"]
+                }
+              ]
+            }
+          },
+          "required": ["platform", "locationDetail"]
+        },
         "deployment_code": { "type": "string", "title": "Deployment Code", "description": "Unique deployment identifier (links all PARS CSVs)" },
         "monitoring_start_datetime": { "type": "string", "format": "date-time", "title": "Monitoring Start" },
         "monitoring_end_datetime": { "type": "string", "format": "date-time", "title": "Monitoring End" },
@@ -81,5 +137,17 @@
           }
         }
       },
-      "required": ["deployment_code", "monitoring_start_datetime", "monitoring_end_datetime", "deployment_platform_type_code", "deployment_water_depth_m", "points_of_contact", "recordings"]
+      "definitions": {
+        "marineInstrumentLocation": {
+          "type": "object",
+          "properties": {
+            "latitude": { "type": "number", "title": "Latitude", "minimum": -90, "maximum": 90 },
+            "longitude": { "type": "number", "title": "Longitude", "minimum": -180, "maximum": 180 },
+            "seaFloorDepth": { "type": "number", "title": "Seafloor Depth", "exclusiveMaximum": 0 },
+            "instrumentDepth": { "type": "number", "title": "Instrument Depth", "exclusiveMaximum": 0 }
+          },
+          "required": ["latitude", "longitude", "instrumentDepth"]
+        }
+      },
+      "required": ["project", "site", "deployment_code", "monitoring_start_datetime", "monitoring_end_datetime", "deployment_platform_type_code", "deployment_water_depth_m", "points_of_contact", "recordings"]
     }
