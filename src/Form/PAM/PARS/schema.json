@@ -147,6 +147,34 @@
                 },
                 "required": ["channels"]
               }
+            },
+            "analyses": {
+              "type": "array",
+              "title": "Analyses",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "qualityAnalyst": { "type": "string", "title": "Quality Analyst", "description": "Person who performed the data quality assessment" },
+                  "qualityAssessmentDescription": { "type": "string", "title": "Quality Assessment Description", "description": "Overall description of the quality assessment" },
+                  "qualityEntries": {
+                    "type": "array",
+                    "title": "Quality Entries",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "startTime": { "type": "string", "format": "date-time", "title": "Start Time" },
+                        "endTime": { "type": "string", "format": "date-time", "title": "End Time" },
+                        "minFrequency": { "type": "number", "title": "Minimum Frequency (Hz)", "description": "Minimum frequency covered by the assessment", "minimum": 0 },
+                        "maxFrequency": { "type": "number", "title": "Maximum Frequency (Hz)", "description": "Maximum frequency covered by the assessment", "minimum": 0 },
+                        "qualityLevel": { "type": "string", "title": "Quality Level", "enum": ["unverified", "good", "compromised", "unusable"] },
+                        "comments": { "type": "string", "title": "Comments", "description": "Additional information about this quality interval" },
+                        "channelNumbers": { "type": "array", "title": "Channel Numbers", "description": "Channels to which this quality entry applies", "items": { "type": "integer", "minimum": 1 }, "minItems": 1 }
+                      },
+                      "required": ["startTime", "endTime", "minFrequency", "maxFrequency", "qualityLevel", "channelNumbers"]
+                    }
+                  }
+                }
+              }
             }
           },
           "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue", "recordings"]

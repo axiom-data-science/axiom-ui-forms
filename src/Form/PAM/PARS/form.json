@@ -111,6 +111,36 @@
               ]
             }
           ]
+        },
+        {
+          "id": "pam_analyses",
+          "label": "Analyses",
+          "description": "Quality assessments for this deployment",
+          "fields": [
+            {
+              "prop": "deployment.analyses",
+              "type": "object",
+              "multiple": true,
+              "fields": [
+                { "prop": "deployment.analyses[].qualityAnalyst" },
+                { "prop": "deployment.analyses[].qualityAssessmentDescription", "type": "long_text" },
+                {
+                  "prop": "deployment.analyses[].qualityEntries",
+                  "type": "object",
+                  "multiple": true,
+                  "fields": [
+                    { "prop": "deployment.analyses[].qualityEntries[].startTime" },
+                    { "prop": "deployment.analyses[].qualityEntries[].endTime" },
+                    { "prop": "deployment.analyses[].qualityEntries[].minFrequency" },
+                    { "prop": "deployment.analyses[].qualityEntries[].maxFrequency" },
+                    { "prop": "deployment.analyses[].qualityEntries[].qualityLevel" },
+                    { "prop": "deployment.analyses[].qualityEntries[].comments", "type": "long_text" },
+                    { "prop": "deployment.analyses[].qualityEntries[].channelNumbers" }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
