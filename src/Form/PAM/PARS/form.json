@@ -32,19 +32,39 @@
         },
         {
           "id": "deployment-info",
-          "label": "Deployment Information",
-          "description": "Deployment event details",
+          "label": "Deployment",
+          "description": "Dataset, instrument, files, and deployment timing",
           "fields": [
-            { "prop": "deployment_code" },
-            { "prop": "monitoring_start_datetime" },
-            { "prop": "monitoring_end_datetime" },
-            { "prop": "deployment_platform_type_code" },
-            { "prop": "deployment_platform_id" },
-            { "prop": "deployment_water_depth_m" },
-            { "prop": "points_of_contact" },
-            { "prop": "deployment_url" },
-            { "prop": "dynamic_management_platform" },
-            { "prop": "gps_data_uri", "type": "file_upload" }
+            {
+              "prop": "deployment",
+              "type": "object",
+              "label": "",
+              "fields": [
+                { "prop": "deployment.dataCollectionName" },
+                { "prop": "deployment.averageFileLengthMinutes" },
+                { "prop": "deployment.deploymentTitle" },
+                { "prop": "deployment.deploymentDescription", "type": "long_text" },
+                { "prop": "deployment.deploymentId" },
+                { "prop": "deployment.alternateDeploymentName" },
+                { "prop": "deployment.instrument" },
+                { "prop": "deployment.instrumentId" },
+                { "prop": "deployment.sensitivityFlatValue" },
+                { "prop": "deployment.preDeploymentCalibrationDate" },
+                { "prop": "deployment.postDeploymentCalibrationDate" },
+                { "prop": "deployment.calibrationState" },
+                { "prop": "deployment.calibrationDescription", "type": "long_text" },
+                { "prop": "deployment.sourceURI" },
+                { "prop": "deployment.calibrationDocumentsURI" },
+                { "prop": "deployment.documentsURI" },
+                { "prop": "deployment.temperatureURI" },
+                { "prop": "deployment.otherURI" },
+                { "prop": "deployment.deploymentTime" },
+                { "prop": "deployment.recoveryTime" },
+                { "prop": "deployment.audioStartTime" },
+                { "prop": "deployment.audioEndTime" },
+                { "prop": "deployment.comments", "type": "long_text" }
+              ]
+            }
           ]
         },
         {

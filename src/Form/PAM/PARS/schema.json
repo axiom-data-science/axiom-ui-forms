@@ -73,27 +73,36 @@
           },
           "required": ["platform", "locationDetail"]
         },
-        "deployment_code": { "type": "string", "title": "Deployment Code", "description": "Unique deployment identifier (links all PARS CSVs)" },
-        "monitoring_start_datetime": { "type": "string", "format": "date-time", "title": "Monitoring Start" },
-        "monitoring_end_datetime": { "type": "string", "format": "date-time", "title": "Monitoring End" },
-        "deployment_platform_type_code": { "type": "string", "title": "Platform Type", "enum": ["BOTTOM_MOUNTED_MOORING", "DRIFTING_BUOY", "ELECTRIC_GLIDER", "MOORED_SURFACE_BUOY", "TOWED_ARRAY", "WAVE_GLIDER"] },
-        "deployment_platform_id": { "type": "string", "title": "Platform ID" },
-        "deployment_url": { "type": "string", "format": "uri", "title": "Deployment URL" },
-        "dynamic_management_platform": { "type": "boolean", "title": "Dynamic Management Platform" },
-        "deployment_water_depth_m": { "type": "number", "title": "Water Depth (m)", "minimum": 0 },
-        "points_of_contact": {
-          "type": "array",
-          "title": "Points of Contact",
-          "items": {
-            "type": "object",
-            "properties": {
-              "contact_name": { "type": "string", "title": "Full Name" },
-              "contact_email": { "type": "string", "format": "email", "title": "Email" }
-            },
-            "required": ["contact_name", "contact_email"]
-          }
+        "deployment": {
+          "type": "object",
+          "title": "Deployment",
+          "properties": {
+            "dataCollectionName": { "type": "string", "title": "Data Collection Name", "description": "Unique dataset name for the archive", "minLength": 1 },
+            "averageFileLengthMinutes": { "type": "number", "title": "Average File Length (minutes)", "description": "Approximate average audio-file length used for aggregation", "minimum": 0 },
+            "deploymentTitle": { "type": "string", "title": "Deployment Title", "description": "Title used in the dataset-level metadata record" },
+            "deploymentDescription": { "type": "string", "title": "Deployment Description", "description": "Description of the data and its purpose" },
+            "deploymentId": { "type": "string", "title": "Deployment ID", "description": "Deployment identifier at a site with multiple deployments" },
+            "alternateDeploymentName": { "type": "string", "title": "Alternate Deployment Name", "description": "Alternate deployment label" },
+            "instrument": { "type": "string", "title": "Instrument", "description": "Passive acoustic recorder used to collect data", "minLength": 1 },
+            "instrumentId": { "type": "string", "title": "Instrument ID", "description": "Unique instrument identifier" },
+            "sensitivityFlatValue": { "type": "number", "title": "Sensitivity Flat Value", "description": "Frequency-independent calibration sensitivity value" },
+            "preDeploymentCalibrationDate": { "type": "string", "format": "date", "title": "Pre-Deployment Calibration Date" },
+            "postDeploymentCalibrationDate": { "type": "string", "format": "date", "title": "Post-Deployment Calibration Date" },
+            "calibrationState": { "type": "string", "title": "Calibration State", "enum": ["Factory Calibrated", "Calibrated Pre-Deployment", "Calibrated Post-Deployment", "Calibrated Pre & Post Deployment", "Not calibrated / not applicable"] },
+            "calibrationDescription": { "type": "string", "title": "Calibration Description" },
+            "sourceURI": { "type": "string", "format": "uri", "title": "Source URI", "description": "URI containing the audio files for this dataset" },
+            "calibrationDocumentsURI": { "type": "string", "format": "uri", "title": "Calibration Documents URI" },
+            "documentsURI": { "type": "string", "format": "uri", "title": "Documents URI" },
+            "temperatureURI": { "type": "string", "format": "uri", "title": "Temperature Data URI" },
+            "otherURI": { "type": "string", "format": "uri", "title": "Other Data URI" },
+            "deploymentTime": { "type": "string", "format": "date-time", "title": "Deployment Time" },
+            "recoveryTime": { "type": "string", "format": "date-time", "title": "Recovery Time" },
+            "audioStartTime": { "type": "string", "format": "date-time", "title": "Audio Start Time" },
+            "audioEndTime": { "type": "string", "format": "date-time", "title": "Audio End Time" },
+            "comments": { "type": "string", "title": "Comments", "description": "Additional information useful to future data users" }
+          },
+          "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue"]
         },
-        "gps_data_uri": { "type": "string", "format": "uri", "title": "GPS Track File", "description": "URI to gpsdata.csv for mobile deployments" },
         "recordings": {
           "type": "array",
           "title": "Recordings",
@@ -149,5 +158,5 @@
           "required": ["latitude", "longitude", "instrumentDepth"]
         }
       },
-      "required": ["project", "site", "deployment_code", "monitoring_start_datetime", "monitoring_end_datetime", "deployment_platform_type_code", "deployment_water_depth_m", "points_of_contact", "recordings"]
+      "required": ["project", "site", "deployment", "recordings"]
     }
