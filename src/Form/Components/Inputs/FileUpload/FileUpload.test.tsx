@@ -60,7 +60,8 @@ describe('FileUpload', () => {
 
   it('uses upload and preview hooks passed as component props', async () => {
     const onChange = vi.fn()
-    const onFileUpload = vi.fn(async () => undefined)
+    const storedFileRef = 'https://example.com/files/photo.png'
+    const onFileUpload = vi.fn(async () => storedFileRef)
     const getPreviewUrl = vi.fn(async () => 'https://example.com/files/photo.png')
     const file = new File(['fake-image'], 'photo.png', { type: 'image/png' })
 
@@ -80,14 +81,20 @@ describe('FileUpload', () => {
     await waitFor(() => {
       expect(onFileUpload).toHaveBeenCalled()
     })
-    expect(onFileUpload).toHaveBeenCalledWith('photo.png', expect.any(ArrayBuffer), null)
+    expect(onFileUpload).toHaveBeenCalledWith({
+      fileName: 'photo.png',
+      fileData: expect.any(ArrayBuffer),
+      parsedCsvData: null,
+      file,
+    })
+    expect(onChange).toHaveBeenCalledWith(storedFileRef)
 
     unmount()
 
     render(
       <FileUpload
         field={baseField as any}
-        value={'photo.png'}
+        value={storedFileRef}
         onChange={onChange}
         onFileUpload={onFileUpload}
         getPreviewUrl={getPreviewUrl}
@@ -95,7 +102,7 @@ describe('FileUpload', () => {
     )
 
     await waitFor(() => {
-      expect(getPreviewUrl).toHaveBeenCalledWith('photo.png')
+      expect(getPreviewUrl).toHaveBeenCalledWith(storedFileRef)
     })
     await waitFor(() => {
       expect(screen.getByAltText('Uploaded file preview')).toHaveAttribute(

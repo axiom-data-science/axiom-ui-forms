@@ -242,11 +242,17 @@ const FileUpload = ({
   getPreviewUrl,
 }: IFieldInputProps & {
   acceptFileTypes?: string[]
-  onFileUpload?: (
+  onFileUpload?: ({
+    fileName,
+    fileData,
+    parsedCsvData,
+    file
+  }:{
     fileName: string,
     fileData: string | ArrayBuffer | undefined | null,
-    parsedCsvData: ParsedCSV | null
-  ) => void | Promise<void>
+    parsedCsvData: ParsedCSV | null,
+    file: File
+  }) => string | void | Promise<string | void>
   getPreviewUrl?: (fileName: string) => string | null | undefined | Promise<string | null | undefined>
 }): ReactElement => {
   const [file, setFile] = useState<File | null>(null)
@@ -337,9 +343,16 @@ const FileUpload = ({
       setCsvData(parsedCsvData)
       setPreviewUrl(null)
 
-      if (onFileUpload) {
-        await onFileUpload(_file.name, fileData, parsedCsvData)
-      } else {
+      const uploadedFileRef = onFileUpload
+        ? await onFileUpload({
+          fileName: _file.name,
+          fileData,
+          parsedCsvData,
+          file: _file,
+        })
+        : undefined
+
+      if (!onFileUpload) {
         inMemoryFileStore.set(_file.name, {
           file: _file,
           fileData,
@@ -348,9 +361,10 @@ const FileUpload = ({
       }
 
       // Clear the input value so the same file can be selected again
-      setFileRef(_file.name)
+      const nextFileRef = typeof uploadedFileRef === 'string' ? uploadedFileRef : _file.name
+      setFileRef(nextFileRef)
       if (onChange) {
-        onChange(_file.name)
+        onChange(nextFileRef)
       }
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
@@ -423,7 +437,7 @@ const FileUpload = ({
               className={`${utils.createButtonClass({
                 size: 'sm',
                 variant: 'create',
-              })} px-4 py-2 rounded-lg cursor-pointer inline-block ${file !== null ? 'bg-slate-200 text-slate-400' : ''}`}
+              })}  ${file !== null ? 'bg-slate-200 text-slate-400' : ''}`}
             >
               Browse Files
             </div>
