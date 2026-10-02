@@ -7,7 +7,7 @@ import form from './form.json'
 import schema from './schema.json'
 
 const PARSForm = (): ReactElement => {
-  const schemaState = useState<JSONSchema6 | undefined>(schema as JSONSchema6)
+  const schemaState = useState<JSONSchema6 | undefined>(schema as unknown as JSONSchema6)
   const fieldOverrideState = useState<IFormFieldOverride[]>([])
   const formOverrideState = useState<IFormOverride | undefined>(form as IFormOverride)
 
