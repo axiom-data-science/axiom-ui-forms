@@ -1,0 +1,123 @@
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PAM Deployment",
+      "description": "One deployment event including recordings and analyses",
+      "type": "object",
+
+          "properties": {
+            "dataCollectionName": { "type": "string", "title": "Data Collection Name", "description": "Unique dataset name for the archive", "minLength": 1 },
+            "averageFileLengthMinutes": { "type": "number", "title": "Average File Length (minutes)", "description": "Approximate average audio-file length used for aggregation", "minimum": 0 },
+            "deploymentTitle": { "type": "string", "title": "Deployment Title", "description": "Title used in the dataset-level metadata record" },
+            "deploymentDescription": { "type": "string", "title": "Deployment Description", "description": "Description of the data and its purpose" },
+            "deploymentId": { "type": "string", "title": "Deployment ID", "description": "Deployment identifier at a site with multiple deployments" },
+            "alternateDeploymentName": { "type": "string", "title": "Alternate Deployment Name", "description": "Alternate deployment label" },
+            "instrument": { "type": "string", "title": "Instrument", "description": "Passive acoustic recorder used to collect data", "minLength": 1 },
+            "instrumentId": { "type": "string", "title": "Instrument ID", "description": "Unique instrument identifier" },
+            "sensitivityFlatValue": { "type": "number", "title": "Sensitivity Flat Value", "description": "Frequency-independent calibration sensitivity value" },
+            "preDeploymentCalibrationDate": { "type": "string", "format": "date", "title": "Pre-Deployment Calibration Date" },
+            "postDeploymentCalibrationDate": { "type": "string", "format": "date", "title": "Post-Deployment Calibration Date" },
+            "calibrationState": { "type": "string", "title": "Calibration State", "enum": ["Factory Calibrated", "Calibrated Pre-Deployment", "Calibrated Post-Deployment", "Calibrated Pre & Post Deployment", "Not calibrated / not applicable"] },
+            "calibrationDescription": { "type": "string", "title": "Calibration Description" },
+            "sourceURI": { "type": "string", "format": "uri", "title": "Source URI", "description": "URI containing the audio files for this dataset" },
+            "calibrationDocumentsURI": { "type": "string", "format": "uri", "title": "Calibration Documents URI" },
+            "documentsURI": { "type": "string", "format": "uri", "title": "Documents URI" },
+            "temperatureURI": { "type": "string", "format": "uri", "title": "Temperature Data URI" },
+            "otherURI": { "type": "string", "format": "uri", "title": "Other Data URI" },
+            "deploymentTime": { "type": "string", "format": "date-time", "title": "Deployment Time" },
+            "recoveryTime": { "type": "string", "format": "date-time", "title": "Recovery Time" },
+            "audioStartTime": { "type": "string", "format": "date-time", "title": "Audio Start Time" },
+            "audioEndTime": { "type": "string", "format": "date-time", "title": "Audio End Time" },
+            "comments": { "type": "string", "title": "Comments", "description": "Additional information useful to future data users" },
+            "recordings": {
+              "type": "array",
+              "title": "Recordings",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "channels": {
+                    "type": "array",
+                    "title": "Channels",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "startTime": { "type": "string", "format": "date-time", "title": "Start Time", "description": "Start time for this channel's audio data" },
+                        "endTime": { "type": "string", "format": "date-time", "title": "End Time", "description": "End time for this channel's audio data" },
+                        "sampleRates": {
+                          "type": "array",
+                          "title": "Sample Rate Intervals",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "startTime": { "type": "string", "format": "date-time", "title": "Start Time" },
+                              "endTime": { "type": "string", "format": "date-time", "title": "End Time" },
+                              "sampleRate": { "type": "number", "title": "Sample Rate (Hz)", "description": "Audio sample rate in hertz", "minimum": 0 },
+                              "sampleBits": { "type": "integer", "title": "Sample Bits", "description": "Bit depth in bits per sample", "minimum": 0 }
+                            }
+                          }
+                        },
+                        "dutyCycles": {
+                          "type": "array",
+                          "title": "Duty Cycle Intervals",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "startTime": { "type": "string", "format": "date-time", "title": "Start Time" },
+                              "endTime": { "type": "string", "format": "date-time", "title": "End Time" },
+                              "duration": { "type": "number", "title": "Duration (seconds)", "description": "Continuous recording duration", "minimum": 0 },
+                              "interval": { "type": "number", "title": "Interval (seconds)", "description": "Time between starts of consecutive recording periods", "minimum": 0 }
+                            },
+                            "required": ["duration", "interval"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["channels"]
+              }
+            },
+            "analyses": {
+              "type": "array",
+              "title": "Analyses",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "qualityAnalyst": { "type": "string", "title": "Quality Analyst", "description": "Person who performed the data quality assessment" },
+                  "qualityAssessmentDescription": { "type": "string", "title": "Quality Assessment Description", "description": "Overall description of the quality assessment" },
+                  "qualityEntries": {
+                    "type": "array",
+                    "title": "Quality Entries",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "startTime": { "type": "string", "format": "date-time", "title": "Start Time" },
+                        "endTime": { "type": "string", "format": "date-time", "title": "End Time" },
+                        "minFrequency": { "type": "number", "title": "Minimum Frequency (Hz)", "description": "Minimum frequency covered by the assessment", "minimum": 0 },
+                        "maxFrequency": { "type": "number", "title": "Maximum Frequency (Hz)", "description": "Maximum frequency covered by the assessment", "minimum": 0 },
+                        "qualityLevel": { "type": "string", "title": "Quality Level", "enum": ["unverified", "good", "compromised", "unusable"] },
+                        "comments": { "type": "string", "title": "Comments", "description": "Additional information about this quality interval" },
+                        "channelNumbers": { "type": "array", "title": "Channel Numbers", "description": "Channels to which this quality entry applies", "items": { "type": "integer", "minimum": 1 }, "minItems": 1 }
+                      },
+                      "required": ["startTime", "endTime", "minFrequency", "maxFrequency", "qualityLevel", "channelNumbers"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue", "recordings"],
+        
+      
+      "definitions": {
+        "marineInstrumentLocation": {
+          "type": "object",
+          "properties": {
+            "latitude": { "type": "number", "title": "Latitude", "minimum": -90, "maximum": 90 },
+            "longitude": { "type": "number", "title": "Longitude", "minimum": -180, "maximum": 180 },
+            "seaFloorDepth": { "type": "number", "title": "Seafloor Depth", "exclusiveMaximum": 0 },
+            "instrumentDepth": { "type": "number", "title": "Instrument Depth", "exclusiveMaximum": 0 }
+          },
+          "required": ["latitude", "longitude", "instrumentDepth"]
+        }
+      }
+    }

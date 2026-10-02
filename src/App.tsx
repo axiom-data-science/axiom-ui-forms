@@ -70,6 +70,7 @@ import COLLABDebug from '@/WaterLevel/COLLAB/Debug/COLLABDebug'
 import PARSForm from '@/Form/PAM/PARS/PARS'
 import { ProjectForm as PAMProjectForm, SiteForm as PAMSiteForm } from '@/Form/PAM/PAMForms'
 import QCToolsForm from '@/Form/PAM/QCTools/QCTools'
+import { TugboatDeployment, TugboatProject, TugboatSite } from '@/Form/PAM/ModifiedTugboat/Forms'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -307,8 +308,14 @@ const App = (): ReactElement => {
             <Route path="/water-level-asset" element={<AssetForm />}>
               <Route path="*" element={<AssetForm />} />
             </Route>
-            <Route path="/water-level-asset-wizard" element={<AssetForm configKey="wizard" />}>
-              <Route path="*" element={<AssetForm configKey="wizard" />} />
+            <Route path="/PAM/tugboat/project" element={<TugboatProject />}>
+              <Route path="*" element={<TugboatProject />} />
+            </Route>
+            <Route path="/PAM/tugboat/site" element={<TugboatSite />}>
+              <Route path="*" element={<TugboatSite />} />
+            </Route>
+            <Route path="/PAM/tugboat/deployment" element={<TugboatDeployment />}>
+              <Route path="*" element={<TugboatDeployment />} />
             </Route>
             <Route path="/test">
               <Route path="override-of-schema-array" element={<OverrideOfSchemaArray />} />

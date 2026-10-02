@@ -1,0 +1,30 @@
+{
+  "id": "pam_site",
+  "label": "PAM site",
+  "fields": [
+    {
+      "prop": "siteOrCruiseName"
+    },
+    {
+      "id": "group-1",
+      "type": "object",
+      "label": "",
+      "skip_path": true,
+      "layout": "grid2",
+      "settings": {
+        "className": "pt-0"
+      },
+      "fields": [
+        {
+          "prop": "alternateSiteName"
+        },
+        {
+          "prop": "platform"
+        }
+      ]
+    },
+    {
+      "prop": "locationDetail"
+    }
+  ]
+}

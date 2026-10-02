@@ -1,0 +1,56 @@
+{
+  "id": "pam_project",
+  "label": "PAM Project",
+  "fields": [
+    {
+      "id": "wrap1",
+      "type": "objectWrapper",
+      "label": "",
+      "layout": "grid2",
+      "fields": [
+            {
+      "prop": "project"
+    },
+    {
+      "prop": "dataSubmitter"
+    }
+
+      ]
+    },
+    {
+      "prop": "contributor[]",
+      "fields": [
+                {"prop": "contributor[].role", "label": "Role", "type": "select"},
+                {
+                  "id": "contributor_contact_wrapper",
+                  "type": "objectWrapper",
+                  "layout": "grid2",
+                  "label": "",
+                  "settings": {
+                    "className": "p-0 bg-transparent"
+                  },
+                  "fields": [
+                                    {
+                  "prop": "contributor[].name"
+                },
+                {
+                  "prop": "contributor[].phone"
+                },
+                {
+                  "prop": "contributor[].email"
+                },
+                {
+                  "prop": "contributor[].url"
+                }
+
+                  ]
+                }
+      ]
+
+              
+    },
+    {
+      "prop": "relatedProjects[]"
+    }
+  ]
+}

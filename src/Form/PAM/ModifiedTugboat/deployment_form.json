@@ -1,0 +1,280 @@
+{
+  "id": "pam_deployment",
+  "label": "PAM Deployment and Analyses",
+  "pages": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "description": "Dataset identity and deployment details",
+      "fields": [
+        {
+          "prop": "dataCollectionName"
+        },
+        {
+          "prop": "averageFileLengthMinutes"
+        },
+        {
+          "prop": "deploymentTitle"
+        },
+        {
+          "prop": "deploymentDescription",
+          "type": "long_text"
+        },
+        {
+          "prop": "deploymentId"
+        },
+        {
+          "prop": "alternateDeploymentName"
+        },
+        {
+          "prop": "instrument"
+        },
+        {
+          "prop": "instrumentId"
+        }
+      ]
+    },
+    {
+      "id": "calibration",
+      "label": "Calibration and Resources",
+      "description": "Instrument calibration and related data locations",
+      "fields": [
+        {
+          "id": "sensitivity_calibration_state_wrapper",
+          "type": "objectWrapper",
+          "label": "",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "sensitivityFlatValue"
+            },
+            {
+              "prop": "calibrationState"
+            }
+          ]
+        },
+        {
+          "id": "calibration_dates_wrapper",
+          "type": "objectWrapper",
+          "label": "",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "preDeploymentCalibrationDate"
+            },
+            {
+              "prop": "postDeploymentCalibrationDate"
+            }
+          ]
+        },
+        {
+          "prop": "calibrationDescription",
+          "type": "long_text"
+        },
+        {
+          "prop": "sourceURI"
+        },
+        {
+          "prop": "calibrationDocumentsURI"
+        },
+        {
+          "prop": "documentsURI"
+        },
+        {
+          "prop": "temperatureURI"
+        },
+        {
+          "prop": "otherURI"
+        }
+      ]
+    },
+    {
+      "id": "timing",
+      "label": "Deployment Timing",
+      "fields": [
+        {
+          "id": "deployment_recovery_times_wrapper",
+          "type": "objectWrapper",
+          "label": "",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "deploymentTime"
+            },
+            {
+              "prop": "recoveryTime"
+            }
+          ]
+        },
+        {
+          "id": "audio_times_wrapper",
+          "type": "objectWrapper",
+          "label": "",
+          "layout": "grid2",
+          "fields": [
+            {
+              "prop": "audioStartTime"
+            },
+            {
+              "prop": "audioEndTime"
+            }
+          ]
+        },
+        {
+          "prop": "comments",
+          "type": "long_text"
+        }
+      ]
+    },
+    {
+      "id": "recordings",
+      "label": "Recordings",
+      "description": "Audio channels, sample rates, and duty cycles",
+      "fields": [
+        {
+          "prop": "recordings",
+          "type": "object",
+          "multiple": true,
+          "fields": [
+            {
+              "prop": "recordings[].channels",
+              "type": "object",
+              "multiple": true,
+              "fields": [
+                {
+                  "id": "recording_channel_times_wrapper",
+                  "type": "objectWrapper",
+                  "label": "",
+                  "layout": "grid2",
+                  "settings": {
+                    "className": "p-0 bg-transparent"
+                  },
+                  "fields": [
+                    {
+                      "prop": "recordings[].channels[].startTime"
+                    },
+                    {
+                      "prop": "recordings[].channels[].endTime"
+                    }
+                  ]
+                },
+                {
+                  "prop": "recordings[].channels[].sampleRates",
+                  "type": "object",
+                  "multiple": true,
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "recordings[].channels[].sampleRates[].startTime"
+                    },
+                    {
+                      "prop": "recordings[].channels[].sampleRates[].endTime"
+                    },
+                    {
+                      "prop": "recordings[].channels[].sampleRates[].sampleRate"
+                    },
+                    {
+                      "prop": "recordings[].channels[].sampleRates[].sampleBits"
+                    }
+                  ]
+                },
+                {
+                  "prop": "recordings[].channels[].dutyCycles",
+                  "type": "object",
+                  "multiple": true,
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "recordings[].channels[].dutyCycles[].startTime"
+                    },
+                    {
+                      "prop": "recordings[].channels[].dutyCycles[].endTime"
+                    },
+                    {
+                      "prop": "recordings[].channels[].dutyCycles[].duration"
+                    },
+                    {
+                      "prop": "recordings[].channels[].dutyCycles[].interval"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analyses",
+      "label": "Analyses",
+      "description": "Quality assessments and quality intervals",
+      "fields": [
+        {
+          "prop": "analyses",
+          "type": "object",
+          "multiple": true,
+          "fields": [
+            {
+              "prop": "analyses[].qualityAnalyst"
+            },
+            {
+              "prop": "analyses[].qualityAssessmentDescription",
+              "type": "long_text"
+            },
+            {
+              "prop": "analyses[].qualityEntries",
+              "type": "object",
+              "multiple": true,
+              "fields": [
+                {
+                  "id": "quality_entry_times_wrapper",
+                  "type": "objectWrapper",
+                  "label": "",
+                  "layout": "grid2",
+                  "fields": [
+                    {
+                      "prop": "analyses[].qualityEntries[].startTime"
+                    },
+                    {
+                      "prop": "analyses[].qualityEntries[].endTime"
+                    }
+                  ]
+                },
+                {
+                  "id": "quality_frequency_level_wrapper",
+                  "type": "objectWrapper",
+                  "label": "",
+                  "layout": "grid3",
+                  "fields": [
+                    {
+                      "prop": "analyses[].qualityEntries[].minFrequency",
+                      "settings": {
+                        "descriptionPresentation": "tooltip"
+                      }
+                    },
+                    {
+                      "prop": "analyses[].qualityEntries[].maxFrequency",
+                      "settings": {
+                        "descriptionPresentation": "tooltip"
+                      }
+                    },
+                    {
+                      "prop": "analyses[].qualityEntries[].qualityLevel"
+                    }
+                  ]
+                },
+                {
+                  "prop": "analyses[].qualityEntries[].comments",
+                  "type": "long_text"
+                },
+                {
+                  "prop": "analyses[].qualityEntries[].channelNumbers"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
