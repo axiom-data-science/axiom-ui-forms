@@ -1,0 +1,58 @@
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PAM project",
+      "description": "A pam project",
+      "type": "object",
+      "properties": {
+        "project": { "type": "string", "title": "Project", "description": "Project name", "minLength": 1 },
+        "dataSubmitter": { "type": "string", "title": "Data Submitter", "description": "Person responsible for submitting the data" },
+        "relatedProjects": { "type": "array", "title": "Related Projects", "description": "Overarching projects for which the data were collected", "items": { "type": "string", "minLength": 1 } },
+        "contributor": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Contributor role",
+            "enum": [
+              {
+                "const": "funder",
+                "title": "Funder",
+                "description": "Organizations that funded the data collection"
+              },
+              {
+                "const": "scientist",
+                "title": "Scientist",
+                "description": "People involved in collecting or processing the data"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "phone": {
+            "type": "string",
+            "format": "phone",
+            "title": "Telephone (primary)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "url": {
+            "type": "string",
+            "title": "URL"
+          },
+          "affiliation": {
+            "type": "string",
+            "title": "Organization"
+          }
+        }
+      },
+      "required": ["project", "dataSubmitter"]
+    }
+  }
+}

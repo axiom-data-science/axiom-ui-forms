@@ -3,79 +3,7 @@
       "title": "PAM Deployment",
       "description": "One deployment event including recordings and analyses",
       "type": "object",
-      "properties": {
-        "project": {
-          "type": "object",
-          "title": "Project",
-          "properties": {
-            "project": { "type": "string", "title": "Project", "description": "Project name", "minLength": 1 },
-            "dataSubmitter": { "type": "string", "title": "Data Submitter", "description": "Person responsible for submitting the data" },
-            "sources": { "type": "array", "title": "Sources", "description": "Organizations responsible for data collection", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
-            "funders": { "type": "array", "title": "Funders", "description": "Organizations that funded the data collection", "items": { "type": "string" } },
-            "scientists": { "type": "array", "title": "Scientists", "description": "People involved in collecting or processing the data", "items": { "type": "string" } },
-            "relatedProjects": { "type": "array", "title": "Related Projects", "description": "Overarching projects for which the data were collected", "items": { "type": "string", "minLength": 1 } }
-          },
-          "required": ["project", "dataSubmitter", "sources"]
-        },
-        "site": {
-          "type": "object",
-          "title": "Site",
-          "properties": {
-            "siteOrCruiseName": { "type": "string", "title": "Site or Cruise Name", "description": "Location name, cruise ID, or site" },
-            "alternateSiteName": { "type": "string", "title": "Alternate Site Name", "description": "Alternate site label" },
-            "platform": { "type": "string", "title": "Platform", "description": "Platform on which the acoustic recorders were deployed", "minLength": 1 },
-            "locationDetail": {
-              "type": "object",
-              "title": "Location Detail",
-              "oneOf": [
-                {
-                  "title": "Mobile Marine Location",
-                  "type": "object",
-                  "properties": {
-                    "seaArea": { "type": "string", "title": "Sea Area" },
-                    "locationDerivationDescription": { "type": "string", "title": "Location Derivation Description", "minLength": 1 },
-                    "navigationFileURIList": { "type": "array", "title": "Navigation Files", "items": { "type": "string", "format": "uri" }, "minItems": 1 }
-                  },
-                  "required": ["locationDerivationDescription", "navigationFileURIList"]
-                },
-                {
-                  "title": "Multipoint Stationary Marine Location",
-                  "type": "object",
-                  "properties": {
-                    "seaArea": { "type": "string", "title": "Sea Area" },
-                    "locations": { "type": "array", "title": "Locations", "items": { "$ref": "#/definitions/marineInstrumentLocation" }, "minItems": 1 }
-                  },
-                  "required": ["locations"]
-                },
-                {
-                  "title": "Stationary Marine Location",
-                  "type": "object",
-                  "properties": {
-                    "seaArea": { "type": "string", "title": "Sea Area" },
-                    "deploymentLocation": { "$ref": "#/definitions/marineInstrumentLocation" },
-                    "recoveryLocation": { "$ref": "#/definitions/marineInstrumentLocation" }
-                  },
-                  "required": ["deploymentLocation", "recoveryLocation"]
-                },
-                {
-                  "title": "Stationary Terrestrial Location",
-                  "type": "object",
-                  "properties": {
-                    "latitude": { "type": "number", "title": "Latitude", "minimum": -90, "maximum": 90 },
-                    "longitude": { "type": "number", "title": "Longitude", "minimum": -180, "maximum": 180 },
-                    "surfaceElevation": { "type": "number", "title": "Surface Elevation" },
-                    "instrumentElevation": { "type": "number", "title": "Instrument Elevation" }
-                  },
-                  "required": ["latitude", "longitude", "surfaceElevation", "instrumentElevation"]
-                }
-              ]
-            }
-          },
-          "required": ["platform", "locationDetail"]
-        },
-        "deployment": {
-          "type": "object",
-          "title": "Deployment",
+
           "properties": {
             "dataCollectionName": { "type": "string", "title": "Data Collection Name", "description": "Unique dataset name for the archive", "minLength": 1 },
             "averageFileLengthMinutes": { "type": "number", "title": "Average File Length (minutes)", "description": "Approximate average audio-file length used for aggregation", "minimum": 0 },
@@ -177,9 +105,9 @@
               }
             }
           },
-          "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue", "recordings"]
-        }
-      },
+          "required": ["dataCollectionName", "averageFileLengthMinutes", "deploymentTitle", "deploymentDescription", "instrument", "sourceURI", "calibrationState", "sensitivityFlatValue", "recordings"],
+        
+      
       "definitions": {
         "marineInstrumentLocation": {
           "type": "object",
@@ -191,6 +119,5 @@
           },
           "required": ["latitude", "longitude", "instrumentDepth"]
         }
-      },
-      "required": ["project", "site", "deployment"]
+      }
     }

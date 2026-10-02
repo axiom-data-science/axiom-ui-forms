@@ -1,0 +1,72 @@
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PAM Site",
+      "description": "A PAM site",
+      "type": "object",
+        "properties": {
+        "siteOrCruiseName": { "type": "string", "title": "Site or Cruise Name", "description": "Location name, cruise ID, or site" },
+        "alternateSiteName": { "type": "string", "title": "Alternate Site Name", "description": "Alternate site label" },
+        "platform": { "type": "string", "title": "Platform", "description": "Platform on which the acoustic recorders were deployed", "minLength": 1 },
+        "locationDetail": {
+            "type": "object",
+            "title": "Location Detail",
+            "oneOf": [
+              {
+                "title": "Stationary Marine Location",
+                "type": "object",
+                "properties": {
+                "seaArea": { "type": "string", "title": "Sea Area" },
+                "deploymentLocation": { "$ref": "#/definitions/marineInstrumentLocation", "title": "Deployment Location" },
+                "recoveryLocation": { "$ref": "#/definitions/marineInstrumentLocation", "title": "Recovery Location" }
+                },
+                "required": ["deploymentLocation", "recoveryLocation"]
+            },
+            {
+                "title": "Stationary Terrestrial Location",
+                "type": "object",
+                "properties": {
+                "type": { "type": "string", "const": "stationary_terrestrial" },
+                "latitude": { "type": "number", "title": "Latitude", "minimum": -90, "maximum": 90 },
+                "longitude": { "type": "number", "title": "Longitude", "minimum": -180, "maximum": 180 },
+                "surfaceElevation": { "type": "number", "title": "Surface Elevation" },
+                "instrumentElevation": { "type": "number", "title": "Instrument Elevation" }
+                },
+                "required": ["latitude", "longitude", "surfaceElevation", "instrumentElevation"]
+            },
+            {
+                "title": "Mobile Marine Location",
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string", "const": "mobile_marine" },
+                "seaArea": { "type": "string", "title": "Sea Area" },
+                "locationDerivationDescription": { "type": "string", "title": "Location Derivation Description", "minLength": 1 },
+                "navigationFileURIList": { "type": "array", "title": "Navigation Files", "items": { "type": "string", "format": "uri" }, "minItems": 1 }
+                },
+                "required": ["locationDerivationDescription", "navigationFileURIList"]
+            },
+            {
+                "title": "Multipoint Stationary Marine Location",
+                "type": "object",
+                "properties": {
+                "seaArea": { "type": "string", "title": "Sea Area" },
+                "locations": { "type": "array", "title": "Locations", "items": { "$ref": "#/definitions/marineInstrumentLocation" }, "minItems": 1 }
+                },
+                "required": ["locations"]
+            }
+            ]
+        }
+        },
+      "definitions": {
+        "marineInstrumentLocation": {
+          "type": "object",
+          "properties": {
+            "latitude": { "type": "number", "title": "Latitude", "minimum": -90, "maximum": 90 },
+            "longitude": { "type": "number", "title": "Longitude", "minimum": -180, "maximum": 180 },
+            "seaFloorDepth": { "type": "number", "title": "Seafloor Depth", "exclusiveMaximum": 0 },
+            "instrumentDepth": { "type": "number", "title": "Instrument Depth", "exclusiveMaximum": 0 }
+          },
+          "required": ["latitude", "longitude", "instrumentDepth"]
+        }
+      },
+      "required": ["platform", "locationDetail"]
+    }
