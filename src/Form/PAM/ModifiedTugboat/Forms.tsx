@@ -1,9 +1,10 @@
 import FormWithEditorOverlay from '@/Form/FormWithEditorOverlay'
 import { ReactElement, useState } from 'react'
-import omit from 'lodash/omit'
+import { atom, useAtomValue } from 'jotai'
+
 import { type JSONSchema6 } from 'json-schema'
 import { IFormFieldOverride } from '@/library'
-import { IForm, IFormValues, type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 import project_form from './project_form.json'
 import project_schema from './project_schema.json'
 import site_form from './site_form.json'
@@ -11,24 +12,31 @@ import site_schema from './site_schema.json'
 import deployment_form from './deployment_form.json'
 import deployment_schema from './deployment_schema.json'
 import { Button } from '@axdspub/axiom-ui-utilities'
-import { overridesAndSchemaToFormObject, validateAgainstSchema } from '@/utils/schemaToFormHelpers'
+import { validateAgainstSchema } from '@/utils/schemaToFormHelpers'
 import { getFormPayload } from '@/utils/getters'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
+import { useSetAtom } from 'jotai'
+import { resolveRefs } from '@/utils/resolveRefs'
+
+const errorAtom = atom<string[]>([])
 
 
-const SubmitButton = (): ReactElement => {
-  const { form, schema } = useFormContext()
-const formValues = useFormValues()
-const payload = getFormPayload(formValues, form)
+const SubmitButton = ({schema}: {schema: JSONSchema6}): ReactElement => {
+  const { form } = useFormContext()
+  const formValues = useFormValues()
+  const payload = getFormPayload(formValues, form)
+  const setErrors = useSetAtom(errorAtom)
+  const resolvedSchema = resolveRefs(schema ?? {})
   return (
     <Button
       type="submit"
       onClick={()=>{
-        const valid = validateAgainstSchema(
-          schema ?? {},
+        const newErrors = validateAgainstSchema(
+          resolvedSchema,
           payload
         )
-        console.log(valid)
+        console.log(newErrors)
+        setErrors(newErrors.length === 0 ? [] : newErrors.map((error) => error.message))
       }}
     >
       Submit
@@ -48,9 +56,17 @@ const TugboatForm = ({
   const schemaState = useState<JSONSchema6 | undefined>(schema as unknown as JSONSchema6)
   const fieldOverrideState = useState<IFormFieldOverride[]>([])
   const formOverrideState = useState<IFormOverride | undefined>(formOverride)
+  const errors = useAtomValue(errorAtom)
 
   return (
     <div>
+      {errors.length > 0 && (
+        <div className='px-10 pt-8'>
+          {errors.map((error, index) => (
+            <p key={index} style={{ color: 'red' }}>{error}</p>
+          ))}
+        </div>
+      )}
     <FormWithEditorOverlay
       label={schema.title ?? 'NA'}
       schemaState={schemaState}
@@ -58,7 +74,7 @@ const TugboatForm = ({
       formOverrideState={formOverrideState}
       SubmitButton={(props)=>{
         return (
-        <SubmitButton />
+        <SubmitButton schema={schemaState[0] ?? {}} />
         )
       }}
 
