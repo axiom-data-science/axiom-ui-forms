@@ -142,6 +142,21 @@ describe('schemaToFormHelpers', () => {
       expect(form?.fields?.[0].label).toBe('First Name')
     })
 
+    it('creates constant fields for schema const properties', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          kind: { type: 'string', const: 'fixed' },
+        },
+      }
+
+      const form = schemaToFormObject(schema)
+      const field = form.fields?.find((candidate) => candidate.id === 'kind')
+
+      expect(field?.type).toBe('constant')
+      expect(field?.defaultValue).toBe('fixed')
+    })
+
     it('renders oneOf object branches as a selector with conditional branch wrappers', () => {
       const schema: JSONSchema6 = {
         title: 'Config Form',
@@ -327,6 +342,24 @@ describe('schemaToFormHelpers', () => {
       })
       expect(form.label).toBe('Overridden')
       expect(form?.fields?.[0]?.label).toBe('Bar')
+    })
+
+    it('preserves constant fields when applying form overrides', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          kind: { type: 'string', const: 'fixed' },
+        },
+      }
+
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [{ fields: [{ prop: 'kind' }] }],
+      })
+      const field = form.fields?.find((candidate) => candidate.id === 'kind')
+
+      expect(field?.type).toBe('constant')
+      expect(field?.defaultValue).toBe('fixed')
     })
 
     it('preserves schema-generated tabs for anyOf object when override only references the parent prop', () => {

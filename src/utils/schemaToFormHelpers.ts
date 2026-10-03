@@ -188,6 +188,10 @@ const isSelectOrTextStringAnyOf = (schema: JSONSchema6): boolean => {
 }
 
 const getFieldType = (schema: JSONSchema6): IFormFieldType => {
+  if (schema.const !== undefined) {
+    return 'constant'
+  }
+
   if (isSelectOrTextStringAnyOf(schema)) {
     return 'selectOrText'
   }
@@ -464,7 +468,11 @@ const schemaToFormField = ({
     description: hasDescription ? schemaField.description : exampleString,
     long_description: hasDescription ? exampleString : undefined,
     defaultValue:
-      schemaField.default !== undefined ? (schemaField.default as IValueType) : undefined,
+      schemaField.default !== undefined
+        ? (schemaField.default as IValueType)
+        : schemaField.const !== undefined
+          ? (schemaField.const as IValueType)
+          : undefined,
     required: schemaRequired.includes(property) ?? false,
   }
   if (
@@ -474,7 +482,8 @@ const schemaToFormField = ({
     type === 'boolean' ||
     type === 'datetime' ||
     type === 'date' ||
-    type === 'time'
+    type === 'time' ||
+    type === 'constant'
   ) {
     if (
       type === 'number' &&

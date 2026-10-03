@@ -68,6 +68,7 @@ export type IFormFieldType =
   | 'stateSelector'
   | 'state_selector'
   | 'selectOrText'
+  | 'constant'
   | 'geojson'
   | 'geometry'
   | `custom:${string}`
