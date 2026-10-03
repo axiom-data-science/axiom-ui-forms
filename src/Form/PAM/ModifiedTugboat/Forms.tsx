@@ -3,55 +3,99 @@ import { ReactElement, useState } from 'react'
 import omit from 'lodash/omit'
 import { type JSONSchema6 } from 'json-schema'
 import { IFormFieldOverride } from '@/library'
-import { type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
+import { IForm, IFormValues, type IFormOverride } from '@/Form/Creator/FormCreatorTypes'
 import project_form from './project_form.json'
 import project_schema from './project_schema.json'
 import site_form from './site_form.json'
 import site_schema from './site_schema.json'
 import deployment_form from './deployment_form.json'
 import deployment_schema from './deployment_schema.json'
+import { Button } from '@axdspub/axiom-ui-utilities'
+import { overridesAndSchemaToFormObject, validateAgainstSchema } from '@/utils/schemaToFormHelpers'
+import { getFormPayload } from '@/utils/getters'
+import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 
-export const TugboatProject = (): ReactElement => {
-  const schemaState = useState<JSONSchema6 | undefined>(project_schema as JSONSchema6)
+
+const SubmitButton = (): ReactElement => {
+  const { form, schema } = useFormContext()
+const formValues = useFormValues()
+const payload = getFormPayload(formValues, form)
+  return (
+    <Button
+      type="submit"
+      onClick={()=>{
+        const valid = validateAgainstSchema(
+          schema ?? {},
+          payload
+        )
+        console.log(valid)
+      }}
+    >
+      Submit
+    </Button>
+  )
+}
+
+
+const TugboatForm = ({
+  formOverride,
+  schema
+}:{
+  formOverride: IFormOverride,
+  schema: JSONSchema6
+}):ReactElement => {
+
+  const schemaState = useState<JSONSchema6 | undefined>(schema as unknown as JSONSchema6)
   const fieldOverrideState = useState<IFormFieldOverride[]>([])
-  const formOverrideState = useState<IFormOverride | undefined>(omit(project_form,'$schema') as IFormOverride)
+  const formOverrideState = useState<IFormOverride | undefined>(formOverride)
 
   return (
+    <div>
     <FormWithEditorOverlay
-      label="Modified tugboat project"
+      label={schema.title ?? 'NA'}
       schemaState={schemaState}
       fieldOverrideState={fieldOverrideState}
       formOverrideState={formOverrideState}
+      SubmitButton={(props)=>{
+        return (
+        <SubmitButton />
+        )
+      }}
+
+
+    />
+    
+    </div>
+  )
+}
+
+export const TugboatProject = (): ReactElement => {
+  return (
+    <TugboatForm
+      formOverride={project_form as IFormOverride}
+      schema={project_schema as JSONSchema6}
     />
   )
 }
 
 export const TugboatSite = (): ReactElement => {
-  const schemaState = useState<JSONSchema6 | undefined>(site_schema as unknown as JSONSchema6)
-  const fieldOverrideState = useState<IFormFieldOverride[]>([])
-  const formOverrideState = useState<IFormOverride | undefined>(omit(site_form,'$schema') as IFormOverride)
+
+
 
   return (
-    <FormWithEditorOverlay
-      label="Modified tugboat site"
-      schemaState={schemaState}
-      fieldOverrideState={fieldOverrideState}
-      formOverrideState={formOverrideState}
+    <TugboatForm
+      formOverride={site_form as IFormOverride}
+      schema={site_schema as unknown as JSONSchema6}
     />
   )
 }
 
 export const TugboatDeployment = (): ReactElement => {
-  const schemaState = useState<JSONSchema6 | undefined>(deployment_schema as JSONSchema6)
-  const fieldOverrideState = useState<IFormFieldOverride[]>([])
-  const formOverrideState = useState<IFormOverride | undefined>(omit(deployment_form,'$schema') as IFormOverride)
 
   return (
-    <FormWithEditorOverlay
-      label="Modified tugboat deployment"
-      schemaState={schemaState}
-      fieldOverrideState={fieldOverrideState}
-      formOverrideState={formOverrideState}
+    <TugboatForm
+      formOverride={deployment_form as IFormOverride}
+      schema={deployment_schema as unknown as JSONSchema6}
     />
   )
 }

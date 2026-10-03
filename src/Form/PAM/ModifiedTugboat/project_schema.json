@@ -15,7 +15,7 @@
           "role": {
             "type": "string",
             "title": "Contributor role",
-            "enum": [
+            "oneOf": [
               {
                 "const": "funder",
                 "title": "Funder",
@@ -51,8 +51,8 @@
             "title": "Organization"
           }
         }
-      },
-      "required": ["project", "dataSubmitter"]
+      }
     }
-  }
+  },
+  "required": ["project", "dataSubmitter"]
 }
