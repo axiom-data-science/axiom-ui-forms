@@ -563,6 +563,8 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
       const objectListPayload: IFormValues = {}
       const keyField = (field as any).settings?.keyField
       const valueField = (field as any).settings?.valueField as string | undefined
+      const excludeKeyFieldFromValue =
+        (field as any).settings?.excludeKeyFieldFromValue === true
 
       Object.entries(objectListValue).forEach(([key, item]) => {
         // Optional simple mapping mode: emit key -> selected scalar value.
@@ -597,8 +599,11 @@ export function getFormPayload(formValues: IFormValues, form: IForm): IFormValue
               // Extract fields flat from the item, excluding keyField
               childFields.forEach((grandchildField) => {
                 if (grandchildField.excludeFromPayload !== true) {
-                  // Skip the keyField value by default
-                  if (keyField && grandchildField.id === keyField) {
+                  if (
+                    excludeKeyFieldFromValue &&
+                    keyField &&
+                    grandchildField.id === keyField
+                  ) {
                     return
                   }
                   const grandchildId = grandchildField.id

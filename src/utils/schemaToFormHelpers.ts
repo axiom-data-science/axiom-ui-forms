@@ -1117,10 +1117,17 @@ const mergeFormFields = ({
 
   return (fieldOverrides ?? []).map((fieldOverride) => {
     const normalizedProp = fieldOverride.prop?.replace(/\[\]/g, '')
-    const schemaField = fieldOverride.prop
-      ? (schemaFieldMap[fieldOverride.prop] ??
-        (normalizedProp ? schemaFieldMap[normalizedProp] : undefined))
-      : undefined
+    const scopedProps =
+      normalizedProp !== undefined && containerPathPrefix !== undefined
+        ? [
+            `${containerPathPrefix}.${normalizedProp}`,
+            `${containerPathPrefix}[].${normalizedProp}`,
+          ]
+        : []
+    const schemaField = [fieldOverride.prop, normalizedProp, ...scopedProps]
+      .filter((prop): prop is string => prop !== undefined)
+      .map((prop) => schemaFieldMap[prop])
+      .find((field) => field !== undefined)
     return mergeFormField({
       field: schemaField,
       fieldOverride,

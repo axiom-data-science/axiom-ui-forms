@@ -169,6 +169,53 @@ describe('FieldCreator objectList valueField mode', () => {
     expect((latestFormValues.servers as any).alpha).toBeUndefined()
   })
 
+  it('retains focus on a committed key field when the key changes', () => {
+    const objectListField: IFormField = {
+      id: 'servers',
+      type: 'objectList',
+      label: 'Servers',
+      settings: {
+        keyField: 'hostname',
+      },
+      fields: [
+        {
+          id: 'wrapper',
+          type: 'objectWrapper',
+          fields: [
+            { id: 'hostname', type: 'text', label: 'Hostname' },
+            { id: 'ip', type: 'text', label: 'IP Address' },
+          ],
+        } as any,
+      ],
+    } as any
+
+    currentForm = {
+      id: 'test-form',
+      label: 'Test Form',
+      fields: [objectListField],
+    }
+    currentFormValues = {
+      servers: {
+        alpha: {
+          hostname: 'alpha',
+          ip: '10.0.0.1',
+        },
+      },
+    }
+
+    const { rerender } = render(<FieldCreator field={objectListField} />)
+    const hostnameInput = screen.getByTestId('mock-input-hostname') as HTMLInputElement
+    hostnameInput.focus()
+
+    fireEvent.change(hostnameInput, { target: { value: 'bravo' } })
+    currentFormValues =
+      setFormValuesMock.mock.calls[setFormValuesMock.mock.calls.length - 1][0]
+    rerender(<FieldCreator field={objectListField} />)
+
+    expect(screen.getByTestId('mock-input-hostname')).toBe(hostnameInput)
+    expect(document.activeElement).toBe(hostnameInput)
+  })
+
   it('shows only key field until a unique key is entered when onlyShowKeyUntilUniqueEntered is true', () => {
     const objectListField: IFormField = {
       id: 'servers',

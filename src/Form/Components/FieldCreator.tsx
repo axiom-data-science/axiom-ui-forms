@@ -312,6 +312,24 @@ export const ObjectListCreator = ({
   const [pendingItems, setPendingItems] = useState<Array<{ tempKey: string; data: ICompositeValueType }>>([])
   // itemErrors maps item keys (tempKey for pending, currentKey for committed) to error messages
   const [itemErrors, setItemErrors] = useState<Record<string, string>>({})
+  const committedItemIds = useRef(new Map<string, string>())
+  const pendingCommittedItemIdMoves = useRef(new Map<string, string>())
+  const nextCommittedItemId = useRef(0)
+
+  const getCommittedItemId = (currentKey: string): string => {
+    let itemId = committedItemIds.current.get(currentKey)
+    if (itemId === undefined) {
+      itemId = `object-list-item-${nextCommittedItemId.current++}`
+      committedItemIds.current.set(currentKey, itemId)
+    }
+    return itemId
+  }
+
+  const moveCommittedItemId = (currentKey: string, newKey: string): void => {
+    const itemId = getCommittedItemId(currentKey)
+    committedItemIds.current.set(newKey, itemId)
+    pendingCommittedItemIdMoves.current.set(currentKey, newKey)
+  }
 
   const objListField = field as any // IObjectListField
   const keyField = objListField.settings?.keyField
@@ -381,6 +399,19 @@ export const ObjectListCreator = ({
   }, [form, field, setFormValues, onChange, contextOnChange])
 
   const objValue = (typeof value === 'object' && value !== null && !Array.isArray(value)) ? value as ICompositeValueType : {}
+  const committedKeys = new Set(Object.keys(objValue))
+  for (const [previousKey, newKey] of pendingCommittedItemIdMoves.current) {
+    if (committedKeys.has(newKey)) {
+      committedItemIds.current.delete(previousKey)
+      pendingCommittedItemIdMoves.current.delete(previousKey)
+    }
+  }
+  const pendingKeys = new Set(pendingCommittedItemIdMoves.current.values())
+  for (const itemKey of committedItemIds.current.keys()) {
+    if (!committedKeys.has(itemKey) && !pendingKeys.has(itemKey)) {
+      committedItemIds.current.delete(itemKey)
+    }
+  }
 
   const toStoredItemValue = useCallback(
     (keyValue: string, itemData: ICompositeValueType): IValueType | IValueType[] | undefined => {
@@ -510,14 +541,16 @@ export const ObjectListCreator = ({
     })
     const newObjValue = cloneObject(objValue)
     newObjValue[keyValue] = toStoredItemValue(keyValue, itemData)
+    committedItemIds.current.set(keyValue, tempKey)
+    pendingCommittedItemIdMoves.current.set(tempKey, keyValue)
     defaultOnChange(newObjValue)
     setPendingItems(prev => prev.filter(p => p.tempKey !== tempKey))
   }
 
   // Combine committed (formValues) and pending (local) items for rendering
-  const allItems: Array<{ currentKey: string; itemValue: ICompositeValueType; isPending: boolean }> = [
-    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: toRenderableItemValue(k, v), isPending: false })),
-    ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true })),
+  const allItems: Array<{ currentKey: string; itemValue: ICompositeValueType; isPending: boolean; renderId: string }> = [
+    ...Object.entries(objValue).map(([k, v]) => ({ currentKey: k, itemValue: toRenderableItemValue(k, v), isPending: false, renderId: getCommittedItemId(k) })),
+    ...pendingItems.map(p => ({ currentKey: p.tempKey, itemValue: p.data, isPending: true, renderId: p.tempKey })),
   ]
 
   const createPendingItem = (itemOverride?: ICompositeValueType): {
@@ -588,9 +621,8 @@ export const ObjectListCreator = ({
     <div className={`p-4 bg-slate-100${disabled ? ` ${disabledClassName}` : ''}`}>
       <FieldLabel field={field} disabled={disabled} />
       <div className="flex flex-col divide-y-2 divide-opacity-50 divide-slate-400 divide-dashed">
-        {allItems.map(({ currentKey, itemValue, isPending }) => {
-          // Use _id for stable React key if it exists, otherwise fallback to currentKey
-          const itemId = (itemValue as any)?._id || currentKey
+        {allItems.map(({ currentKey, itemValue, isPending, renderId }) => {
+          const itemId = renderId
           const itemError = itemErrors[currentKey]
           const showOnlyKeyField = shouldShowOnlyKeyField({
             currentKey,
@@ -682,6 +714,7 @@ export const ObjectListCreator = ({
                         const newObjValue = cloneObject(objValue)
                         delete newObjValue[currentKey]
                         newObjValue[newKeyValue] = toStoredItemValue(newKeyValue, newItemValue)
+                        moveCommittedItemId(currentKey, newKeyValue)
                         defaultOnChange(newObjValue)
                         return
                       }
@@ -745,6 +778,7 @@ export const ObjectListCreator = ({
                             const newObjValue = cloneObject(objValue)
                             delete newObjValue[currentKey]
                             newObjValue[newKeyValue] = toStoredItemValue(newKeyValue, newValue)
+                            moveCommittedItemId(currentKey, newKeyValue)
                             defaultOnChange(newObjValue)
                             return
                           }

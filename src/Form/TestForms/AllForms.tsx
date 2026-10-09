@@ -24,6 +24,7 @@ import ObjectListExampleWithSelectAsKeyField from '@/Form/TestForms/ObjectListEx
 import ObjectListKeyValueExample from '@/Form/TestForms/ObjectListExample/ObjectListKeyValueExample'
 import ObjectListWithSchemaExample, {
   ObjectListKeyValueWithSchemaExample,
+  ERDDAPVariableMetadataExample,
 } from '@/Form/TestForms/ObjectListExample/ObjectListWithSchemaExample'
 import ObjectWrapper from '@/Form/TestForms/ObjectWrapper/ObjectWrapper'
 import ObjectWrapperWithSchema from '@/Form/TestForms/ObjectWrapperWithSchema/ObjectWrapperWithSchema'
@@ -97,6 +98,11 @@ const forms = [
     label: 'Object list with schema',
     path: 'object-list-with-schema',
     view: ObjectListWithSchemaExample,
+  },
+  {
+    label: 'ERDDAP variable metadata schema',
+    path: 'erddap-variable-metadata-schema',
+    view: ERDDAPVariableMetadataExample,
   },
   {
     label: 'Object list with key/value and schema',

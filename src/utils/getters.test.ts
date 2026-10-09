@@ -453,6 +453,107 @@ describe('getters.ts', () => {
       })
     })
 
+    it('should include objectList keyField in payload unless excluded', () => {
+      const form = {
+        id: 'test-form',
+        label: 'Test Form',
+        fields: [
+          {
+            id: 'variables',
+            type: 'objectList',
+            settings: { keyField: 'variable_name' },
+            fields: [
+              {
+                id: 'wrapper',
+                type: 'objectWrapper',
+                tabs: [
+                  {
+                    id: 'general',
+                    label: 'General',
+                    fields: [{ id: 'variable_name', type: 'text' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      } as any
+      const formValues = {
+        variables: {
+          temperature: { variable_name: 'temperature' },
+        },
+      }
+
+      expect(getFormPayload(formValues, form)).toEqual({
+        variables: {
+          temperature: { variable_name: 'temperature' },
+        },
+      })
+    })
+
+    it('should emit schema-backed objectList values with tabbed wrapper fields', () => {
+      const schema: JSONSchema6 = {
+        type: 'object',
+        properties: {
+          dataset_id: { type: 'string' },
+          variables: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                variable_name: { type: 'string' },
+                units: { type: 'string' },
+              },
+              required: ['variable_name'],
+            },
+          },
+        },
+      }
+      const form = overridesAndSchemaToFormObject({
+        schema,
+        formOverrides: [
+          {
+            fields: [
+              { prop: 'dataset_id' },
+              {
+                prop: 'variables',
+                type: 'objectList',
+                settings: { keyField: 'variable_name' },
+                fields: [
+                  {
+                    id: 'wrapper',
+                    type: 'objectWrapper',
+                    tabs: [
+                      {
+                        id: 'general',
+                        label: 'General',
+                        fields: [
+                          { prop: 'variable_name' },
+                          { prop: 'units' },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              } as any,
+            ],
+          },
+        ],
+      })
+      const formValues = {
+        dataset_id: 'sample',
+        variables: {
+          temperature: { variable_name: 'temperature', units: 'Celsius' },
+        },
+      }
+      const variablesField = form.fields?.find((field) => field.id === 'variables')
+
+      expect(variablesField?.type).toBe('objectList')
+      expect(variablesField?.excludeFromPayload).not.toBe(true)
+
+      expect(getFormPayload(formValues, form)).toEqual(formValues)
+    })
+
     it('should include flattened skip_path child values for multiple object items', () => {
       const form = {
         id: 'test-form',
