@@ -1,4 +1,5 @@
 import { type IFormContextValue } from '@/Form/Creator/FormContextProvider'
+import { type ISelectOptionProps } from '@axdspub/axiom-ui-utilities'
 import type { GeoJSON } from 'geojson'
 
 interface IValueTypes {
@@ -185,15 +186,10 @@ export interface IJSONField extends IFormFieldRoot {
   }
 }
 
-interface ISelectOption {
-  label: string
-  value: string | number
-  description?: string
-  [key: string]: string | number | boolean | Record<string, unknown> | undefined
-}
+
 
 interface ISelectableInput extends IFormFieldRoot {
-  options?: ISelectOption[]
+  options?: ISelectOptionProps[]
   options_source?: {
     type: 'url'
     url: string
