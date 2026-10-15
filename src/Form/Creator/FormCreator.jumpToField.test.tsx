@@ -2,11 +2,11 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import React, { createRef } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
-import FormCreator, { type IFormCreatorHandle } from './FormCreator'
+import FormCreator from './FormCreator'
 import SchemaFormWithEditorOverlay from '@/Form/FormWithEditorOverlay'
 import { FormWithEditorOverlay } from '@/Form/FormWithEditorOverlay'
 import { SchemaFormWithEditorOverlay as PublicSchemaFormWithEditorOverlay } from '@/Form'
-import { type IForm } from './FormCreatorTypes'
+import { IFormCreatorHandle, type IForm } from './FormCreatorTypes'
 
 const renderForm = (form: IForm, ref: React.RefObject<IFormCreatorHandle | null>): void => {
   render(

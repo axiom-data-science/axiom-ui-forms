@@ -1,5 +1,5 @@
 import React, { type ReactNode, useContext, useState, type ReactElement, useEffect } from 'react'
-import FormCreator, { IFormCreatorProps, IFormCreatorHandle, SchemaFormCreator } from '@/Form/Creator/FormCreator'
+import FormCreator, { IFormCreatorProps, SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import {
@@ -22,6 +22,7 @@ import {
   type IForm,
   type IFormValueState,
   IFormValues,
+  IFormCreatorHandle,
 } from '@/Form/Creator/FormCreatorTypes'
 import { Tabs, Tooltip } from '@axdspub/axiom-ui-utilities'
 import { JSONInput } from '@/Form/Components/Inputs'
