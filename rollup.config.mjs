@@ -22,6 +22,7 @@ const external = [
   'react/jsx-runtime',
   'react-router-dom',
   '@tanstack/react-query',
+  'to-json-schema',
   'use-sync-external-store/shim',
   'use-sync-external-store/shim/with-selector'
 ]
