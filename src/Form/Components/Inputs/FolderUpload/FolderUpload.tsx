@@ -8,6 +8,7 @@ type FileTypeFlags = FolderFileEntry['fileType']
 
 type FolderUploadProps = IFieldInputProps & {
   acceptFileTypes?: string[]
+  maxDepth?: number
   folderPreviewComponent?: ComponentType<FolderPreviewProps>
 }
 
@@ -208,6 +209,7 @@ const FolderUpload = ({
   value,
   onChange,
   acceptFileTypes,
+  maxDepth: maxDepthProp,
   disabled,
   folderPreviewComponent: FolderPreviewComponent = FolderPreview,
 }: FolderUploadProps): ReactElement => {
@@ -226,6 +228,8 @@ const FolderUpload = ({
       ? [settingsAcceptedFileTypes]
       : undefined
   const acceptFileTypeToUse = settingsAcceptedFileTypesArray ?? acceptFileTypes
+  const settingsMaxDepth = (field.settings as { maxDepth?: number } | undefined)?.maxDepth
+  const maxDepth = maxDepthProp ?? settingsMaxDepth
   const folderInputAttributes: FolderInputAttributes = {
     webkitdirectory: '',
   }
@@ -244,15 +248,37 @@ const FolderUpload = ({
     setUploading(true)
 
     try {
-      const mappedFiles = selectedFiles
+      const selectedFolderName = getSelectedFolderName(selectedFiles)
+      const filesWithinDepth =
+        maxDepth === undefined
+          ? selectedFiles
+          : selectedFiles.filter(({ relativePath }) => {
+              const pathSegments = relativePath.split(/[\\/]/).filter(Boolean)
+              const fileDepth = Math.max(1, pathSegments.length - 1)
+
+              return fileDepth <= maxDepth
+            })
+
+      if (!filesWithinDepth.length) {
+        setFiles([])
+        setFolderName(selectedFolderName)
+        setError('No files found within the selected folder depth.')
+        onChange(selectedFolderName)
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+
+        return
+      }
+
+      const mappedFiles = filesWithinDepth
         .map((entry) => ({
           file: entry.file,
           relativePath: entry.relativePath,
           fileType: getFileTypeFlags(entry.file),
         }))
         .sort((left, right) => left.relativePath.localeCompare(right.relativePath))
-
-      const selectedFolderName = getSelectedFolderName(selectedFiles)
 
       setFiles(mappedFiles)
       setFolderName(selectedFolderName)
