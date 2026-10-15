@@ -1033,6 +1033,9 @@ const FolderFileRow = ({
             </Tooltip>
           </div>
         </td>
+        <td className="whitespace-nowrap px-3 py-2 text-sm text-slate-700 align-top">
+          {formatBytes(file.file.size)}
+        </td>
         <td className={`whitespace-nowrap px-3 py-2 align-top text-sm ${timestampCellClassName}`}>
           <span>{inferredTimestamp ? inferredTimestamp.toLocaleString() : 'Not found'}</span>
         </td>
@@ -1064,7 +1067,7 @@ const FolderFileRow = ({
       </tr>
       {isExpanded && (
         <tr className="border-b border-slate-600 bg-slate-600 border-b-slate-800 last:border-b-0">
-          <td colSpan={9} className=" px-3 py-3">
+          <td colSpan={10} className=" px-3 py-3">
             <div className="flex flex-col gap-3">
               {file.fileType.isAudio && audioUrl ? (
                 <div className="rounded-md border border-slate-200 bg-white px-3 py-2 shadow-sm">
@@ -1136,6 +1139,14 @@ const QCFolderPreview = ({ folderName, files }: FolderPreviewProps) => {
     [audioEntries]
   )
   const hasNonAudioFiles = audioEntries.length !== sortedFiles.length
+  const fileSizeSummary = useMemo(() => {
+    const totalBytes = sortedFiles.reduce((total, entry) => total + entry.file.file.size, 0)
+
+    return {
+      totalBytes,
+      meanBytes: sortedFiles.length > 0 ? totalBytes / sortedFiles.length : null,
+    }
+  }, [sortedFiles])
   const sampleRateValues = useMemo(
     () =>
       audioEntries
@@ -1460,6 +1471,22 @@ const QCFolderPreview = ({ folderName, files }: FolderPreviewProps) => {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-x-8 gap-y-3 bg-white px-4 py-3">
+        <div>
+          <div className="text-xs uppercase tracking-wide text-slate-500">Total file size</div>
+          <div className="mt-1 text-sm font-medium text-slate-800">
+            {sortedFiles.length > 0 ? formatBytes(fileSizeSummary.totalBytes) : 'No files loaded'}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wide text-slate-500">Mean file size</div>
+          <div className="mt-1 text-sm font-medium text-slate-800">
+            {fileSizeSummary.meanBytes !== null
+              ? formatBytes(fileSizeSummary.meanBytes)
+              : 'Unavailable'}
+          </div>
+        </div>
+      </div>
       <div className="bg-white">
         <div className="px-4 py-3">
           <h3 className="text-sm font-semibold text-slate-800">Validation Overview</h3>
@@ -1555,6 +1582,7 @@ const QCFolderPreview = ({ folderName, files }: FolderPreviewProps) => {
                     <span>File</span>
                   </div>
                 </th>
+                <th className="w-24 bg-slate-50 px-3 py-2">Size</th>
                 <th className="bg-slate-50 px-3 py-2">Timestamp</th>
                 <th className="w-36 bg-slate-50 px-3 py-2">~ bitrate</th>
                 <th className="w-28 bg-slate-50 px-3 py-2">Duration</th>
@@ -1591,7 +1619,7 @@ const QCFolderPreview = ({ folderName, files }: FolderPreviewProps) => {
 }
 
 const QCField = (props: IFieldInputProps) => {
-  return <FolderUpload {...props} folderPreviewComponent={QCFolderPreview} />
+  return <FolderUpload {...props} folderPreviewComponent={QCFolderPreview} maxDepth={1} />
 }
 
 const QCToolsForm = (): ReactElement => {
