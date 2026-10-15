@@ -1,5 +1,5 @@
 import React, { type ReactNode, useContext, useState, type ReactElement, useEffect } from 'react'
-import FormCreator, { IFormCreatorProps, SchemaFormCreator } from '@/Form/Creator/FormCreator'
+import FormCreator, { IFormCreatorProps, IFormCreatorHandle, SchemaFormCreator } from '@/Form/Creator/FormCreator'
 import { type JSONSchema6 } from 'json-schema'
 import { CopyButton } from '@/Form/Manage/CopyableJSONOutput'
 import {
@@ -145,15 +145,15 @@ const FormEditor = ({ children }: { children: ReactNode }): ReactElement => {
   )
 }
 
-export const FormWithEditorOverlay = ({
-  formState,
-  formValueState,
-  inputOverrides,
-}: {
+export const FormWithEditorOverlay = React.forwardRef<IFormCreatorHandle, {
   formState: [IForm | undefined, (form: IForm | undefined) => void]
   formValueState?: IFormValueState
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-}): ReactElement => {
+}>(({
+  formState,
+  formValueState,
+  inputOverrides,
+}, ref): ReactElement => {
   const [formInput, setFormInput] = formState ?? useState<IForm | undefined>(undefined)
   const [layout] = useAtom(layoutAtom)
   const [formValues, setFormValues] = formValueState ?? useAtom(formValuesAtom)
@@ -165,6 +165,7 @@ export const FormWithEditorOverlay = ({
       >
         {formInput !== undefined ? (
           <FormCreator
+            ref={ref}
             form={formInput}
             formValueState={[formValues, setFormValues]}
             Footer={Footer}
@@ -208,9 +209,18 @@ export const FormWithEditorOverlay = ({
       </div>
     </>
   )
-}
+})
 
-const SchemaFormWithEditorOverlay = ({
+FormWithEditorOverlay.displayName = 'FormWithEditorOverlay'
+
+const SchemaFormWithEditorOverlay = React.forwardRef<IFormCreatorHandle, {
+  label: string
+  schemaState?: [JSONSchema6 | undefined, (schema: JSONSchema6 | undefined) => void]
+  formOverrideState?: [IFormOverride | undefined, (override: IFormOverride | undefined) => void]
+  fieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
+  rootFieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
+  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+} & Omit<IFormCreatorProps, 'Header' | 'Footer' | 'form'>>(({
   label,
   schemaState,
   formOverrideState,
@@ -218,14 +228,7 @@ const SchemaFormWithEditorOverlay = ({
   fieldOverrideState,
   inputOverrides,
   ...props
-}: {
-  label: string
-  schemaState?: [JSONSchema6 | undefined, (schema: JSONSchema6 | undefined) => void]
-  formOverrideState?: [IFormOverride | undefined, (override: IFormOverride | undefined) => void]
-  fieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
-  rootFieldOverrideState?: [IFormFieldOverride[], (overrides: IFormFieldOverride[]) => void]
-  inputOverrides?: Record<string, React.FC<IFieldInputProps>>
-} & Omit<IFormCreatorProps, 'Header' | 'Footer' | 'form'>): ReactElement => {
+}, ref): ReactElement => {
   const [schemaInput, setSchemaInput] = schemaState ?? useState<JSONSchema6 | undefined>(undefined)
   const [rootFieldOverridesInput, setRootFieldOverridesInput] = rootFieldOverrideState ?? []
   const [fieldOverridesInput, setFieldOverridesInput] =
@@ -245,6 +248,7 @@ const SchemaFormWithEditorOverlay = ({
     >
       {schemaInput !== undefined ? (
         <SchemaFormCreator
+          ref={ref}
           {...props}
           id={schemaState?.[0]?.$id ?? 'default'}
           label={label}
@@ -392,6 +396,8 @@ const SchemaFormWithEditorOverlay = ({
       )}
     </div>
   )
-}
+})
+
+SchemaFormWithEditorOverlay.displayName = 'SchemaFormWithEditorOverlay'
 
 export default SchemaFormWithEditorOverlay

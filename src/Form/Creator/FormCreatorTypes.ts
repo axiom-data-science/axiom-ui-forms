@@ -488,3 +488,8 @@ export interface IFieldInputProps {
   disabled?: boolean
   context?: IFormContextValue
 }
+
+
+export interface IFormCreatorHandle {
+  jumpToField: (path: string) => Promise<boolean>
+}

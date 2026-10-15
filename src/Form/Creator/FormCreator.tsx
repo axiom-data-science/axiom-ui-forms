@@ -1,7 +1,7 @@
 'use client'
 
 import { FormStableContext, FormValuesContext, IFormContextValue, useFormValues } from '@/Form/Creator/FormContextProvider'
-import { type IFormValues, type IForm, type IFormSection, type IFormField, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride } from '@/Form/Creator/FormCreatorTypes'
+import { type IFormValues, type IForm, type IFormSection, type IFormField, type IValueChangeFn, type IFieldInputProps, type IFormOverride, type IFormFieldOverride, IFormCreatorHandle } from '@/Form/Creator/FormCreatorTypes'
 import FormHeader from '@/Form/Creator/FormHeader'
 import FormSection from '@/Form/Creator/FormSection'
 import { copyAndAddPathToFields } from '@/utils/manipulators'
@@ -16,8 +16,12 @@ import { useAtom } from 'jotai'
 import { type JSONSchema6 } from 'json-schema'
 import debounce from 'lodash-es/debounce'
 import isEqual from 'lodash-es/isEqual'
-import React, { type ReactNode, useContext, type ReactElement, useState, useEffect, useMemo, useCallback } from 'react'
+import React, { type ReactNode, useContext, type ReactElement, useState, useEffect, useMemo, useCallback, useImperativeHandle, useRef } from 'react'
 import errorRenderer from '@/utils/errorRenderer'
+import { FieldNavigationProvider, fieldPathsMatch, type IFieldNavigationRequest } from './FieldNavigationContext'
+import { getFieldsFromFormSection, makeJsonPath } from '@/utils/getters'
+
+
 
 export interface IFormCreatorProps {
   form: IForm
@@ -61,20 +65,20 @@ const FormStatus = (): ReactElement => {
 }
 
 
-export const SchemaFormCreator = ({
+export const SchemaFormCreator = React.forwardRef<IFormCreatorHandle, Omit<IFormCreatorProps, 'form'> & {
+  id?: string
+  label?: string
+  schema: JSONSchema6
+  formOverrides?: IFormOverride[]
+  formFieldOverrides?: IFormFieldOverride[][]
+}>(({
   label,
   id,
   schema,
   formOverrides,
   formFieldOverrides,
   ...props
-}: Omit<IFormCreatorProps, 'form'> & {
-  id?: string
-  label?: string
-  schema: JSONSchema6
-  formOverrides?: IFormOverride[]
-  formFieldOverrides?: IFormFieldOverride[][]
-}): ReactElement => {
+}, ref): ReactElement => {
   const form = useMemo(() => {
     const f = formOverrides === undefined && formFieldOverrides === undefined
       ? schemaToFormObject(schema)
@@ -87,11 +91,13 @@ export const SchemaFormCreator = ({
   return (
     <>{  
       form !== undefined
-        ? <FormCreator form={form} {...props} />
+        ? <FormCreator ref={ref} form={form} {...props} />
         : <div className='p-5 bg-slate-200 text-xs'><Loader className='pt-20' /></div>
     }</>
   )
-}
+})
+
+SchemaFormCreator.displayName = 'SchemaFormCreator'
 
 const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   const formValues: IFormValues = {}
@@ -109,7 +115,7 @@ const seedFormValuesWithDefaults = (form: IForm): IFormValues => {
   return formValues
 }
 
-const FormCreator = ({
+const FormCreator = React.forwardRef<IFormCreatorHandle, IFormCreatorProps>(({
   form,
   formValueState,
   note,
@@ -124,7 +130,7 @@ const FormCreator = ({
   Header,
   SubmitButton,
   initialFormValues
-}: IFormCreatorProps): ReactElement => {
+}: IFormCreatorProps, ref): ReactElement => {
   const activeForm = useMemo(() => {
     const af = copyAndAddPathToFields(ensureObjectWrappersHaveSkipPath(form))
     // Disable URL navigation if form has nested pages or wizard_steps (these don't support URL nav)
@@ -138,6 +144,64 @@ const FormCreator = ({
     ...seedFormValuesWithDefaults(activeForm),
     ...initialFormValues
   }))
+  const [navigationRequest, setNavigationRequest] = useState<IFieldNavigationRequest | undefined>()
+  const navigationRequestId = useRef(0)
+  const formElementRef = useRef<HTMLDivElement>(null)
+
+  useImperativeHandle(ref, () => ({
+    jumpToField: async (path: string): Promise<boolean> => {
+      const fieldExists = getFieldsFromFormSection(activeForm).some((field) => {
+        const fieldPath = makeJsonPath(field)
+        return fieldPath !== undefined && fieldPathsMatch(fieldPath, path)
+      })
+      if (!fieldExists || formElementRef.current === null) {
+        return false
+      }
+
+      const nextRequest = { path, requestId: ++navigationRequestId.current }
+
+      return await new Promise<boolean>((resolve) => {
+        const root = formElementRef.current
+        if (root === null) {
+          resolve(false)
+          return
+        }
+
+        let timeoutId: number
+        const observer = new MutationObserver(() => findAndNavigate())
+        const finish = (success: boolean): void => {
+          observer.disconnect()
+          window.clearTimeout(timeoutId)
+          resolve(success)
+        }
+        const findAndNavigate = (): void => {
+          const fieldElement = Array.from(root.querySelectorAll<HTMLElement>('[data-field-path]'))
+            .find((element) => element.dataset.fieldPath === path)
+          if (fieldElement === undefined) {
+            return
+          }
+
+          fieldElement.scrollIntoView?.({ block: 'center', behavior: 'smooth' })
+          fieldElement.classList.remove('ring-4', 'ring-amber-400', 'ring-offset-2', 'animate-pulse')
+          void fieldElement.offsetWidth
+          fieldElement.classList.add('ring-4', 'ring-amber-400', 'ring-offset-2', 'animate-pulse')
+          window.setTimeout(() => {
+            fieldElement.classList.remove('ring-4', 'ring-amber-400', 'ring-offset-2', 'animate-pulse')
+          }, 1800)
+          const focusTarget = fieldElement.querySelector<HTMLElement>(
+            'input:not([type="hidden"]), textarea, select, button, [tabindex]:not([tabindex="-1"])'
+          )
+          focusTarget?.focus({ preventScroll: true })
+          finish(true)
+        }
+
+        observer.observe(root, { childList: true, subtree: true })
+        timeoutId = window.setTimeout(() => finish(false), 2000)
+        setNavigationRequest(nextRequest)
+        findAndNavigate()
+      })
+    }
+  }), [activeForm])
 
   useEffect(() => {
     const valuesWithDefaults = {
@@ -182,8 +246,9 @@ const FormCreator = ({
     <ErrorBoundary fallbackRender={errorRenderer}>
     <FormStableContext.Provider value={stableCtxValue}>
       <FormValuesContext.Provider value={formValues}>
+      <FieldNavigationProvider value={navigationRequest}>
         {typeof Header === 'function' ? <FormComponentWrap Component={Header} /> : Header ?? ''}
-        <div className={utils.makeClassName({
+        <div ref={formElementRef} className={utils.makeClassName({
           className: activeForm?.settings?.class_name,
           defaultClassName,
           extras: [className]
@@ -200,11 +265,14 @@ const FormCreator = ({
           />
         </div>
         {typeof Footer === 'function' ? <FormComponentWrap Component={Footer} /> : Footer ?? ''}
+      </FieldNavigationProvider>
       </FormValuesContext.Provider>
     </FormStableContext.Provider>
     </ErrorBoundary>
   )
-}
+})
+
+FormCreator.displayName = 'FormCreator'
 
 export type IFormSectionStatus = Record<string, {
   completed: number

@@ -14,6 +14,7 @@ import { Button } from '@axdspub/axiom-ui-utilities'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
 import { WizardNavSmall } from '@/Form/Creator/Wizard'
+import { findSectionForFieldPath, useFieldNavigationRequest } from '@/Form/Creator/FieldNavigationContext'
 
 const PageNav = ({
   sections,
@@ -233,7 +234,15 @@ const PageLayoutContent = ({
 
   const formValues = useFormValues()
   const sectionStatus = calculateSectionStatus(sections, formValues)
-  const { activeId } = useFormSectionContext()
+  const { activeId, setActiveId } = useFormSectionContext()
+  const navigationRequest = useFieldNavigationRequest()
+  useEffect(() => {
+    if (navigationRequest === undefined) return
+    const targetSection = findSectionForFieldPath(sections, navigationRequest.path)
+    if (targetSection !== undefined) {
+      setActiveId(targetSection.id)
+    }
+  }, [sections, setActiveId, navigationRequest])
   const formSection = sections?.find(s => s.id === activeId) ?? sections?.[0]
   const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 

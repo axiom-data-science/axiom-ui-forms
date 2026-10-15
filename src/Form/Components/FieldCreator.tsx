@@ -146,6 +146,7 @@ const OneOfMultiple = ({
     <div
       className={`flex flex-col gap-2${disabled ? ` ${disabledClassName}` : ''} py-2 ${getFieldWrapperClass(field)}`}
       data-testid={`field-${field.id}-${index}`}
+      data-field-path={makeJsonPath(field)}
     >
       <InputComponent
         field={field}
@@ -972,6 +973,7 @@ const FieldCreator = ({
     >
       {InputComponent !== undefined || isObjectList || isMultiple ? (
         <div
+          data-field-path={makeJsonPath(field)}
           className={utils.makeClassName({
             className,
             defaultClassName,

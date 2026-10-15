@@ -9,7 +9,7 @@ import {
 import { type IPageLayoutProps, ActivePage, type INavProps } from '@/Form/Creator/Page'
 import { SelectInput, utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
-import React, { ReactNode, type ReactElement, memo } from 'react'
+import React, { ReactNode, type ReactElement, memo, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import {
@@ -20,6 +20,7 @@ import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvide
 import { useAtomValue } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
+import { findSectionForFieldPath, useFieldNavigationRequest } from '@/Form/Creator/FieldNavigationContext'
 
 const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
   const aOrder = a.order ?? Infinity
@@ -301,7 +302,15 @@ const WizardLayoutContent = ({
     return <></>
   }
   const formValues = useFormValues()
-  const { activeId } = useFormSectionContext()
+  const { activeId, setActiveId } = useFormSectionContext()
+  const navigationRequest = useFieldNavigationRequest()
+  useEffect(() => {
+    if (navigationRequest === undefined) return
+    const targetSection = findSectionForFieldPath(sections, navigationRequest.path)
+    if (targetSection !== undefined) {
+      setActiveId(targetSection.id)
+    }
+  }, [sections, setActiveId, navigationRequest])
   const formSection = sections?.find((s) => s.id === activeId) ?? sections?.[0]
   const sectionStatus = calculateSectionStatus(sections, formValues)
   const useScoped = scopedValue !== undefined && scopedOnChange !== undefined

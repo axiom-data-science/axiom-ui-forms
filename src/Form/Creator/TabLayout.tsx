@@ -1,4 +1,4 @@
-import { FormSectionContextProvider } from '@/Form/Creator/FormSectionContextProvider'
+import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import {
   type IFormSection,
@@ -9,7 +9,7 @@ import {
 } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
 import { calculateSectionStatus } from '@/utils/validators'
-import React, { memo, ReactNode, type ReactElement } from 'react'
+import React, { memo, ReactNode, type ReactElement, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
 import { Tabs } from '@axdspub/axiom-ui-utilities'
@@ -18,6 +18,7 @@ import FormFields from '@/Form/Creator/FormFields'
 import { cloneObject } from '@/utils/manipulators'
 import FieldCreator from '@/Form/Components/FieldCreator'
 import { getLayoutClassName } from '@/utils/layoutHelpers'
+import { findSectionForFieldPath, useFieldNavigationRequest } from '@/Form/Creator/FieldNavigationContext'
 
 export interface ITabLayoutProps {
   sections?: IFormSection[]
@@ -232,7 +233,15 @@ const TabLayoutContent = ({
 
   const formValues = useFormValues()
   const sectionStatus = calculateSectionStatus(sections, formValues)
-
+  const { activeId, setActiveId } = useFormSectionContext()
+  const navigationRequest = useFieldNavigationRequest()
+  useEffect(() => {
+    if (navigationRequest === undefined) return
+    const targetSection = findSectionForFieldPath(sections, navigationRequest.path)
+    if (targetSection !== undefined) {
+      setActiveId(targetSection.id)
+    }
+  }, [sections, setActiveId, navigationRequest])
   // If scopedValue/scopedOnChange are provided, use ScopedActiveTab instead
   const useScoped = scopedValue !== undefined && scopedOnChange !== undefined
 
@@ -244,28 +253,28 @@ const TabLayoutContent = ({
         tabNavClassName="border-b-0"
         activeTabNavClassName="border-b-2 border-slate-400"
         navClassName="w-full border-b border-slate-300"
-        tabs={sections.map((s) => {
-          return {
-            id: s.id,
-            label: s.label ?? s.id,
-            content: useScoped ? (
-              <ScopedTabContentWrapper
-                formSection={s}
-                sectionStatus={sectionStatus}
-                level={level}
-                scopedValue={scopedValue}
-                scopedOnChange={scopedOnChange}
-              />
-            ) : (
-              <RegularTabContentWrapper
-                formSection={s}
-                sectionStatus={sectionStatus}
-                level={level}
-                ContentComponent={ContentComponent}
-              />
-            ),
-          }
-        })}
+        selectedTab={activeId}
+        onChange={setActiveId}
+        tabs={sections.map((s) => ({
+          id: s.id,
+          label: s.label ?? s.id,
+          content: useScoped ? (
+            <ScopedTabContentWrapper
+              formSection={s}
+              sectionStatus={sectionStatus}
+              level={level}
+              scopedValue={scopedValue}
+              scopedOnChange={scopedOnChange}
+            />
+          ) : (
+            <RegularTabContentWrapper
+              formSection={s}
+              sectionStatus={sectionStatus}
+              level={level}
+              ContentComponent={ContentComponent}
+            />
+          ),
+        }))}
       />
     </div>
         {SubmitButton && (
