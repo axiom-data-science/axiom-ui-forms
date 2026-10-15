@@ -5,7 +5,6 @@
       "title": "Page 1",
       "fields":[
         { "prop": "test" }, 
-        {"prop": "name"},
         {
           "prop": "testObject",
           "layout": "grid2",
@@ -29,12 +28,13 @@
         {
           "id":"wrapper1",
           "type":"objectWrapper",
-          "fields": [
+          "tabs":[
             {
-              "id":"wrapper2",
-              "type":"objectWrapper",
+              "id": "tab1",
+              "title": "Tab 1",
               "fields": [
-                  {
+                        
+                                          {
                     "prop": "testEnum",
                     "label": "Custom Label for Enum (from array override)",
                     "settings": {
@@ -42,8 +42,23 @@
                     }
                   }
               ]
+            },
+            {
+              "id": "tab2",
+              "title": "Tab 2",
+          "fields": [
+            {
+              "id":"wrapper2",
+              "type":"objectWrapper",
+              "fields": [
+                {"prop": "name"}
+              ]
             }
           ]
+            }
+
+          ]
+
         }
       ]
     }
