@@ -1,6 +1,6 @@
 {
   "name": "@axdspub/axiom-ui-forms",
-  "version": "1.2.2-alpha.9",
+  "version": "1.2.2-alpha.10",
   "private": false,
   "description": "Axiom UI Forms",
   "type": "module",
@@ -46,8 +46,7 @@
     "react-error-boundary": "^5.0.0",
     "react-markdown": "^10.1.0",
     "react-media": "^1.10.0",
-    "react-router-dom": "^7.0.0",
-    "to-json-schema": "^0.2.5"
+    "react-router-dom": "^7.0.0"
   },
   "scripts": {
     "start": "set PORT=3080 && vite",
@@ -128,6 +127,7 @@
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "tailwindcss": "^4.2.1",
+    "to-json-schema": "^0.2.5",
     "ts-node": "^10.9.1",
     "typedoc": "^0.27.7",
     "typescript": "^5.2.2",
