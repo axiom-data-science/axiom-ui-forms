@@ -27,9 +27,13 @@ vi.mock('@axdspub/axiom-ui-utilities', () => ({
 }))
 
 describe('QCToolsForm file sizes', () => {
-  it('shows per-file sizes and total and mean sizes above validation', async () => {
-    const largerFile = new File([new Uint8Array(1536)], 'larger.txt', { type: 'text/plain' })
-    const smallerFile = new File([new Uint8Array(512)], 'smaller.txt', { type: 'text/plain' })
+  it('shows file sizes and the overall time range above validation', async () => {
+    const largerFile = new File([new Uint8Array(1536)], 'larger_20240102_030405.txt', {
+      type: 'text/plain',
+    })
+    const smallerFile = new File([new Uint8Array(512)], 'smaller_20240103_040506.txt', {
+      type: 'text/plain',
+    })
     const { container } = render(<QCToolsForm />)
     const fileInput = container.querySelector('input[type="file"]')
 
@@ -47,6 +51,12 @@ describe('QCToolsForm file sizes', () => {
 
     expect(screen.getByText('Total file size')).toBeInTheDocument()
     expect(screen.getByText('Mean file size')).toBeInTheDocument()
+    expect(screen.getByText('Overall start time').parentElement).toHaveTextContent(
+      new Date(2024, 0, 2, 3, 4, 5).toLocaleString()
+    )
+    expect(screen.getByText('Overall end time').parentElement).toHaveTextContent(
+      new Date(2024, 0, 3, 4, 5, 6).toLocaleString()
+    )
     expect(screen.getByRole('columnheader', { name: 'Size' })).toBeInTheDocument()
     expect(screen.getByText('Validation Overview').compareDocumentPosition(screen.getByText('Total file size')) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
   })

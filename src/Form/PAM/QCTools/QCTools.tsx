@@ -1147,6 +1147,23 @@ const QCFolderPreview = ({ folderName, files }: FolderPreviewProps) => {
       meanBytes: sortedFiles.length > 0 ? totalBytes / sortedFiles.length : null,
     }
   }, [sortedFiles])
+  const overallTimeRange = useMemo(() => {
+    const timestampedEntries = sortedFiles.filter((entry) => entry.inferredTimestamp !== null)
+    const startTime = timestampedEntries.reduce<Date | null>((earliest, entry) => {
+      const timestamp = entry.inferredTimestamp!
+      return earliest === null || timestamp < earliest ? timestamp : earliest
+    }, null)
+    const endTime = timestampedEntries.reduce<Date | null>((latest, entry) => {
+      const timestamp = entry.inferredTimestamp!
+      const end =
+        typeof entry.durationSeconds === 'number'
+          ? addSeconds(timestamp, entry.durationSeconds)
+          : timestamp
+      return latest === null || end > latest ? end : latest
+    }, null)
+
+    return { startTime, endTime }
+  }, [sortedFiles])
   const sampleRateValues = useMemo(
     () =>
       audioEntries
@@ -1484,6 +1501,18 @@ const QCFolderPreview = ({ folderName, files }: FolderPreviewProps) => {
             {fileSizeSummary.meanBytes !== null
               ? formatBytes(fileSizeSummary.meanBytes)
               : 'Unavailable'}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wide text-slate-500">Overall start time</div>
+          <div className="mt-1 text-sm font-medium text-slate-800">
+            {formatDateTime(overallTimeRange.startTime)}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wide text-slate-500">Overall end time</div>
+          <div className="mt-1 text-sm font-medium text-slate-800">
+            {formatDateTime(overallTimeRange.endTime)}
           </div>
         </div>
       </div>
