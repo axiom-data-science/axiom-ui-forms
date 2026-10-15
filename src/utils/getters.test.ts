@@ -118,6 +118,36 @@ describe('getters.ts', () => {
       const result = getFields(undefined)
       expect(result).toEqual([])
     })
+
+    it('should not repeat fields nested in sections while preserving getChildFields descendants', () => {
+      const field = {
+        id: 'wrapper1',
+        type: 'objectWrapper',
+        tabs: [
+          {
+            id: 'tab2',
+            title: 'Tab 2',
+            fields: [
+              {
+                id: 'wrapper2',
+                type: 'objectWrapper',
+                fields: [{ id: 'name', type: 'text' }],
+              },
+            ],
+          },
+        ],
+      } as unknown as IFormField
+
+      expect(getFields([field]).map((item) => item.id)).toEqual(['wrapper1', 'wrapper2', 'name'])
+      expect(
+        getFieldsFromFormSection({
+          id: 'form',
+          label: 'Form',
+          pages: [{ id: 'page', label: 'Page', fields: [field] }],
+        }).map((item) => item.id)
+      ).toEqual(['wrapper1', 'wrapper2', 'name'])
+      expect(getChildFields(field).map((item) => item.id)).toEqual(['wrapper2', 'name'])
+    })
   })
 
   describe('getValueFromPath', () => {

@@ -75,6 +75,23 @@ export const getChildFields = (field: { id: string; fields?: IFormField[] }): IF
   return [...directFields, ...fromSections]
 }
 
+const getSectionFieldRoots = (section: IFormSection): IFormField[] => [
+  ...(section.fields ?? []),
+  ...(section.pages ?? []).flatMap(getSectionFieldRoots),
+  ...(section.wizard_steps ?? []).flatMap(getSectionFieldRoots),
+  ...(section.tabs ?? []).flatMap(getSectionFieldRoots),
+]
+
+const getImmediateChildFields = (field: { id: string; fields?: IFormField[] }): IFormField[] => {
+  const f = field as any
+  const sectionFields: IFormField[] = [
+    ...(f.tabs ?? []),
+    ...(f.pages ?? []),
+    ...(f.wizard_steps ?? []),
+  ].flatMap((section: IFormSection) => getSectionFieldRoots(section))
+  return [...(f.fields ?? []), ...sectionFields]
+}
+
 /**
  * Recursively gets all fields from a given array of fields
  *
@@ -89,7 +106,7 @@ export const getFields = (fields?: Array<{ id: string; fields?: IFormField[] }>)
   const all = fields
     .map((field) => {
       let fields = [field]
-      const children = getChildFields(field)
+      const children = getImmediateChildFields(field)
       children.forEach((c) => {
         fields = fields.concat(getFields([c]))
       })
