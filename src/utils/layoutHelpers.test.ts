@@ -12,7 +12,7 @@ describe('layoutHelpers', () => {
     })
 
     it('returns horizontal flex classes for "horizontal"', () => {
-      expect(getLayoutClassName('horizontal')).toBe('flex md:flex-row sm:flex-col gap-4 sm:gap-2')
+      expect(getLayoutClassName('horizontal')).toBe('flex flex-col md:flex-row gap-4 sm:gap-2')
     })
 
     it('returns 2-column grid classes for "grid2"', () => {
@@ -42,8 +42,8 @@ describe('layoutHelpers', () => {
   })
 
   describe('getFieldFlexClass', () => {
-    it('returns "flex-1" for horizontal layout', () => {
-      expect(getFieldFlexClass('horizontal')).toBe('flex-1')
+    it('returns responsive flex sizing for horizontal layout', () => {
+      expect(getFieldFlexClass('horizontal')).toBe('md:flex-1')
     })
 
     it('returns empty string for grid layouts', () => {

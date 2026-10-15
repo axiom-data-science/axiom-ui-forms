@@ -1,4 +1,5 @@
 import { type IFormContextValue } from '@/Form/Creator/FormContextProvider'
+import { type LayoutType } from '@/utils/layoutHelpers'
 import { type ISelectOptionProps } from '@axdspub/axiom-ui-utilities'
 import type { GeoJSON } from 'geojson'
 
@@ -485,6 +486,7 @@ export interface IFieldInputProps {
   onChange: IValueChangeFn
   value?: IValueType
   className?: string
+  parentLayout?: LayoutType
   disabled?: boolean
   context?: IFormContextValue
 }

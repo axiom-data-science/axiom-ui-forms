@@ -17,7 +17,7 @@ import FieldLabel from '@/Form/Components/FieldLabel'
 import FormFields from '@/Form/Creator/FormFields'
 import { cloneObject } from '@/utils/manipulators'
 import FieldCreator from '@/Form/Components/FieldCreator'
-import { getLayoutClassName } from '@/utils/layoutHelpers'
+import { getFieldFlexClass, getLayoutClassName } from '@/utils/layoutHelpers'
 import { findSectionForFieldPath, useFieldNavigationRequest } from '@/Form/Creator/FieldNavigationContext'
 
 export interface ITabLayoutProps {
@@ -89,7 +89,9 @@ export const ScopedActiveSection = memo(
     className = 'flex flex-col gap-2 grow h-full',
     level,
   }: IScopedActiveTabProps): ReactElement => {
-    const fieldLayoutClass = getLayoutClassName((formSection as any)?.layout)
+    const sectionLayout = (formSection as any)?.layout
+    const fieldLayoutClass = getLayoutClassName(sectionLayout)
+    const fieldFlexClass = getFieldFlexClass(sectionLayout)
 
     return (
       <div className={className}>
@@ -121,6 +123,8 @@ export const ScopedActiveSection = memo(
               <FieldCreator
                 key={field.id}
                 field={field}
+                className={fieldFlexClass}
+                parentLayout={sectionLayout ?? 'vertical'}
                 value={isSkipPath ? scopedValue : (scopedValue[field.id] ?? null)}
                 onChange={(v: any) => {
                   if (isSkipPath) {

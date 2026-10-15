@@ -11,7 +11,7 @@ import TabLayout from '@/Form/Creator/TabLayout'
 import WizardLayout from '@/Form/Creator/Wizard'
 import { evaluateFieldLogicState, type FieldEvaluationContext } from '@/utils/formEngine'
 import { cloneObject } from '@/utils/manipulators'
-import { getLayoutClassName, getFieldFlexClass } from '@/utils/layoutHelpers'
+import { getFieldFlexClass, getLayoutClassName, type LayoutType } from '@/utils/layoutHelpers'
 import { utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement, useMemo, useCallback, memo } from 'react'
 
@@ -23,6 +23,7 @@ interface IObjectFieldItemProps {
   onChange: (value: ICompositeValueType) => void
   fieldLogicState: any
   fc: string
+  parentLayout?: LayoutType
   evaluationContext: FieldEvaluationContext
 }
 
@@ -35,6 +36,7 @@ const ObjectFieldItem = memo(
     onChange,
     fieldLogicState,
     fc,
+    parentLayout,
   }: IObjectFieldItemProps) => {
     const key = childField.id
 
@@ -46,6 +48,7 @@ const ObjectFieldItem = memo(
           className={utils.makeClassName({
             className: fc,
           })}
+          parentLayout={parentLayout}
           field={childField}
           key={key}
         />
@@ -75,6 +78,7 @@ const ObjectFieldItem = memo(
           className={utils.makeClassName({
             className: fc,
           })}
+          parentLayout={parentLayout}
           value={
             ((childField.type === 'object' || childField.type === 'objectWrapper') &&
             childField.skip_path === true
@@ -218,6 +222,7 @@ const ObjectInput = ({ field, onChange, value, disabled }: IFieldInputProps): Re
                 onChange={onChange}
                 fieldLogicState={fieldLogicState}
                 fc={fc}
+                parentLayout={field.layout ?? 'vertical'}
                 evaluationContext={evaluationContext}
               />
             )

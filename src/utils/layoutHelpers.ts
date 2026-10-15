@@ -11,7 +11,7 @@ export type LayoutType = 'horizontal' | 'vertical' | 'grid2' | 'grid3' | 'grid4'
 export const getLayoutClassName = (layout?: LayoutType): string => {
   switch (layout) {
     case 'horizontal':
-      return 'flex md:flex-row sm:flex-col gap-4 sm:gap-2'
+      return 'flex flex-col md:flex-row gap-4 sm:gap-2'
     case 'grid4':
       return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
     case 'grid3':
@@ -28,5 +28,5 @@ export const getLayoutClassName = (layout?: LayoutType): string => {
  * Get the flex-1 class for horizontal layout fields
  */
 export const getFieldFlexClass = (layout?: LayoutType): string => {
-  return layout === 'horizontal' ? 'flex-1' : ''
+  return layout === 'horizontal' ? 'md:flex-1' : ''
 }

@@ -9,17 +9,21 @@ const SingleSelectInput = ({
   value,
   disabled,
   className,
+  parentLayout,
 }: IFieldInputProps): ReactElement => {
   const initialValue = value !== undefined ? value : ''
 
   if (field.type === 'select' && field.options !== undefined) {
+    const selectedDescription = field.options.find((option) => option.value === value)?.description
+
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex min-w-0 flex-col gap-2">
         <SelectInput
           id={field.id}
-          className={className}
+          className={`w-full ${parentLayout === 'vertical' ? 'md:w-fit' : ''} ${className ?? ''}`}
           variant="outline"
           useNative={true}
+          disabled={disabled}
           label={<FieldLabel field={field} disabled={disabled} value={value} onChange={onChange} />}
           testId={field.id}
           options={field.options.map((option) => ({
@@ -33,12 +37,13 @@ const SingleSelectInput = ({
           }}
         />
         {field?.settings?.showDescriptionForSelected &&
-          field.options.find((option) => option.value === value)?.description && (
+          typeof selectedDescription === 'string' &&
+          selectedDescription.length > 0 && (
             <FieldDescriptionText
               field={{
                 ...field,
                 label: '',
-                description: field.options.find((option) => option.value === value)?.description,
+                description: selectedDescription,
               }}
               disabled={disabled}
             />

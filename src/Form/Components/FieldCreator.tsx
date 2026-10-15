@@ -24,6 +24,7 @@ import {
   createOneOfMultipleField,
 } from '@/utils/manipulators'
 import { checkCondition } from '@/utils/validators'
+import { type LayoutType } from '@/utils/layoutHelpers'
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import {
   CheckIcon,
@@ -45,6 +46,7 @@ interface IFieldCreator {
   field: IFormField
   onChange?: IValueChangeFn
   className?: string
+  parentLayout?: LayoutType
   defaultClassName?: string
   value?: IValueType | IValueType[]
   disabled?: boolean
@@ -878,6 +880,7 @@ const FieldCreator = ({
   value,
   onChange,
   className = field.type === 'constant' ? 'hidden' : undefined,
+  parentLayout,
   disabled,
   defaultClassName = 'flex flex-col gap-8 grow h-full',
   conditionResult,
@@ -987,6 +990,7 @@ const FieldCreator = ({
           ) : (
             InputComponent && <InputComponent
               field={field}
+              parentLayout={parentLayout}
               disabled={disabled}
               onChange={onChangeFn}
               value={Array.isArray(initialValue) ? initialValue[0] : initialValue}
