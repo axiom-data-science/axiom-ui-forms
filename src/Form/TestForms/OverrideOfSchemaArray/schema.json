@@ -4,6 +4,10 @@
   "description": "Schema for marine bioacoustic data including deployments, recordings, analyses, and detections",
   "type": "object",
   "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
     "test": {
       "type": "array",
       "items": {
@@ -42,6 +46,7 @@
     }
   },
   "required": [
-    "testEnum"
+    "testEnum",
+    "name"
   ]
 }

@@ -1,5 +1,5 @@
 import FormWithEditorOverlay from '@/Form/FormWithEditorOverlay'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useRef, useState } from 'react'
 import schema from './schema.json'
 import fieldOverrides from './fields.json'
 import formOverride from './form.json'
@@ -9,6 +9,8 @@ import { Button } from '@axdspub/axiom-ui-utilities'
 import { getFieldsFromFormSection } from '@/utils/getters'
 import { overridesAndSchemaToFormObject, validateAgainstSchema } from '@/utils/schemaToFormHelpers'
 import { get, omit } from 'lodash-es'
+import { IFormCreatorHandle } from '@/Form/Creator/FormCreatorTypes'
+import { PlayIcon } from '@radix-ui/react-icons'
 
 
 type IValidationError = { field: string; path?: string; message: string }
@@ -63,13 +65,14 @@ const SchemaValidationExample = (): ReactElement => {
     }
     setValidationState({ valid, isValidated: true, errors })
   }
+  const formRef = useRef<IFormCreatorHandle>(null)
   return (
     <div className='flex flex-col gap-4'>
       {
         !validationState.valid && validationState.isValidated && (
-          <div className='text-red-500 py-8 pl-8'>
+          <div className='text-red-500 py-8 pl-8 flex flex-col gap-2'>
             {validationState.errors.map((error, index) => (
-              <div key={index}>{error.message}</div>
+              <div key={index}>{error.message} <Button variant='alert' size='xs' onClick={() => formRef.current?.jumpToField(error.field)}><PlayIcon /></Button></div>
             ))}
           </div>
         )
@@ -82,6 +85,7 @@ const SchemaValidationExample = (): ReactElement => {
         )
       }
     <FormWithEditorOverlay
+      ref={formRef}
       label={'Test: schema validation'}
       schemaState={schemaState}
       formValueState={formValueState}
