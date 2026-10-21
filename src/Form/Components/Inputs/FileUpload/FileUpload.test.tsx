@@ -47,7 +47,9 @@ describe('FileUpload', () => {
       expect(onChange).toHaveBeenCalledWith('photo.png')
     })
 
-    expect(screen.getByAltText('Uploaded file preview')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByAltText('Uploaded file preview')).toBeInTheDocument()
+    })
 
     unmount()
 
@@ -111,4 +113,51 @@ describe('FileUpload', () => {
       )
     })
   })
+
+  it('previews a restored file based on its retrieved MIME type', async () => {
+    const storedFileRef = 'https://example.com/files/opaque-reference'
+    const getPreviewFile = vi.fn(async () =>
+      new File(['fake-image'], 'downloaded-file', { type: 'image/png' })
+    )
+
+    render(
+      <FileUpload
+        field={baseField as any}
+        value={storedFileRef}
+        onChange={vi.fn()}
+        getPreviewFile={getPreviewFile}
+      />
+    )
+
+    await waitFor(() => {
+      expect(getPreviewFile).toHaveBeenCalledWith(storedFileRef)
+      expect(screen.getByAltText('Uploaded file preview')).toBeInTheDocument()
+    })
+  })
+
+  it('parses a restored CSV before setting file state', async () => {
+    const csvText = 'name,value\nsample,42'
+    const file = new File([csvText], 'downloaded-file.csv', { type: 'text/plain' })
+    Object.defineProperty(file, 'text', {
+      value: async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0))
+        return csvText
+      },
+    })
+    const getPreviewFile = vi.fn(async () => file)
+
+    render(
+      <FileUpload
+        field={baseField as any}
+        value="https://example.com/files/opaque-reference"
+        onChange={vi.fn()}
+        getPreviewFile={getPreviewFile}
+      />
+    )
+
+    await waitFor(() => {
+      expect(screen.getByTestId('table')).toBeInTheDocument()
+    })
+  })
+
 })

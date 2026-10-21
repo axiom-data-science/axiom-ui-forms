@@ -37,7 +37,7 @@ const getFileTypeFlags = (file?: File | null, fileName?: string | null): FileTyp
     isPdf: type === 'application/pdf' || lowerName.endsWith('.pdf'),
     isCsv: Boolean(type.match(/csv/)) || lowerName.endsWith('.csv'),
     isText: type.startsWith('text/') || /\.(txt|md|csv|log)$/i.test(lowerName),
-    isGeojson: Boolean(type.match(/geojson/)) || lowerName.endsWith('.geojson')
+    isGeojson: type === 'application/geo+json' || Boolean(type.match(/geojson/)) || lowerName.endsWith('.geojson')
   }
 }
 
@@ -240,6 +240,7 @@ const FileUpload = ({
   acceptFileTypes,
   onFileUpload,
   getPreviewUrl,
+  getPreviewFile,
 }: IFieldInputProps & {
   acceptFileTypes?: string[]
   onFileUpload?: ({
@@ -254,6 +255,7 @@ const FileUpload = ({
     file: File
   }) => string | void | Promise<string | void>
   getPreviewUrl?: (fileName: string) => string | null | undefined | Promise<string | null | undefined>
+  getPreviewFile?: (fileRef: string) => File | null | undefined | Promise<File | null | undefined>
 }): ReactElement => {
   const [file, setFile] = useState<File | null>(null)
   const [fileRef, setFileRef] = useState<string | null>(
@@ -288,6 +290,26 @@ const FileUpload = ({
     let mounted = true
 
     const restorePreviewState = async (): Promise<void> => {
+      if (getPreviewFile) {
+        const previewFile = await getPreviewFile(fileRef)
+        if (!previewFile || !mounted) {
+          return
+        }
+
+        let parsedCsvData: ParsedCSV | null = null
+        if (getFileTypeFlags(previewFile).isCsv) {
+          const text = await previewFile.text()
+          parsedCsvData = parseCSV(text)
+        }
+        if (mounted) {
+          setFile(previewFile)
+          if (parsedCsvData) {
+            setCsvData(parsedCsvData)
+          }
+        }
+        return
+      }
+
       if (getPreviewUrl) {
         const serviceUrl = await getPreviewUrl(fileRef)
         if (mounted) {
@@ -312,7 +334,7 @@ const FileUpload = ({
     return () => {
       mounted = false
     }
-  }, [file, fileRef, getPreviewUrl])
+  }, [file, fileRef, getPreviewFile, getPreviewUrl])
 
   const readFileData = async (_file: File, isCsv: boolean): Promise<string | ArrayBuffer> => {
     return await new Promise((resolve, reject) => {
