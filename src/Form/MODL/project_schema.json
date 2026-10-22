@@ -1,0 +1,246 @@
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MODL Dataset Metadata Schema",
+      "type": "object",
+      "properties": {
+        "acknowledgement": {
+          "type": "string",
+          "description": "Acknowlegment of financial supporting entities or award numbers",
+          "examples": [
+            "This dataset is part of a MetOcean Cyberinfrastructure supported by the Integrated Ocean Observing System (IOOS) to streamline integration of data from offshore operations."
+          ]
+        },
+        "comment": {
+          "type": "string",
+          "description": "Used to describe the buoy/platform and contributor",
+          "examples": ["South Fork Wind Lidar buoy developed and deployed by Woods Hole Group"]
+        },
+        "contributor": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                "url": {
+                    "type": "string",
+                    "title": "URL"
+                },
+                "name": {
+                    "type": "string",
+                    "title": "Name"
+                },
+                "role": {
+                    "enum": [
+                    {
+                        "const": "owner",
+                        "title": "Owner",
+                        "description": "Party that owns the resource.\n - ***AOOS***"
+                    },
+                    {
+                        "const": "funder",
+                        "title": "Funder",
+                        "description": "Party providing monetary support for the resource.\n - ***AOOS***\n - ***USGS***"
+                    },
+                    {
+                        "const": "custodian",
+                        "title": "Custodian",
+                        "description": "Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource.\n - ***JOA Surveys** (the organization that is servicing the station)*"
+                    },
+                    {
+                        "const": "community_poc",
+                        "title": "Community Point of Contact",
+                        "description": "Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - ***Person ABC** (the POC who is aware of the station or provides access to the site)*"
+                    },
+                    {
+                        "const": "publisher",
+                        "title": "Data Publisher",
+                        "description": "Party who published the resource.\n - ***JOA Surveys** (The organization that shares the data via API or other access point)*"
+                    },
+                    {
+                        "const": "processor",
+                        "title": "Data Processor",
+                        "description": "Party that has processed the data in a manner such that the resource has been modified.\n - ***Tetra Tech***"
+                    },
+                    {
+                        "const": "distributor",
+                        "title": "Distributor",
+                        "description": "Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n - ***Hohonu***"
+                    }
+                    ],
+                    "type": "string",
+                    "title": "Contributor role"
+                },
+                "email": {
+                    "type": "string",
+                    "title": "Email",
+                    "format": "email"
+                },
+                "phone": {
+                    "type": "string",
+                    "title": "Telephone (primary)",
+                    "format": "phone"
+                },
+                "affiliation": {
+                    "type": "string",
+                    "title": "Organization"
+                }
+                }
+            }
+            },
+        "creator": {
+            "type": "object",
+            "properties": {
+                "url": {
+                "type": "string",
+                "title": "Creator url",
+                "description": "URL of the person or organization that collected the data."
+                },
+                "city": {
+                "type": "string",
+                "title": "Creator city",
+                "description": "City of the person or organization that collected the data."
+                },
+                "name": {
+                "type": "string",
+                "title": "Creator Name",
+                "description": "Name of the person that collected the data. "
+                },
+                "email": {
+                "type": "string",
+                "title": "Creator email",
+                "description": "Email address of the person or organization that collected the data."
+                },
+                "phone": {
+                "type": "string",
+                "title": "Creator phone",
+                "description": "The phone number of the person or group that collected the data. "
+                },
+                "state": {
+                "type": "string",
+                "title": "Creator state",
+                "description": "State of the person or organization that collected the data."
+                },
+                "sector": {
+                "enum": [
+                    "ioos_ra",
+                    "citizen",
+                    "municipal government",
+                    "academic",
+                    "industry",
+                    "gov_federal",
+                    "gov_state",
+                    "nonprofit",
+                    "tribal",
+                    "community",
+                    "international",
+                    "other"
+                ],
+                "type": "string",
+                "title": "Creator sector",
+                "description": "The sector of the organization that collected the data. If you are submitting for an IOOS Regional Association (RA), select 'ioos_ra'"
+                },
+                "address": {
+                "type": "string",
+                "title": "Creator address",
+                "description": "Street address of the person or organization that collected the data."
+                },
+                "country": {
+                "type": "string",
+                "title": "Creator country",
+                "description": "Country of the person or organization that collected the data."
+                },
+                "institution": {
+                "type": "string",
+                "title": "Creator institution",
+                "description": "Name of the organization that collected the data."
+                },
+                "postal_code": {
+                "type": "string",
+                "title": "Creator postal code",
+                "description": "The postal code of the person or organization that collected the data."
+                }
+            }
+        },
+        "geometry": {
+          "type": "object"
+        },
+        "infoURL": {
+          "type": "string",
+          "format": "uri",
+          "title": "Inormation URL",
+          "description": "Best website for information about program",
+          "examples": ["https://southforkwind.com"]
+        },
+        "license": {
+          "type": "string",
+          "description": "General license language for re-use/access of data in ERDDAP platform",
+          "examples": [
+            "The data may be used and redistributed for free but is not intended for legal use, since it may contain inaccuracies. Neither the data Contributor, Orsted, NOAA, nor the United States Government, nor any of their employees or contractors, makes any warranty, express or implied, including warranties of merchantability and fitness for a particular purpose, or assumes any legal liability for the accuracy, completeness, or usefulness, of this information."
+          ]
+        },
+        "platform_name": {
+          "type": "string",
+          "description": "Project or individual platform",
+          "examples": ["South Fork Wind"]
+        },
+        "processing_level": {
+          "type": "string",
+          "description": "Processing level of data (raw, qc, level 1, etc)",
+          "examples": ["raw dataset, no qc provided"]
+        },
+        "project": {
+          "type": "string",
+          "description": "Name of wind project",
+          "examples": ["South Fork Wind"]
+        },
+        "publisher_country": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["USA"]
+        },
+        "publisher_email": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["devops@rpsgroup.com, info@neracoos.org"]
+        },
+        "publisher_institution": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["MARACOOS, NERACOOS"]
+        },
+        "publisher_name": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["MARACOOS, NERACOOS"]
+        },
+        "publisher_phone": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["(401) 789-6224, (603) 319-1785"]
+        },
+        "publisher_type": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["institution"]
+        },
+        "publisher_url": {
+          "type": "string",
+          "description": "Publisher refers to data management at NERACOOS/MARACOOS",
+          "examples": ["https://www.maracoos.org, https://www.neracoos.org"]
+        },
+        "summary": {
+          "type": "string",
+          "description": "Basic summary of dataset - location, platform, variables collected",
+          "examples": [
+            "This dataset contains observations to support further understanding of metocean conditions off the coast of New York, Rhode Island and Southeastern Massachusetts. Data is collected from a floating lidar buoy and the dataset includes  measurements of sea temperature (surface and sea floor), current speed, current direction, wave height, wave direction, and wave period, air temperature, atmospheric pressure, relative humidity, visibility, surface wind speed,  surface wind direction, and surface wind gust."
+          ]
+        },
+        "instrument": {
+          "type": "string",
+          "description": "Instruments used, varies by variable-  see DP metadata - use at attribute level as component (with each variable) or global (separate by comma)",
+          "examples": [
+            "Campbell Scientific MetSENS 500, Campbell Scientific CS120 Visibility Sensor, Garmin GPS16X-HVS, Seaview SVS-603b, Nortek Aquadopp Profiler Z-Cell 600kHz"
+          ]
+        }
+      },
+      "required": ["title", "id"]
+    }

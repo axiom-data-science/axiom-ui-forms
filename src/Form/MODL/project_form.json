@@ -1,0 +1,213 @@
+{
+    "id": "modl-metadata-form",
+    "label": "Asset Metadata",
+    "pages": [
+      {
+        "id": "basic-info",
+        "label": "Basic Information",
+
+        "fields": [
+          {
+            "id":"intro-wrap",
+            "type": "objectWrapper",
+            "layout": "grid2",
+            "label": "",
+            "fields": [
+              {"prop": "platform_name"},
+              {"prop": "project"}
+            ]
+          },
+          {"prop": "summary", "type": "long_text"}
+        ],
+        "description": "Essential dataset identification"
+      },
+      {
+        "id": "creator-page",
+        "label": "Creator",
+        "fields": [
+          {
+            "prop": "creator.name",
+            "label": "Name"
+          },
+          {
+            "id": "creator2",
+            "type": "objectWrapper",
+            "label": "",
+            "fields": [
+              {
+                "prop": "creator.institution",
+                "label": "Organization",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              },
+              {
+                "prop": "creator.sector",
+                "label": "Sector",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              }
+            ],
+            "layout": "horizontal"
+          },
+          {
+            "prop": "creator.address",
+            "label": "Address",
+            "settings": {
+              "descriptionPresentation": "tooltip"
+            }
+          },
+          {
+            "id": "creator1",
+            "type": "objectWrapper",
+            "label": "",
+            "fields": [
+              {
+                "prop": "creator.city",
+                "label": "City",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              },
+              {
+                "prop": "creator.postal_code",
+                "label": "Postal Code",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              },
+              {
+                "prop": "creator.country",
+                "label": "Country",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                },
+                "defaultValue": "United States"
+              },
+              {
+                "prop": "creator.state",
+                "type": "stateSelector",
+                "label": "State",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              },
+              {
+                "prop": "creator.email",
+                "label": "Email",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              },
+              {
+                "prop": "creator.phone",
+                "label": "Phone",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              },
+              {
+                "prop": "creator.url",
+                "label": "URL",
+                "settings": {
+                  "descriptionPresentation": "tooltip"
+                }
+              }
+            ],
+            "layout": "grid2"
+          }
+        ],
+        "settings": {
+          "boldDescription": true
+        },
+        "description": "Party responsible for collecting the data and/or creating the resource"
+      },
+      {
+        "id": "contributors-list",
+        "label": "Contributors List",
+        "fields": [
+          {
+            "prop": "contributor",
+            "type": "object",
+            "label": "",
+            "fields": [
+              {
+                "prop": "role",
+                "type": "select",
+                "settings": {
+                  "boldLabel": true,
+                  "showDescriptionForSelected": true
+                }
+              },
+              {
+                "id": "contributor-fields",
+                "type": "objectWrapper",
+                "label": "",
+                "fields": [
+                  {
+                    "prop": "name"
+                  },
+                  {
+                    "prop": "phone"
+                  },
+                  {
+                    "prop": "email"
+                  },
+                  {
+                    "prop": "url"
+                  },
+                  {
+                    "prop": "affiliation"
+                  }
+                ],
+                "layout": "grid3",
+                "settings": {
+                  "className": "bg-transparent px-0 -mt-2"
+                }
+              }
+            ],
+            "multiple": true,
+            "settings": {
+              "className": "bg-slate-100"
+            }
+          }
+        ],
+        "description": "All roles are optional to complete. You may enter the same information for multiple roles. For example, you may submit 1 Custodian and 1 Community POC and use the same information for both.\nUse the 'Duplicate' button to copy information from a role and create a new one.\n- **Owner**: Party that owns the resource\n - **Funder**: Party providing monetary support for the resource\n - **Custodian**: Party that accepts accountability and responsibility for the data, and ensures appropriate care and maintenance of the resource\n - **Community Point of Contact**: Name of community contact, if applicable. This information is **not reported to ERDDAP**. It is only recorded for RA project tracking purposes.\n - **Data Publisher**: Party who published the resource\n - **Data Processor**: Party that has processed the data in a manner such that the resource has been modified\n - **Distributor**: Party who distributes the resource. Example, Hohonu, Divirod, etc. These distributors provide a packaged instrument, not a single sensor.\n\nExamples:\n - **Owner**: AOOS. The RA that purchased the equipment.  \n - **Funder**: AOOS, USGS. Any organizations that shared the cost of a station. Perhaps this was a pre-existing USGS station that was upgraded by an RA. \n - **Custodian**: JOA Surveys. The organization that is servicing the station.\n - **Community** Point of Contact: Person ABC. The POC who is aware of the station or provides access to the site. This will not be reported to ERDDAP. \n - **Data Publisher**: JOA Surveys. The organization that shares the data via API or other access point. \n - **Data Processor**: Tetra Tech. \n - **Distributor**: Hohonu"
+      },
+      {
+        "id": "geospatial-info",
+        "label": "Geospatial Information",
+        "fields": [
+          {
+            "prop": "geometry",
+            "type": "geometry",
+            "label": "Location",
+            "settings": {
+              "drawPointEnabled": true,
+              "defaultCenter": {
+                "lat": 42,
+                "lon": -73,
+                "zoom": 5.5
+              }
+            }
+          }
+        ],
+        "description": "Geographic coordinates"
+      },
+      {
+        "id": "additional-info",
+        "label": "Additional Information",
+        "fields": [
+          {"prop": "comment"},
+          {"prop": "acknowledgement"},
+          {"prop": "infoURL"},
+          {"prop": "license"},
+          {"prop": "processing_level"},
+          {"prop": "Instrument"}
+        ],
+        "description": "Supplementary metadata"
+      }
+    ],
+    "description": "Form for capturing MODL Dataset Metadata"
+  }

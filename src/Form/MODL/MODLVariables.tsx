@@ -1,0 +1,106 @@
+import FormWithEditorOverlay from '@/Form/FormWithEditorOverlay'
+import { ReactElement, useRef, useState } from 'react'
+import schema from './variable_schema.json'
+import fieldOverrides from './variable_form_fields.json'
+import formOverride from './variable_form.json'
+import { JSONSchema6 } from 'json-schema'
+import { IForm, IFormFieldOverride, IFormOverride, IFormValues } from '@/library'
+import { Button } from '@axdspub/axiom-ui-utilities'
+import { getFieldsFromFormSection } from '@/utils/getters'
+import { overridesAndSchemaToFormObject, validateAgainstSchema } from '@/utils/schemaToFormHelpers'
+import { get, omit } from 'lodash-es'
+import { IFormCreatorHandle } from '@/Form/Creator/FormCreatorTypes'
+import { PlayIcon } from '@radix-ui/react-icons'
+
+
+type IValidationError = { field: string; path?: string; message: string }
+
+const MODLVariables = (): ReactElement => {
+  const schemaState = useState<JSONSchema6 | undefined>(schema as JSONSchema6)
+  const fieldOverrideState = useState<IFormFieldOverride[]>(fieldOverrides as IFormFieldOverride[])
+  const formOverrideState = useState<IFormOverride | undefined>(formOverride as IFormOverride)
+  const formValueState = useState<IFormValues>({})
+  const [validationState, setValidationState] = useState<{ valid: boolean; isValidated: boolean; errors: IValidationError[] }>({ valid: true, isValidated: false, errors: [] })
+  const form: IForm = overridesAndSchemaToFormObject({
+    formOverrides: [formOverride as IFormOverride],
+    schema: schema as JSONSchema6,
+    formFieldOverrides: [fieldOverrides as IFormFieldOverride[]],
+  })
+  const onValidate = async () => {
+    const errors: IValidationError[] = []
+    const [formValues] = formValueState
+    let valid = true
+
+    const flattenedFields = getFieldsFromFormSection(form)
+    const fieldsById = Object.fromEntries(flattenedFields.map((f) => [f.id, f]))
+    flattenedFields.forEach((f) => {
+      if (f.required && (formValues[f.id] === undefined || formValues[f.id] === '')) {
+        valid = false
+        errors.push({
+          field: f.id,
+          message: `${f.label} is required.`,
+        })
+      }
+    })
+    if (schema !== undefined) {
+      const againstSchema = validateAgainstSchema(
+        omit(schema as any, '$schema'),
+        formValues
+      )
+      if (againstSchema?.length) {
+        valid = false
+        againstSchema.forEach((e) => {
+          const fieldKey = e.field?.length ? e.field : e.message.split(' ')[0].replace(/\//g, '.').replace(/^\./, '')
+          const field = fieldsById[fieldKey as keyof typeof fieldsById]?.label ?? fieldKey
+          const currentValue = get(formValues, fieldKey)
+          if(!errors.find(e => e.field === fieldKey)){
+            errors.push({
+              field: fieldKey,
+              message: `${field} ${e.message.split(' ').slice(1).join(' ')}${typeof currentValue !== 'undefined' ? `. Current value: ${JSON.stringify(currentValue)}` : ''}`,
+            })
+          }
+        })
+        
+      }
+    }
+    setValidationState({ valid, isValidated: true, errors })
+  }
+  const formRef = useRef<IFormCreatorHandle>(null)
+  return (
+    <div className='flex flex-col gap-4'>
+      {
+        !validationState.valid && validationState.isValidated && (
+          <div className='text-red-500 py-8 pl-8 flex flex-col gap-2'>
+            {validationState.errors.map((error, index) => (
+              <div key={index}>{error.message} <Button variant='alert' size='xs' onClick={() => formRef.current?.jumpToField(error.field)}><PlayIcon /></Button></div>
+            ))}
+          </div>
+        )
+      }
+      {
+        validationState.valid && validationState.isValidated && (
+          <div className='text-green-500 py-8 pl-8'>
+            Form is valid.
+          </div>
+        )
+      }
+    <FormWithEditorOverlay
+      ref={formRef}
+      label={'MODL Variables'}
+      schemaState={schemaState}
+      formValueState={formValueState}
+      fieldOverrideState={fieldOverrideState}
+      formOverrideState={formOverrideState}
+      SubmitButton={
+        <Button type='submit' onClick={()=>{
+          onValidate()
+        }}>Validate</Button>
+      }
+    />
+    </div>
+  )
+}
+
+
+
+export default MODLVariables

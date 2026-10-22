@@ -1,0 +1,75 @@
+{
+    "fields": [
+        {"prop": "dataset_id"},
+        {
+            "prop": "variables",
+            "type": "objectList",
+            "settings": {
+                "keyField": "variable_name",
+                "showInitialObject": true
+            },
+            "fields": [
+                {
+                    "id": "wrapper",
+                    "label": "",
+                    "type": "objectWrapper",
+                    "tabs": [
+                        {
+                            "id": "general",
+                            "label": "General",
+                            "layout": "grid2",
+                            "fields": [
+                                { "prop": "variable_name", "settings": { "descriptionPresentation":"tooltip"} },
+                                { "prop": "units", "settings": { "descriptionPresentation":"tooltip"} },
+                                { "prop": "standard_name", "settings": { "descriptionPresentation":"tooltip"} },
+                                { "prop": "long_name", "settings": { "descriptionPresentation":"tooltip"} },
+                                { "prop": "ioos_category", "label": "IOOS Category", "settings": { "descriptionPresentation":"tooltip"} },
+                                { "prop": "axis", "settings": { "descriptionPresentation":"tooltip"} }
+                            ]
+                        },
+                        {
+                            "id": "additional",
+                            "label": "Additional",
+                            "fields": [
+                                {
+                                    "id":"additional-1",
+                                    "label": "",
+                                    "type": "objectWrapper",
+                                    "layout": "horizontal",
+                                    "fields":[
+                                        { "prop": "actual_range_min", "settings": { "descriptionPresentation":"tooltip"} },
+                                        { "prop": "actual_range_max", "settings": { "descriptionPresentation":"tooltip"} },
+                                        { "prop": "colorBarMaximum", "settings": { "descriptionPresentation":"tooltip"} },
+                                        { "prop": "colorBarMinimum", "settings": { "descriptionPresentation":"tooltip"} }
+                                    ]
+                                },
+                                {
+                                    "id":"additional-2",
+                                    "label": "",
+                                    "type": "objectWrapper",
+                                    "layout": "horizontal",
+                                    "fields":[
+                                        { "prop": "_CoordinateAxisType", "settings": { "descriptionPresentation":"tooltip"} },
+                                        { "prop": "_FillValue", "settings": { "descriptionPresentation":"tooltip"} }
+                                    ]
+                                },
+                                {
+                                    "id":"additional-3",
+                                    "label": "",
+                                    "type": "objectWrapper",
+                                    "layout": "horizontal",
+                                    "fields":[
+                                        { "prop": "point_spacing", "settings": { "descriptionPresentation":"tooltip"} },
+                                        { "prop": "time_origin", "settings": { "descriptionPresentation":"tooltip"} }
+                                    ]
+                                }
+
+
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

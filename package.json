@@ -50,6 +50,7 @@
   },
   "scripts": {
     "start": "set PORT=3080 && vite",
+    "dev": "npm run start",
     "build": "vite build && npx typedoc src/library.ts --out dist/docs",
     "serve": "vite preview",
     "test": "vitest",

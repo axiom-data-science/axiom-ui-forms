@@ -71,6 +71,8 @@ import PARSForm from '@/Form/PAM/PARS/PARS'
 import { ProjectForm as PAMProjectForm, SiteForm as PAMSiteForm } from '@/Form/PAM/PAMForms'
 import QCToolsForm from '@/Form/PAM/QCTools/QCTools'
 import { TugboatDeployment, TugboatProject, TugboatSite } from '@/Form/PAM/ModifiedTugboat/Forms'
+import MODLProject from '@/Form/MODL/MODLProject'
+import MODLVariables from '@/Form/MODL/MODLVariables'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -289,6 +291,12 @@ const App = (): ReactElement => {
             </Route>
             <Route path="/modl" element={<MODLForm />}>
               <Route path="*" element={<MODLForm />} />
+            </Route>
+            <Route path="/modl-project" element={<MODLProject />}>
+              <Route path="*" element={<MODLProject />} />
+            </Route>
+            <Route path="/modl-variables" element={<MODLVariables />}>
+              <Route path="*" element={<MODLVariables />} />
             </Route>
             <Route path="/PAM/qc-tools" element={<QCToolsForm />}>
               <Route path="*" element={<QCToolsForm />} />
