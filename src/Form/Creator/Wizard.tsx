@@ -10,10 +10,11 @@ import { type IPageLayoutProps, ActivePage, type INavProps } from '@/Form/Creato
 import { SelectInput, utils } from '@axdspub/axiom-ui-utilities'
 import { CaretRightIcon, CaretLeftIcon } from '@radix-ui/react-icons'
 import React, { ReactNode, type ReactElement, memo, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 import NavElement from '@/Form/Creator/NavElement'
 import {
+  FormNavigationDepthProvider,
   FormSectionContextProvider,
+  useFormNavigationDepth,
   useFormSectionContext,
 } from '@/Form/Creator/FormSectionContextProvider'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
@@ -21,6 +22,7 @@ import { useAtomValue } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 import { ScopedActiveSection } from '@/Form/Creator/TabLayout'
 import { findSectionForFieldPath, useFieldNavigationRequest } from '@/Form/Creator/FieldNavigationContext'
+import { useFormUrlNavigation } from '@/Form/Creator/FormUrlNavigation'
 
 const sortByOrder = (a: IWizardStep, b: IWizardStep): number => {
   const aOrder = a.order ?? Infinity
@@ -34,23 +36,19 @@ export const WizardNavMobile = ({
   level,
   SubmitButton,
 }: INavProps): ReactElement => {
-  const { activeId, setActiveId, path } = useFormSectionContext()
-  const { urlNavigable } = useFormContext()
+  const { activeId, setActiveId, urlNavigable } = useFormSectionContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
   const stepsMap = Object.fromEntries(steps.map((p) => [p.id, p]))
   const currentStep = stepsMap[activeId ?? ''] ?? steps[0]
   const currentIndex = steps.indexOf(currentStep)
   const nextIndex = currentIndex + 1
   const prevIndex = currentIndex - 1
-  // const params = (useParams()['*'] ?? '').split('/')
-  // const path = params.slice(0, level).join('/')
   return (
     <>
       <div className="flex flex-row gap-4 justify-center items-center">
         {prevIndex >= 0 ? (
           <NavElement
             className="p-2 bg-none  border-none text-sm hover:bg-slate-none"
-            path={path}
             id={steps[prevIndex].id}
             navigable={urlNavigable ?? true}
             onClick={() => {
@@ -88,7 +86,6 @@ export const WizardNavMobile = ({
 
         {nextIndex < steps.length ? (
           <NavElement
-            path={path}
             id={steps[nextIndex].id}
             navigable={urlNavigable ?? true}
             className="p-2 bg-none  border-none text-sm hover:bg-none"
@@ -130,8 +127,7 @@ export const WizardNavLargeScreen = ({
 }: INavProps): ReactElement => {
   const { form } = useFormContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
-  const { activeId, setActiveId, path } = useFormSectionContext()
-  const { urlNavigable } = useFormContext()
+  const { activeId, setActiveId, urlNavigable } = useFormSectionContext()
 
   return (
     <div className="relative z-0">
@@ -144,7 +140,6 @@ export const WizardNavLargeScreen = ({
               className="grow first:shrink last:shrink text-center first:text-left first:ml-4 last:text-right last:mr-4 z-10 relative"
             >
               <NavElement
-                path={path}
                 id={p.id}
                 navigable={urlNavigable ?? true}
                 className={`whitespace-nowrap px-8 bg-white z-20 border-none text-sm ${activeId === p.id ? 'bg-slate-600 text-white' : 'hover:bg-slate-100'}`}
@@ -197,8 +192,7 @@ export const WizardNavSmall = ({
   defaultClassName?: string
   className?: string
 }): ReactElement => {
-  const { activeId, setActiveId, path } = useFormSectionContext()
-  const { urlNavigable } = useFormContext()
+  const { activeId, setActiveId, urlNavigable } = useFormSectionContext()
   const steps = ((sections ?? []) as IWizardStep[]).sort(sortByOrder)
   const stepsMap = Object.fromEntries(steps.map((p) => [p.id, p]))
   const currentStep = stepsMap[activeId ?? ''] ?? steps[0]
@@ -215,7 +209,6 @@ export const WizardNavSmall = ({
       {prevIndex >= 0 ? (
         <NavElement
           className="px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white"
-          path={path}
           id={steps[prevIndex].id}
           navigable={urlNavigable ?? true}
           onClick={() => {
@@ -235,7 +228,6 @@ export const WizardNavSmall = ({
       )}
       {nextIndex < steps.length ? (
         <NavElement
-          path={path}
           id={steps[nextIndex].id}
           navigable={urlNavigable ?? true}
           className="px-4 bg-slate-600 text-white border-none text-sm hover:bg-slate-700 hover:text-white"
@@ -271,18 +263,22 @@ const WizardLayout = (props: IPageLayoutProps): ReactElement => {
   if (props.sections === undefined) {
     return <></>
   }
-  const { urlNavigable } = useFormContext()
-  const params = (useParams()['*'] ?? '').split('/')
-  const path = params.slice(0, props.level).join('/')
-  const id = urlNavigable
-    ? params[props.level] && params[props.level] !== ''
-      ? params[props.level]
-      : (props.sections[0]?.id ?? null)
+  const { form, urlNavigable } = useFormContext()
+  const navigationDepth = useFormNavigationDepth()
+  const { getSectionId } = useFormUrlNavigation()
+  const maxNestedDepth = form.settings?.url_navigation_depth ?? 1
+  const canNavigateUrl = (urlNavigable ?? true) &&
+    navigationDepth !== undefined &&
+    navigationDepth <= maxNestedDepth
+  const id = canNavigateUrl
+    ? getSectionId(form.id, navigationDepth) ?? (props.sections[0]?.id ?? null)
     : (props.sections[0]?.id ?? null)
 
   return (
-    <FormSectionContextProvider path={path} id={id}>
-      <WizardLayoutContent {...props} />
+    <FormSectionContextProvider path="" id={id} formId={form.id} level={props.level} navigationDepth={navigationDepth} urlNavigable={canNavigateUrl}>
+      <FormNavigationDepthProvider depth={navigationDepth === undefined ? undefined : navigationDepth + 1}>
+        <WizardLayoutContent {...props} />
+      </FormNavigationDepthProvider>
     </FormSectionContextProvider>
   )
 }

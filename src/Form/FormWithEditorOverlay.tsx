@@ -150,10 +150,14 @@ export const FormWithEditorOverlay = React.forwardRef<IFormCreatorHandle, {
   formState: [IForm | undefined, (form: IForm | undefined) => void]
   formValueState?: IFormValueState
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
+  urlNavigable?: boolean
+  urlNavigationDepth?: number
 }>(({
   formState,
   formValueState,
   inputOverrides,
+  urlNavigable,
+  urlNavigationDepth,
 }, ref): ReactElement => {
   const [formInput, setFormInput] = formState ?? useState<IForm | undefined>(undefined)
   const [layout] = useAtom(layoutAtom)
@@ -171,6 +175,8 @@ export const FormWithEditorOverlay = React.forwardRef<IFormCreatorHandle, {
             formValueState={[formValues, setFormValues]}
             Footer={Footer}
             inputOverrides={inputOverrides}
+            urlNavigable={urlNavigable}
+            urlNavigationDepth={urlNavigationDepth}
             Header={
               <FormEditor>
                 <Tabs

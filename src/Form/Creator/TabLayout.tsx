@@ -1,4 +1,9 @@
-import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
+import {
+  FormNavigationDepthProvider,
+  FormSectionContextProvider,
+  useFormNavigationDepth,
+  useFormSectionContext,
+} from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import {
   type IFormSection,
@@ -10,8 +15,8 @@ import {
 import FormSection from '@/Form/Creator/FormSection'
 import { calculateSectionStatus } from '@/utils/validators'
 import React, { memo, ReactNode, type ReactElement, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
+import { useFormUrlNavigation } from '@/Form/Creator/FormUrlNavigation'
 import { Tabs } from '@axdspub/axiom-ui-utilities'
 import FieldLabel from '@/Form/Components/FieldLabel'
 import FormFields from '@/Form/Creator/FormFields'
@@ -153,23 +158,22 @@ const TabLayout = (props: ITabLayoutProps): ReactElement => {
   if (props.sections === undefined) {
     return <></>
   }
-  const { urlNavigable } = useFormContext()
-
-  const url = new URL(window.location.href)
-  const parts = url.pathname.split('/')
-  const formParts = parts.slice(parts.length - props.level, parts.length)
-
-  const params = (useParams()['*'] ?? '').split('/')
-  const path = params.slice(0, props.level).join('/')
-  const id = urlNavigable
-    ? params[props.level] && params[props.level] !== ''
-      ? params[props.level]
-      : (props.sections[0]?.id ?? null)
+  const { form, urlNavigable } = useFormContext()
+  const navigationDepth = useFormNavigationDepth()
+  const { getSectionId } = useFormUrlNavigation()
+  const maxNestedDepth = form.settings?.url_navigation_depth ?? 1
+  const canNavigateUrl = (urlNavigable ?? true) &&
+    navigationDepth !== undefined &&
+    navigationDepth <= maxNestedDepth
+  const id = canNavigateUrl
+    ? getSectionId(form.id, navigationDepth) ?? (props.sections[0]?.id ?? null)
     : (props.sections[0]?.id ?? null)
 
   return (
-    <FormSectionContextProvider path={path} id={id}>
-      <TabLayoutContent {...props} />
+    <FormSectionContextProvider path="" id={id} formId={form.id} level={props.level} navigationDepth={navigationDepth} urlNavigable={canNavigateUrl}>
+      <FormNavigationDepthProvider depth={navigationDepth === undefined ? undefined : navigationDepth + 1}>
+        <TabLayoutContent {...props} />
+      </FormNavigationDepthProvider>
     </FormSectionContextProvider>
   )
 }

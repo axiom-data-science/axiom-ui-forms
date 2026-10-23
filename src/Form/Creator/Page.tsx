@@ -1,4 +1,9 @@
-import { FormSectionContextProvider, useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
+import {
+  FormNavigationDepthProvider,
+  FormSectionContextProvider,
+  useFormNavigationDepth,
+  useFormSectionContext,
+} from '@/Form/Creator/FormSectionContextProvider'
 import { type IFormSectionStatus } from '@/Form/Creator/FormCreator'
 import { type IFormSection, type IFieldInputProps, IFormValues, type ICompositeValueType } from '@/Form/Creator/FormCreatorTypes'
 import FormSection from '@/Form/Creator/FormSection'
@@ -6,8 +11,8 @@ import NavElement from '@/Form/Creator/NavElement'
 import { calculateSectionStatus } from '@/utils/validators'
 import { Cross2Icon, DropdownMenuIcon } from '@radix-ui/react-icons'
 import React, { memo, ReactNode, useEffect, useState, type ReactElement } from 'react'
-import { useParams } from 'react-router-dom'
 import { useFormContext, useFormValues } from '@/Form/Creator/FormContextProvider'
+import { useFormUrlNavigation } from '@/Form/Creator/FormUrlNavigation'
 import { useAtom } from 'jotai'
 import layoutAtom from '@/utils/responsive/layoutState'
 import { Button } from '@axdspub/axiom-ui-utilities'
@@ -24,8 +29,7 @@ const PageNav = ({
   level: number
 }): ReactElement => {
   const [layout] = useAtom(layoutAtom)
-  const { urlNavigable } = useFormContext()
-  const { activeId, setActiveId, path } = useFormSectionContext()
+  const { activeId, setActiveId, urlNavigable } = useFormSectionContext()
   return (
     layout.size === 'sm' || layout.size === 'md'
       ? <PageNavMobile sections={sections} level={level} />
@@ -34,7 +38,6 @@ const PageNav = ({
           return (
             <NavElement
               key={p.id}
-              path={path}
               id={p.id}
               navigable={urlNavigable ?? true}
               onClick={() => { setActiveId(p.id) }}
@@ -55,8 +58,7 @@ const PageNavMobile = ({
   level: number
 }): ReactElement => {
   const [active, setActive] = useState(false)
-  const { activeId, setActiveId, path } = useFormSectionContext()
-  const { urlNavigable } = useFormContext()
+  const { activeId, setActiveId, urlNavigable } = useFormSectionContext()
 
   useEffect(() => {
     setActive(false)
@@ -92,7 +94,6 @@ const PageNavMobile = ({
                 return (
                   <NavElement
                     key={p.id}
-                    path={path}
                     id={p.id}
                     navigable={urlNavigable ?? true}
                     onClick={() => { setActiveId(p.id) }}
@@ -109,7 +110,6 @@ const PageNavMobile = ({
               return (
                 <NavElement
                   key={p.id}
-                  path={path}
                   id={p.id}
                   navigable={urlNavigable ?? true}
                   onClick={() => { setActiveId(p.id) }}
@@ -197,21 +197,22 @@ const PageLayout = (props: IPageLayoutProps): ReactElement => {
   if (props.sections === undefined) {
     return <></>
   }
-  const { urlNavigable } = useFormContext()
-
-  const url = new URL(window.location.href)
-  const parts = url.pathname.split('/')
-  const formParts = parts.slice(parts.length - props.level, parts.length)
-
-  const params = (useParams()['*'] ?? '').split('/')
-  const path = params.slice(0, props.level).join('/')
-  const id = urlNavigable
-    ? (params[props.level] && params[props.level] !== '') ? params[props.level] : (props.sections[0]?.id ?? null)
+  const { form, urlNavigable } = useFormContext()
+  const navigationDepth = useFormNavigationDepth()
+  const { getSectionId } = useFormUrlNavigation()
+  const maxNestedDepth = form.settings?.url_navigation_depth ?? 1
+  const canNavigateUrl = (urlNavigable ?? true) &&
+    navigationDepth !== undefined &&
+    navigationDepth <= maxNestedDepth
+  const id = canNavigateUrl
+    ? getSectionId(form.id, navigationDepth) ?? (props.sections[0]?.id ?? null)
     : props.sections[0]?.id ?? null
 
   return (
-    <FormSectionContextProvider path={path} id={id}>
-      <PageLayoutContent {...props} />
+    <FormSectionContextProvider path="" id={id} formId={form.id} level={props.level} navigationDepth={navigationDepth} urlNavigable={canNavigateUrl}>
+      <FormNavigationDepthProvider depth={navigationDepth === undefined ? undefined : navigationDepth + 1}>
+        <PageLayoutContent {...props} />
+      </FormNavigationDepthProvider>
     </FormSectionContextProvider>
   )
 }
