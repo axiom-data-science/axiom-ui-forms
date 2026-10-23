@@ -69,6 +69,36 @@ export default ExampleForm = ({formConfig}: {formConfig: IForm}): ReactElement =
 
 ```
 
+## URL navigation for forms
+
+Top-level page, wizard-step, and tab navigation can store the selected section in the URL without taking ownership of the host application's pathname. By default, one additional nested layout level is URL-navigable; deeper layouts stay local. The form uses a query parameter scoped by the form ID and preserves other query parameters. `urlNavigable={false}` disables URL updates and keeps section navigation local.
+
+Configure the number of nested layout levels with `form.settings.url_navigation_depth` or the `urlNavigationDepth` component prop. The prop takes precedence; `0` allows only top-level navigation, `1` allows one nested level, and the default is `1`.
+
+The library uses browser history by default, so in-form navigation works without React Router. If the consuming site uses React Router, provide an adapter so its router state stays synchronized while it continues to own site-level routes:
+
+```tsx
+import React, { useMemo, type PropsWithChildren } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { FormUrlNavigationProvider } from '@axdspub/axiom-ui-forms'
+
+const RouterFormNavigation = ({ children }: PropsWithChildren): React.ReactElement => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const adapter = useMemo(() => ({
+    location: `${location.pathname}${location.search}${location.hash}`,
+    navigate: (url: string, options?: { replace?: boolean }): void => {
+      navigate(url, { replace: options?.replace })
+    },
+  }), [location.pathname, location.search, location.hash, navigate])
+
+  return <FormUrlNavigationProvider adapter={adapter}>{children}</FormUrlNavigationProvider>
+}
+```
+
+Place `RouterFormNavigation` inside the site's `<BrowserRouter>` around the routes that render forms. The package's form navigation itself does not import or require `react-router-dom`.
+Existing deep links that stored the active form section in pathname segments will need to use the new query-parameter URL; the site's pathname and route structure remain unchanged.
+
 ## Config to create a form with wizard steps using config. 
 Example [here](https://axiom-ui-forms.srv.axds.co/?tab=config&form=uQAEYmlkZ2V4YW1wbGVlbGFiZWxsRXhhbXBsZSBmb3Jta2Rlc2NyaXB0aW9ud1RoaXMgaXMganVzdCBhbiBleGFtcGxlbHdpemFyZF9zdGVwc4O5AARiaWRlaW50cm9lbGFiZWxsSW50cm9kdWN0aW9uZW9yZGVyAGZmaWVsZHOCuQADYmlkZXRpdGxlZHR5cGVkdGV4dGVsYWJlbGVUaXRsZbkAA2JpZGtkZXNjcmlwdGlvbmR0eXBlaWxvbmdfdGV4dGVsYWJlbGtEZXNjcmlwdGlvbrkABGJpZGNtYXBlbGFiZWxmU3RlcCAyZW9yZGVyAWZmaWVsZHOBuQADYmlkY21hcGR0eXBlZ2dlb2pzb25lbGFiZWxoTG9jYXRpb265AARiaWRlYWJvdXRlbGFiZWxuQWJvdXQgeW91cnNlbGZlb3JkZXICZXBhZ2VzgrkAA2JpZGlmYXZvcml0ZXNlbGFiZWxpRmF2b3JpdGVzZmZpZWxkc4G5AARiaWRuZmF2b3JpdGVzX2xpc3RkdHlwZWR0ZXh0ZWxhYmVseBlMaXN0IHlvdXIgZmF2b3JpdGUgdGhpbmdzaG11bHRpcGxl9bkAA2JpZGRzaWduZWxhYmVsaVNpZ25hdHVyZWZmaWVsZHOCuQADYmlkZWFncmVlZHR5cGVnYm9vbGVhbmVsYWJlbG1EbyB5b3UgYWdyZWU%2FuQADYmlkaXNpZ25hdHVyZWR0eXBlZHRleHRlbGFiZWxzU2lnbiB5b3VyIG5hbWUgdGhlbg%3D%3D).
 

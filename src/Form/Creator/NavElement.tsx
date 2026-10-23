@@ -1,11 +1,10 @@
 import { Button, utils } from '@axdspub/axiom-ui-utilities'
 import React, { type ReactElement, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { useFormSectionContext } from '@/Form/Creator/FormSectionContextProvider'
 
 const NavElement = ({
   className,
   children,
-  path,
   id,
   navigable = true,
   onClick
@@ -14,15 +13,23 @@ const NavElement = ({
   overrideClassName?: string
   navigable?: boolean
   children: ReactNode
-  path: string
   id: string
   onClick?: () => void
 }): ReactElement => {
+  const { getSectionUrl } = useFormSectionContext()
   return (
     navigable
-      ? <Link to={`${path !== '' ? `${path}/` : ''}${id}`} className={utils.createButtonClass({
-        className
-      })}>{children}</Link>
+      ? <a
+        href={getSectionUrl(id)}
+        onClick={(event) => {
+          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return
+          }
+          event.preventDefault()
+          onClick?.()
+        }}
+        className={utils.createButtonClass({ className })}
+      >{children}</a>
       : <Button className={className} onClick={onClick}>{children}</Button>
 
   )

@@ -9,7 +9,6 @@ import layoutAtom, { getWindowSize } from '@/utils/responsive/layoutState'
 import { overridesAndSchemaToFormObject, schemaToFormObject, ensureObjectWrappersHaveSkipPath } from '@/utils/schemaToFormHelpers'
 import { calculateSectionStatus } from '@/utils/validators'
 import { seedNestedDefaults } from '@/utils/formEngine'
-import { formHasNestedNavigation } from '@/utils/formEngine/hasNestedNavigation'
 import { Loader, utils } from '@axdspub/axiom-ui-utilities'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useAtom } from 'jotai'
@@ -20,6 +19,7 @@ import React, { type ReactNode, useContext, type ReactElement, useState, useEffe
 import errorRenderer from '@/utils/errorRenderer'
 import { FieldNavigationProvider, fieldPathsMatch, type IFieldNavigationRequest } from './FieldNavigationContext'
 import { getFieldsFromFormSection, makeJsonPath } from '@/utils/getters'
+import { FormNavigationDepthProvider } from './FormSectionContextProvider'
 
 
 
@@ -34,6 +34,7 @@ export interface IFormCreatorProps {
   className?: string
   defaultClassName?: string
   urlNavigable?: boolean
+  urlNavigationDepth?: number
   inputOverrides?: Record<string, React.FC<IFieldInputProps>>
   Header?: React.FC<{ formValues: IFormValues }> | ReactNode
   Footer?: React.FC<{ formValues: IFormValues }> | ReactNode
@@ -124,6 +125,7 @@ const FormCreator = React.forwardRef<IFormCreatorHandle, IFormCreatorProps>(({
   className,
   defaultClassName = 'flex flex-col gap-8 grow',
   urlNavigable = true,
+  urlNavigationDepth,
   inputOverrides,
   schema,
   Footer,
@@ -133,12 +135,17 @@ const FormCreator = React.forwardRef<IFormCreatorHandle, IFormCreatorProps>(({
 }: IFormCreatorProps, ref): ReactElement => {
   const activeForm = useMemo(() => {
     const af = copyAndAddPathToFields(ensureObjectWrappersHaveSkipPath(form))
-    // Disable URL navigation if form has nested pages or wizard_steps (these don't support URL nav)
-    // This includes both top-level and embedded within object/objectList fields
-    const hasNestedNavigation = formHasNestedNavigation(af)
-    af.settings = { url_navigable: hasNestedNavigation ? false : urlNavigable, ...af.settings }
+    const navigationDepth = urlNavigationDepth ?? af.settings?.url_navigation_depth ?? 1
+    if (!Number.isInteger(navigationDepth) || navigationDepth < 0) {
+      throw new Error('urlNavigationDepth must be a non-negative integer')
+    }
+    af.settings = {
+      ...af.settings,
+      url_navigable: af.settings?.url_navigable ?? urlNavigable,
+      url_navigation_depth: navigationDepth
+    }
     return af
-  }, [form, urlNavigable])
+  }, [form, urlNavigable, urlNavigationDepth])
 
   const [formValues, setFormValues] = formValueState ?? useState<IFormValues>(() => ({
     ...seedFormValuesWithDefaults(activeForm),
@@ -259,10 +266,12 @@ const FormCreator = React.forwardRef<IFormCreatorHandle, IFormCreatorProps>(({
               ? <FormStatus />
               : ''
           }
-          <FormSection
-            formSection={activeForm}
-            SubmitButton={SubmitButton}
-          />
+          <FormNavigationDepthProvider depth={0}>
+            <FormSection
+              formSection={activeForm}
+              SubmitButton={SubmitButton}
+            />
+          </FormNavigationDepthProvider>
         </div>
         {typeof Footer === 'function' ? <FormComponentWrap Component={Footer} /> : Footer ?? ''}
       </FieldNavigationProvider>

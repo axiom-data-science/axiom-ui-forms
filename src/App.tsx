@@ -1,8 +1,8 @@
 'use client'
 
 import FormManager from '@/Form/Manage/Manage'
-import React, { createContext, useContext, useState, type ReactElement } from 'react'
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
+import React, { createContext, useContext, useMemo, useState, type ReactElement, type ReactNode } from 'react'
+import { BrowserRouter, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import SetTester from '@/SetTester'
 import MapTester from '@/Form/MapTester'
 import SchemaToForm from '@/Form/SchemaToForm'
@@ -73,6 +73,7 @@ import QCToolsForm from '@/Form/PAM/QCTools/QCTools'
 import { TugboatDeployment, TugboatProject, TugboatSite } from '@/Form/PAM/ModifiedTugboat/Forms'
 import MODLProject from '@/Form/MODL/MODLProject'
 import MODLVariables from '@/Form/MODL/MODLVariables'
+import { FormUrlNavigationProvider } from '@/Form/Creator/FormUrlNavigation'
 
 const PagedFormWrap = (): ReactElement => {
   const formValueState = useState<IFormValues>({})
@@ -191,6 +192,19 @@ function BinnerMetadataRoute(): ReactElement {
   )
 }
 
+const RouterFormUrlNavigationProvider = ({ children }: { children: ReactNode }): ReactElement => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const adapter = useMemo(() => ({
+    location: `${location.pathname}${location.search}${location.hash}`,
+    navigate: (url: string, options?: { replace?: boolean }): void => {
+      navigate(url, { replace: options?.replace })
+    }
+  }), [location.pathname, location.search, location.hash, navigate])
+
+  return <FormUrlNavigationProvider adapter={adapter}>{children}</FormUrlNavigationProvider>
+}
+
 const App = (): ReactElement => {
   const [layout, setLayout] = useAtom(layoutAtom)
   const updateLayoutValue = (): void => {
@@ -208,6 +222,7 @@ const App = (): ReactElement => {
     <ErrorBoundary fallbackRender={errorRenderer}>
       <div className="h-screen flex flex-col gap-4">
         <BrowserRouter>
+          <RouterFormUrlNavigationProvider>
           <Routes>
             <Route path="/" element={<FormManager />}>
               <Route path="*" element={<FormManager />} />
@@ -362,6 +377,7 @@ const App = (): ReactElement => {
             </Route>
             <Route path="management-dd" element={<DragDropSandbox />} />
           </Routes>
+          </RouterFormUrlNavigationProvider>
         </BrowserRouter>
       </div>
     </ErrorBoundary>

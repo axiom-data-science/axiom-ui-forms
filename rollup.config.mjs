@@ -11,7 +11,6 @@ const globals = {
   'react/jsx-runtime': 'JSXRuntime',
   react: 'React',
   'react-dom': 'ReactDOM',
-  'react-router-dom': 'reactRouterDom',
   '@tanstack/react-query': 'reactQuery'
 }
 
@@ -20,7 +19,6 @@ const external = [
   'react-dom',
   'react-scripts',
   'react/jsx-runtime',
-  'react-router-dom',
   '@tanstack/react-query',
   'to-json-schema',
   'use-sync-external-store/shim',

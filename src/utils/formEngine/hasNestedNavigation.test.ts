@@ -4,21 +4,44 @@ import { formHasNestedNavigation } from './hasNestedNavigation'
 
 describe('formHasNestedNavigation', () => {
   describe('top-level navigation', () => {
-    it('should detect top-level pages', () => {
+    it('should not consider top-level pages nested', () => {
       const form: IForm = {
         id: 'form',
         pages: [
           { id: 'page1', fields: [] },
         ],
       }
-      expect(formHasNestedNavigation(form)).toBe(true)
+      expect(formHasNestedNavigation(form)).toBe(false)
     })
 
-    it('should detect top-level wizard_steps', () => {
+    it('should not consider top-level wizard_steps nested', () => {
       const form: IForm = {
         id: 'form',
         wizard_steps: [
           { id: 'step1', fields: [] },
+        ],
+      }
+      expect(formHasNestedNavigation(form)).toBe(false)
+    })
+
+    it('should not consider top-level tabs nested', () => {
+      const form: IForm = {
+        id: 'form',
+        tabs: [
+          { id: 'tab1', fields: [] },
+        ],
+      }
+      expect(formHasNestedNavigation(form)).toBe(false)
+    })
+
+    it('should detect a nested layout inside a top-level page', () => {
+      const form: IForm = {
+        id: 'form',
+        pages: [
+          {
+            id: 'page1',
+            tabs: [{ id: 'tab1', fields: [] }],
+          },
         ],
       }
       expect(formHasNestedNavigation(form)).toBe(true)

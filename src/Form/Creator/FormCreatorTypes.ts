@@ -410,6 +410,7 @@ export interface IFormLayoutTab extends Omit<IFormSection, 'tabs'> {
 
 export interface IFormSettings {
   url_navigable?: boolean
+  url_navigation_depth?: number
   class_name?: string
   show_progress?: boolean
 }
