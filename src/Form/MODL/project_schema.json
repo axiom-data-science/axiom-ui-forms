@@ -29,7 +29,7 @@
                     "title": "Name"
                 },
                 "role": {
-                    "enum": [
+                    "oneOf": [
                     {
                         "const": "owner",
                         "title": "Owner",
