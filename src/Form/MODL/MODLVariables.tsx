@@ -11,6 +11,7 @@ import { overridesAndSchemaToFormObject, validateAgainstSchema } from '@/utils/s
 import { get, omit } from 'lodash-es'
 import { IFormCreatorHandle } from '@/Form/Creator/FormCreatorTypes'
 import { PlayIcon } from '@radix-ui/react-icons'
+import CSVDataFileToVariables from './CSVDataFileToVariables'
 
 
 type IValidationError = { field: string; path?: string; message: string }
@@ -91,6 +92,9 @@ const MODLVariables = (): ReactElement => {
       formValueState={formValueState}
       fieldOverrideState={fieldOverrideState}
       formOverrideState={formOverrideState}
+      inputOverrides={{
+        'custom:csv-data-file-to-variables': CSVDataFileToVariables
+      }}
       SubmitButton={
         <Button type='submit' onClick={()=>{
           onValidate()

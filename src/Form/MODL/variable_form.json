@@ -2,6 +2,11 @@
     "fields": [
         {"prop": "dataset_id"},
         {
+            "id": "variables_data_csv_upload",
+            "type": "custom:csv-data-file-to-variables",
+            "label": "Infer variables from data CSV"
+        },
+        {
             "prop": "variables",
             "type": "objectList",
             "settings": {
